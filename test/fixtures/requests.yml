@@ -1,0 +1,75 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  product_type: MyString
+  product_what: MyString
+  product_length: 1.5
+  product_width: 1.5
+  product_height: 1.5
+  product_weight: 1.5
+  for_what: MyString
+  boxes_stow: 1
+  quantity: 1
+  inner_length: 1.5
+  inner_width: 1.5
+  inner_height: MyString
+  outer_length: 1.5
+  outer_widht: 1.5
+  outer_height: 1.5
+  bag_length: 1.5
+  bag_width: 1.5
+  bag_height: 1.5
+  sheet_length: 1.5
+  sheet_height: 1.5
+  main_material: MyString
+  resistance_main_material: MyString
+  secondary_material: MyString
+  resistance_secondary_material: MyString
+  third_material: MyString
+  resistance_third_material: MyString
+  impression: MyString
+  inks: 1
+  impression_finishing: MyString
+  which_finishing: MyString
+  delivery_date: 2017-06-05
+  maximum_sales_price: 1.5
+  observations: MyText
+  notes: MyText
+  prospect_id: 
+
+two:
+  product_type: MyString
+  product_what: MyString
+  product_length: 1.5
+  product_width: 1.5
+  product_height: 1.5
+  product_weight: 1.5
+  for_what: MyString
+  boxes_stow: 1
+  quantity: 1
+  inner_length: 1.5
+  inner_width: 1.5
+  inner_height: MyString
+  outer_length: 1.5
+  outer_widht: 1.5
+  outer_height: 1.5
+  bag_length: 1.5
+  bag_width: 1.5
+  bag_height: 1.5
+  sheet_length: 1.5
+  sheet_height: 1.5
+  main_material: MyString
+  resistance_main_material: MyString
+  secondary_material: MyString
+  resistance_secondary_material: MyString
+  third_material: MyString
+  resistance_third_material: MyString
+  impression: MyString
+  inks: 1
+  impression_finishing: MyString
+  which_finishing: MyString
+  delivery_date: 2017-06-05
+  maximum_sales_price: 1.5
+  observations: MyText
+  notes: MyText
+  prospect_id: 

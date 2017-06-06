@@ -1,9 +1,22 @@
 Rails.application.routes.draw do
 
-  devise_for :views
+  get 'requests/special'
+
+  get 'requests/catalog'
+
+  get 'requests/index'
+
+  get 'orders/special'
+
+  get 'orders/catalog'
+
+  get 'orders/index'
+
   get 'pages/index'
 
   devise_for :users
+
+  resources :requests
 
   root 'pages#index'
 
