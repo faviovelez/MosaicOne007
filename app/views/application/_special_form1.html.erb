@@ -106,7 +106,7 @@
 
   <div class="field">
   <%= f.label :material_secundario  %>
-  <%= f.text_field :main_material %>
+  <%= f.text_field :secondary_material %>
   </div>
 
   <div class="field">
@@ -156,7 +156,127 @@
 
   <div class="field">
   <%= f.label :observaciones_adicionales %>
-  <%= f.text_field :observations %>
+  <%= f.text_area :observations %>
+  </div>
+
+  <div class="field">
+  <%= f.label :observaciones_adicionales %>
+  <%= f.text_area :notes %>
+  </div>
+
+  <div class="field">
+  <%= f.label :código_de_producto  %>
+  <%= f.text_field :product_code %>
+  </div>
+
+  <div class="field">
+  <%= f.label :cantidad_final  %>
+  <%= f.text_field :final_quantity %>
+  </div>
+
+  <div class="field">
+  <%= f.label :fabricar_dummy  %>
+  <%= f.text_field :require_dummy %>
+  </div>
+
+  <div class="field">
+  <%= f.label :elaborar_printcard  %>
+  <%= f.text_field :require_printcard %>
+  </div>
+
+  <div class="field">
+  <%= f.label :elaborar_printcard  %>
+  <%= f.text_field :require_printcard %>
+  </div>
+
+  <div class="field">
+  <%= f.label :fecha_de_producción_finalizada  %>
+  <%= f.text_field :date_finished %>
+  </div>
+
+  <div class="field">
+  <%= f.label :costo_interno  %>
+  <%= f.text_field :internal_cost %>
+  </div>
+
+  <div class="field">
+  <%= f.label :precio_interno  %>
+  <%= f.text_field :internal_price %>
+  </div>
+
+  <div class="field">
+  <%= f.label :precio_de_venta  %>
+  <%= f.text_field :sales_price %>
+  </div>
+
+  <div class="field">
+  <%= f.label :tipo_de_impresión  %>
+  <%= f.text_field :impression_type %>
+  </div>
+
+  <div class="field">
+  <%= f.label :en_qué_parte_va_la_impresión?  %>
+  <%= f.text_field :impression_where %>
+  </div>
+
+  <div class="field">
+  <%= f.label :costo_del_dummy  %>
+  <%= f.text_field :dummy_cost %>
+  </div>
+
+  <div class="field">
+  <%= f.label :costo_por_trabajo_de_diseño  %>
+  <%= f.text_field :design_cost %>
+  </div>
+
+  <div class="field">
+  <%= f.label :tipo_de_armado_como  %>
+  <%= f.text_field :design_like %>
+  </div>
+
+  <div class="field">
+  <%= f.label :tipo_de_resistencia_como %>
+  <%= f.text_field :resistance_like %>
+  </div>
+
+  <div class="field">
+  <%= f.label :color_del_papel_en_cartón_rígido %>
+  <%= f.text_field :rigid_color %>
+  </div>
+
+  <div class="field">
+  <%= f.label :tipo_de_papel %>
+  <%= f.text_field :paper_type_rigid %>
+  </div>
+
+  <div class="field">
+  <%= f.label :color_exterior_del_cartón %>
+  <%= f.text_field :main_material_color %>
+  </div>
+
+  <div class="field">
+  <%= f.label :color_interior_del_cartón %>
+  <%= f.text_field :secondary_material_color %>
+  </div>
+
+  <div class="field">
+  <%= f.label :color_exterior_de_otros_materiales %>
+  <%= f.text_field :third_material_color %>
+  </div>
+
+  <div class="field">
+    <%= f.label :subir_autorización_de_printcard %><br>
+    <%= f.file_field :printcard_authorised  %>
+  </div>
+
+  <div class="field">
+    <%= f.label :subir_ficha_de_anticipo %><br>
+    <%= f.file_field :payment_uploaded  %>
+  </div>
+
+  <div class="field">
+    <%= f.label :subir_pedido_autorizado %><br>
+    <%= f.file_field :authorisation_signed  %>
   </div>
 
   <div class="actions">

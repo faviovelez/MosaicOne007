@@ -11,17 +11,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170605195623) do
+ActiveRecord::Schema.define(version: 20170606235623) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "prospects", force: :cascade do |t|
-    t.string   "name"
-    t.string   "type"
-    t.integer  "store_id"
+  create_table "documents", force: :cascade do |t|
+    t.string   "document"
+    t.integer  "request_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.string   "document_type"
+  end
+
+  add_index "documents", ["request_id"], name: "index_documents_on_request_id", using: :btree
+
+  create_table "modified_fields", force: :cascade do |t|
+    t.string   "field"
+    t.integer  "request_id"
+    t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  add_index "modified_fields", ["request_id"], name: "index_modified_fields_on_request_id", using: :btree
+  add_index "modified_fields", ["user_id"], name: "index_modified_fields_on_user_id", using: :btree
+
+  create_table "prospects", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "store_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.string   "prospect_type"
   end
 
   add_index "prospects", ["store_id"], name: "index_prospects_on_store_id", using: :btree
@@ -64,15 +85,40 @@ ActiveRecord::Schema.define(version: 20170605195623) do
     t.integer  "prospect_id"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
+    t.string   "product_code"
+    t.integer  "final_quantity"
+    t.boolean  "require_dummy"
+    t.boolean  "require_printcard"
+    t.boolean  "printcard_authorised"
+    t.boolean  "dummy_generated"
+    t.boolean  "dummy_authorised"
+    t.boolean  "printcard_generated"
+    t.boolean  "payment_uploaded"
+    t.boolean  "authorisation_signed"
+    t.date     "date_finished"
+    t.float    "internal_cost"
+    t.float    "internal_price"
+    t.float    "sales_price"
+    t.string   "impression_type"
+    t.string   "impression_where"
+    t.float    "dummy_cost"
+    t.float    "design_cost"
+    t.string   "design_like"
+    t.string   "resistance_like"
+    t.string   "rigid_color"
+    t.string   "paper_type_rigid"
+    t.string   "main_material_color"
+    t.string   "secondary_material_color"
+    t.string   "third_material_color"
   end
 
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree
 
   create_table "stores", force: :cascade do |t|
-    t.string   "type"
     t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "store_type"
   end
 
   add_index "stores", ["user_id"], name: "index_stores_on_user_id", using: :btree
@@ -113,6 +159,9 @@ ActiveRecord::Schema.define(version: 20170605195623) do
   add_index "views", ["email"], name: "index_views_on_email", unique: true, using: :btree
   add_index "views", ["reset_password_token"], name: "index_views_on_reset_password_token", unique: true, using: :btree
 
+  add_foreign_key "documents", "requests"
+  add_foreign_key "modified_fields", "requests"
+  add_foreign_key "modified_fields", "users"
   add_foreign_key "prospects", "stores"
   add_foreign_key "requests", "prospects"
   add_foreign_key "stores", "users"
