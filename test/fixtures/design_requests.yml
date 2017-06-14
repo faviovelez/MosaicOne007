@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  design_type: MyString
+  cost: 1.5
+  status: MyString
+  authorisation: false
+  attachment: MyString
+  outcome: MyString
+
+two:
+  design_type: MyString
+  cost: 1.5
+  status: MyString
+  authorisation: false
+  attachment: MyString
+  outcome: MyString

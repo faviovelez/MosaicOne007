@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  street: MyString
+  exterior_number: MyString
+  interior_number: MyString
+  zipcode: MyString
+  neighborhood: MyString
+  city: MyString
+  state: MyString
+  country: MyString
+  additional_references: MyString
+  prospect_id: 
+  type_of_address: MyString
+
+two:
+  street: MyString
+  exterior_number: MyString
+  interior_number: MyString
+  zipcode: MyString
+  neighborhood: MyString
+  city: MyString
+  state: MyString
+  country: MyString
+  additional_references: MyString
+  prospect_id: 
+  type_of_address: MyString

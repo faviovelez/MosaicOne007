@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  status: MyString
+  product_catalog_id: 
+  order_id: 
+  initial_price: 1.5
+  discount_applied: 1.5
+  additional_discount_applied: 1.5
+  price_before_taxes: 1.5
+
+two:
+  status: MyString
+  product_catalog_id: 
+  order_id: 
+  initial_price: 1.5
+  discount_applied: 1.5
+  additional_discount_applied: 1.5
+  price_before_taxes: 1.5

@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mosaicone007</title>
+  <title>Sistema DC</title>
   <%= stylesheet_link_tag    'bootstrap', media: 'all', 'data-turbolinks-track' => true %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'bootstrap', 'data-turbolinks-track' => true %>
 
   <%= csrf_meta_tags %>
+  <meta name="robots" content="noindex"
 </head>
 <body>
   <%= render 'navbar' %>
-  <%= render 'horizontal' %>
+  <%= render 'vertical' %>
   <p class="notice"><%= notice %></p>
   <%= yield %>
   <p class="alert"><%= alert %></p>

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  lenght: 1.5
+  width: 1.5
+  height: 1.5
+  weight: 1.5
+  order_id: 
+
+two:
+  lenght: 1.5
+  width: 1.5
+  height: 1.5
+  weight: 1.5
+  order_id: 

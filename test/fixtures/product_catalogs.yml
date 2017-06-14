@@ -1,0 +1,47 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  former_code: MyString
+  unique_code: MyString
+  description: MyString
+  product_type: MyString
+  exterior_material_color: MyString
+  interior_material_color: MyString
+  impression: false
+  exterior_color_or_design: MyString
+  main_material: MyString
+  resistance_main_material: MyString
+  inner_length: 1.5
+  inner_width: 1.5
+  inner_height: 1.5
+  outer_length: 1.5
+  outer_width: 1.5
+  outer_height: 1.5
+  design_type: MyString
+  number_of_pieces: 1
+  accesories_kit: MyString
+  cost: 1.5
+  price: 1.5
+
+two:
+  former_code: MyString
+  unique_code: MyString
+  description: MyString
+  product_type: MyString
+  exterior_material_color: MyString
+  interior_material_color: MyString
+  impression: false
+  exterior_color_or_design: MyString
+  main_material: MyString
+  resistance_main_material: MyString
+  inner_length: 1.5
+  inner_width: 1.5
+  inner_height: 1.5
+  outer_length: 1.5
+  outer_width: 1.5
+  outer_height: 1.5
+  design_type: MyString
+  number_of_pieces: 1
+  accesories_kit: MyString
+  cost: 1.5
+  price: 1.5

@@ -52,3 +52,5 @@ gem 'cancancan', '~> 1.10'
 gem 'carrierwave', '~> 1.0'
 
 gem 'rmagick'
+
+gem 'aasm', '~> 4.11'

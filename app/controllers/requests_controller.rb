@@ -35,7 +35,6 @@ end
 def create
   @request = Request.new(request_params)
   upload_authorisation_payment
-  upload_authorisation_printcard
   upload_authorisation_document
 
   respond_to do |format|
@@ -53,7 +52,6 @@ end
 # PATCH/PUT /requests/1.json
 def update
   upload_authorisation_payment
-  upload_authorisation_printcard
   upload_authorisation_document
 
   respond_to do |format|
@@ -83,14 +81,6 @@ private
     @request = Request.find(params[:id])
   end
 
-  def upload_authorisation_printcard
-    if params[:request][:printcard_authorised].nil?
-      @request.printcard_authorised = false
-    else
-      @request.documents << Document.create(document: params[:request][:printcard_authorised], document_type: 'printcard', request: @request)
-      @request.printcard_authorised = true
-    end
-  end
 
   def upload_authorisation_payment
     if params[:request][:payment_uploaded].nil?
@@ -113,6 +103,6 @@ private
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def request_params
-    params.require(:request).permit(:product_type, :product_what, :product_length, :product_width, :product_height, :product_weight, :for_what, :boxes_stow, :quantity, :inner_length, :inner_width, :inner_height, :outer_length, :outer_widht, :outer_height, :bag_length, :bag_width, :bag_height, :sheet_length, :sheet_height, :main_material, :resistance_main_material, :secondary_material, :resistance_secondary_material, :third_material, :resistance_third_material, :impression, :inks, :impression_finishing, :which_finishing, :delivery_date, :maximum_sales_price, :observations, :notes, :prospect_id, :product_code, :final_quantity, :require_dummy, :require_printcard, :printcard_authorised, :dummy_generated, :dummy_authorised,:printcard_generated, :payment_uploaded, :authorisation_signed, :date_finished, :internal_cost, :internal_price, :sales_price, :impression_type, :impression_where, :dummy_cost, :design_cost, :design_like, :resistance_like, :rigid_color, :paper_type_rigid, :main_material_color, :secondary_material_color, :third_material_color )
+    params.require(:request).permit(:product_type, :product_what, :product_length, :product_width, :product_height, :product_weight, :for_what, :boxes_stow, :quantity, :inner_length, :inner_width, :inner_height, :outer_length, :outer_widht, :outer_height, :bag_length, :bag_width, :bag_height, :sheet_length, :sheet_height, :main_material, :resistance_main_material, :secondary_material, :resistance_secondary_material, :third_material, :resistance_third_material, :impression, :inks, :impression_finishing, :which_finishing, :delivery_date, :maximum_sales_price, :observations, :notes, :prospect_id, :product_code, :final_quantity, :require_dummy, :require_printcard, :printcard_authorised, :dummy_generated, :dummy_authorised,:printcard_generated, :payment_uploaded, :authorisation_signed, :date_finished, :internal_cost, :internal_price, :sales_price, :impression_type, :impression_where, :dummy_cost, :design_cost, :design_like, :resistance_like, :rigid_color, :paper_type_rigid, :exterior_material_color, :interior_material_color, :other_material_color, :manager)
   end
 end
