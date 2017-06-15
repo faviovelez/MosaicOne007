@@ -1,0 +1,21 @@
+<% @requests.each do |request| %>
+
+    <table>
+      <thead>
+        <tr>
+          <th>tienda</th>
+          <th>piezas</th>
+          <th>creada hace</th>
+          <th>fecha compromiso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= @stores.find(request.store_id) %></td>
+          <td><%= request.quantity %> piezas </td>
+          <td> <%= (@a - request.created_at.to_date).to_i %> días </td>
+          <td> <%= request.delivery_date %></td>
+        </tr>
+      </tbody>
+    </table>
+<% end %>

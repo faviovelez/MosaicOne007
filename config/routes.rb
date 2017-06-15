@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   get 'requests/index'
 
+  get 'requests/follow'
+
   get 'orders/special'
 
   get 'orders/catalog'
@@ -19,14 +21,6 @@ Rails.application.routes.draw do
   resources :requests
 
   root 'pages#index'
-
-  get 'managers/home'
-
-  get 'managers/tray1'
-
-  get 'managers/tray2'
-
-  get 'managers/tray3'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
