@@ -8,6 +8,10 @@ Rails.application.routes.draw do
 
   get 'requests/follow'
 
+  get 'requests/assigned'
+
+  get 'requests/unassigned'
+
   get 'orders/special'
 
   get 'orders/catalog'

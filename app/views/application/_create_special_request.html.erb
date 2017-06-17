@@ -247,7 +247,7 @@
 
   <div class="field">
     <%= f.label :asignado_a %>
-    <%= f.text_field :manager %>
+    <%= f.text_field :manager_id %>
   </div>
 
   <div class="field">
@@ -261,7 +261,8 @@
   </div>
 
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit :enviar_cotización, name: 'enviar'%>
+    <%= f.submit :guardar_para_después, name: 'guardar'%>
   </div>
 
 <% end %>

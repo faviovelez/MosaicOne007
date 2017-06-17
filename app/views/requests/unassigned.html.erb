@@ -1,6 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<% @requests.each do |request| %>
+<% @unassigned.each do |request| %>
 
     <table>
       <thead>
@@ -17,6 +17,7 @@
           <td><%= request.quantity %> piezas </td>
           <td> <%= (@a - request.created_at.to_date).to_i %> días </td>
           <td> <%= request.delivery_date %></td>
+          <td> <%= link_to 'detalles', request %> </td>
         </tr>
       </tbody>
     </table>

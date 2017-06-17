@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170616000424) do
+ActiveRecord::Schema.define(version: 20170617043302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,6 +120,15 @@ ActiveRecord::Schema.define(version: 20170616000424) do
 
   add_index "design_requests", ["request_id"], name: "index_design_requests_on_request_id", using: :btree
 
+  create_table "designers", force: :cascade do |t|
+    t.string   "username"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "designers", ["user_id"], name: "index_designers_on_user_id", using: :btree
+
   create_table "documents", force: :cascade do |t|
     t.string   "document"
     t.integer  "request_id"
@@ -148,6 +157,15 @@ ActiveRecord::Schema.define(version: 20170616000424) do
   end
 
   add_index "images", ["product_catalog_id"], name: "index_images_on_product_catalog_id", using: :btree
+
+  create_table "managers", force: :cascade do |t|
+    t.string   "username"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "managers", ["user_id"], name: "index_managers_on_user_id", using: :btree
 
   create_table "modified_fields", force: :cascade do |t|
     t.string   "field"
@@ -231,6 +249,16 @@ ActiveRecord::Schema.define(version: 20170616000424) do
 
   add_index "prospects", ["store_id"], name: "index_prospects_on_store_id", using: :btree
 
+  create_table "request_users", force: :cascade do |t|
+    t.integer  "request_id"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "request_users", ["request_id"], name: "index_request_users_on_request_id", using: :btree
+  add_index "request_users", ["user_id"], name: "index_request_users_on_user_id", using: :btree
+
   create_table "requests", force: :cascade do |t|
     t.string   "product_type"
     t.string   "product_what"
@@ -284,26 +312,30 @@ ActiveRecord::Schema.define(version: 20170616000424) do
     t.string   "rigid_color"
     t.string   "paper_type_rigid"
     t.integer  "store_id"
-    t.integer  "user_id"
-    t.string   "manager"
     t.boolean  "require_design"
     t.string   "exterior_material_color"
     t.string   "interior_material_color"
     t.string   "other_material_color"
     t.string   "store_code"
     t.string   "store_name"
+    t.integer  "order_id"
+    t.string   "status"
+    t.integer  "manager_id"
+    t.integer  "designer_id"
   end
 
+  add_index "requests", ["designer_id"], name: "index_requests_on_designer_id", using: :btree
+  add_index "requests", ["manager_id"], name: "index_requests_on_manager_id", using: :btree
+  add_index "requests", ["order_id"], name: "index_requests_on_order_id", using: :btree
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree
   add_index "requests", ["store_id"], name: "index_requests_on_store_id", using: :btree
-  add_index "requests", ["user_id"], name: "index_requests_on_user_id", using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string   "name"
     t.string   "description"
-    t.integer  "user_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "user_id"
   end
 
   add_index "roles", ["user_id"], name: "index_roles_on_user_id", using: :btree
@@ -317,6 +349,24 @@ ActiveRecord::Schema.define(version: 20170616000424) do
     t.string   "group"
     t.float    "discount"
   end
+
+  create_table "user_requests", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "request_id"
+  end
+
+  add_index "user_requests", ["request_id"], name: "index_user_requests_on_request_id", using: :btree
+  add_index "user_requests", ["user_id"], name: "index_user_requests_on_user_id", using: :btree
+
+  create_table "user_roles", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "role_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "user_roles", ["role_id"], name: "index_user_roles_on_role_id", using: :btree
+  add_index "user_roles", ["user_id"], name: "index_user_roles_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -335,10 +385,12 @@ ActiveRecord::Schema.define(version: 20170616000424) do
     t.string   "middle_name"
     t.string   "last_name"
     t.integer  "store_id"
+    t.integer  "role_id"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
   add_index "users", ["store_id"], name: "index_users_on_store_id", using: :btree
 
   add_foreign_key "additional_discounts", "bills"
@@ -348,9 +400,11 @@ ActiveRecord::Schema.define(version: 20170616000424) do
   add_foreign_key "delivery_addresses", "prospects"
   add_foreign_key "delivery_packages", "orders"
   add_foreign_key "design_requests", "requests"
+  add_foreign_key "designers", "users"
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"
   add_foreign_key "images", "product_catalogs"
+  add_foreign_key "managers", "users"
   add_foreign_key "modified_fields", "requests"
   add_foreign_key "modified_fields", "users"
   add_foreign_key "orders", "additional_discounts"
@@ -359,9 +413,18 @@ ActiveRecord::Schema.define(version: 20170616000424) do
   add_foreign_key "productions", "orders"
   add_foreign_key "productions", "users"
   add_foreign_key "prospects", "stores"
+  add_foreign_key "request_users", "requests"
+  add_foreign_key "request_users", "users"
+  add_foreign_key "requests", "designers"
+  add_foreign_key "requests", "managers"
+  add_foreign_key "requests", "orders"
   add_foreign_key "requests", "prospects"
   add_foreign_key "requests", "stores"
-  add_foreign_key "requests", "users"
   add_foreign_key "roles", "users"
+  add_foreign_key "user_requests", "requests"
+  add_foreign_key "user_requests", "users"
+  add_foreign_key "user_roles", "roles"
+  add_foreign_key "user_roles", "users"
+  add_foreign_key "users", "roles"
   add_foreign_key "users", "stores"
 end
