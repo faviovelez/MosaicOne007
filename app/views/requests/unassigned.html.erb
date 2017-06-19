@@ -15,7 +15,7 @@
         <tr>
           <td><%= request.store_code %> - <%= request.store_name %> </td>
           <td><%= request.quantity %> piezas </td>
-          <td> <%= (@a - request.created_at.to_date).to_i %> días </td>
+          <td> <%= @days %> </td>
           <td> <%= request.delivery_date %></td>
           <td> <%= link_to 'detalles', request %> </td>
         </tr>
