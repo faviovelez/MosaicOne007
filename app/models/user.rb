@@ -6,6 +6,5 @@ class User < ActiveRecord::Base
   belongs_to :store
   has_many :requests, through: :request_users
   has_many :request_users
-  has_many :roles, through: :user_roles
-  has_many :user_roles
+  has_one :role
 end

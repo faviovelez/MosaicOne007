@@ -7,5 +7,4 @@ class Request < ActiveRecord::Base
   has_many :design_requests
   has_one :order
   has_many :request_users
-  has_one :role, through: :users
 end

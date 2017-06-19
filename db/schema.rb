@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170617043302) do
+ActiveRecord::Schema.define(version: 20170619153626) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -141,14 +141,6 @@ ActiveRecord::Schema.define(version: 20170617043302) do
   add_index "documents", ["design_request_id"], name: "index_documents_on_design_request_id", using: :btree
   add_index "documents", ["request_id"], name: "index_documents_on_request_id", using: :btree
 
-  create_table "frequencies", force: :cascade do |t|
-    t.string   "category"
-    t.integer  "times_ordered"
-    t.integer  "order_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-  end
-
   create_table "images", force: :cascade do |t|
     t.string   "image"
     t.integer  "product_catalog_id"
@@ -187,10 +179,18 @@ ActiveRecord::Schema.define(version: 20170617043302) do
     t.datetime "updated_at",             null: false
     t.string   "category"
     t.integer  "times_ordered"
+    t.integer  "product_catalog_id"
+    t.integer  "prospect_id"
+    t.integer  "request_id"
+    t.integer  "billing_address_id"
   end
 
   add_index "orders", ["additional_discount_id"], name: "index_orders_on_additional_discount_id", using: :btree
+  add_index "orders", ["billing_address_id"], name: "index_orders_on_billing_address_id", using: :btree
   add_index "orders", ["delivery_address_id"], name: "index_orders_on_delivery_address_id", using: :btree
+  add_index "orders", ["product_catalog_id"], name: "index_orders_on_product_catalog_id", using: :btree
+  add_index "orders", ["prospect_id"], name: "index_orders_on_prospect_id", using: :btree
+  add_index "orders", ["request_id"], name: "index_orders_on_request_id", using: :btree
   add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree
 
   create_table "product_catalogs", force: :cascade do |t|
@@ -245,8 +245,10 @@ ActiveRecord::Schema.define(version: 20170617043302) do
     t.string   "prospect_status"
     t.float    "discount"
     t.string   "legal_or_business_name"
+    t.integer  "billing_address_id"
   end
 
+  add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
   add_index "prospects", ["store_id"], name: "index_prospects_on_store_id", using: :btree
 
   create_table "request_users", force: :cascade do |t|
@@ -318,15 +320,9 @@ ActiveRecord::Schema.define(version: 20170617043302) do
     t.string   "other_material_color"
     t.string   "store_code"
     t.string   "store_name"
-    t.integer  "order_id"
     t.string   "status"
-    t.integer  "manager_id"
-    t.integer  "designer_id"
   end
 
-  add_index "requests", ["designer_id"], name: "index_requests_on_designer_id", using: :btree
-  add_index "requests", ["manager_id"], name: "index_requests_on_manager_id", using: :btree
-  add_index "requests", ["order_id"], name: "index_requests_on_order_id", using: :btree
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree
   add_index "requests", ["store_id"], name: "index_requests_on_store_id", using: :btree
 
@@ -335,10 +331,7 @@ ActiveRecord::Schema.define(version: 20170617043302) do
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.integer  "user_id"
   end
-
-  add_index "roles", ["user_id"], name: "index_roles_on_user_id", using: :btree
 
   create_table "stores", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -357,16 +350,6 @@ ActiveRecord::Schema.define(version: 20170617043302) do
 
   add_index "user_requests", ["request_id"], name: "index_user_requests_on_request_id", using: :btree
   add_index "user_requests", ["user_id"], name: "index_user_requests_on_user_id", using: :btree
-
-  create_table "user_roles", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "role_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "user_roles", ["role_id"], name: "index_user_roles_on_role_id", using: :btree
-  add_index "user_roles", ["user_id"], name: "index_user_roles_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -408,23 +391,22 @@ ActiveRecord::Schema.define(version: 20170617043302) do
   add_foreign_key "modified_fields", "requests"
   add_foreign_key "modified_fields", "users"
   add_foreign_key "orders", "additional_discounts"
+  add_foreign_key "orders", "billing_addresses"
   add_foreign_key "orders", "delivery_addresses"
+  add_foreign_key "orders", "product_catalogs"
+  add_foreign_key "orders", "prospects"
+  add_foreign_key "orders", "requests"
   add_foreign_key "orders", "users"
   add_foreign_key "productions", "orders"
   add_foreign_key "productions", "users"
+  add_foreign_key "prospects", "billing_addresses"
   add_foreign_key "prospects", "stores"
   add_foreign_key "request_users", "requests"
   add_foreign_key "request_users", "users"
-  add_foreign_key "requests", "designers"
-  add_foreign_key "requests", "managers"
-  add_foreign_key "requests", "orders"
   add_foreign_key "requests", "prospects"
   add_foreign_key "requests", "stores"
-  add_foreign_key "roles", "users"
   add_foreign_key "user_requests", "requests"
   add_foreign_key "user_requests", "users"
-  add_foreign_key "user_roles", "roles"
-  add_foreign_key "user_roles", "users"
   add_foreign_key "users", "roles"
   add_foreign_key "users", "stores"
 end
