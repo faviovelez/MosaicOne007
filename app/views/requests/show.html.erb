@@ -140,9 +140,6 @@
   </p>
 
 <p>NOTA: ESTOS CAMPOS NOOOOOOO</p>
-  <p><strong>código de producto: </strong>
-    <%= @request.product_code %>
-  </p>
 
   <p><strong>cantidad final: </strong>
     <%= @request.final_quantity %>
@@ -191,11 +188,6 @@
   <p><strong>color exterior otros materiales: </strong>
     <%= @request.other_material_color %>
   </p>
-
-  <p><strong>asignado a: </strong>
-    <%= @request.manager_id %>
-  </p>
-
 
 <%= form_for(@request) do |f| %>
   <p><strong></strong> subir_ficha_de_anticipo</p>

@@ -12,6 +12,8 @@ Rails.application.routes.draw do
 
   get 'requests/unassigned'
 
+  get 'requests/assigned_to_designer'
+
   get 'orders/special'
 
   get 'orders/catalog'
