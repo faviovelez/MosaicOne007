@@ -1,6 +1,6 @@
 class Request < ActiveRecord::Base
   has_many :users, through: :request_users
-  has_one :prospect
+  belongs_to :prospect
   has_many :documents
   has_many :modified_fields
   belongs_to :store

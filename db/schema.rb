@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170619175053) do
+ActiveRecord::Schema.define(version: 20170622184999) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,9 +38,6 @@ ActiveRecord::Schema.define(version: 20170619175053) do
     t.string   "city"
     t.string   "state"
     t.string   "country"
-    t.string   "type_of_bill"
-    t.string   "bill_for_who"
-    t.string   "classification"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end
@@ -55,10 +52,14 @@ ActiveRecord::Schema.define(version: 20170619175053) do
     t.float    "price_before_taxes"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
+    t.string   "type_of_bill"
+    t.integer  "prospect_id"
+    t.string   "classification"
   end
 
   add_index "bills", ["order_id"], name: "index_bills_on_order_id", using: :btree
   add_index "bills", ["product_catalog_id"], name: "index_bills_on_product_catalog_id", using: :btree
+  add_index "bills", ["prospect_id"], name: "index_bills_on_prospect_id", using: :btree
 
   create_table "carriers", force: :cascade do |t|
     t.string   "name"
@@ -84,11 +85,11 @@ ActiveRecord::Schema.define(version: 20170619175053) do
     t.string   "city"
     t.string   "state"
     t.string   "country"
-    t.string   "additional_references"
     t.integer  "prospect_id"
     t.string   "type_of_address"
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
+    t.text     "additional_references"
   end
 
   add_index "delivery_addresses", ["prospect_id"], name: "index_delivery_addresses_on_prospect_id", using: :btree
@@ -243,12 +244,14 @@ ActiveRecord::Schema.define(version: 20170619175053) do
     t.string   "cell_phone"
     t.string   "business_type"
     t.string   "prospect_status"
-    t.float    "discount"
     t.string   "legal_or_business_name"
     t.integer  "billing_address_id"
+    t.integer  "delivery_address_id"
+    t.string   "second_last_name"
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
+  add_index "prospects", ["delivery_address_id"], name: "index_prospects_on_delivery_address_id", using: :btree
   add_index "prospects", ["store_id"], name: "index_prospects_on_store_id", using: :btree
 
   create_table "request_users", force: :cascade do |t|
@@ -338,7 +341,6 @@ ActiveRecord::Schema.define(version: 20170619175053) do
     t.string   "store_type"
     t.string   "store_code"
     t.string   "store_name"
-    t.string   "group"
     t.float    "discount"
   end
 
@@ -378,6 +380,7 @@ ActiveRecord::Schema.define(version: 20170619175053) do
   add_foreign_key "additional_discounts", "bills"
   add_foreign_key "bills", "orders"
   add_foreign_key "bills", "product_catalogs"
+  add_foreign_key "bills", "prospects"
   add_foreign_key "carriers", "orders"
   add_foreign_key "delivery_addresses", "prospects"
   add_foreign_key "delivery_packages", "orders"
@@ -399,6 +402,7 @@ ActiveRecord::Schema.define(version: 20170619175053) do
   add_foreign_key "productions", "orders"
   add_foreign_key "productions", "users"
   add_foreign_key "prospects", "billing_addresses"
+  add_foreign_key "prospects", "delivery_addresses"
   add_foreign_key "prospects", "stores"
   add_foreign_key "request_users", "requests"
   add_foreign_key "request_users", "users"

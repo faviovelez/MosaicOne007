@@ -1,14 +1,12 @@
 class RequestsController < ApplicationController
-  before_action :set_request, only: [:show, :edit, :update, :destroy]
+# Este controller solo debe manejar la creación y modificación de requests individuales por la tienda, managers y designers
+
+  before_action :set_request, only: [:show, :edit, :update, :destroy, :follow]
   before_action :new, only: [:catalog, :special]
-  before_action :set_data_from_requests, :set_today_date, only: [:follow, :manager_assigned_requests, :manager_unassigned_requests, :assigned, :unassigned, :assigned_to_designer]
+  before_action :set_today_date, only: [:follow, :manager_assigned_requests, :manager_unassigned_requests, :assigned, :unassigned, :assigned_to_designer]
 
   def set_today_date
     @a = Date.today
-  end
-
-  def days_since_request
-    @request = Request.find(params[:id])
   end
 
   def catalog
@@ -36,10 +34,6 @@ class RequestsController < ApplicationController
   def index
   end
 
-  def set_data_from_requests
-    @requests = Request.all
-  end
-
   # GET /requests/1
   # GET /requests/1.json
   def show
@@ -47,7 +41,8 @@ class RequestsController < ApplicationController
 
   # GET /requests/new
   def new
-    @request = Request.new
+    @prospect = Prospect.find(params[:prospect_id])
+    @request = @prospect.requests.build
   end
 
   # GET /requests/1/edit
@@ -58,13 +53,14 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    upload_authorisation_payment
-    upload_authorisation_document
     save_user_request
     save_store_request
     save_request_status
-    assign_to_designer
+    save_prospect_to_request
+    filter_requests_requiring_design
     check_saving_type
+    upload_authorisation_payment
+    upload_authorisation_document
     respond_to do |format|
       if @request.save
         format.html { redirect_to requests_index_path, notice: 'La solicitud de cotización fue generada exitosamente.' }
@@ -81,8 +77,8 @@ class RequestsController < ApplicationController
   def update
     upload_authorisation_payment
     upload_authorisation_document
-    assign_to_current_manager
-    assign_to_designer
+    assign_to_current_follower
+    filter_requests_requiring_design
     respond_to do |format|
       if @request.update(request_params)
         format.html { redirect_to requests_index_path, notice: 'La solicitud de cotización fue modificada exitosamente.' }
@@ -104,16 +100,20 @@ class RequestsController < ApplicationController
     end
   end
 
+# Es probable que borre este método de aquí
   def manager_assigned_requests
     @assigned = Request.where('status' => ['solicitada','cotizando','modificada']).joins(users: :role).where('roles.name' => 'manager')
+    @assigned
   end
 
+# Es probable que borre este método de aquí
   def manager_unassigned_requests
-    manager_assigned_active
-    @requests = Request.where('status' => ['solicitada','cotizando','modificada'])
-    @unassigned = @requests - @assigned
+    manager_assigned_requests
+    @requestes = Request.where('status' => ['solicitada','cotizando','modificada'])
+    @unassigned = @requestes - @assigned
   end
 
+# Es probable que borre este método de aquí
   def designer_assigned_requests
     @assigned_to_designer = Request.where('status' => ['solicitada','cotizando','modificada']).joins(users: :role).where('roles.name' => 'designer')
   end
@@ -126,61 +126,74 @@ class RequestsController < ApplicationController
     end
   end
 
+  def save_user_request
+    @user = current_user
+    @request.users << @user
+  end
+
+  def save_request_status
+    @request.status = 'solicitada'
+  end
+
+# Método para managers o designers: asigna la solicitud si no hay otro usuario con el mismo rol en la solicitud
+  def assign_to_current_follower(user = current_user, role = current_user.role.name)
+    followers = User.joins(:role).where('roles.name' => (role))
+    followers_counter = 0
+    @request.users.each do |user|
+      followers.each do |other_user|
+        other_user.id
+        if (user.id == other_user.id)
+          followers_counter+=1
+        end
+      end
+    end
+    if params[:asignar] && follower_counter < 1
+      @request.users << user
+    else
+      format.html { redirect_to requests_follow_path, notice: 'No se puede asignar esta solicitud, ya fue asignada a otro #{role}' }
+    end
+  end
+
+  def filter_requests_require_design
+    if require_design = '1'
+      @request.require_design = true
+    end
+  end
+
+  def save_prospect_to_request
+    @prospect = Prospect.find(params[:prospect_id])
+    @request.prospect = @prospect
+  end
+
+  def save_store_request
+    @store = @user.store
+    @request.store = @store
+    @request.store_code = @store.store_code
+    @request.store_name = @store.store_name
+  end
+
+  def upload_authorisation_document
+    if params[:request][:authorisation_signed].nil?
+      @request.authorisation_signed = false
+    else
+      @request.documents << Document.create(document: params[:request][:authorisation_signed], document_type: 'pedido', request: @request)
+      @request.authorisation_signed = true
+    end
+  end
+
+  def upload_authorisation_payment
+    if params[:request][:payment_uploaded].nil?
+      @request.payment_uploaded = false
+    else
+      @request.documents << Document.create(document: params[:request][:payment_uploaded], document_type: 'pago', request: @request)
+      @request.payment_uploaded = true
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_request
       @request = Request.find(params[:id])
-    end
-
-    def upload_authorisation_payment
-      if params[:request][:payment_uploaded].nil?
-        @request.payment_uploaded = false
-      else
-        @request.documents << Document.create(document: params[:request][:payment_uploaded], document_type: 'pago', request: @request)
-        @request.payment_uploaded = true
-      end
-    end
-
-    def save_user_request
-      @user = current_user
-      @request.users << @user
-    end
-
-    def save_request_status
-      @request.status = 'solicitada'
-    end
-
-    def assign_to_current_manager
-      @user = current_user
-      if params[:asignar]
-        @request.users << @user
-      else
-        format.html { redirect_to requests_assigned_path, notice: 'No se puede asignar esta solicitud, ya fue asignada' }
-      end
-    end
-
-    def assign_to_designer
-      @designer = User.joins(:role).where('roles.name' => 'designer')
-      if require_design = '1'
-        @request.require_design = true
-        @request.users << @designer
-      end
-    end
-
-    def save_store_request
-      @store = @user.store
-      @request.store = @store
-      @request.store_code = @store.store_code
-      @request.store_name = @store.store_name
-    end
-
-    def upload_authorisation_document
-      if params[:request][:authorisation_signed].nil?
-        @request.authorisation_signed = false
-      else
-        @request.documents << Document.create(document: params[:request][:authorisation_signed], document_type: 'pedido', request: @request)
-        @request.authorisation_signed = true
-      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

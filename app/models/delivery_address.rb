@@ -1,4 +1,5 @@
 class DeliveryAddress < ActiveRecord::Base
-  belongs_to :prospect
-  belongs_to :store
+  has_many :orders
+  has_many :stores
+  has_one :prospect
 end

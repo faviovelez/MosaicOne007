@@ -1,4 +1,15 @@
 Rails.application.routes.draw do
+  get 'stores/index'
+
+  get 'stores/new'
+
+  get 'stores/show'
+
+  root 'pages#index'
+
+  get 'billing_addresses/index'
+
+  get 'billing_addresses/show'
 
   get 'requests/special'
 
@@ -22,11 +33,40 @@ Rails.application.routes.draw do
 
   get 'pages/index'
 
+  get 'prospects/index'
+
+  get 'filtered_requests/current_view'
+
+  get 'filtered_requests/canceled_view'
+
+  get 'filtered_requests/saved_view'
+
+  get 'filtered_requests/assigned_view'
+
+  get 'filtered_requests/unassigned_view'
+
+  get 'filtered_requests/other_users_view'
+
+  get 'filtered_requests/design_view'
+
+  get 'filtered_requests/suporters_view'
+
   devise_for :users
 
-  resources :requests
+  resources :users do
+    resources :requests, controller: 'assigned_requests'
+  end
 
-  root 'pages#index'
+# Estas rutas están perfectas y sí me sirven
+  resources :prospects do
+    resources :requests, :billing_addresses, :delivery_addresses
+  end
+
+  resources :stores do
+    resources :requests, :billing_addresses, :delivery_addresses
+  end
+
+  resources :requests
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

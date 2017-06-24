@@ -7,4 +7,6 @@ class User < ActiveRecord::Base
   has_many :requests, through: :request_users
   has_many :request_users
   belongs_to :role
+  has_many :prospects
+  belongs_to :delivery_address
 end

@@ -1,0 +1,218 @@
+<p id="notice"><%= notice %></p>
+
+  <p><strong>tipo de producto: </strong>
+    <%= @request.product_type %>
+  </p>
+
+  <p><strong>cantidad: </strong>
+    <%= @request.quantity  %>
+  </p>
+
+  <p><strong>tipo de producto: </strong>
+    <%= @request.product_what %>
+  </p>
+
+  <p><strong>largo: </strong>
+    <%= @request.product_length %>
+  </p>
+
+  <p><strong>ancho: </strong>
+    <%= @request.product_width %>
+  </p>
+
+  <p><strong>alto: </strong>
+    <%= @request.product_height %>
+  </p>
+
+  <p><strong>peso: </strong>
+    <%= @request.product_weight %>
+  </p>
+
+  <p><strong>cajas para: </strong>
+    <%= @request.for_what %>
+  </p>
+
+  <p><strong>estiba: </strong>
+    <%= @request.boxes_stow %>
+  </p>
+
+  <p><strong>largo: </strong>
+    <%= @request.inner_length %>
+  </p>
+
+  <p><strong>ancho: </strong>
+    <%= @request.inner_width %>
+  </p>
+
+  <p><strong>alto: </strong>
+    <%= @request.inner_height %>
+  </p>
+
+  <p><strong>largo: </strong>
+    <%= @request.outer_length %>
+  </p>
+
+  <p><strong>ancho: </strong>
+    <%= @request.outer_widht %>
+  </p>
+
+  <p><strong>alto: </strong>
+    <%= @request.outer_height %>
+  </p>
+
+  <p><strong>largo: </strong>
+    <%= @request.bag_length %>
+  </p>
+
+  <p><strong>ancho: </strong>
+    <%= @request.bag_width %>
+  </p>
+
+  <p><strong>alto: </strong>
+    <%= @request.bag_height %>
+  </p>
+
+  <p><strong>largo: </strong>
+    <%= @request.sheet_length %>
+  </p>
+
+  <p><strong>alto: </strong>
+    <%= @request.sheet_height %>
+  </p>
+
+  <p><strong>tipo de cartón:</strong>
+    <%= @request.main_material %>
+  </p>
+
+  <p><strong>resistencia: </strong>
+    <%= @request.resistance_main_material %>
+  </p>
+
+
+  <p><strong>otro material: </strong>
+    <%= @request.secondary_material %>
+  </p>
+
+  <p><strong>resistencia de segundo material: </strong>
+    <%= @request.resistance_secondary_material %>
+  </p>
+
+  <p><strong>material adicional: </strong>
+    <%= @request.third_material %>
+  </p>
+
+  <p><strong>resistencia de material adicional: </strong>
+    <%= @request.resistance_third_material %>
+  </p>
+
+  <p><strong>impresión: </strong>
+    <%= @request.impression %>
+  </p>
+
+  <p>
+    <%= @request.inks %> tintas
+  </p>
+
+  <p><strong>acabado:</strong>
+    <%= @request.impression_finishing %>
+  </p>
+
+  <p>
+    <%= @request.which_finishing %>
+  </p>
+
+  <p><strong>fecha compromiso: </strong>
+    <span class="date">
+      <%= @request.delivery_date %>
+    </span>
+  </p>
+
+  <p><strong>precio de venta objetivo (al cliente): </strong>
+    <span class="pesos">
+      <%= @request.maximum_sales_price %>
+    </span>
+  </p>
+
+  <p><strong>observaciones: </strong>
+    <span class="comments">
+      <%= @request.observations %>
+    </span>
+  </p>
+
+<p>NOTA: ESTOS CAMPOS NOOOOOOO</p>
+
+  <p><strong>cantidad final: </strong>
+    <%= @request.final_quantity %>
+  </p>
+
+  <p><strong>fecha de finalización de la producción: </strong>
+    <%= @request.date_finished %>
+  </p>
+
+  <p><strong>precio de venta: </strong>
+    <%= @request.sales_price %>
+  </p>
+
+  <p><strong>tipo de impresión: </strong>
+    <%= @request.impression_type %>
+  </p>
+
+  <p> parte
+    <%= @request.impression_where %>
+  </p>
+
+  <p><strong>tipo de armado como: </strong>
+    <%= @request.design_like %>
+  </p>
+
+  <p><strong>resistencia como: </strong>
+    <%= @request.resistance_like %>
+  </p>
+
+  <p><strong>color de papel:</strong>
+    <%= @request.rigid_color %>
+  </p>
+
+  <p><strong>tipo de papel: </strong>
+    <%= @request.paper_type_rigid %>
+  </p>
+
+  <p><strong>color exterior (base): </strong>
+    <%= @request.exterior_material_color %>
+  </p>
+
+  <p><strong>color interior (base): </strong>
+    <%= @request.interior_material_color %>
+  </p>
+
+  <p><strong>color exterior otros materiales: </strong>
+    <%= @request.other_material_color %>
+  </p>
+
+<%= form_for(@request) do |f| %>
+  <p><strong></strong> subir_ficha_de_anticipo</p>
+  <%= f.file_field :payment_uploaded %>
+
+  <p><strong>costo para la empresa: </strong>
+    <%= f.text_field :internal_cost %>
+  </p>
+
+  <p><strong>precio de venta: </strong>
+    <%= f.text_field :internal_price %>
+  </p>
+
+    <p><strong> dudas o sugerencias de modificaciones: </strong>
+      <%=f.text_area :notes %>
+    </p>
+
+  <p><strong></strong>subir_pedido_autorizado</p>
+  <%= f.file_field :authorisation_signed %>
+
+  <div class="actions">
+    <%= f.submit :asignar_solicitud, name: 'asignar'%>
+  </div>
+
+  <div class="actions">
+    <%= f.submit :guardar_cambios, name: 'guardar'%>
+  </div>
+<% end %>
