@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170622184999) do
+ActiveRecord::Schema.define(version: 20170626181515) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -283,8 +283,6 @@ ActiveRecord::Schema.define(version: 20170622184999) do
     t.float    "bag_length"
     t.float    "bag_width"
     t.float    "bag_height"
-    t.float    "sheet_length"
-    t.float    "sheet_height"
     t.string   "main_material"
     t.string   "resistance_main_material"
     t.string   "secondary_material"
@@ -319,10 +317,15 @@ ActiveRecord::Schema.define(version: 20170622184999) do
     t.boolean  "require_design"
     t.string   "exterior_material_color"
     t.string   "interior_material_color"
-    t.string   "other_material_color"
     t.string   "store_code"
     t.string   "store_name"
     t.string   "status"
+    t.float    "exhibitor_height"
+    t.integer  "tray_quantity"
+    t.float    "tray_length"
+    t.float    "tray_width"
+    t.integer  "tray_divisions"
+    t.string   "name_type"
   end
 
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree

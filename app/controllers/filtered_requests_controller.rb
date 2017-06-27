@@ -29,7 +29,7 @@ class FilteredRequestsController < ApplicationController
     filter_requests_assigned_to_others
   end
 
-  def suporters_view
+  def supporters_view
     filter_supporters_view
   end
 
@@ -60,7 +60,6 @@ class FilteredRequestsController < ApplicationController
 
 # Método para managers y designers: muestra las solicitudes sin asignar
   def filter_unassigned_requests(role = current_user.role.name)
-    debugger
     if role == 'manager'
       requests = Request.where.not('status' => ['creada','expirada','cancelada'])
       assigned = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => (role))
@@ -73,7 +72,7 @@ class FilteredRequestsController < ApplicationController
 
 # Este método sirve para que usuarios con roles distintos a Manager o Designer puedan ver el estatus
   def filter_supporters_view
-    @suporters = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => 'manager')
+    @supporters = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => 'manager')
   end
 
 end

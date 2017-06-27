@@ -1,6 +1,5 @@
 <p id="notice"><%= notice %></p>
-
-<% @requests.each do |request| %>
+<% @supporters.each do |request| %>
 
     <table>
       <thead>
@@ -14,8 +13,8 @@
       </thead>
       <tbody>
         <tr>
-          <td><%= request.store_code %> - <%= request.store_name %> </td>
-          <td><%= request.quantity %> piezas </td>
+          <td> <%= request.store_code %> - <%= request.store_name %> </td>
+          <td> <%= request.quantity %> piezas </td>
           <% @days = (@a -  request.created_at.to_date).to_i %>
           <% if @days < 1 %>
             <td> hoy </td>

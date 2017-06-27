@@ -1,262 +1,291 @@
-<%= form_for [@prospect, @request] do |f| %>
-  <div class="field">
-    <%= f.label :¿qué_tipo_de_producto_desea_cotizar? %>
-    <%= f.text_field :product_type %>
-  </div>
+<body class="<%= params[:controller] %> <%= params[:action] %>">
 
-  <div class="field">
-    <%= f.label :¿cuántas_cajas_desea_cotizar? %>
-    <%= f.text_field :quantity  %>
-  </div>
+  <%= form_for [@prospect, @request] do |f| %>
 
-  <div class="field">
-    <%= f.label :¿qué_es? %>
-    <%= f.text_field :product_what %>
-  </div>
+    <div class="field">
+      <p>
+        <%= f.label :¿qué_tipo_de_producto_desea_cotizar? %>
+        <%= f.select :product_type, options_for_select(['seleccione', 'caja', 'bolsa', 'exhibidor', 'otro']) %>
+        <div class="otro hidden">
+          <%= f.label :¿cuál? %>
+          <%= f.text_field :name_type %>
+        </div>
 
-  <div class="field">
-    <%= f.label :largo %>
-    <%= f.text_field :product_length %>
-  </div>
+      </p>
+    </div>
 
-  <div class="field">
-    <%= f.label :ancho %>
-    <%= f.text_field :product_width %>
-  </div>
+    <div class="field">
+      <%= f.label :¿qué_cantidad_desea_cotizar? %>
+      <%= f.text_field :quantity %>
+    </div>
 
-  <div class="field">
-    <%= f.label :alto %>
-    <%= f.text_field :product_height %>
-  </div>
+    <div class="field">
+      <%= f.label :¿qué_es? %>
+      <%= f.text_field :product_what %>
+    </div>
 
-  <div class="field">
-    <%= f.label :peso %>
-    <%= f.text_field :product_weight %>
-  </div>
+    <div class="field">
+      <%= f.label :largo %>
+      <%= f.text_field :product_length %>
+    </div>
 
-  <div class="field">
-    <%= f.label :¿las_cajas_son_para_almacenar_o_transportar? %>
-    <%= f.text_field :for_what %>
-  </div>
+    <div class="field">
+      <%= f.label :ancho %>
+      <%= f.text_field :product_width %>
+    </div>
 
-  <div class="field">
-    <%= f.label :¿cuántas_cajas_se_van_a_estibar? %>
-    <%= f.text_field :boxes_stow %>
-  </div>
+    <div class="field">
+      <%= f.label :alto %>
+      <%= f.text_field :product_height %>
+    </div>
 
-  <div class="field">
-    <%= f.label :medidas_largo %>
-    <%= f.text_field :inner_length %>
-  </div>
+    <div class="field">
+      <%= f.label :peso %>
+      <%= f.text_field :product_weight %>
+    </div>
 
-  <div class="field">
-    <%= f.label :medidas_ancho %>
-    <%= f.text_field :inner_width %>
-  </div>
+    <div class="caja hidden">
+      <div class="field">
+        <%= f.label :¿las_cajas_son_para_almacenar_o_transportar? %>
+        <%= f.text_field :for_what %>
+      </div>
 
-  <div class="field">
-    <%= f.label :medidas_alto %>
-    <%= f.text_field :inner_height %>
-  </div>
+      <div class="field">
+        <%= f.label :¿cuántas_cajas_se_van_a_estibar? %>
+        <%= f.text_field :boxes_stow %>
+      </div>
+    </div>
 
-  <div class="field">
-    <%= f.label :medidas_externas_largo %>
-    <%= f.text_field :outer_length %>
-  </div>
+    <div class="measures field hidden">
+      <label for="request_que_medidas">¿Qué medidas ingresará?</label>
+      <select class="medidas">
+        <option value="0">seleccione</option>
+        <option value="2">medidas internas</option>
+        <option value="3">ambas</option>
+      </select>
+    </div>
 
-  <div class="field">
-    <%= f.label :medidas_externas_ancho %>
-    <%= f.text_field :outer_widht %>
-  </div>
+    <div id="outer" class="hidden" >
+      <div class="field">
+        <%= f.label :largo %>
+        <%= f.text_field :outer_length %>
+      </div>
 
-  <div class="field">
-    <%= f.label :medidas_externas_alto %>
-    <%= f.text_field :outer_height %>
-  </div>
+      <div class="field">
+        <%= f.label :ancho %>
+        <%= f.text_field :outer_widht %>
+      </div>
 
-  <div class="field">
-    <%= f.label :medidas_de_la_bolsa_largo %>
-    <%= f.text_field :bag_length %>
-  </div>
+      <div class="field">
+        <%= f.label :alto %>
+        <%= f.text_field :outer_height %>
+      </div>
+    </div>
 
-  <div class="field">
-    <%= f.label :medidas_de_la_bolsa_ancho %>
-    <%= f.text_field :bag_width %>
-  </div>
+    <div id="inner" class="hidden">
+      <div class="field">
+        <%= f.label :largo %>
+        <%= f.text_field :inner_length %>
+      </div>
 
-  <div class="field">
-    <%= f.label :medidas_de_la_bolsa_alto %>
-    <%= f.text_field :bag_height %>
-  </div>
+      <div class="field">
+        <%= f.label :ancho %>
+        <%= f.text_field :inner_width %>
+      </div>
 
-  <div class="field">
-    <%= f.label :medidas_de_lámina_largo %>
-    <%= f.text_field :sheet_length %>
-  </div>
+      <div class="field">
+        <%= f.label :alto %>
+        <%= f.text_field :inner_height %>
+      </div>
+    </div>
 
-  <div class="field">
-    <%= f.label :medidas_de_lámina_alto %>
-    <%= f.text_field :sheet_height %>
-  </div>
+    <div class="bolsa hidden">
+      <div class="field">
+        <%= f.label :largo %>
+        <%= f.text_field :bag_length %>
+      </div>
 
-  <div class="field">
-    <%= f.label :material_principal %>
-    <%= f.text_field :main_material %>
-  </div>
+      <div class="field">
+        <%= f.label :ancho %>
+        <%= f.text_field :bag_width %>
+      </div>
 
-  <div class="field">
-    <%= f.label :resistencia_del_material %>
-    <%= f.text_field :resistance_main_material %>
-  </div>
+      <div class="field">
+        <%= f.label :alto %>
+        <%= f.text_field :bag_height %>
+      </div>
+    </div>
 
-  <div class="field">
-    <%= f.label :material_secundario %>
-    <%= f.text_field :secondary_material %>
-  </div>
+    <div class="exhibidor hidden">
+      <div class="field">
+        <%= f.label :altura %>
+        <%= f.text_field :exhibitor_height %>
+      </div>
 
-  <div class="field">
-    <%= f.label :resistencia_del_material %>
-    <%= f.text_field :resistance_secondary_material %>
-  </div>
+      <div class="field">
+        <%= f.label :cantidad_de_charolas %>
+        <%= f.text_field :tray_quantity %>
+      </div>
 
-  <div class="field">
-    <%= f.label :material_adicional %>
-    <%= f.text_field :third_material %>
-  </div>
+      <div class="field">
+        <%= f.label :largo_de_la_charola %>
+        <%= f.text_field :tray_length %>
+      </div>
 
-  <div class="field">
-    <%= f.label :resistencia_del_material %>
-    <%= f.text_field :resistance_third_material %>
-  </div>
+      <div class="field">
+        <%= f.label :ancho_de_la_charola %>
+        <%= f.text_field :tray_width %>
+      </div>
+    </div>
 
-  <div class="field">
-    <%= f.label :¿lleva_impresión? %>
-    <%= f.text_field :impression %>
-  </div>
+    <div class="field">
+      <%= f.label :material_principal %>
+      <%= f.select :main_material, options_for_select(['seleccione', 'caple', 'sulfatada', 'multicapa', 'reverso blanco', 'liner', 'microcorrugado', 'corrugado', 'rígido']) %>
+    </div>
 
-  <div class="field">
-    <%= f.label :cantidad_de_tintas %>
-    <%= f.text_field :inks %>
-  </div>
+    <div class="field">
+      <%= f.label :resistencia_del_material %>
+      <%= f.select :resistance_main_material, options_for_select(['seleccione', 'caja', 'bolsa', 'exhibidor', 'otro']) %>
+    </div>
 
-  <div class="field">
-    <%= f.label :¿la_impresión_lleva_algún_acabado? %>
-    <%= f.text_field :impression_finishing %>
-  </div>
+    <div class="2">
+      <div class="field">
+        <%= f.label :material_secundario %>
+        <%= f.select :secondary_material, options_for_select(['seleccione', 'caple', 'sulfatada', 'multicapa', 'reverso blanco', 'liner', 'microcorrugado', 'corrugado', 'rígido']) %>
+      </div>
 
-  <div class="field">
-    <%= f.label :¿qué_acabados_lleva_la_impresión? %>
-    <%= f.text_field :which_finishing %>
-  </div>
+      <div class="field">
+        <%= f.label :resistencia_del_material %>
+        <%= f.select :resistance_secondary_material, options_for_select(['seleccione', 'caja', 'bolsa', 'exhibidor', 'otro']) %>
+      </div>
+    </div>
 
-  <div class="field">
-    <%= f.label :fecha_máxima_de_entrega_al_cliente %>
-    <%= f.text_field :delivery_date %>
-  </div>
+    <div class="3">
+      <div class="field">
+        <%= f.label :material_adicional %>
+        <%= f.select :third_material, options_for_select(['seleccione', 'caple', 'sulfatada', 'multicapa', 'reverso blanco', 'liner', 'microcorrugado', 'corrugado', 'rígido']) %>
+      </div>
 
-  <div class="field">
-    <%= f.label :precio_máximo_de_venta_al_cliente %>
-    <%= f.text_field :maximum_sales_price %>
-  </div>
+      <div class="field">
+        <%= f.label :resistencia_del_material %>
+        <%= f.select :resistance_third_material, options_for_select(['seleccione', 'caja', 'bolsa', 'exhibidor', 'otro']) %>
+      </div>
+    </div>
 
-  <div class="field">
-    <%= f.label :observaciones_adicionales %>
-    <%= f.text_area :observations %>
-  </div>
+    <div class="field">
+      <%= f.label :¿lleva_impresión? %>
+      <%= f.text_field :impression %>
+    </div>
 
-  <div class="field">
-    <%= f.label :dudas_o_sugerencias_de_modificaciones %>
-    <%= f.text_area :notes %>
-  </div>
+    <div class="field">
+      <%= f.label :cantidad_de_tintas %>
+      <%= f.text_field :inks %>
+    </div>
 
-  <div class="field">
-    <%= f.label :cantidad_final %>
-    <%= f.text_field :final_quantity %>
-  </div>
+    <div class="field">
+      <%= f.label :¿la_impresión_lleva_algún_acabado? %>
+      <%= f.text_field :impression_finishing %>
+    </div>
 
-  <div class="field">
-    <%= f.label :fecha_de_finalización_producción %>
-    <%= f.text_field :date_finished %>
-  </div>
+    <div class="field">
+      <%= f.label :¿qué_acabados_lleva_la_impresión? %>
+      <%= f.text_field :which_finishing %>
+    </div>
 
-  <div class="field">
-    <%= f.label :costo_interno %>
-    <%= f.text_field :internal_cost %>
-  </div>
+    <div class="field">
+      <%= f.label :fecha_máxima_de_entrega_al_cliente %>
+      <%= f.text_field :delivery_date %>
+    </div>
 
-  <div class="field">
-    <%= f.label :precio_interno %>
-    <%= f.text_field :internal_price %>
-  </div>
+    <div class="field">
+      <%= f.label :precio_máximo_de_venta_al_cliente %>
+      <%= f.text_field :maximum_sales_price %>
+    </div>
 
-  <div class="field">
-    <%= f.label :precio_de_venta %>
-    <%= f.text_field :sales_price %>
-  </div>
+    <div class="field">
+      <%= f.label :observaciones_adicionales %>
+      <%= f.text_area :observations %>
+    </div>
 
-  <div class="field">
-    <%= f.label :tipo_de_impresión %>
-    <%= f.text_field :impression_type %>
-  </div>
+    <div class="field">
+      <%= f.label :dudas_o_sugerencias_de_modificaciones %>
+      <%= f.text_area :notes %>
+    </div>
 
-  <div class="field">
-    <%= f.label :en_qué_parte_va_la_impresión? %>
-    <%= f.text_field :impression_where %>
-  </div>
+    <div class="field">
+      <%= f.label :costo_interno %>
+      <%= f.text_field :internal_cost %>
+    </div>
 
-  <div class="field">
-    <%= f.label :tipo_de_armado_como %>
-    <%= f.text_field :design_like %>
-  </div>
+    <div class="field">
+      <%= f.label :precio_interno %>
+      <%= f.text_field :internal_price %>
+    </div>
 
-  <div class="field">
-    <%= f.label :tipo_de_resistencia_como %>
-    <%= f.text_field :resistance_like %>
-  </div>
+    <div class="field">
+      <%= f.label :precio_de_venta %>
+      <%= f.text_field :sales_price %>
+    </div>
 
-  <div class="field">
-    <%= f.label :color_del_papel_en_cartón_rígido %>
-    <%= f.text_field :rigid_color %>
-  </div>
+    <div class="field">
+      <%= f.label :tipo_de_impresión %>
+      <%= f.text_field :impression_type %>
+    </div>
 
-  <div class="field">
-    <%= f.label :tipo_de_papel %>
-    <%= f.text_field :paper_type_rigid %>
-  </div>
+    <div class="field">
+      <%= f.label :en_qué_parte_va_la_impresión? %>
+      <%= f.text_field :impression_where %>
+    </div>
 
-  <div class="field">
-    <%= f.label :color_exterior_del_cartón %>
-    <%= f.text_field :exterior_material_color %>
-  </div>
+    <div class="field">
+      <%= f.label :tipo_de_armado_como %>
+      <%= f.text_field :design_like %>
+    </div>
 
-  <div class="field">
-    <%= f.label :color_interior_del_cartón %>
-    <%= f.text_field :interior_material_color %>
-  </div>
+    <div class="field">
+      <%= f.label :tipo_de_resistencia_como %>
+      <%= f.text_field :resistance_like %>
+    </div>
 
-  <div class="field">
-    <%= f.label :color_exterior_de_otros_materiales %>
-    <%= f.text_field :other_material_color %>
-  </div>
+    <div class="field">
+      <%= f.label :color_del_papel_en_cartón_rígido %>
+      <%= f.text_field :rigid_color %>
+    </div>
 
-  <div class="field">
-    <%= f.label :¿requiere_diseño? %>
-    <%= f.check_box :require_design %>
-  </div>
+    <div class="field">
+      <%= f.label :tipo_de_papel %>
+      <%= f.text_field :paper_type_rigid %>
+    </div>
 
-  <div class="field">
-    <%= f.label :subir_ficha_de_anticipo %>
-    <%= f.file_field :payment_uploaded %>
-  </div>
+    <div class="field">
+      <%= f.label :color_exterior_del_cartón %>
+      <%= f.text_field :exterior_material_color %>
+    </div>
 
-  <div class="field">
-    <%= f.label :subir_pedido_autorizado %>
-    <%= f.file_field :authorisation_signed %>
-  </div>
+    <div class="field">
+      <%= f.label :color_interior_del_cartón %>
+      <%= f.text_field :interior_material_color %>
+    </div>
 
-  <div class="actions">
-    <%= f.submit :enviar_cotización, name: 'enviar'%>
-    <%= f.submit :guardar_para_después, name: 'guardar'%>
-  </div>
+    <div class="field">
+      <%= f.label :¿requiere_diseño? %>
+      <%= f.check_box :require_design %>
+    </div>
 
-<% end %>
+    <div class="field">
+      <%= f.label :subir_ficha_de_anticipo %>
+      <%= f.file_field :payment_uploaded %>
+    </div>
+
+    <div class="field">
+      <%= f.label :subir_pedido_autorizado %>
+      <%= f.file_field :authorisation_signed %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit :enviar_cotización, name: 'enviar'%>
+      <%= f.submit :guardar_para_después, name: 'guardar'%>
+    </div>
+
+  <% end %>
+</body>
