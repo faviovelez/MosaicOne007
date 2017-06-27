@@ -1,5 +1,7 @@
 var counter = 0;
 $(".requests.new").ready(function() {
+
+/* Este método esconde o muestra las opciones, dependiendo de la elección del tipo de producto, por ejepmlo: medidas externas, medidas de bolsa, medidas de exhibidor, etc. */
   $("#request_product_type").bind('change', function() {
     var productType = $(this).val();
 
@@ -51,6 +53,7 @@ $(".requests.new").ready(function() {
 
   });
 
+/* Este método esconde o muestra las opciones, dependiendo de la elección del tipo de medidas (internas o extenras) */
   $(".medidas").bind('change', function() {
     var measures = $(".medidas").val();
 
@@ -66,6 +69,159 @@ $(".requests.new").ready(function() {
     } else if (measures == 3) {
       $("#outer").removeClass('hidden');
       $("#inner").removeClass('hidden');
+    };
+  });
+
+/* Este método esconde o muestra las resistencias, dependiendo de la elección del tipo de material elegido (primer material)*/
+  $("#request_main_material").bind('change', function() {
+    var material = $("#request_main_material").val();
+
+    if (material == 'reverso gris' ||
+      material == 'reverso blanco' ||
+      material == 'caple' ||
+      material == 'sulfatada' ||
+      material == 'multicapa') {
+      $(".main.plegadizo").removeClass('hidden');
+      $(".main.liner").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.otros").addClass('hidden');
+
+    } else if (material == 'liner') {
+      $(".main.liner").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.otros").addClass('hidden');
+
+    } else if (material == 'microcorrugado' ||
+      material == 'single face' ||
+      material == 'rígido') {
+      $(".main.otros").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.liner").addClass('hidden');
+
+    } else if (material == 'doble_corrugado') {
+      $(".main.doble_corrugado").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.otros").addClass('hidden');
+      $(".main.liner").addClass('hidden');
+
+    } else if (material == 'corrugado') {
+      $(".main.corrugado").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.otros").addClass('hidden');
+      $(".main.liner").addClass('hidden');
+    };
+  });
+
+/* Este método esconde o muestra las resistencias, dependiendo de la elección del tipo de material elegido (segundo material)*/
+  $("#request_secondary_material").bind('change', function() {
+    var material = $("#request_secondary_material").val();
+
+    if (material == 'reverso gris' ||
+      material == 'reverso blanco' ||
+      material == 'caple' ||
+      material == 'sulfatada' ||
+      material == 'multicapa') {
+      $(".secondary.plegadizo").removeClass('hidden');
+      $(".secondary.liner").addClass('hidden');
+      $(".secondary.corrugado").addClass('hidden');
+      $(".secondary.doble_corrugado").addClass('hidden');
+      $(".secondary.otros").addClass('hidden');
+
+    } else if (material == 'liner') {
+      $(".secondary.liner").removeClass('hidden');
+      $(".secondary.plegadizo").addClass('hidden');
+      $(".secondary.corrugado").addClass('hidden');
+      $(".secondary.doble_corrugado").addClass('hidden');
+      $(".secondary.otros").addClass('hidden');
+
+    } else if (material == 'microcorrugado' ||
+      material == 'single face' ||
+      material == 'rígido') {
+      $(".secondary.otros").removeClass('hidden');
+      $(".secondary.plegadizo").addClass('hidden');
+      $(".secondary.corrugado").addClass('hidden');
+      $(".secondary.doble_corrugado").addClass('hidden');
+      $(".secondary.liner").addClass('hidden');
+
+    } else if (material == 'doble_corrugado') {
+      $(".secondary.doble_corrugado").removeClass('hidden');
+      $(".secondary.plegadizo").addClass('hidden');
+      $(".secondary.corrugado").addClass('hidden');
+      $(".secondary.otros").addClass('hidden');
+      $(".secondary.liner").addClass('hidden');
+
+    } else if (material == 'corrugado') {
+      $(".secondary.corrugado").removeClass('hidden');
+      $(".secondary.plegadizo").addClass('hidden');
+      $(".secondary.doble_corrugado").addClass('hidden');
+      $(".secondary.otros").addClass('hidden');
+      $(".secondary.liner").addClass('hidden');
+    };
+  });
+
+/* Este método esconde o muestra las resistencias, dependiendo de la elección del tipo de material elegido (tercer material)*/
+  $("#request_third_material").bind('change', function() {
+    var material = $("#request_third_material").val();
+
+    if (material == 'reverso gris' ||
+      material == 'reverso blanco' ||
+      material == 'caple' ||
+      material == 'sulfatada' ||
+      material == 'multicapa') {
+      $(".third.plegadizo").removeClass('hidden');
+      $(".third.liner").addClass('hidden');
+      $(".third.corrugado").addClass('hidden');
+      $(".third.doble_corrugado").addClass('hidden');
+      $(".third.otros").addClass('hidden');
+
+    } else if (material == 'liner') {
+      $(".third.liner").removeClass('hidden');
+      $(".third.plegadizo").addClass('hidden');
+      $(".third.corrugado").addClass('hidden');
+      $(".third.doble_corrugado").addClass('hidden');
+      $(".third.otros").addClass('hidden');
+
+    } else if (material == 'microcorrugado' ||
+      material == 'single face' ||
+      material == 'rígido') {
+      $(".third.otros").removeClass('hidden');
+      $(".third.plegadizo").addClass('hidden');
+      $(".third.corrugado").addClass('hidden');
+      $(".third.doble_corrugado").addClass('hidden');
+      $(".third.liner").addClass('hidden');
+
+    } else if (material == 'doble_corrugado') {
+      $(".third.doble_corrugado").removeClass('hidden');
+      $(".third.plegadizo").addClass('hidden');
+      $(".third.corrugado").addClass('hidden');
+      $(".third.otros").addClass('hidden');
+      $(".third.liner").addClass('hidden');
+
+    } else if (material == 'corrugado') {
+      $(".third.corrugado").removeClass('hidden');
+      $(".third.plegadizo").addClass('hidden');
+      $(".third.doble_corrugado").addClass('hidden');
+      $(".third.otros").addClass('hidden');
+      $(".third.liner").addClass('hidden');
+    };
+  });
+
+  $("#agregar_material").click(function () {
+    var clickCounter = 0;
+    event.preventDefault();
+    if (clickCounter == 0) {
+      $(".field.secondary.hidden").removeClass('hidden');
+      clickCounter +=1;
+    } else if (clickCounter == 1) {
+      $(".field.third.hidden").removeClass('hidden');
+      clickCounter +=1;
     };
   });
 });
