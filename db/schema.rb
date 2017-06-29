@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170626181515) do
+ActiveRecord::Schema.define(version: 20170628172934) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -292,7 +292,6 @@ ActiveRecord::Schema.define(version: 20170626181515) do
     t.string   "impression"
     t.integer  "inks"
     t.string   "impression_finishing"
-    t.string   "which_finishing"
     t.date     "delivery_date"
     t.float    "maximum_sales_price"
     t.text     "observations"
@@ -326,6 +325,7 @@ ActiveRecord::Schema.define(version: 20170626181515) do
     t.float    "tray_width"
     t.integer  "tray_divisions"
     t.string   "name_type"
+    t.boolean  "contraencolado"
   end
 
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree

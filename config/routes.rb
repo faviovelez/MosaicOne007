@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
+  root 'pages#index'
+
   get 'stores/index'
 
   get 'stores/new'
 
   get 'stores/show'
-
-  root 'pages#index'
 
   get 'billing_addresses/index'
 
@@ -66,7 +66,12 @@ Rails.application.routes.draw do
     resources :requests, :billing_addresses, :delivery_addresses
   end
 
-  resources :requests
+  post 'requests/design'
+
+  patch 'requests/design'
+
+  put 'requests/design'
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

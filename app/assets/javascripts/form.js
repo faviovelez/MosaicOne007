@@ -11,6 +11,7 @@ $(".requests.new").ready(function() {
       if (counter == 0) {
         $(".medidas").append('<option value="1" selected="selected" class="new">medidas externas</option>');
         counter +=1;
+        $("#outer").removeClass('hidden');
       };
       $(".caja").addClass('hidden');
       $(".bolsa").addClass('hidden');
@@ -22,6 +23,7 @@ $(".requests.new").ready(function() {
       if (counter == 0) {
         $(".medidas").append('<option value="1" selected="selected" class="new">medidas externas</option>');
         counter +=1;
+        $("#outer").removeClass('hidden');
       };
       $(".otro").addClass('hidden');
       $(".bolsa").addClass('hidden');
@@ -86,6 +88,7 @@ $(".requests.new").ready(function() {
       $(".main.corrugado").addClass('hidden');
       $(".main.doble_corrugado").addClass('hidden');
       $(".main.otros").addClass('hidden');
+      $(".rigid").addClass('hidden');
 
     } else if (material == 'liner') {
       $(".main.liner").removeClass('hidden');
@@ -93,10 +96,19 @@ $(".requests.new").ready(function() {
       $(".main.corrugado").addClass('hidden');
       $(".main.doble_corrugado").addClass('hidden');
       $(".main.otros").addClass('hidden');
+      $(".rigid").addClass('hidden');
 
     } else if (material == 'microcorrugado' ||
-      material == 'single face' ||
-      material == 'rígido') {
+      material == 'single face') {
+      $(".main.otros").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.liner").addClass('hidden');
+      $(".rigid").addClass('hidden');
+
+    } else if (material == 'rígido') {
+      $(".rigid").removeClass('hidden');
       $(".main.otros").removeClass('hidden');
       $(".main.plegadizo").addClass('hidden');
       $(".main.corrugado").addClass('hidden');
@@ -109,6 +121,7 @@ $(".requests.new").ready(function() {
       $(".main.corrugado").addClass('hidden');
       $(".main.otros").addClass('hidden');
       $(".main.liner").addClass('hidden');
+      $(".rigid").addClass('hidden');
 
     } else if (material == 'corrugado') {
       $(".main.corrugado").removeClass('hidden');
@@ -116,6 +129,7 @@ $(".requests.new").ready(function() {
       $(".main.doble_corrugado").addClass('hidden');
       $(".main.otros").addClass('hidden');
       $(".main.liner").addClass('hidden');
+      $(".rigid").addClass('hidden');
     };
   });
 
@@ -143,7 +157,9 @@ $(".requests.new").ready(function() {
 
     } else if (material == 'microcorrugado' ||
       material == 'single face' ||
-      material == 'rígido') {
+      material == 'rígido' ||
+      material == 'acetato' ||
+      material == 'celofán') {
       $(".secondary.otros").removeClass('hidden');
       $(".secondary.plegadizo").addClass('hidden');
       $(".secondary.corrugado").addClass('hidden');
@@ -190,7 +206,9 @@ $(".requests.new").ready(function() {
 
     } else if (material == 'microcorrugado' ||
       material == 'single face' ||
-      material == 'rígido') {
+      material == 'rígido' ||
+      material == 'acetato' ||
+      material == 'celofán') {
       $(".third.otros").removeClass('hidden');
       $(".third.plegadizo").addClass('hidden');
       $(".third.corrugado").addClass('hidden');
@@ -213,8 +231,8 @@ $(".requests.new").ready(function() {
     };
   });
 
+  var clickCounter = 0;
   $("#agregar_material").click(function () {
-    var clickCounter = 0;
     event.preventDefault();
     if (clickCounter == 0) {
       $(".field.secondary.hidden").removeClass('hidden');
@@ -224,4 +242,13 @@ $(".requests.new").ready(function() {
       clickCounter +=1;
     };
   });
+
+  $("#request_impression_si").click(function () {
+    $(".impression").removeClass('hidden');
+  });
+
+  $("#request_impression_no").click(function () {
+    $(".impression").addClass('hidden');
+  });
+
 });

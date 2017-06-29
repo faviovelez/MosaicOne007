@@ -6,11 +6,10 @@
       <p>
         <%= f.label :¿qué_tipo_de_producto_desea_cotizar? %>
         <%= f.select :product_type, options_for_select(['seleccione', 'caja', 'bolsa', 'exhibidor', 'otro']) %>
-        <div class="otro hidden">
+        <div class="field otro hidden">
           <%= f.label :¿cuál? %>
           <%= f.text_field :name_type %>
         </div>
-
       </p>
     </div>
 
@@ -179,7 +178,7 @@
 
       <div class="field secondary hidden">
         <%= f.label :material_secundario %>
-        <%= f.select :secondary_material, options_for_select(['seleccione', 'caple', 'sulfatada', 'multicapa', 'reverso blanco', 'reverso gris', 'liner', 'single face', 'microcorrugado', 'corrugado', 'rígido']) %>
+        <%= f.select :secondary_material, options_for_select(['seleccione', 'caple', 'sulfatada', 'multicapa', 'reverso blanco', 'reverso gris', 'liner', 'single face', 'microcorrugado', 'corrugado', 'rígido', 'acetato', 'celofán']) %>
       </div>
 
       <div class="field secondary hidden">
@@ -216,7 +215,7 @@
 
       <div class="field third hidden">
         <%= f.label :material_adicional %>
-        <%= f.select :third_material, options_for_select(['seleccione', 'caple', 'sulfatada', 'multicapa', 'reverso blanco', 'reverso gris', 'liner', 'single face', 'microcorrugado', 'corrugado', 'rígido']) %>
+        <%= f.select :third_material, options_for_select(['seleccione', 'caple', 'sulfatada', 'multicapa', 'reverso blanco', 'reverso gris', 'liner', 'single face', 'microcorrugado', 'corrugado', 'rígido', 'acetato', 'celofán']) %>
       </div>
 
       <div class="field third hidden">
@@ -251,25 +250,52 @@
         ["42kg - 82 ECT", class: 'third doble_corrugado hidden']]) %>
       </div>
 
+      <div class="field">
+        <%= f.label :color_exterior_del_cartón %>
+        <%= f.text_field :exterior_material_color %>
+      </div>
+
+      <div class="field">
+        <%= f.label :color_interior_del_cartón %>
+        <%= f.text_field :interior_material_color %>
+      </div>
+
+  <div class="rigid hidden">
     <div class="field">
-      <%= f.label :¿lleva_impresión? %>
-      <%= f.text_field :impression %>
+      <%= f.label :color_del_papel_en_cartón_rígido %>
+      <%= f.text_field :rigid_color %>
     </div>
 
     <div class="field">
+      <%= f.label :tipo_de_papel %>
+      <%= f.text_field :paper_type_rigid %>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label :¿lleva_impresión? %>
+    <%= label :impression, 'Sí' %>
+    <%= f.radio_button :impression, 'si', value: 'si' %>
+    <%= label :impression, 'No' %>
+    <%= f.radio_button :impression, 'no', value: 'no', checked: true %>
+  </div>
+
+  <div class="impression hidden">
+    <div class="field">
       <%= f.label :cantidad_de_tintas %>
-      <%= f.text_field :inks %>
+      <%= f.select :inks, options_for_select(['Seleccione', '1', '2', '3', '4 o más'])  %>
     </div>
 
     <div class="field">
       <%= f.label :¿la_impresión_lleva_algún_acabado? %>
-      <%= f.text_field :impression_finishing %>
+      <%= f.select :impression_finishing, options_for_select(['Seleccione', 'Barniz de máquina', 'Barniz UV', 'Plastificado mate', 'Plastificado brillante', 'Hot stamping']) %>
     </div>
 
     <div class="field">
-      <%= f.label :¿qué_acabados_lleva_la_impresión? %>
-      <%= f.text_field :which_finishing %>
+      <%= f.label :en_qué_parte_va_la_impresión? %>
+      <%= f.select :impression_where, options_for_select(['seleccione', 'exterior', 'interior', 'interior y exterior']) %>
     </div>
+  </div>
 
     <div class="field">
       <%= f.label :fecha_máxima_de_entrega_al_cliente %>
@@ -279,41 +305,6 @@
     <div class="field">
       <%= f.label :precio_máximo_de_venta_al_cliente %>
       <%= f.text_field :maximum_sales_price %>
-    </div>
-
-    <div class="field">
-      <%= f.label :observaciones_adicionales %>
-      <%= f.text_area :observations %>
-    </div>
-
-    <div class="field">
-      <%= f.label :dudas_o_sugerencias_de_modificaciones %>
-      <%= f.text_area :notes %>
-    </div>
-
-    <div class="field">
-      <%= f.label :costo_interno %>
-      <%= f.text_field :internal_cost %>
-    </div>
-
-    <div class="field">
-      <%= f.label :precio_interno %>
-      <%= f.text_field :internal_price %>
-    </div>
-
-    <div class="field">
-      <%= f.label :precio_de_venta %>
-      <%= f.text_field :sales_price %>
-    </div>
-
-    <div class="field">
-      <%= f.label :tipo_de_impresión %>
-      <%= f.text_field :impression_type %>
-    </div>
-
-    <div class="field">
-      <%= f.label :en_qué_parte_va_la_impresión? %>
-      <%= f.text_field :impression_where %>
     </div>
 
     <div class="field">
@@ -327,28 +318,13 @@
     </div>
 
     <div class="field">
-      <%= f.label :color_del_papel_en_cartón_rígido %>
-      <%= f.text_field :rigid_color %>
-    </div>
-
-    <div class="field">
-      <%= f.label :tipo_de_papel %>
-      <%= f.text_field :paper_type_rigid %>
-    </div>
-
-    <div class="field">
-      <%= f.label :color_exterior_del_cartón %>
-      <%= f.text_field :exterior_material_color %>
-    </div>
-
-    <div class="field">
-      <%= f.label :color_interior_del_cartón %>
-      <%= f.text_field :interior_material_color %>
+      <%= f.label :observaciones_adicionales %>
+      <%= f.text_area :observations %>
     </div>
 
     <div class="field">
       <%= f.label :¿requiere_diseño? %>
-      <%= f.check_box :require_design %>
+      <%= f.check_box :require_design, value: true %>
     </div>
 
     <div class="field">
@@ -367,4 +343,27 @@
     </div>
 
   <% end %>
+
+
+  <%= form_for(@design_request, url: requests_design_path) do |t| %>
+
+    <div class="design">
+      <div class="field">
+        <%= t.label :tipo_de_solicitud %>
+        <%= t.select :design_type, options_for_select([['seleccione','seleccione'], ['elaborar o modificar diseño' 'diseño'], ['dummy físico', 'dummy'],['printcard','printcard']]) %>
+      </div>
+
+      <div class="field">
+        <%= t.label :notas_para_el_diseño %>
+        <%= t.text_area :description %>
+      </div>
+
+      <div class="field">
+        <%= t.label :subir_archivo %>
+        <%= t.file_field :attachment %>
+      </div>
+    </div>
+  <% end %>
+
+
 </body>
