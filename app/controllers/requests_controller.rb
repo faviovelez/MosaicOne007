@@ -51,25 +51,42 @@ class RequestsController < ApplicationController
   def new
     @prospect = Prospect.find(params[:prospect_id])
     @request = @prospect.requests.build
-    @design_request = DesignRequest.new
   end
 
   # GET /requests/1/edit
   def edit
   end
 
+  def search_design(input = params[:request][:design_like])
+    @product = ProductCatalog.find_by_unique_code(input) || ProductCatalog.find_by_former_code(input)
+    if input != nil && @product != nil
+      @request.design_like = @product.design_type
+    elsif input != nil && @product = nil
+      @request.design_like = input
+    end
+  end
+
+  def search_resistance(input = params[:request][:resistance_like])
+    @product = ProductCatalog.find_by_unique_code(input) || ProductCatalog.find_by_former_code(input)
+    if input != nil && @product != nil
+      @request.design_like = @product.design_type
+      @request.resistance_like = @product.resistance_main_material
+    elsif input != nil && @product = nil
+      @request.resistance_like = input
+    end
+  end
+
   # POST /requests
   # POST /requests.json
   def create
     @request = Request.new(request_params)
+    search_design
+    search_resistance
     save_user_request
     save_store_request
     save_request_status
     save_prospect_to_request
-    assign_design_request
     check_saving_type
-    upload_authorisation_payment
-    upload_authorisation_document
     respond_to do |format|
       if @request.save
         format.html { redirect_to requests_index_path, notice: 'La solicitud de cotización fue generada exitosamente.' }
@@ -83,21 +100,6 @@ class RequestsController < ApplicationController
 
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
-  def update
-    upload_authorisation_payment
-    upload_authorisation_document
-    assign_to_current_follower
-    assign_design_request
-    respond_to do |format|
-      if @request.update(request_params)
-        format.html { redirect_to requests_index_path, notice: 'La solicitud de cotización fue modificada exitosamente.' }
-        format.json { render :index, status: :ok, location: @request }
-      else
-        format.html { render :edit }
-        format.json { render json: @request.errors, status: :unprocessable_entity }
-      end
-    end
-  end
 
   # DELETE /requests/1
   # DELETE /requests/1.json
@@ -127,49 +129,6 @@ class RequestsController < ApplicationController
     @assigned_to_designer = Request.where('status' => ['solicitada','cotizando','modificada']).joins(users: :role).where('roles.name' => 'designer')
   end
 
-# Método para managers o designers: asigna la solicitud si no hay otro usuario con el mismo rol en la solicitud
-  def assign_to_current_follower(user = current_user, role = current_user.role.name)
-    followers = User.joins(:role).where('roles.name' => (role))
-    followers_counter = 0
-    @request.users.each do |user|
-      followers.each do |other_user|
-        other_user.id
-        if (user.id == other_user.id)
-          followers_counter+=1
-        end
-      end
-    end
-    if params[:asignar] && follower_counter < 1
-      @request.users << user
-    else
-      format.html { redirect_to requests_follow_path, notice: 'No se puede asignar esta solicitud, ya fue asignada a otro #{role}' }
-    end
-  end
-
-  def assign_design_request
-    require_design = params[:request][:require_design]
-    current_request_has_design
-    if require_design == '1' && @design_counter < 1
-      @design_request = DesignRequest.new(design_params)
-    elsif require_design == true && @design_counter > 1
-      debugger
-      @design_request = @request.design_requests.where(design_type: params[:design_request][:design_type])
-    end
-    @design_request.save
-    @request.require_design = true
-    @request.design_requests << @design_request
-  end
-
-  def current_request_has_design
-    @design_counter = 0
-    @request.design_requests.each do |request|
-      if request.design_type == @design_request.design_type
-      @design_counter +=1
-      end
-    end
-    @design_counter
-  end
-
   def check_saving_type
     if params[:enviar]
       @request.status = 'solicitada'
@@ -197,26 +156,6 @@ class RequestsController < ApplicationController
     @request.store = @store
     @request.store_code = @store.store_code
     @request.store_name = @store.store_name
-  end
-
-  def upload_authorisation_document
-    if params[:request][:authorisation_signed].nil?
-      @request.authorisation_signed = false
-    else
-      @request.documents << Document.create(document: params[:request][:authorisation_signed],
-      document_type: 'pedido', request: @request)
-      @request.authorisation_signed = true
-    end
-  end
-
-  def upload_authorisation_payment
-    if params[:request][:payment_uploaded].nil?
-      @request.payment_uploaded = false
-    else
-      @request.documents << Document.create(document: params[:request][:payment_uploaded],
-      document_type: 'pago', request: @request)
-      @request.payment_uploaded = true
-    end
   end
 
   private
@@ -293,10 +232,8 @@ class RequestsController < ApplicationController
        :tray_quantity,
        :tray_length,
        :tray_width,
-       :contraencolado)
+       :contraencolado,
+       :how_many)
     end
 
-    def design_params
-      params.require(:design_request).permit(:design_type, :cost, :status, :authorisation, :attachment, :outcome, :request_id, :description)
-    end
 end

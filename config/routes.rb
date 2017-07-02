@@ -59,19 +59,18 @@ Rails.application.routes.draw do
 
 # Estas rutas están perfectas y sí me sirven
   resources :prospects do
-    resources :requests, :billing_addresses, :delivery_addresses
+    resources :billing_addresses, :delivery_addresses, :requests
   end
 
   resources :stores do
     resources :requests, :billing_addresses, :delivery_addresses
   end
 
-  post 'requests/design'
+  resources :requests do
+    resources :design_requests, controller: 'design_requests'
+  end
 
-  patch 'requests/design'
-
-  put 'requests/design'
-
+  resources :design_requests
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

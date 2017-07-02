@@ -1,5 +1,7 @@
 <p id="notice"><%= notice %></p>
+
 <% @assigned.each do |request| %>
+  <% if current_user.role.name == 'manager' %>
 
     <table>
       <thead>
@@ -29,4 +31,34 @@
         </tr>
       </tbody>
     </table>
+
+    <% elsif current_user.role.name == 'designer' %>
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo de solicitud</th>
+            <th>creada hace</th>
+            <th>tienda</th>
+            <th>estatus</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td> <%= request.design_type %></td>
+            <% @days = (@a - request.created_at.to_date).to_i %>
+            <% if @days < 1 %>
+              <td> hoy </td>
+            <% elsif @days = 1 %>
+              <td> '1 día' </td>
+            <% else @days > 1 %>
+              <td> <%= @days %> 'días'</td>
+            <% end %>
+            <td><%= request.request.store_code %> - <%= request.request.store_name %> </td>
+            <td> <%= request.status %></td>
+            <td> <%= link_to 'detalles', design_request_path(request) %> </td>
+          </tr>
+        </tbody>
+      </table>
+    <% end %>
+
 <% end %>

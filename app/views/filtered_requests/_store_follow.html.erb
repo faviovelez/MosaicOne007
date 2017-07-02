@@ -1,0 +1,23 @@
+
+
+<%= form_for [@prospect, @request] do |f| %>
+
+  <div class="field">
+    <%= f.label :¿requiere_diseño? %>
+    <%= f.check_box :require_design, value: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :subir_ficha_de_anticipo %>
+    <%= f.file_field :payment_uploaded %>
+  </div>
+
+  <div class="field">
+    <%= f.label :subir_pedido_autorizado %>
+    <%= f.file_field :authorisation_signed %>
+  </div>
+  <div class="actions">
+    <%= f.submit :enviar_cotización, name: 'enviar'%>
+  </div>
+
+<% end %>

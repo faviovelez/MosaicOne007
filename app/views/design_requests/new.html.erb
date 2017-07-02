@@ -1,0 +1,23 @@
+<%= form_for [@request, @design_request] do |f| %>
+
+  <div class="design">
+    <div class="field">
+      <%= f.label :tipo_de_solicitud %>
+      <%= f.select :design_type, options_for_select([['seleccione','seleccione'], ['elaborar o modificar diseño', 'diseño'], ['dummy físico', 'dummy'],['printcard','printcard']]) %>
+    </div>
+
+    <div class="field">
+      <%= f.label :notas_para_el_diseño %>
+      <%= f.text_area :description %>
+    </div>
+
+    <div class="field">
+      <%= f.label :subir_archivo %>
+      <%= f.file_field :attachment, multiple: true %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit :solicitar_diseño, name: 'enviar'%>
+    </div>
+  </div>
+<% end %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170628172934) do
+ActiveRecord::Schema.define(version: 20170701222345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,20 +106,28 @@ ActiveRecord::Schema.define(version: 20170628172934) do
 
   add_index "delivery_packages", ["order_id"], name: "index_delivery_packages_on_order_id", using: :btree
 
+  create_table "design_costs", force: :cascade do |t|
+    t.string   "complexity"
+    t.float    "cost"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "design_requests", force: :cascade do |t|
     t.string   "design_type"
     t.float    "cost"
     t.string   "status"
     t.boolean  "authorisation"
-    t.string   "attachment"
-    t.string   "outcome"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.integer  "request_id"
     t.text     "description"
+    t.string   "attachment"
+    t.integer  "user_id"
   end
 
   add_index "design_requests", ["request_id"], name: "index_design_requests_on_request_id", using: :btree
+  add_index "design_requests", ["user_id"], name: "index_design_requests_on_user_id", using: :btree
 
   create_table "designers", force: :cascade do |t|
     t.string   "username"
@@ -131,12 +139,12 @@ ActiveRecord::Schema.define(version: 20170628172934) do
   add_index "designers", ["user_id"], name: "index_designers_on_user_id", using: :btree
 
   create_table "documents", force: :cascade do |t|
-    t.string   "document"
     t.integer  "request_id"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
     t.string   "document_type"
     t.integer  "design_request_id"
+    t.string   "document"
   end
 
   add_index "documents", ["design_request_id"], name: "index_documents_on_design_request_id", using: :btree
@@ -326,6 +334,8 @@ ActiveRecord::Schema.define(version: 20170628172934) do
     t.integer  "tray_divisions"
     t.string   "name_type"
     t.boolean  "contraencolado"
+    t.boolean  "authorisation"
+    t.string   "how_many"
   end
 
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree
@@ -388,6 +398,7 @@ ActiveRecord::Schema.define(version: 20170628172934) do
   add_foreign_key "delivery_addresses", "prospects"
   add_foreign_key "delivery_packages", "orders"
   add_foreign_key "design_requests", "requests"
+  add_foreign_key "design_requests", "users"
   add_foreign_key "designers", "users"
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"

@@ -88,7 +88,7 @@ $(".requests.new").ready(function() {
       $(".main.corrugado").addClass('hidden');
       $(".main.doble_corrugado").addClass('hidden');
       $(".main.otros").addClass('hidden');
-      $(".rigid").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
 
     } else if (material == 'liner') {
       $(".main.liner").removeClass('hidden');
@@ -96,19 +96,21 @@ $(".requests.new").ready(function() {
       $(".main.corrugado").addClass('hidden');
       $(".main.doble_corrugado").addClass('hidden');
       $(".main.otros").addClass('hidden');
-      $(".rigid").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
 
     } else if (material == 'microcorrugado' ||
-      material == 'single face') {
+      material == 'single face' ||
+      material == 'papel kraft' ||
+      material == 'papel bond') {
       $(".main.otros").removeClass('hidden');
       $(".main.plegadizo").addClass('hidden');
       $(".main.corrugado").addClass('hidden');
       $(".main.doble_corrugado").addClass('hidden');
       $(".main.liner").addClass('hidden');
-      $(".rigid").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
 
     } else if (material == 'rígido') {
-      $(".rigid").removeClass('hidden');
+      $(".main.rigid").removeClass('hidden');
       $(".main.otros").removeClass('hidden');
       $(".main.plegadizo").addClass('hidden');
       $(".main.corrugado").addClass('hidden');
@@ -121,7 +123,7 @@ $(".requests.new").ready(function() {
       $(".main.corrugado").addClass('hidden');
       $(".main.otros").addClass('hidden');
       $(".main.liner").addClass('hidden');
-      $(".rigid").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
 
     } else if (material == 'corrugado') {
       $(".main.corrugado").removeClass('hidden');
@@ -129,7 +131,7 @@ $(".requests.new").ready(function() {
       $(".main.doble_corrugado").addClass('hidden');
       $(".main.otros").addClass('hidden');
       $(".main.liner").addClass('hidden');
-      $(".rigid").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
     };
   });
 
@@ -249,6 +251,17 @@ $(".requests.new").ready(function() {
 
   $("#request_impression_no").click(function () {
     $(".impression").addClass('hidden');
+  });
+
+
+/* Este método esconde o muestra el buscador de resistencia, si elige sugerir resistencia */
+  $("#request_resistance_main_material").bind('change', function() {
+    var search = $("#request_resistance_main_material").val();
+    if (search == 'Sugerir resistencia') {
+      $("#request_resistance_like").removeClass('hidden');
+    } else if (search != 'Sugerir resistencia') {
+      $("#request_resistance_like").addClass('hidden');
+    };
   });
 
 });
