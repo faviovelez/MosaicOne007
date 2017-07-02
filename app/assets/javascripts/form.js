@@ -28,6 +28,7 @@ $(".requests.new").ready(function() {
       $(".otro").addClass('hidden');
       $(".bolsa").addClass('hidden');
       $(".exhibidor").addClass('hidden');
+      $(".resistance.main.bolsa").addClass('hidden');
 
     } else if (productType == 'bolsa') {
       $(".bolsa").removeClass('hidden');
@@ -35,6 +36,7 @@ $(".requests.new").ready(function() {
       $(".otro").addClass('hidden');
       $(".caja").addClass('hidden');
       $(".exhibidor").addClass('hidden');
+      $(".resistance.main.caja").addClass('hidden');
 
     } else if (productType == 'exhibidor') {
       $(".exhibidor").removeClass('hidden');
@@ -42,6 +44,7 @@ $(".requests.new").ready(function() {
       $(".otro").addClass('hidden');
       $(".bolsa").addClass('hidden');
       $(".caja").addClass('hidden');
+      $(".resistance.main.bolsa").addClass('hidden');
 
     } else if (productType == 'seleccione') {
       $(".otro").addClass('hidden');
@@ -51,6 +54,7 @@ $(".requests.new").ready(function() {
       $(".exhibidor").addClass('hidden');
       $("#outer").addClass('hidden');
       $(".measures").addClass('hidden');
+      $(".resistance.main.bolsa").addClass('hidden');
     };
 
   });
@@ -252,7 +256,6 @@ $(".requests.new").ready(function() {
   $("#request_impression_no").click(function () {
     $(".impression").addClass('hidden');
   });
-
 
 /* Este método esconde o muestra el buscador de resistencia, si elige sugerir resistencia */
   $("#request_resistance_main_material").bind('change', function() {
