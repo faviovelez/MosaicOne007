@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170701222345) do
+ActiveRecord::Schema.define(version: 20170702214804) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,18 +63,12 @@ ActiveRecord::Schema.define(version: 20170701222345) do
 
   create_table "carriers", force: :cascade do |t|
     t.string   "name"
-    t.string   "street"
-    t.string   "exterior_number"
-    t.string   "interior_number"
-    t.string   "zipcode"
-    t.string   "neighborhood"
-    t.text     "additional_references"
-    t.integer  "order_id"
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.integer  "delivery_address_id"
   end
 
-  add_index "carriers", ["order_id"], name: "index_carriers_on_order_id", using: :btree
+  add_index "carriers", ["delivery_address_id"], name: "index_carriers_on_delivery_address_id", using: :btree
 
   create_table "delivery_addresses", force: :cascade do |t|
     t.string   "street"
@@ -85,14 +79,11 @@ ActiveRecord::Schema.define(version: 20170701222345) do
     t.string   "city"
     t.string   "state"
     t.string   "country"
-    t.integer  "prospect_id"
     t.string   "type_of_address"
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
     t.text     "additional_references"
   end
-
-  add_index "delivery_addresses", ["prospect_id"], name: "index_delivery_addresses_on_prospect_id", using: :btree
 
   create_table "delivery_packages", force: :cascade do |t|
     t.float    "lenght"
@@ -349,13 +340,18 @@ ActiveRecord::Schema.define(version: 20170701222345) do
   end
 
   create_table "stores", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
     t.string   "store_type"
     t.string   "store_code"
     t.string   "store_name"
     t.float    "discount"
+    t.integer  "delivery_address_id"
+    t.integer  "billing_address_id"
   end
+
+  add_index "stores", ["billing_address_id"], name: "index_stores_on_billing_address_id", using: :btree
+  add_index "stores", ["delivery_address_id"], name: "index_stores_on_delivery_address_id", using: :btree
 
   create_table "user_requests", force: :cascade do |t|
     t.integer "user_id"
@@ -394,8 +390,7 @@ ActiveRecord::Schema.define(version: 20170701222345) do
   add_foreign_key "bills", "orders"
   add_foreign_key "bills", "product_catalogs"
   add_foreign_key "bills", "prospects"
-  add_foreign_key "carriers", "orders"
-  add_foreign_key "delivery_addresses", "prospects"
+  add_foreign_key "carriers", "delivery_addresses"
   add_foreign_key "delivery_packages", "orders"
   add_foreign_key "design_requests", "requests"
   add_foreign_key "design_requests", "users"
@@ -422,6 +417,8 @@ ActiveRecord::Schema.define(version: 20170701222345) do
   add_foreign_key "request_users", "users"
   add_foreign_key "requests", "prospects"
   add_foreign_key "requests", "stores"
+  add_foreign_key "stores", "billing_addresses"
+  add_foreign_key "stores", "delivery_addresses"
   add_foreign_key "user_requests", "requests"
   add_foreign_key "user_requests", "users"
   add_foreign_key "users", "roles"

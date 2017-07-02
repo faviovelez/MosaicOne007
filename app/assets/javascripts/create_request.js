@@ -32,7 +32,6 @@ $(".requests.new").ready(function() {
       $(".resistance.secondary.bolsa").addClass('hidden');
       $(".resistance.third.bolsa").addClass('hidden');
 
-
     } else if (productType == 'bolsa') {
       counter -=1;
       $(".bolsa").removeClass('hidden');

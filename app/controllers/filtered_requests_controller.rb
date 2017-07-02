@@ -1,8 +1,10 @@
 class FilteredRequestsController < ApplicationController
-  before_action :set_today_date
+  before_action :days_since
 
-  def set_today_date
-    @a = Date.today
+  def days_since
+    a = Date.today
+    date = @request.created_at.to_date
+    @days_since = (a - date).to_i
   end
 
   def current_view
@@ -84,24 +86,6 @@ class FilteredRequestsController < ApplicationController
   def filter_supporters_view
     @supporters = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => 'manager')
     @supporters
-  end
-
-# Método para managers o designers: asigna la solicitud si no hay otro usuario con el mismo rol en la solicitud
-  def assign_to_current_user(user = current_user, role = current_user.role.name)
-    users = User.joins(:role).where('roles.name' => (role))
-    users_counter = 0
-    @request.users.each do |user|
-      users.each do |other_user|
-        if (user.id == other_user.id)
-          user_counter+=1
-        end
-      end
-    end
-    if params[:asignar] && user_counter < 1
-      @request.users << user
-    else
-      format.html { redirect_to "#", notice: 'No se puede asignar esta solicitud, ya fue asignada a otro(a) #{role}' }
-    end
   end
 
 end

@@ -8,7 +8,6 @@ class AssignedRequestsController < ApplicationController
     all_assigned_requests_to_managers
   end
 
-
   def show
   end
 

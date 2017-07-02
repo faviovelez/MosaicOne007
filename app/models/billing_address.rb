@@ -1,4 +1,4 @@
 class BillingAddress < ActiveRecord::Base
-  belongs_to :prospect
-  belongs_to :store
+  has_many :stores
+  has_many :prospects
 end

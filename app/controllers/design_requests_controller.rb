@@ -1,4 +1,7 @@
 class DesignRequestsController < ApplicationController
+
+  before_action :set_design_request, only: [:show, :edit, :update, :destroy]
+
   def index
   end
 
@@ -23,7 +26,7 @@ class DesignRequestsController < ApplicationController
         @request.require_design = true
         @request.design_requests << @design_request
         @request.save
-        format.html { redirect_to @request, notice: 'La solicitud de diseño fue creada exitosamente.' }
+        format.html { redirect_to @design_request, notice: 'La solicitud de diseño fue creada exitosamente.' }
         format.json { render :show, status: :created, location: @design_request }
       else
         format.html { render new_request_design_request_path }
@@ -36,7 +39,7 @@ class DesignRequestsController < ApplicationController
     upload_attachment
     respond_to do |format|
       if @design_request.update(request_params)
-        format.html { redirect_to design_requests_index_path, notice: 'La solicitud de diseño fue modificada exitosamente.' }
+        format.html { redirect_to @design_request, notice: 'La solicitud de diseño fue modificada exitosamente.' }
         format.json { render :index, status: :ok, location: @design_request }
       else
         format.html { render :edit }
@@ -54,6 +57,9 @@ class DesignRequestsController < ApplicationController
   end
 
 private
+  def set_design_request
+    @design_request = DesignRequest.find(params[:id])
+  end
 
 def design_params
   params.require(:design_request).permit(:design_type,

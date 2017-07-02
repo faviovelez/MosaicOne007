@@ -1,4 +1,3 @@
-<p id="notice"><%= notice %></p>
 
   <p><strong>tipo de producto: </strong>
     <%= @request.product_type %>
@@ -72,14 +71,6 @@
     <%= @request.bag_height %>
   </p>
 
-  <p><strong>largo: </strong>
-    <%= @request.sheet_length %>
-  </p>
-
-  <p><strong>alto: </strong>
-    <%= @request.sheet_height %>
-  </p>
-
   <p><strong>tipo de cartón:</strong>
     <%= @request.main_material %>
   </p>
@@ -87,7 +78,6 @@
   <p><strong>resistencia: </strong>
     <%= @request.resistance_main_material %>
   </p>
-
 
   <p><strong>otro material: </strong>
     <%= @request.secondary_material %>
@@ -115,10 +105,6 @@
 
   <p><strong>acabado:</strong>
     <%= @request.impression_finishing %>
-  </p>
-
-  <p>
-    <%= @request.which_finishing %>
   </p>
 
   <p><strong>fecha compromiso: </strong>
@@ -185,9 +171,6 @@
     <%= @request.interior_material_color %>
   </p>
 
-  <p><strong>color exterior otros materiales: </strong>
-    <%= @request.other_material_color %>
-  </p>
 
 <%= form_for(@request) do |f| %>
   <p><strong></strong> subir_ficha_de_anticipo</p>
@@ -216,3 +199,5 @@
     <%= f.submit :guardar_cambios, name: 'guardar'%>
   </div>
 <% end %>
+
+<%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>

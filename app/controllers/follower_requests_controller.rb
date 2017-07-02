@@ -24,24 +24,37 @@ class DesignRequestsController < ApplicationController
         format.json { render json: @design_request.errors, status: :unprocessable_entity }
       end
     end
-
   end
 
-  def update
-    upload_authorisation_payment
-    upload_authorisation_document
-    assign_to_current_user
-    assign_design_request
-    respond_to do |format|
-      if @request.update(request_params)
-        format.html { redirect_to requests_index_path, notice: 'La solicitud de cotización fue modificada exitosamente.' }
-        format.json { render :index, status: :ok, location: @request }
-      else
-        format.html { render :edit }
-        format.json { render json: @request.errors, status: :unprocessable_entity }
-      end
+  # Es probable que borre este método de aquí
+    def manager_assigned_requests
+      @assigned = Request.where('status' => ['solicitada','cotizando','modificada']).joins(users: :role).where('roles.name' => 'manager')
+      @assigned
     end
-  end
+
+  # Es probable que borre este método de aquí
+    def manager_unassigned_requests
+      manager_assigned_requests
+      @requestes = Request.where('status' => ['solicitada','cotizando','modificada'])
+      @unassigned = @requestes - @assigned
+    end
+
+  # Es probable que borre este método de aquí
+    def designer_assigned_requests
+      @assigned_to_designer = Request.where('status' => ['solicitada','cotizando','modificada']).joins(users: :role).where('roles.name' => 'designer')
+    end
+
+    def assigned
+      manager_assigned_requests
+    end
+
+    def unassigned
+      manager_unassigned_requests
+    end
+
+    def assigned_to_designer
+      designer_assigned_requests
+    end
 
 private
 
