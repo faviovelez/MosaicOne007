@@ -29,24 +29,32 @@ $(".requests.new").ready(function() {
       $(".bolsa").addClass('hidden');
       $(".exhibidor").addClass('hidden');
       $(".resistance.main.bolsa").addClass('hidden');
+      $(".resistance.secondary.bolsa").addClass('hidden');
+      $(".resistance.third.bolsa").addClass('hidden');
+
 
     } else if (productType == 'bolsa') {
+      counter -=1;
       $(".bolsa").removeClass('hidden');
       $(".measures").addClass('hidden');
       $(".otro").addClass('hidden');
+      $("#outer").addClass('hidden');
       $(".caja").addClass('hidden');
       $(".exhibidor").addClass('hidden');
       $(".resistance.main.caja").addClass('hidden');
 
     } else if (productType == 'exhibidor') {
+      counter -=1;
       $(".exhibidor").removeClass('hidden');
       $(".measures").addClass('hidden');
       $(".otro").addClass('hidden');
       $(".bolsa").addClass('hidden');
       $(".caja").addClass('hidden');
       $(".resistance.main.bolsa").addClass('hidden');
+      $("#outer").addClass('hidden');
 
     } else if (productType == 'seleccione') {
+      counter -=1;
       $(".otro").addClass('hidden');
       $(".measures").addClass('hidden');
       $(".bolsa").addClass('hidden');
@@ -261,9 +269,9 @@ $(".requests.new").ready(function() {
   $("#request_resistance_main_material").bind('change', function() {
     var search = $("#request_resistance_main_material").val();
     if (search == 'Sugerir resistencia') {
-      $("#request_resistance_like").removeClass('hidden');
+      $("#resistencia_como").removeClass('hidden');
     } else if (search != 'Sugerir resistencia') {
-      $("#request_resistance_like").addClass('hidden');
+      $("#resistencia_como").addClass('hidden');
     };
   });
 
