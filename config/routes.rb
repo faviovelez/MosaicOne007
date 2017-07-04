@@ -1,29 +1,6 @@
 Rails.application.routes.draw do
+
   root 'pages#index'
-
-  get 'stores/index'
-
-  get 'stores/new'
-
-  get 'stores/show'
-
-  get 'billing_addresses/index'
-
-  get 'billing_addresses/show'
-
-  get 'requests/special'
-
-  get 'requests/catalog'
-
-  get 'requests/index'
-
-  get 'requests/follow'
-
-  get 'requests/assigned'
-
-  get 'requests/unassigned'
-
-  get 'requests/assigned_to_designer'
 
   get 'orders/special'
 
@@ -57,13 +34,12 @@ Rails.application.routes.draw do
     resources :requests, controller: 'assigned_requests'
   end
 
-# Estas rutas están perfectas y sí me sirven
   resources :prospects do
     resources :billing_addresses, :delivery_addresses, :requests
   end
 
   resources :stores do
-    resources :requests, :billing_addresses, :delivery_addresses
+    resources :prospects, :requests, :billing_addresses, :delivery_addresses
   end
 
   resources :requests do

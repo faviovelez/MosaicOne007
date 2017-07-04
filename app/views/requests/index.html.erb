@@ -1,0 +1,24 @@
+<% @requests.each do |request| %>
+<table>
+  <thead>
+    <tr>
+      <th>Cantidad</th>
+      <th>Producto</th>
+      <th>Estatus</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> <%= request.quantity %> </td>
+      <td> <%= request.product_type %> </td>
+      <td> <%= request.status %> </td>
+      <td> <%= link_to 'ver cotización', request_path(request) %> </td>
+    </tr>
+  </tbody>
+</table>
+<% end %>
+<%= link_to 'ver prospecto', prospect_path(@prospect) %>
+
+<%= link_to 'lista de prospectos', store_prospects_path(@prospect.store) %>
+
+<%= link_to 'inicio', store_path(@prospect.store) %>

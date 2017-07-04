@@ -147,11 +147,11 @@
     <%= @request.impression_where %>
   </p>
 
-  <p><strong>tipo de armado como: </strong>
+  <p><strong>tipo de armado: </strong>
     <%= @request.design_like %>
   </p>
 
-  <p><strong>resistencia como: </strong>
+  <p><strong>resistencia: </strong>
     <%= @request.resistance_like %>
   </p>
 
@@ -201,3 +201,5 @@
 <% end %>
 
 <%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
+
+<%= link_to 'regresar', prospect_path(@request.prospect) %>

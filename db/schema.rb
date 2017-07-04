@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170702214804) do
+ActiveRecord::Schema.define(version: 20170703184817) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,7 +44,6 @@ ActiveRecord::Schema.define(version: 20170702214804) do
 
   create_table "bills", force: :cascade do |t|
     t.string   "status"
-    t.integer  "product_catalog_id"
     t.integer  "order_id"
     t.float    "initial_price"
     t.float    "discount_applied"
@@ -55,10 +54,11 @@ ActiveRecord::Schema.define(version: 20170702214804) do
     t.string   "type_of_bill"
     t.integer  "prospect_id"
     t.string   "classification"
+    t.integer  "product_id"
   end
 
   add_index "bills", ["order_id"], name: "index_bills_on_order_id", using: :btree
-  add_index "bills", ["product_catalog_id"], name: "index_bills_on_product_catalog_id", using: :btree
+  add_index "bills", ["product_id"], name: "index_bills_on_product_id", using: :btree
   add_index "bills", ["prospect_id"], name: "index_bills_on_prospect_id", using: :btree
 
   create_table "carriers", force: :cascade do |t|
@@ -143,12 +143,12 @@ ActiveRecord::Schema.define(version: 20170702214804) do
 
   create_table "images", force: :cascade do |t|
     t.string   "image"
-    t.integer  "product_catalog_id"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "product_id"
   end
 
-  add_index "images", ["product_catalog_id"], name: "index_images_on_product_catalog_id", using: :btree
+  add_index "images", ["product_id"], name: "index_images_on_product_id", using: :btree
 
   create_table "managers", force: :cascade do |t|
     t.string   "username"
@@ -170,6 +170,18 @@ ActiveRecord::Schema.define(version: 20170702214804) do
   add_index "modified_fields", ["request_id"], name: "index_modified_fields_on_request_id", using: :btree
   add_index "modified_fields", ["user_id"], name: "index_modified_fields_on_user_id", using: :btree
 
+  create_table "movements", force: :cascade do |t|
+    t.integer  "product_id"
+    t.integer  "quantity"
+    t.string   "movement_type"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "order_id"
+  end
+
+  add_index "movements", ["order_id"], name: "index_movements_on_order_id", using: :btree
+  add_index "movements", ["product_id"], name: "index_movements_on_product_id", using: :btree
+
   create_table "orders", force: :cascade do |t|
     t.string   "status"
     t.integer  "user_id"
@@ -179,21 +191,32 @@ ActiveRecord::Schema.define(version: 20170702214804) do
     t.datetime "updated_at",             null: false
     t.string   "category"
     t.integer  "times_ordered"
-    t.integer  "product_catalog_id"
     t.integer  "prospect_id"
     t.integer  "request_id"
     t.integer  "billing_address_id"
+    t.integer  "product_id"
   end
 
   add_index "orders", ["additional_discount_id"], name: "index_orders_on_additional_discount_id", using: :btree
   add_index "orders", ["billing_address_id"], name: "index_orders_on_billing_address_id", using: :btree
   add_index "orders", ["delivery_address_id"], name: "index_orders_on_delivery_address_id", using: :btree
-  add_index "orders", ["product_catalog_id"], name: "index_orders_on_product_catalog_id", using: :btree
+  add_index "orders", ["product_id"], name: "index_orders_on_product_id", using: :btree
   add_index "orders", ["prospect_id"], name: "index_orders_on_prospect_id", using: :btree
   add_index "orders", ["request_id"], name: "index_orders_on_request_id", using: :btree
   add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree
 
-  create_table "product_catalogs", force: :cascade do |t|
+  create_table "productions", force: :cascade do |t|
+    t.string   "status"
+    t.integer  "user_id"
+    t.integer  "order_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "productions", ["order_id"], name: "index_productions_on_order_id", using: :btree
+  add_index "productions", ["user_id"], name: "index_productions_on_user_id", using: :btree
+
+  create_table "products", force: :cascade do |t|
     t.string   "former_code"
     t.string   "unique_code"
     t.string   "description"
@@ -217,17 +240,6 @@ ActiveRecord::Schema.define(version: 20170702214804) do
     t.datetime "updated_at",               null: false
     t.float    "price"
   end
-
-  create_table "productions", force: :cascade do |t|
-    t.string   "status"
-    t.integer  "user_id"
-    t.integer  "order_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "productions", ["order_id"], name: "index_productions_on_order_id", using: :btree
-  add_index "productions", ["user_id"], name: "index_productions_on_user_id", using: :btree
 
   create_table "prospects", force: :cascade do |t|
     t.integer  "store_id"
@@ -388,7 +400,7 @@ ActiveRecord::Schema.define(version: 20170702214804) do
 
   add_foreign_key "additional_discounts", "bills"
   add_foreign_key "bills", "orders"
-  add_foreign_key "bills", "product_catalogs"
+  add_foreign_key "bills", "products"
   add_foreign_key "bills", "prospects"
   add_foreign_key "carriers", "delivery_addresses"
   add_foreign_key "delivery_packages", "orders"
@@ -397,14 +409,16 @@ ActiveRecord::Schema.define(version: 20170702214804) do
   add_foreign_key "designers", "users"
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"
-  add_foreign_key "images", "product_catalogs"
+  add_foreign_key "images", "products"
   add_foreign_key "managers", "users"
   add_foreign_key "modified_fields", "requests"
   add_foreign_key "modified_fields", "users"
+  add_foreign_key "movements", "orders"
+  add_foreign_key "movements", "products"
   add_foreign_key "orders", "additional_discounts"
   add_foreign_key "orders", "billing_addresses"
   add_foreign_key "orders", "delivery_addresses"
-  add_foreign_key "orders", "product_catalogs"
+  add_foreign_key "orders", "products"
   add_foreign_key "orders", "prospects"
   add_foreign_key "orders", "requests"
   add_foreign_key "orders", "users"

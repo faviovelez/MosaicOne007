@@ -5,6 +5,8 @@ class RequestsController < ApplicationController
   # GET /requests
   # GET /requests.json
   def index
+    @prospect = Prospect.find(params[:prospect_id])
+    @requests = @prospect.requests
   end
 
   # GET /requests/1
@@ -95,7 +97,7 @@ class RequestsController < ApplicationController
   end
 
   def search_design(input = params[:request][:design_like])
-    @product = ProductCatalog.find_by_unique_code(input) || ProductCatalog.find_by_former_code(input)
+    define_search_field
     if input != nil && @product != nil
       @request.design_like = @product.design_type
     elsif input != nil && @product = nil
@@ -104,12 +106,20 @@ class RequestsController < ApplicationController
   end
 
   def search_resistance(input = params[:request][:resistance_like])
-    @product = ProductCatalog.find_by_unique_code(input) || ProductCatalog.find_by_former_code(input)
+    define_search_field
     if input != nil && @product != nil
       @request.design_like = @product.design_type
       @request.resistance_like = @product.resistance_main_material
     elsif input != nil && @product = nil
       @request.resistance_like = input
+    end
+  end
+
+  def define_search_field(input = params[:request][:resistance_like])
+    if Product.find_by_unique_code(input) != nil
+      @product = Product.find_by_unique_code(input)
+    elsif Product.find_by_former_code(input) != nil
+      @product = Product.find_by_former_code(input)
     end
   end
 

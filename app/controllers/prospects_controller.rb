@@ -1,13 +1,11 @@
 class ProspectsController < ApplicationController
   before_action :set_prospect, only: [:show, :edit, :update, :destroy]
+  before_action :set_store, only: [:new, :create, :update]
 
   # GET /prospects
   # GET /prospects.json
   def index
-  end
-
-  def set_data_from_prospects
-    @prospects = Prospect.all
+    store_prospects
   end
 
   # GET /prospects/1
@@ -22,9 +20,6 @@ class ProspectsController < ApplicationController
 
   # GET /prospects/1/edit
   def edit
-  end
-
-  def prospect
   end
 
   # POST /prospects
@@ -46,6 +41,7 @@ class ProspectsController < ApplicationController
   # PATCH/PUT /prospects/1
   # PATCH/PUT /prospects/1.json
   def update
+    save_prospect_to_store
     respond_to do |format|
       if @prospect.update(prospect_params)
         format.html { redirect_to @prospect, notice: 'El prospecto fue modificado exitosamente.' }
@@ -67,6 +63,16 @@ class ProspectsController < ApplicationController
     end
   end
 
+  def save_prospect_to_store
+    @store.prospect = @prospect
+    @store.save
+  end
+
+  def store_prospects
+    @store = current_user.store
+    @prospects = @store.prospects
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_prospect
@@ -75,8 +81,11 @@ class ProspectsController < ApplicationController
 
     def save_store_prospect
       @user = current_user
-      @store = @user.store
       @prospect.store = @store
+    end
+
+    def set_store
+      @store = Store.find(params[:store_id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

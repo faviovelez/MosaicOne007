@@ -1,0 +1,51 @@
+<%= form_for [@owner, @delivery] do |f| %>
+
+  <div class="field">
+    <%= f.label :calle %>
+    <%= f.text_field :street %>
+  </div>
+
+  <div class="field">
+    <%= f.label :número_exterior %>
+    <%= f.text_field :exterior_number %>
+  </div>
+
+  <div class="field">
+    <%= f.label :número_interior %>
+    <%= f.text_field :interior_number %>
+  </div>
+
+  <div class="field">
+    <%= f.label :colonia %>
+    <%= f.text_field :neighborhood %>
+  </div>
+
+  <div class="field">
+    <%= f.label :código_postal %>
+    <%= f.text_field :zipcode %>
+  </div>
+
+  <div class="field">
+    <%= f.label :ciudad %>
+    <%= f.text_field :city %>
+  </div>
+
+  <div class="field">
+    <%= f.label :estado %>
+    <%= f.text_field :state %>
+  </div>
+
+  <div class="field">
+    <%= f.label :país %>
+    <%= f.text_field :country %>
+  </div>
+
+  <div class="field">
+    <%= f.label :referencias_adicionales %>
+    <%= f.text_area :additional_references %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit :guardar_direccion, name: 'guardar' %>
+  </div>
+<% end %>

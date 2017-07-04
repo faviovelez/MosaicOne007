@@ -1,4 +1,6 @@
 class StoresController < ApplicationController
+  before_action :set_store, only: [:show, :new, :create, :update]
+
   def index
   end
 
@@ -50,6 +52,10 @@ class StoresController < ApplicationController
 
 
 private
+
+  def set_store
+    @store = current_user.store
+  end
 
   def store_params
     params.require(:store).permit(:store_type, :store_code, :store_name, :group, :discount)
