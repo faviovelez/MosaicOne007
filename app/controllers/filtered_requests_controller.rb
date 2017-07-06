@@ -1,11 +1,5 @@
 class FilteredRequestsController < ApplicationController
-  before_action :days_since
 
-  def days_since
-    a = Date.today
-    date = @request.created_at.to_date
-    @days_since = (a - date).to_i
-  end
 
   def current_view
     filter_store_active_requests
@@ -87,5 +81,6 @@ class FilteredRequestsController < ApplicationController
     @supporters = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => 'manager')
     @supporters
   end
+
 
 end

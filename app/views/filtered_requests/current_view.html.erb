@@ -13,19 +13,12 @@
       </thead>
       <tbody>
         <tr>
-          <td> <%= request.store_code %> - <%= request.store_name %> </td>
+          <td> <%= request.store.store_code %> - <%= request.store.store_name %> </td>
           <td> <%= request.quantity %> piezas </td>
-          <% @days = (@a -  request.created_at.to_date).to_i %>
-          <% if @days < 1 %>
-            <td> hoy </td>
-          <% elsif @days = 1 %>
-            <td> '1 día' </td>
-          <% else @days > 1 %>
-            <td> <%= @days %> 'días'</td>
-          <% end %>
           <td> <%= request.delivery_date %></td>
           <td> <%= request.status %></td>
           <td> <%= link_to 'detalles', request %> </td>
+          <td> <%= link_to 'confirmar pedido', confirm_requests_path(request) %> </td>
         </tr>
       </tbody>
     </table>

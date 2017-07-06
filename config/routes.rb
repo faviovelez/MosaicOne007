@@ -50,6 +50,11 @@ Rails.application.routes.draw do
 
   resources :billing_addresses
 
+  get 'requests/confirm/:id', to: 'requests#confirm', as: 'confirm_requests'
+
+  get 'requests/confirm_view/:id', to: 'requests#confirm_view', as: 'confirm_view_requests'
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

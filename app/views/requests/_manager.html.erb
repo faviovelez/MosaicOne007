@@ -1,0 +1,28 @@
+<%= form_for(@request) do |f| %>
+
+  <div class="field">
+    <%= f.label :costo_de_venta %>
+    <%= f.text_field :internal_cost %>
+  </div>
+
+  <div class="field">
+    <%= f.label :precio_para_la_tienda %>
+    <%= f.text_field :internal_price %>
+  </div>
+
+
+  <div class="actions">
+    <%= f.submit :confirmar_costo, name: 'actualizar' %>
+  </div>
+<% end %>
+
+<%= form_for(@request) do |f| %>
+
+  <div class="field">
+    <%= t.label :notas_para_la_tienda %>
+    <%= t.text_area :notes %>
+  </div>
+
+  <div class="actions">
+    <%= t.submit :enviar_dudas, name: 'devuelta' %>
+  </div>

@@ -49,40 +49,4 @@ class StoreRequestsController < ApplicationController
     end
   end
 
-  def authorise
-  end
-
-  def upload_authorisation_document
-    if params[:request][:authorisation_signed].nil?
-      @request.authorisation_signed = false
-    else
-      @request.documents << Document.create(documents params[:request][:authorisation_signed],
-      document_type: 'pedido', request: @request)
-      @request.authorisation_signed = true
-    end
-  end
-
-  def upload_authorisation_payment
-    if params[:request][:payment_uploaded].nil?
-      @request.payment_uploaded = false
-    else
-      @request.documents << Document.create(document: params[:request][:payment_uploaded],
-      document_type: 'pago', request: @request)
-      @request.payment_uploaded = true
-    end
-  end
-
-private
-
-def design_params
-  params.require(:design_request).permit(:design_type,
-         :cost,
-         :status,
-         :authorisation,
-         :attachment,
-         :outcome,
-         :request_id,
-         :description)
-end
-
 end

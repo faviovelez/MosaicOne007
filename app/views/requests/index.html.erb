@@ -10,7 +10,11 @@
   <tbody>
     <tr>
       <td> <%= request.quantity %> </td>
-      <td> <%= request.product_type %> </td>
+      <% if request.product_type != 'exhibidor' %>
+      <td> <%= request.product_type %>s</td>
+      <% else request.product_type %>
+        <td> <%= request.product_type %>(es)</td>
+      <% end %>
       <td> <%= request.status %> </td>
       <td> <%= link_to 'ver cotización', request_path(request) %> </td>
     </tr>

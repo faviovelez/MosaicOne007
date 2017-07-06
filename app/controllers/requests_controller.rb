@@ -1,6 +1,6 @@
 class RequestsController < ApplicationController
 # Este controller solo debe manejar la creación y modificación de requests individuales por la tienda, managers y designers
-  before_action :set_request, only: [:show, :edit, :update, :destroy]
+  before_action :set_request, only: [:show, :edit, :update, :destroy, :manager, :confirm, :confirm_view, :price]
 
   # GET /requests
   # GET /requests.json
@@ -14,7 +14,19 @@ class RequestsController < ApplicationController
   def show
   end
 
-  def special
+  def manager
+  end
+
+  def confirm
+    check_authorisation
+    get_documents
+  end
+
+  def confirm_view
+    get_documents
+  end
+
+  def price
   end
 
   # GET /requests/new
@@ -33,11 +45,10 @@ class RequestsController < ApplicationController
     @request = Request.new(request_params)
     search_design
     search_resistance
-    save_user_request
+    assign_to_current_user
     save_store_request
-    save_request_status
     save_prospect_to_request
-    check_saving_type
+    save_status
     respond_to do |format|
       if @request.save
         format.html { redirect_to @request, notice: 'La solicitud de cotización fue generada exitosamente.' }
@@ -52,14 +63,16 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
   def update
-    upload_authorisation_payment
-    upload_authorisation_document
+    search_design
+    search_resistance
     assign_to_current_user
-    assign_design_request
     respond_to do |format|
       if @request.update(request_params)
+        save_document
+        validate_authorisation
+        save_status
+        save_document_identifier_field
         format.html { redirect_to @request, notice: 'La solicitud de cotización fue modificada exitosamente.' }
-        format.json { render :show, status: :ok, location: @request }
       else
         format.html { render :edit }
         format.json { render json: @request.errors, status: :unprocessable_entity }
@@ -80,6 +93,11 @@ class RequestsController < ApplicationController
     end
   end
 
+  def get_documents
+    @payment = Document.where(document_type: 'pago').find_by_request_id(@request)
+    @authorisation = Document.where(document_type: 'pedido').find_by_request_id(@request)
+  end
+
   def days_since
     a = Date.today
     date = @request.created_at.to_date
@@ -96,25 +114,6 @@ class RequestsController < ApplicationController
     user_find
   end
 
-  def search_design(input = params[:request][:design_like])
-    define_search_field
-    if input != nil && @product != nil
-      @request.design_like = @product.design_type
-    elsif input != nil && @product = nil
-      @request.design_like = input
-    end
-  end
-
-  def search_resistance(input = params[:request][:resistance_like])
-    define_search_field
-    if input != nil && @product != nil
-      @request.design_like = @product.design_type
-      @request.resistance_like = @product.resistance_main_material
-    elsif input != nil && @product = nil
-      @request.resistance_like = input
-    end
-  end
-
   def define_search_field(input = params[:request][:resistance_like])
     if Product.find_by_unique_code(input) != nil
       @product = Product.find_by_unique_code(input)
@@ -123,21 +122,23 @@ class RequestsController < ApplicationController
     end
   end
 
-  def check_saving_type
-    if params[:enviar]
-      @request.status = 'solicitada'
-    elsif params[:guardar]
-      @request.status = 'creada'
+  def search_design(input = params[:request][:design_like])
+    define_search_field
+    if (input != nil) && (@product != nil)
+      @request.design_like = @product.design_type
+    elsif (input != nil) && (@product = nil)
+      @request.design_like = input
     end
   end
 
-  def save_user_request
-    @user = current_user
-    @request.users << @user
-  end
-
-  def save_request_status
-    @request.status = 'solicitada'
+  def search_resistance(input = params[:request][:resistance_like])
+    define_search_field
+    if (input != nil) && (@product != nil)
+      @request.design_like = @product.design_type
+      @request.resistance_like = @product.resistance_main_material
+    elsif (input != nil) && (@product = nil)
+      @request.resistance_like = input
+    end
   end
 
   def save_prospect_to_request
@@ -145,28 +146,110 @@ class RequestsController < ApplicationController
     @request.prospect = @prospect
   end
 
-  def save_store_request
-    @store = @user.store
-    @request.store = @store
-    @request.store_code = @store.store_code
-    @request.store_name = @store.store_name
+  def save_store_request(store = current_user.store)
+    @request.store = store
   end
 
 # Método para managers o designers: asigna la solicitud si no hay otro usuario con el mismo rol en la solicitud
   def assign_to_current_user(user = current_user, role = current_user.role.name)
     users = User.joins(:role).where('roles.name' => (role))
-    users_counter = 0
+    user_find = false
     @request.users.each do |user|
       users.each do |other_user|
         if (user.id == other_user.id)
-          user_counter+=1
+          user_find = true
         end
       end
     end
-    if params[:asignar] && user_counter < 1
+    if user_find == false
       @request.users << user
-    else
-      format.html { redirect_to "#", notice: 'No se puede asignar esta solicitud, ya fue asignada a otro(a) #{role}' }
+    end
+  end
+
+  def save_document
+    search_document_in_request
+    if @find_payment == false
+      if params[:request][:payment_uploaded] != nil
+        payment = Document.create(document: params[:request][:payment_uploaded], document_type: 'pago', request: @request)
+        @request.documents << payment
+      end
+    end
+    if @find_authorisation == false
+      if params[:request][:authorisation_signed] != nil
+        authorisation = Document.create(document: params[:request][:authorisation_signed], document_type: 'pedido', request: @request)
+        @request.documents << authorisation
+      end
+    end
+  end
+
+  def save_document_identifier_field
+    search_document_in_request
+    if @find_payment == true
+        @request.update(payment_uploaded: true)
+    end
+    if @find_authorisation == true
+      @request.update(authorisation_signed: true)
+    end
+  end
+
+  def search_document_in_request
+    @find_payment = false
+    @find_authorisation = false
+    @request.documents.each do |document|
+      if (document.document_type == 'pago')
+        @find_payment = true
+      end
+      if (document.document_type == 'pedido')
+        @find_authorisation = true
+      end
+    end
+
+  end
+
+  def validate_authorisation
+    if params[:request][:authorised_without_pay] == '1'
+      @request.authorised_without_pay = true
+    end
+    if params[:request][:authorised_without_doc] == '1'
+      @request.authorised_without_doc = true
+    end
+  end
+
+  def check_document_authorisation
+    @doc_ok = false
+    if( @request.authorised_without_doc == true) || (@request.authorisation_signed == true)
+      @doc_ok = true
+    end
+    @doc_ok
+  end
+
+  def check_payment_authorisation
+    @pay_ok = false
+    if (@request.payment_uploaded == true) || (@request.authorised_without_pay == true)
+      @pay_ok = true
+    end
+    @pay_ok
+  end
+
+  def save_status
+    check_document_authorisation
+    check_payment_authorisation
+    if params[:enviar]
+      @request.status = 'solicitada'
+    elsif params[:guardar]
+      @request.status = 'creada'
+    elsif (@doc_ok == true && @pay_ok == true)
+      @request.status = 'autorizada'
+    end
+  end
+
+  def check_authorisation
+    check_document_authorisation
+    check_payment_authorisation
+    if @request.status == 'autorizada'
+      redirect_to request_path(@request), notice: 'Esta solicitud ya fue autorizada.'
+    elsif ((@request.status != 'autorizada') && (@pay_ok || @doc_ok))
+      redirect_to confirm_view_requests_path(@request)
     end
   end
 
@@ -211,12 +294,6 @@ class RequestsController < ApplicationController
        :notes,
        :prospect_id,
        :final_quantity,
-       :require_dummy,
-       :require_printcard,
-       :printcard_authorised,
-       :dummy_generated,
-       :dummy_authorised,
-       :printcard_generated,
        :payment_uploaded,
        :authorisation_signed,
        :date_finished,
@@ -225,15 +302,12 @@ class RequestsController < ApplicationController
        :sales_price,
        :impression_type,
        :impression_where,
-       :dummy_cost,
-       :design_cost,
        :design_like,
        :resistance_like,
        :rigid_color,
        :paper_type_rigid,
        :exterior_material_color,
        :interior_material_color,
-       :manager,
        :store_code,
        :store_name,
        :user_id,
@@ -245,6 +319,8 @@ class RequestsController < ApplicationController
        :tray_length,
        :tray_width,
        :contraencolado,
-       :how_many)
+       :how_many,
+       :authorised_without_pay,
+       :authorised_without_doc)
     end
 end

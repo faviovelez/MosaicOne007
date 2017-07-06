@@ -1,5 +1,7 @@
 <%= render 'info' %>
 
+<%= render 'price' %>
+
 <% if @request.design_requests.any? == true %>
   <%= link_to 'ver trabajos de diseño', request_design_request_path(request_id: @request) %>
 <% end %>

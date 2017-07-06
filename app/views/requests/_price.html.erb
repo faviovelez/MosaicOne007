@@ -1,0 +1,12 @@
+<%= form_for(@request) do |f| %>
+
+  <div class="field">
+    <%= f.label :precio_de_venta %>
+    <%= f.text_field :sales_price %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit :actualizar_precio, name: 'actualizar' %>
+  </div>
+
+<% end %>

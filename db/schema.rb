@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170703184817) do
+ActiveRecord::Schema.define(version: 20170705161826) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -337,8 +337,9 @@ ActiveRecord::Schema.define(version: 20170703184817) do
     t.integer  "tray_divisions"
     t.string   "name_type"
     t.boolean  "contraencolado"
-    t.boolean  "authorisation"
+    t.boolean  "authorised_without_doc"
     t.string   "how_many"
+    t.boolean  "authorised_without_pay"
   end
 
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree

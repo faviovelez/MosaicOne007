@@ -1,0 +1,27 @@
+<%= form_for(@request) do |f| %>
+
+  <div class="field">
+    <%= f.label :pedido_autorizado %>
+    <%= f.file_field :authorisation_signed %>
+  </div>
+
+  <div class="field">
+    <%= f.label :autorizar_sin_documento_firmado %>
+    <%= f.check_box(:authorised_without_doc, checked_value: '1', unchecked_value: '0') %>
+  </div>
+
+  <div class="field">
+    <%= f.label :ficha_de_depósito %>
+    <%= f.file_field :payment_uploaded %>
+  </div>
+
+  <div class="field">
+    <%= f.label :autorizar_sin_ficha_de_depósito %>
+    <%= f.check_box(:authorised_without_pay, checked_value: '1', unchecked_value: '0') %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit :confirmar_pedido, name: 'confirmar' %>
+  </div>
+
+<% end %>
