@@ -43,8 +43,7 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    search_design
-    search_resistance
+    request_has_design?
     assign_to_current_user
     save_store_request
     save_prospect_to_request
@@ -63,8 +62,7 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
   def update
-    search_design
-    search_resistance
+    request_has_design?
     assign_to_current_user
     respond_to do |format|
       if @request.update(request_params)
@@ -119,6 +117,15 @@ class RequestsController < ApplicationController
       @product = Product.find_by_unique_code(input)
     elsif Product.find_by_former_code(input) != nil
       @product = Product.find_by_former_code(input)
+    end
+  end
+
+  def request_has_design?
+    if params[:request][:design_like]
+      search_design
+    end
+    if params[:request][:resistance_like]
+      search_resistance
     end
   end
 

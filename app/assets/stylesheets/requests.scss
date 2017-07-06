@@ -2,6 +2,25 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+label {
+  padding-right: 1.5rem;
+}
+
 .hidden {
   display: none;
+}
+
+.document-icon {
+  width: 6rem;
+  height: 6rem;
+  padding: 5px;
+  border: solid 1px #EFEFEF;
+  box-shadow: 1px 1px 5px #999;
+  border-radius: 100%;
+}
+
+.document-link-area {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0rem;
 }

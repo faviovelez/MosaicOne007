@@ -1,15 +1,13 @@
-<%= render 'info' %>
-
 <% if @request.design_requests.any? == true %>
   <%= link_to 'ver trabajos de diseño', request_design_request_path(request_id: @request) %>
 <% end %>
 
-<%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
+<%= link_to 'regresar a la solicitud', requests_path(@request) %>
 
-<%= link_to 'modificar', edit_request_path(@request) %>
+<%= link_to 'modificar solicitud', edit_request_path(@request) %>
+
+<%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
 
 <%= link_to 'ver prospecto', prospect_path(@request.prospect) %>
 
 <%= link_to 'ver lista de solicitudes activas', filtered_requests_current_view_path %>
-
-<%= link_to 'confirmar pedido', confirm_requests_path(@request) %>

@@ -1,0 +1,8 @@
+<% @days = (Date.today - request.created_at.to_date).to_i %>
+<% if @days < 1 %>
+  <td> hoy </td>
+<% elsif @days == 1 %>
+  <td> 1 día </td>
+<% else @days > 1 %>
+  <td> <%= @days %> días </td>
+<% end %>

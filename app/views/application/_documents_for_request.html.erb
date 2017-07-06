@@ -1,0 +1,17 @@
+<div class="document-link-area">
+  <% if @request.authorisation_signed %>
+    <%= label_tag ('pedido autorizado:') %>
+    <%= link_to @authorisation.document_url, target: '_blank' do %>
+      <%= image_tag '/assets/document_blue.png', alt: 'Ícono documento azul', class: 'document-icon img-responsive' %>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="document-link-area">
+  <% if @request.payment_uploaded %>
+    <%= label_tag ('anticipo del pedido:') %>
+    <%= link_to @payment.document_url, target: '_blank' do %>
+      <%= image_tag '/assets/document_blue.png', alt: 'Ícono documento azul', class: 'document-icon img-responsive' %>
+    <% end %>
+  <% end %>
+</div>

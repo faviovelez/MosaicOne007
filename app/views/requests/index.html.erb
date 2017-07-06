@@ -2,19 +2,15 @@
 <table>
   <thead>
     <tr>
-      <th>Cantidad</th>
-      <th>Producto</th>
-      <th>Estatus</th>
+      <th>cantidad</th>
+      <th>producto</th>
+      <th>estatus</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td> <%= request.quantity %> </td>
-      <% if request.product_type != 'exhibidor' %>
-      <td> <%= request.product_type %>s</td>
-      <% else request.product_type %>
-        <td> <%= request.product_type %>(es)</td>
-      <% end %>
+      <%= render 'pluralize_product_type' %>
       <td> <%= request.status %> </td>
       <td> <%= link_to 'ver cotización', request_path(request) %> </td>
     </tr>
