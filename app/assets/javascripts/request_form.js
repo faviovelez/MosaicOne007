@@ -1,4 +1,5 @@
 var counter = 0;
+var actionForRequest = $(".requests.new") || $(".requests.edit")
 $(".requests.new").ready(function() {
 
 /* Este método esconde o muestra las opciones, dependiendo de la elección del tipo de producto, por ejepmlo: medidas externas, medidas de bolsa, medidas de exhibidor, etc. */
@@ -9,19 +10,26 @@ $(".requests.new").ready(function() {
       $(".otro").removeClass('hidden');
       $(".measures").removeClass('hidden');
       if (counter == 0) {
-        $(".medidas").append('<option value="1" selected="selected" class="new">medidas externas</option>');
+        $("#request_what_measures").append('<option value="1" selected="selected" class="new">medidas externas</option>');
         counter +=1;
         $("#outer").removeClass('hidden');
       };
       $(".caja").addClass('hidden');
       $(".bolsa").addClass('hidden');
       $(".exhibidor").addClass('hidden');
+      $(".resistance.main.bolsa").removeClass('hidden');
+      $(".resistance.secondary.bolsa").removeClass('hidden');
+      $(".resistance.third.bolsa").removeClass('hidden');
+      $(".resistance.main.caja").removeClass('hidden');
+      $(".resistance.secondary.caja").removeClass('hidden');
+      $(".resistance.third.caja").removeClass('hidden');
+
 
     } else if (productType == 'caja') {
       $(".caja").removeClass('hidden');
       $(".measures").removeClass('hidden');
       if (counter == 0) {
-        $(".medidas").append('<option value="1" selected="selected" class="new">medidas externas</option>');
+        $("#request_what_measures").append('<option value="1" selected="selected" class="new">medidas externas</option>');
         counter +=1;
         $("#outer").removeClass('hidden');
       };
@@ -67,10 +75,10 @@ $(".requests.new").ready(function() {
   });
 
 /* Este método esconde o muestra las opciones, dependiendo de la elección del tipo de medidas (internas o extenras) */
-  $(".medidas").bind('change', function() {
-    var measures = $(".medidas").val();
+  $("#request_what_measures").bind('change', function() {
+    var measures = $("#request_what_measures").val();
 
-    if (measures == 0) {
+    if (measures == ''|| measures == 4) {
       $("#outer").addClass('hidden');
       $("#inner").addClass('hidden');
     } else if (measures == 1) {
@@ -264,12 +272,12 @@ $(".requests.new").ready(function() {
     $(".impression").addClass('hidden');
   });
 
-/* Este método esconde o muestra el buscador de resistencia, si elige sugerir resistencia */
+/* Este método esconde o muestra el buscador de resistencia, si elige buscar resistencia */
   $("#request_resistance_main_material").bind('change', function() {
     var search = $("#request_resistance_main_material").val();
-    if (search == 'Sugerir resistencia') {
+    if (search == 'buscar') {
       $("#resistencia_como").removeClass('hidden');
-    } else if (search != 'Sugerir resistencia') {
+    } else if (search != 'buscar') {
       $("#resistencia_como").addClass('hidden');
     };
   });

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170705161826) do
+ActiveRecord::Schema.define(version: 20170707222445) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 20170705161826) do
   end
 
   create_table "delivery_packages", force: :cascade do |t|
-    t.float    "lenght"
+    t.float    "length"
     t.float    "width"
     t.float    "height"
     t.float    "weight"
@@ -283,7 +283,6 @@ ActiveRecord::Schema.define(version: 20170705161826) do
     t.float    "product_height"
     t.float    "product_weight"
     t.string   "for_what"
-    t.integer  "boxes_stow"
     t.integer  "quantity"
     t.float    "inner_length"
     t.float    "inner_width"
@@ -317,7 +316,6 @@ ActiveRecord::Schema.define(version: 20170705161826) do
     t.float    "internal_cost"
     t.float    "internal_price"
     t.float    "sales_price"
-    t.string   "impression_type"
     t.string   "impression_where"
     t.string   "design_like"
     t.string   "resistance_like"
@@ -340,6 +338,9 @@ ActiveRecord::Schema.define(version: 20170705161826) do
     t.boolean  "authorised_without_doc"
     t.string   "how_many"
     t.boolean  "authorised_without_pay"
+    t.string   "boxes_stow"
+    t.string   "specification"
+    t.string   "what_measures"
   end
 
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree

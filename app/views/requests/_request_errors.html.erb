@@ -1,0 +1,9 @@
+<% if @request.errors.any? %>
+  <ul>
+    <% @request.errors.messages.values.each do |msg| %>
+      <%msg.each do  |m| %>
+        <li><%= m %></li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>

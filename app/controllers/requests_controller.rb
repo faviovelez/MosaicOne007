@@ -46,6 +46,10 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
+    if params[:request][:how_many] == ''
+      @request.how_many = nil
+    end
+    upload_specification
     request_has_design?
     assign_to_current_user
     save_store_request
@@ -66,6 +70,7 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1.json
   def update
     request_has_design?
+    upload_specification
     if current_user.role.name == 'store'
       respond_to do |format|
         if @request.update(request_params)
@@ -276,6 +281,14 @@ class RequestsController < ApplicationController
     end
   end
 
+  def upload_specification
+    if params[:request][:specification].present?
+      params[:request][:specification].each do |file|
+        @request.documents << Document.create(document: file, document_type: 'especificación', request: @request)
+      end
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_request
@@ -344,6 +357,8 @@ class RequestsController < ApplicationController
        :contraencolado,
        :how_many,
        :authorised_without_pay,
-       :authorised_without_doc)
+       :authorised_without_doc,
+       :specification,
+       :what_measures)
     end
 end

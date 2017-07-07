@@ -13,6 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require create_request
+//= require request_form
 //= require show
 //= require_tree .
