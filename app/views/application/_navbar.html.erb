@@ -8,10 +8,21 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <%= link_to root_path do %>
-        <%= image_tag '/assets/logo-disenos-decarton.png', alt: 'Logo Diseños de Cartón', class:'logo img-responsive'  %>
-      <% end %>
+
+      <div class="left">
+        <%= link_to root_path do %>
+          <%= image_tag '/assets/logo-disenos-decarton.png', alt: 'Logo Diseños de Cartón', class:'logo img-responsive'  %>
+        <% end %>
+        <% if current_user %>
+          <p class="greeting">Bienvenido(a), </p>
+            <p class="username">
+            <%= current_user.first_name %>
+            <%= current_user.last_name %>
+          </p>
+        <% end %>
+      </div>
     </div>
+
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

@@ -1,7 +1,14 @@
 <body class="<%= params[:controller] %> <%= params[:action] %>">
 
-  <%= form_for [@prospect, @request] do |f| %>
+  <% if @request.errors.any? %>
+    <ul>
+      <% @request.errors.full_messages.each do |msg| %>
+       <span><%= msg %></span>
+      <% end %>
+    </ul>
+  <% end %>
 
+  <%= form_for [@prospect, @request] do |f| %>
     <div class="field">
       <p>
         <%= f.label :¿qué_desea_cotizar? %>

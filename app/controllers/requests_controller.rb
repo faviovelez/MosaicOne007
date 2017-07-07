@@ -1,6 +1,6 @@
 class RequestsController < ApplicationController
 # Este controller solo debe manejar la creación y modificación de requests individuales por la tienda, managers y designers
-  before_action :set_request, only: [:show, :edit, :update, :destroy, :manager, :confirm, :confirm_view, :price]
+  before_action :set_request, only: [:show, :edit, :update, :destroy, :manager, :manager_view, :confirm, :confirm_view, :price]
 
   # GET /requests
   # GET /requests.json
@@ -15,6 +15,9 @@ class RequestsController < ApplicationController
   end
 
   def manager
+  end
+
+  def manager_view
   end
 
   def confirm
@@ -63,15 +66,22 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1.json
   def update
     request_has_design?
-    assign_to_current_user
-    respond_to do |format|
+    if current_user.role.name == 'store'
+      respond_to do |format|
+        if @request.update(request_params)
+          save_document
+          validate_authorisation
+          save_status
+          save_document_identifier_field
+          format.html { redirect_to @request, notice: 'La solicitud de cotización fue modificada exitosamente.' }
+        end
+      end
+    elsif current_user.role.name == 'manager'
       if @request.update(request_params)
-        save_document
-        validate_authorisation
-        save_status
-        save_document_identifier_field
-        format.html { redirect_to @request, notice: 'La solicitud de cotización fue modificada exitosamente.' }
-      else
+        redirect_to manager_view_requests_path(@request), notice: "La solicitud fue asignada a #{current_user.first_name} #{current_user.last_name}"
+      end
+    else
+      respond_to do |format|
         format.html { render :edit }
         format.json { render json: @request.errors, status: :unprocessable_entity }
       end
@@ -170,6 +180,12 @@ class RequestsController < ApplicationController
     end
     if user_find == false
       @request.users << user
+    end
+  end
+
+  def assign_to_manager
+    if params[:asignar]
+      assign_to_current_user
     end
   end
 

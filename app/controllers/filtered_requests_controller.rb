@@ -47,10 +47,10 @@ class FilteredRequestsController < ApplicationController
   end
 
 # Método de managers y designers: muestra solicitudes o solicitudes de diseño asignadas al usuario logueado
-  def filter_requests_assigned_to_user(user = current_user)
-    if user.role.name == 'manager'
+  def filter_requests_assigned_to_user(user = current_user, role = current_user.role.name)
+    if role == 'manager'
       @assigned = user.requests.where.not('status' => ['creada','expirada','cancelada']).order(:created_at).order(:store_code)
-    elsif user.role.name == 'designer'
+    elsif role == 'designer'
       @assigned = user.design_requests.where.not('status' => ['concluida','expirada','cancelada']).order(:created_at).order(:store_code)
     end
       @assigned
@@ -71,7 +71,8 @@ class FilteredRequestsController < ApplicationController
       requests = DesignRequest.where.not('status' => ['concluida','expirada','cancelada'])
       assigned = DesignRequest.where.not('status' => ['concluida','expirada','cancelada']).joins(user: :role).where('roles.name' => (role))
     end
-    @unassigned = (requests - assigned).order(:created_at).order(:store_code)
+    unassigned = (requests - assigned)
+    @unassigned = unassigned.sort_by{ |key| key["created_at"] }
     @unassigned
   end
 
