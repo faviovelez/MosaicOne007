@@ -14,7 +14,7 @@
     <% else %>
     <% end %>
 
-    <div class="field">
+    <div class="field authorised_without_doc">
       <%= f.label :autorizar_sin_documento_firmado %>
       <%= f.check_box(:authorised_without_doc, checked_value: '1', unchecked_value: '0') %>
     </div>
@@ -31,7 +31,7 @@
   <% else %>
   <% end %>
 
-    <div class="field">
+    <div class="field authorised_without_pay">
       <%= f.label :autorizar_sin_ficha_de_depósito %>
       <%= f.check_box(:authorised_without_pay, checked_value: '1', unchecked_value: '0') %>
     </div>

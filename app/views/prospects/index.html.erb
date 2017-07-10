@@ -15,7 +15,9 @@
       <td> <%= prospect.prospect_type %> </td>
       <td> <%= link_to 'ver prospecto', prospect_path(prospect) %> </td>
       <td> <%= link_to 'crear cotización', new_prospect_request_path(prospect) %> </td>
-
+      <% if prospect.requests.count >= 1 %>
+        <td> <%= link_to 'ver cotizaciones', prospect_requests_path(prospect) %> </td>
+      <% end %>
     </tr>
   </tbody>
 </table>

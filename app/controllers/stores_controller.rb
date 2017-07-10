@@ -1,5 +1,7 @@
 class StoresController < ApplicationController
   before_action :set_store, only: [:show, :new, :create, :update]
+  before_action :authenticate_user!
+  before_action :require_permission, only: :new
 
   def index
   end
@@ -61,5 +63,10 @@ private
     params.require(:store).permit(:store_type, :store_code, :store_name, :group, :discount)
   end
 
+  def require_permission(role = current_user.role.name)
+    if role != 'guard'
+      redirect_to root_path
+    end
+  end
 
 end

@@ -4,7 +4,7 @@ class FilteredRequestsController < ApplicationController
     filter_store_active_requests
   end
 
-  def cancelled_view
+  def inactive_view
     filter_store_inactive_requests
   end
 

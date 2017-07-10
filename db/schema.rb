@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170707222445) do
+ActiveRecord::Schema.define(version: 20170709162255) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -341,6 +341,7 @@ ActiveRecord::Schema.define(version: 20170707222445) do
     t.string   "boxes_stow"
     t.string   "specification"
     t.string   "what_measures"
+    t.boolean  "specification_document"
   end
 
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree

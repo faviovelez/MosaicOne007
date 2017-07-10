@@ -23,7 +23,7 @@ $(".requests.new").ready(function() {
       $(".resistance.main.caja").removeClass('hidden');
       $(".resistance.secondary.caja").removeClass('hidden');
       $(".resistance.third.caja").removeClass('hidden');
-
+      $("#field_design").addClass('hidden');
 
     } else if (productType == 'caja') {
       $(".caja").removeClass('hidden');
@@ -39,6 +39,7 @@ $(".requests.new").ready(function() {
       $(".resistance.main.bolsa").addClass('hidden');
       $(".resistance.secondary.bolsa").addClass('hidden');
       $(".resistance.third.bolsa").addClass('hidden');
+      $("#field_design").removeClass('hidden');
 
     } else if (productType == 'bolsa') {
       counter -=1;
@@ -49,6 +50,7 @@ $(".requests.new").ready(function() {
       $(".caja").addClass('hidden');
       $(".exhibidor").addClass('hidden');
       $(".resistance.main.caja").addClass('hidden');
+      $("#field_design").addClass('hidden');
 
     } else if (productType == 'exhibidor') {
       counter -=1;
@@ -59,6 +61,7 @@ $(".requests.new").ready(function() {
       $(".caja").addClass('hidden');
       $(".resistance.main.bolsa").addClass('hidden');
       $("#outer").addClass('hidden');
+      $("#field_design").addClass('hidden');
 
     } else if (productType == 'seleccione') {
       counter -=1;
@@ -70,6 +73,7 @@ $(".requests.new").ready(function() {
       $("#outer").addClass('hidden');
       $(".measures").addClass('hidden');
       $(".resistance.main.bolsa").addClass('hidden');
+      $("#field_design").addClass('hidden');
     };
 
   });
@@ -279,6 +283,19 @@ $(".requests.new").ready(function() {
       $("#resistencia_como").removeClass('hidden');
     } else if (search != 'buscar') {
       $("#resistencia_como").addClass('hidden');
+    };
+  });
+/* Este método esconde o muestra el checkbox de autorizaciones manuales */
+  var authorisation = $('#request_authorisation_signed');
+  var paymentUploaded = $('#request_payment_uploaded');
+  authorisation.bind('change', function() {
+    if (authorisation != '' ){
+      $('.authorised_without_doc').addClass('hidden');
+    };
+  });
+  paymentUploaded.bind('change', function() {
+    if (paymentUploaded != '' ){
+    $('.authorised_without_pay').addClass('hidden');
     };
   });
 

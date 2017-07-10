@@ -2,8 +2,12 @@
 
 <%= link_to 'nueva cotización', new_prospect_request_path(@prospect) %>
 
-<%= link_to 'ver cotizaciones', prospect_requests_path(@prospect) %>
+<% if @prospect.requests.count >= 1 %>
+  <%= link_to 'ver cotizaciones', prospect_requests_path(@prospect) %>
+<% end %>
 
-<%= link_to 'ver lista de prospectos', store_prospects_path(@prospect.store) %>
+<% if @prospect.store.prospects.count >= 1 %>
+  <%= link_to 'ver lista de prospectos', store_prospects_path(@prospect.store) %>
+<% end %>
 
 <%= link_to 'inicio', store_path(@prospect.store) %>

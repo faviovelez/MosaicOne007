@@ -157,7 +157,12 @@
         <%= f.text_field :tray_width %>
         cm
       </div>
-    </div>
+
+      <div class="field">
+        <%= f.label :número_de_divisiones_de_las_charolas %>
+        <%= f.text_field :tray_divisions %>
+      </div>
+  </div>
 
     <div class="field">
       <%= f.label :material_principal %>
@@ -374,7 +379,7 @@
       <%= f.text_field :maximum_sales_price %>
     </div>
 
-    <div class="field">
+    <div id="field_design" class="field hidden">
       <%= f.label :tipo_de_armado %>
       <%= f.select :design_like, options_for_select([['Seleccione', ''], ['Muñeca'], ['Regalo'], ['Regalo con ventana'], ['Lonchera'], ['Caja regular CR'], ['Maletín'], ['Cierre automático'], ['Medicina o perfume'], [' Pizza'], ['Sugerir armado']]) %>
     </div>
@@ -396,7 +401,7 @@
 
     <div class="actions">
       <%= f.submit :enviar_cotización, name: 'enviar'%>
-      <% if params[:action] == 'new' %>
+      <% unless @request.status == 'creada' %>
         <%= f.submit :guardar_para_después, name: 'guardar'%>
       <% end %>
     </div>

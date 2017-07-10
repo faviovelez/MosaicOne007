@@ -1,6 +1,7 @@
 class RequestsController < ApplicationController
 # Este controller solo debe manejar la creación y modificación de requests individuales por la tienda, managers y designers
   before_action :set_request, only: [:show, :edit, :update, :destroy, :manager, :manager_view, :confirm, :confirm_view, :price]
+  before_action :get_documents, only: [:show, :confirm, :confirm_view, :manager, :manager_view]
 
   # GET /requests
   # GET /requests.json
@@ -22,11 +23,9 @@ class RequestsController < ApplicationController
 
   def confirm
     check_authorisation
-    get_documents
   end
 
   def confirm_view
-    get_documents
   end
 
   def price
@@ -40,12 +39,14 @@ class RequestsController < ApplicationController
 
   # GET /requests/1/edit
   def edit
+    debugger
   end
 
   # POST /requests
   # POST /requests.json
   def create
     @request = Request.new(request_params)
+    debugger
     if params[:request][:how_many] == ''
       @request.how_many = nil
     end
@@ -55,6 +56,7 @@ class RequestsController < ApplicationController
     save_store_request
     save_prospect_to_request
     save_status
+    save_document_identifier_field
     respond_to do |format|
       if @request.save
         format.html { redirect_to @request, notice: 'La solicitud de cotización fue generada exitosamente.' }
@@ -103,12 +105,15 @@ class RequestsController < ApplicationController
         format.html { redirect_to requests_url, notice: 'La solicitud de cotización fue eliminada correctamente.' }
         format.json { head :no_content }
       end
+    else
+      rediret_to root_path, notice: 'Solo el usuario que creó esta solicitud o el administrador de tienda pueden borrar esta solicitud'
     end
   end
 
   def get_documents
-    @payment = Document.where(document_type: 'pago').find_by_request_id(@request)
-    @authorisation = Document.where(document_type: 'pedido').find_by_request_id(@request)
+    @payment = @request.documents.where(document_type: 'pago')
+    @authorisation = @request.documents.where(document_type: 'pedido')
+    @specifications = @request.documents.where(document_type: 'especificación')
   end
 
   def days_since
@@ -213,16 +218,20 @@ class RequestsController < ApplicationController
   def save_document_identifier_field
     search_document_in_request
     if @find_payment == true
-        @request.update(payment_uploaded: true)
+      @request.update(payment_uploaded: true)
     end
     if @find_authorisation == true
       @request.update(authorisation_signed: true)
+    end
+    if @find_specification == true
+      @request.update(specification_document: true)
     end
   end
 
   def search_document_in_request
     @find_payment = false
     @find_authorisation = false
+    @find_specification = false
     @request.documents.each do |document|
       if (document.document_type == 'pago')
         @find_payment = true
@@ -230,8 +239,10 @@ class RequestsController < ApplicationController
       if (document.document_type == 'pedido')
         @find_authorisation = true
       end
+      if (document.document_type == 'especificación')
+        @find_specification = true
+      end
     end
-
   end
 
   def validate_authorisation
@@ -354,11 +365,13 @@ class RequestsController < ApplicationController
        :tray_quantity,
        :tray_length,
        :tray_width,
+       :tray_divisions,
        :contraencolado,
        :how_many,
        :authorised_without_pay,
        :authorised_without_doc,
        :specification,
-       :what_measures)
+       :what_measures,
+       :specification_document)
     end
 end

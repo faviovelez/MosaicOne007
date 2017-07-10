@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
   get 'filtered_requests/current_view'
 
-  get 'filtered_requests/canceled_view'
+  get 'filtered_requests/inactive_view'
 
   get 'filtered_requests/saved_view'
 
@@ -49,6 +49,8 @@ Rails.application.routes.draw do
   resources :design_requests
 
   resources :billing_addresses
+
+  resources :documents
 
   get 'requests/confirm/:id', to: 'requests#confirm', as: 'confirm_requests'
 

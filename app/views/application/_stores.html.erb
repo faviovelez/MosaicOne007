@@ -1,4 +1,16 @@
-<p id="notice"><%= notice %></p>
+<% if params[:action] == 'current_view' %>
+  <% @object = @store_active %>
+<% elsif params[:action] == 'inactive_view' %>
+  <% @object = @store_inactive %>
+<% elsif params[:action] == 'saved_view' %>
+  <% @object = @store_saved %>
+<% elsif params[:action] == 'index' %>
+  <% @object = @requests %>
+<% end %>
+
+  <p id="notice"><%= notice %></p>
+
+<% @object.each do |request| %>
 
     <table>
       <thead>
@@ -18,7 +30,7 @@
           <td><%= request.quantity %></td>
           <td>
             <% if request.product_type == 'otro'%>
-              <%= request.name_type %>s
+              <%= request.name_type %>
             <% elsif request.product_type != 'otro'%>
               <%= request.product_type %>
             <% end %>

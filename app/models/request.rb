@@ -8,16 +8,28 @@ class Request < ActiveRecord::Base
   has_one :order
   has_many :request_users
 
-  validates :quantity, numericality: { only_integer: true, message: "%{value} No es una cantidad válida, solo se aceptan enteros." }
-  validates :product_weight, numericality: true, allow_nil: true
-  validate :fill_name_type
-  validate :quantity_present
-  validate :material_and_resistance_presence
-  validate :product_type_presence
-  validate :outer_or_inner_fields, unless: :product_complete
-  validate :resistance_sugestion, unless: :product_complete
-  validate :measures_suggestion, unless: :product_complete
-  validate :impression_fields_complete, if: :impression_selected
+  validates :quantity, on: :create, numericality: { only_integer: true, message: "%{value} No es una cantidad válida, solo se aceptan enteros." }
+  validates :product_weight, numericality: true, allow_nil: true, on: :create
+  validates :design_like, presence: { message: 'Elija el tipo de armado o sugerir armado.', unless: :product_type_is_not_box}
+  validate :delivery_date_future
+  validate :fill_name_type, on: :create
+  validate :quantity_present, on: :create
+  validate :material_and_resistance_presence, on: :create
+  validate :product_type_presence, on: :create
+  validate :outer_inner_bag_or_exhibitor_fields, on: :create
+  validate :resistance_suggestion, on: :create
+  validate :measures_suggestion, on: :create
+  validate :impression_fields_complete, if: :impression_selected, on: :create
+
+  def delivery_date_future
+    if delivery_date.present? && delivery_date < Date.today
+      errors[:base] << "La fecha no puede estar en el pasado."
+    end
+  end
+
+  def product_type_is_not_box
+    product_type != 'caja'
+  end
 
   def fill_name_type
     if name_type.blank?
@@ -25,9 +37,11 @@ class Request < ActiveRecord::Base
     end
   end
 
-  def resistance_sugestion
-    if (resistance_main_material == 'Sugerir resistencia' || main_material == 'sugerir material')
-      errors[:base] << "Para sugerir el material o resistencia, llene todos los campos del producto."
+  def resistance_suggestion
+    if (main_material == 'sugerir material' || resistance_main_material == 'Sugerir resistencia')
+      unless field_type_complete || product_complete
+        errors[:base] << "Para sugerir el material o resistencia, llene todos los campos del producto."
+      end
     end
   end
 
@@ -58,28 +72,56 @@ class Request < ActiveRecord::Base
     errors[:base] << "El tipo de producto no puede ir vacío." if product_type.blank?
   end
 
-  def outer_or_inner_fields
-    outer_fields = [outer_length, outer_widht, outer_height]
-    inner_fields = [inner_length, inner_width, inner_height]
-    unless (outer_fields.all? || inner_fields.all?)
-      errors[:base] << "Es necesario llenar todas las medidas o los detalles del producto."
+  def field_type_complete
+    if product_type == 'exhibidor'
+      exhibitor_fields = [exhibitor_height, tray_quantity, tray_length, tray_width, tray_divisions]
+      exhibitor_fields.all?
+    elsif product_type == 'bolsa'
+      bag_fields = [bag_length, bag_width, bag_height]
+      bag_fields.all?
+    elsif product_type == 'caja' || product_type == 'otro'
+      outer_fields = [outer_length, outer_widht, outer_height]
+      inner_fields = [inner_length, inner_width, inner_height]
+      outer_fields.all? || inner_fields.all?
+    end
+  end
+
+  def outer_inner_bag_or_exhibitor_fields
+    if product_type == 'exhibidor'
+      exhibitor_fields = [exhibitor_height, tray_quantity, tray_length, tray_width, tray_divisions]
+      unless exhibitor_fields.all? || product_complete
+        errors[:base] << "Es necesario llenar todas las especificaciones del exhibidor."
+      end
+    elsif product_type == 'bolsa'
+      bag_fields = [bag_length, bag_width, bag_height]
+      unless bag_fields.all? || product_complete
+        errors[:base] << "Es necesario llenar todas las especificaciones de la bolsa."
+      end
+    elsif product_type == 'caja' || product_type == 'otro'
+      outer_fields = [outer_length, outer_widht, outer_height]
+      inner_fields = [inner_length, inner_width, inner_height]
+      unless outer_fields.all? || inner_fields.all? || product_complete
+        errors[:base] << "Es necesario llenar todas las medidas o los detalles del producto."
+      end
     end
   end
 
   def measures_suggestion
     if what_measures == 'sugerir medidas'
-      errors[:base] << "Es necesario llenar todas las medidas o los detalles del producto."
+      errors[:base] << "Es necesario llenar todas las medidas o los detalles del producto." unless product_complete
     end
   end
 
   def product_complete
-    product_fields = []
-    if ((resistance_main_material == 'Sugerir resistencia' || main_material == 'sugerir material') && product_type == 'caja')
-      product_fields = [product_what, how_many, product_length, product_width, product_height, for_what, boxes_stow]
-    else
-      product_fields = [product_what, how_many, product_length, product_width, product_height]
+    @product_fields = []
+    if resistance_main_material == 'Sugerir resistencia' || main_material == 'sugerir material'
+      if product_type == 'caja'
+        @product_fields = [product_what, how_many, product_weight, for_what, boxes_stow]
+      else
+        @product_fields = [product_what, how_many, product_weight]
+      end
+    @product_fields.all?
     end
-    product_fields.all?
   end
 
   def impression_fields_complete
