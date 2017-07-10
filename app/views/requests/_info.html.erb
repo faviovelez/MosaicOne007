@@ -1,110 +1,11 @@
 
+  <h3>Datos generales</h3>
   <p><strong>tipo de producto: </strong>
     <%= @request.product_type %>
   </p>
 
   <p><strong>cantidad: </strong>
     <%= @request.quantity  %>
-  </p>
-
-  <p><strong>tipo de producto: </strong>
-    <%= @request.product_what %>
-  </p>
-
-  <p><strong>largo: </strong>
-    <%= @request.product_length %>
-  </p>
-
-  <p><strong>ancho: </strong>
-    <%= @request.product_width %>
-  </p>
-
-  <p><strong>alto: </strong>
-    <%= @request.product_height %>
-  </p>
-
-  <p><strong>peso: </strong>
-    <%= @request.product_weight %>
-  </p>
-
-  <p><strong>cajas para: </strong>
-    <%= @request.for_what %>
-  </p>
-
-  <p><strong>estiba: </strong>
-    <%= @request.boxes_stow %>
-  </p>
-
-  <p><strong>largo: </strong>
-    <%= @request.inner_length %>
-  </p>
-
-  <p><strong>ancho: </strong>
-    <%= @request.inner_width %>
-  </p>
-
-  <p><strong>alto: </strong>
-    <%= @request.inner_height %>
-  </p>
-
-  <p><strong>largo: </strong>
-    <%= @request.outer_length %>
-  </p>
-
-  <p><strong>ancho: </strong>
-    <%= @request.outer_widht %>
-  </p>
-
-  <p><strong>alto: </strong>
-    <%= @request.outer_height %>
-  </p>
-
-  <p><strong>largo: </strong>
-    <%= @request.bag_length %>
-  </p>
-
-  <p><strong>ancho: </strong>
-    <%= @request.bag_width %>
-  </p>
-
-  <p><strong>alto: </strong>
-    <%= @request.bag_height %>
-  </p>
-
-  <p><strong>tipo de cartón:</strong>
-    <%= @request.main_material %>
-  </p>
-
-  <p><strong>resistencia: </strong>
-    <%= @request.resistance_main_material %>
-  </p>
-
-  <p><strong>otro material: </strong>
-    <%= @request.secondary_material %>
-  </p>
-
-  <p><strong>resistencia de segundo material: </strong>
-    <%= @request.resistance_secondary_material %>
-  </p>
-
-  <p><strong>material adicional: </strong>
-    <%= @request.third_material %>
-  </p>
-
-  <p><strong>resistencia de material adicional: </strong>
-    <%= @request.resistance_third_material %>
-  </p>
-
-  <p><strong>impresión: </strong>
-    <%= @request.impression %>
-  </p>
-
-  <p>
-    <%= @request.inks %> tintas
-  </p>
-
-  <p><strong>acabado:</strong>
-    <%= @request.impression_finishing %>
   </p>
 
   <p><strong>fecha compromiso: </strong>
@@ -119,50 +20,232 @@
     </span>
   </p>
 
-  <p><strong>observaciones: </strong>
-    <span class="comments">
-      <%= @request.observations %>
-    </span>
+  <% if @request.product_type != 'exhibidor' %>
+    <h3>datos del producto que irá dentro</h2>
+  <% elsif @request.product_type == 'exhibidor' %>
+    <h3>datos del producto a exhibir </h2>
+  <% end %>
+
+  <p><strong>tipo de producto: </strong>
+    <%= @request.product_what %>
   </p>
 
-<p>NOTA: ESTOS CAMPOS NOOOOOOO</p>
-
-  <p><strong>cantidad final: </strong>
-    <%= @request.final_quantity %>
+  <p><strong>largo: </strong>
+    <%= @request.product_length %> cm
   </p>
 
-  <p><strong>fecha de finalización de la producción: </strong>
-    <%= @request.date_finished %>
+  <p><strong>ancho: </strong>
+    <%= @request.product_width %> cm
   </p>
 
-  <p><strong>precio de venta: </strong>
-    <%= @request.sales_price %>
+  <p><strong>alto: </strong>
+    <%= @request.product_height %> cm
   </p>
 
-  <p> parte
-    <%= @request.impression_where %>
+  <p><strong>peso: </strong>
+    <%= @request.product_weight %> kg
   </p>
 
-  <p><strong>tipo de armado: </strong>
-    <%= @request.design_like %>
+  <% unless @request.product_type == 'caja' %>
+    <p><strong>cajas para: </strong>
+      <%= @request.for_what %>
+    </p>
+
+    <p><strong>estiba: </strong>
+      <%= @request.boxes_stow %>
+    </p>
+  <% end %>
+
+  <h3>detalles del material</h2>
+
+  <% if @request.product_type == 'bolsa' %>
+    <h4>medidas</h2>
+
+    <p><strong>largo: </strong>
+      <%= @request.bag_length %> cm
+    </p>
+
+    <p><strong>ancho: </strong>
+      <%= @request.bag_width %> cm
+    </p>
+
+    <p><strong>alto: </strong>
+      <%= @request.bag_height %> cm
+    </p>
+
+  <% elsif @request.product_type == 'exhibidor' %>
+    <h4>medidas</h2>
+
+    <p><strong>altura: </strong>
+      <%= @request.exhibitor_height %> cm
+    </p>
+
+    <p><strong>cantidad de charolas: </strong>
+      <%= @request.tray_quantity %> cm
+    </p>
+
+    <p><strong>largo de las charolas: </strong>
+      <%= @request.tray_length %> cm
+    </p>
+
+    <p><strong>ancho de las charolas: </strong>
+      <%= @request.tray_width %> cm
+    </p>
+
+  <% elsif @request.product_type == 'caja' || @request.product_type == 'otro' %>
+    <% if @request.what_measures == '1' %>
+      <h4>medidas externas</h2>
+
+      <p><strong>largo: </strong>
+        <%= @request.outer_length %> cm
+      </p>
+
+      <p><strong>ancho: </strong>
+        <%= @request.outer_widht %> cm
+      </p>
+
+      <p><strong>alto: </strong>
+        <%= @request.outer_height %> cm
+      </p>
+
+    <% elsif @request.what_measures == '2' %>
+      <h4>medidas internas</h2>
+
+      <p><strong>largo: </strong>
+        <%= @request.inner_length %> cm
+      </p>
+
+      <p><strong>ancho: </strong>
+        <%= @request.inner_width %> cm
+      </p>
+
+      <p><strong>alto: </strong>
+        <%= @request.inner_height %> cm
+      </p>
+
+    <% elsif @request.what_measures == '3' %>
+      <h4>medidas internas</h4>
+      <p><strong>largo: </strong>
+        <%= @request.inner_length %> cm
+      </p>
+
+      <p><strong>ancho: </strong>
+        <%= @request.inner_width %> cm
+      </p>
+
+      <p><strong>alto: </strong>
+        <%= @request.inner_height %> cm
+      </p>
+
+      <h4>medidas externas</h4>
+
+      <p><strong>largo: </strong>
+        <%= @request.outer_length %> cm
+      </p>
+
+      <p><strong>ancho: </strong>
+        <%= @request.outer_widht %> cm
+      </p>
+
+      <p><strong>alto: </strong>
+        <%= @request.outer_height %> cm
+      </p>
+    <% end %>
+  <% end %>
+
+  <p><strong>tipo de cartón:</strong>
+    <%= @request.main_material %>
   </p>
 
   <p><strong>resistencia: </strong>
-    <%= @request.resistance_like %>
+    <%= @request.resistance_main_material %>
   </p>
 
-  <p><strong>color de papel:</strong>
-    <%= @request.rigid_color %>
-  </p>
+  <% if @request.main_material == 'rígido' %>
+    <p><strong>color de papel:</strong>
+      <%= @request.rigid_color %>
+    </p>
 
-  <p><strong>tipo de papel: </strong>
-    <%= @request.paper_type_rigid %>
-  </p>
+    <p><strong>tipo de papel: </strong>
+      <%= @request.paper_type_rigid %>
+    </p>
 
-  <p><strong>color exterior (base): </strong>
-    <%= @request.exterior_material_color %>
-  </p>
+  <% else %>
+    <p><strong>color exterior (base): </strong>
+      <%= @request.exterior_material_color %>
+    </p>
 
-  <p><strong>color interior (base): </strong>
-    <%= @request.interior_material_color %>
-  </p>
+    <p><strong>color interior (base): </strong>
+      <%= @request.interior_material_color %>
+    </p>
+  <% end %>
+
+  <% unless @request.secondary_material.blank? %>
+    <p><strong>otro material: </strong>
+      <%= @request.secondary_material %>
+    </p>
+
+    <p><strong>resistencia de segundo material: </strong>
+      <%= @request.resistance_secondary_material %>
+    </p>
+  <% end %>
+
+  <% unless @request.third_material.blank? %>
+    <p><strong>material adicional: </strong>
+      <%= @request.third_material %>
+    </p>
+
+    <p><strong>resistencia de material adicional: </strong>
+      <%= @request.resistance_third_material %>
+    </p>
+  <% end %>
+
+  <% unless @request.impression.blank? %>
+    <p><strong> impresión en: </strong>
+      <%= @request.impression_where %>, a
+      <%= @request.inks %> tintas
+    </p>
+
+    <p><strong>acabado:</strong>
+      <%= @request.impression_finishing %>
+    </p>
+  <% end %>
+
+  <h3>información adicional</h3>
+
+  <% unless @request.design_like.blank? %>
+    <p><strong>tipo de armado: </strong>
+      <%= @request.design_like %>
+    </p>
+  <% end %>
+
+  <% unless @request.resistance_like.blank? %>
+    <p><strong>resistencia: </strong>
+      <%= @request.resistance_like %>
+    </p>
+  <% end %>
+
+  <% unless @request.observations.blank? %>
+    <p><strong>observaciones: </strong>
+      <span class="comments">
+        <%= @request.observations %>
+      </span>
+    </p>
+  <% end %>
+
+  <% unless @request.notes.blank? %>
+    <p><strong>dudas o anotaciones de quien cotiza: </strong>
+      <span class="comments">
+        <%= @request.notes %>
+      </span>
+    </p>
+  <% end %>
+
+  <% if @request.design_requests.count > 0 %>
+    <h3>solicitudes de diseño</h3>
+    <% @request.design_requests.each do |design_request| %>
+      <p><strong>tipo de solicitud:</strong><%= design_request.design_type %></p>
+      <p><strong>estatus:</strong><%= design_request.status %></p>
+      <p><%= link_to 'ver solicitud', design_request_path(design_request) %></p>
+    <% end %>
+  <% end %>

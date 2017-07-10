@@ -1,5 +1,6 @@
 var counter = 0;
 var actionForRequest = $(".requests.new") || $(".requests.edit")
+
 $(".requests.new").ready(function() {
 
 /* Este método esconde o muestra las opciones, dependiendo de la elección del tipo de producto, por ejepmlo: medidas externas, medidas de bolsa, medidas de exhibidor, etc. */
@@ -268,13 +269,13 @@ $(".requests.new").ready(function() {
     };
   });
 
-  $("#request_impression_si").click(function () {
-    $(".impression").removeClass('hidden');
-  });
+$("#request_impression_si").click(function () {
+  $(".impression").removeClass('hidden');
+});
 
-  $("#request_impression_no").click(function () {
-    $(".impression").addClass('hidden');
-  });
+$("#request_impression_no").click(function () {
+  $(".impression").addClass('hidden');
+});
 
 /* Este método esconde o muestra el buscador de resistencia, si elige buscar resistencia */
   $("#request_resistance_main_material").bind('change', function() {

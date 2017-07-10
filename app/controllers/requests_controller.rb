@@ -39,7 +39,6 @@ class RequestsController < ApplicationController
 
   # GET /requests/1/edit
   def edit
-    debugger
   end
 
   # POST /requests

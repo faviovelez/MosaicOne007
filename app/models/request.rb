@@ -11,6 +11,7 @@ class Request < ActiveRecord::Base
   validates :quantity, on: :create, numericality: { only_integer: true, message: "%{value} No es una cantidad válida, solo se aceptan enteros." }
   validates :product_weight, numericality: true, allow_nil: true, on: :create
   validates :design_like, presence: { message: 'Elija el tipo de armado o sugerir armado.', unless: :product_type_is_not_box}
+  validates :what_measures, presence: { message: 'Debe seleccionar qué medidas ingresará.' }
   validate :delivery_date_future
   validate :fill_name_type, on: :create
   validate :quantity_present, on: :create

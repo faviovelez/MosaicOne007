@@ -3,10 +3,11 @@
   <%= render 'request_errors' %>
 
   <%= form_for [@prospect, @request] do |f| %>
+
     <div class="field">
       <p>
         <%= f.label :¿qué_desea_cotizar? %>
-        <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja'], ['bolsa'], ['exhibidor'], ['otro']]) %>
+        <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja'], ['bolsa'], ['exhibidor'], ['otro']], selected: @request.product_type) %>
         <div class="field otro hidden">
           <%= f.label :¿cuál? %>
           <%= f.text_field :name_type %>
@@ -60,18 +61,18 @@
     <div class="caja hidden">
       <div class="field">
         <%= f.label :¿las_cajas_son_para_almacenar_o_transportar? %>
-        <%= f.select :for_what, options_for_select([['seleccione', ''], ['sin información'], ['almacenar'], ['transportar']]) %>
+        <%= f.select :for_what, options_for_select([['seleccione', ''], ['sin información'], ['almacenar'], ['transportar']], selected: @request.for_what) %>
       </div>
 
       <div class="field">
         <%= f.label :¿cuántas_cajas_se_van_a_estibar? %>
-        <%= f.select :boxes_stow, options_for_select([['Seleccione', ''], ['ninguna'], ['sin información'], ['1 - 3'], ['4 - 6'], ['7 - 9'], ['10 o más']]) %>
+        <%= f.select :boxes_stow, options_for_select([['Seleccione', ''], ['ninguna'], ['sin información'], ['1 - 3'], ['4 - 6'], ['7 - 9'], ['10 o más']], selected: @request.boxes_stow) %>
       </div>
     </div>
 
     <div class="measures field hidden">
       <%= f.label :¿qué_medidas_ingresará? %>
-      <%= f.select :what_measures, options_for_select([['seleccione', ''], ['sugerir medidas', '4'], ['medidas internas', '2'], ['ambas', '3']], class: 'medidas') %>
+      <%= f.select :what_measures, options_for_select([['seleccione', ''], ['sugerir medidas', '4'], ['medidas internas', '2'], ['ambas', '3']], selected: @request.what_measures, class: 'medidas') %>
     </div>
 
     <div id="outer" class="hidden" >
@@ -179,7 +180,7 @@
       ['rígido', class: "resistance main caja"],
       ['papel kraft', class: "resistance main bolsa"],
       ['papel bond', class: "resistance main bolsa"],
-      ['sugerir material']]) %>
+      ['sugerir material']], selected: @request.main_material) %>
     </div>
 
     <div class="field main">
@@ -213,7 +214,7 @@
       ["28kg - 61 ECT", class: 'main doble_corrugado hidden'],
       ["35kg - 71 ECT", class: 'main doble_corrugado hidden'],
       ["42kg - 82 ECT", class: 'main doble_corrugado hidden'],
-      ["Sugerir resistencia"]]) %>
+      ["Sugerir resistencia"]], selected: @request.resistance_main_material) %>
     </div>
 
     <button type="button" name="button" class="btn btn-primary" id="agregar_material">Agregar material</button>
@@ -233,7 +234,7 @@
       ['rígido', class: "resistance secondary caja"],
       ['papel arroz', class: "resistance secondary bolsa"],
       ['celofán', class: "resistance secondary bolsa"],
-      ['sugerir material']]) %>
+      ['sugerir material']], selected: @request.secondary_material) %>
     </div>
 
     <div class="field secondary hidden">
@@ -266,7 +267,7 @@
       ["28kg - 61 ECT", class: 'secondary doble_corrugado hidden'],
       ["35kg - 71 ECT", class: 'secondary doble_corrugado hidden'],
       ["42kg - 82 ECT", class: 'secondary doble_corrugado hidden'],
-      ["Sugerir resistencia"]]) %>
+      ["Sugerir resistencia"]], selected: @request.resistance_secondary_material) %>
     </div>
 
     <div class="field third hidden">
@@ -285,7 +286,7 @@
       ['papel arroz', class: "resistance third bolsa"],
       ['celofán', class: "resistance third bolsa"],
       ['papel bond', class: "resistance main bolsa"],
-      ['sugerir material']]) %>
+      ['sugerir material']], selected: @request.third_material) %>
     </div>
 
     <div class="field third hidden">
@@ -319,17 +320,17 @@
       ["28kg - 61 ECT", class: 'third doble_corrugado hidden'],
       ["35kg - 71 ECT", class: 'third doble_corrugado hidden'],
       ["42kg - 82 ECT", class: 'third doble_corrugado hidden'],
-      ["Sugerir resistencia"]]) %>
+      ["Sugerir resistencia"]], selected: @request.resistance_third_material) %>
     </div>
 
     <div class="field">
       <%= f.label :color_exterior_del_cartón %>
-      <%= f.select :exterior_material_color, options_for_select(['kraft', 'bond']) %>
+      <%= f.select :exterior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.exterior_material_color) %>
     </div>
 
     <div class="field">
       <%= f.label :color_interior_del_cartón %>
-      <%= f.select :interior_material_color, options_for_select(['kraft', 'bond']) %>
+      <%= f.select :interior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.interior_material_color) %>
     </div>
 
     <div class="rigid hidden">
@@ -345,27 +346,32 @@
     </div>
 
     <div class="field">
+      <% @value = false %>
+      <% if @request.impression == 'si' %>
+        <% @value = true %>
+      <% end %>
       <%= f.label :¿lleva_impresión? %>
       <%= label :impression, 'Sí' %>
-      <%= f.radio_button :impression, 'si', value: 'si' %>
+      <p class="hidden" id="impression_value"><%=@request.impression%></p>
+      <%= f.radio_button :impression, 'si', value: 'si', checked: @value %>
       <%= label :impression, 'No' %>
-      <%= f.radio_button :impression, 'no', value: 'no', checked: true %>
+      <%= f.radio_button :impression, 'no', value: 'no', checked: !@value %>
     </div>
 
     <div class="impression hidden">
       <div class="field">
         <%= f.label :cantidad_de_tintas %>
-        <%= f.select :inks, options_for_select([['Seleccione', ''], ['1'], ['2'], ['3'], ['4 o más']])  %>
+        <%= f.select :inks, options_for_select([['Seleccione', ''], ['1'], ['2'], ['3'], ['4 o más']], selected: @request.inks)  %>
       </div>
 
       <div class="field">
         <%= f.label :¿la_impresión_lleva_algún_acabado? %>
-        <%= f.select :impression_finishing, options_for_select([['Seleccione', ''], ['Sin acabados'], ['Barniz de máquina'], ['Barniz UV'], ['Plastificado mate'], ['Plastificado brillante'], ['Hot stamping']]) %>
+        <%= f.select :impression_finishing, options_for_select([['Seleccione', ''], ['Sin acabados'], ['Barniz de máquina'], ['Barniz UV'], ['Plastificado mate'], ['Plastificado brillante'], ['Hot stamping']], selected: @request.impression_finishing) %>
       </div>
 
       <div class="field">
         <%= f.label :en_qué_parte_va_la_impresión? %>
-        <%= f.select :impression_where, options_for_select([['seleccione', ''], ['exterior'], ['interior'], ['interior y exterior']]) %>
+        <%= f.select :impression_where, options_for_select([['seleccione', ''], ['exterior'], ['interior'], ['interior y exterior']], selected: @request.impression_where) %>
       </div>
     </div>
 
@@ -381,7 +387,7 @@
 
     <div id="field_design" class="field hidden">
       <%= f.label :tipo_de_armado %>
-      <%= f.select :design_like, options_for_select([['Seleccione', ''], ['Muñeca'], ['Regalo'], ['Regalo con ventana'], ['Lonchera'], ['Caja regular CR'], ['Maletín'], ['Cierre automático'], ['Medicina o perfume'], [' Pizza'], ['Sugerir armado']]) %>
+      <%= f.select :design_like, options_for_select([['Seleccione', ''], ['Muñeca'], ['Regalo'], ['Regalo con ventana'], ['Lonchera'], ['Caja regular CR'], ['Maletín'], ['Cierre automático'], ['Medicina o perfume'], [' Pizza'], ['Sugerir armado']], selected: @request.design_like) %>
     </div>
 
     <div class="field hidden" id="resistencia_como">
