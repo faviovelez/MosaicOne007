@@ -1,6 +1,6 @@
 class StoresController < ApplicationController
-  before_action :set_store, only: [:show, :new, :create, :update]
   before_action :authenticate_user!
+  before_action :set_store, only: [:show, :new, :create, :update]
   before_action :require_permission, only: :new
 
   def index

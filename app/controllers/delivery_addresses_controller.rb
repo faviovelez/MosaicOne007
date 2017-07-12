@@ -1,4 +1,5 @@
 class DeliveryAddressesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_delivery_address, only: [:show, :edit, :update, :destroy]
   before_action :identify_owner_type, only: [:new, :create, :update]
 

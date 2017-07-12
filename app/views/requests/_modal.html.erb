@@ -1,0 +1,25 @@
+<!-- Begin of Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <% if @request.status == 'cancelada' %>
+          <h4 class="modal-title" id="myModalLabel">Reactivar solicitud</h4>
+        <% else %>
+          <h4 class="modal-title" id="myModalLabel">¿Estás seguro que deseas cancelar esta solicitud?</h4>
+        <% end %>
+      </div>
+      <div class="modal-body">
+        <% if @request.status != 'cancelada' %>
+          <%= render 'cancel' %>
+        <% else %>
+          <%= render 'reactivate' %>
+        <% end %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" type="button" data-dismiss="modal" aria-label="Close">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of Modal -->

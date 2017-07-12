@@ -1,8 +1,7 @@
-var counter = 0;
 var actionForRequest = $(".requests.new") || $(".requests.edit")
 
-$(".requests.new").ready(function() {
-
+actionForRequest.ready(function() {
+  
 /* Este método esconde o muestra las opciones, dependiendo de la elección del tipo de producto, por ejepmlo: medidas externas, medidas de bolsa, medidas de exhibidor, etc. */
   $("#request_product_type").bind('change', function() {
     var productType = $(this).val();
@@ -10,11 +9,10 @@ $(".requests.new").ready(function() {
     if (productType == 'otro') {
       $(".otro").removeClass('hidden');
       $(".measures").removeClass('hidden');
-      if (counter == 0) {
-        $("#request_what_measures").append('<option value="1" selected="selected" class="new">medidas externas</option>');
-        counter +=1;
-        $("#outer").removeClass('hidden');
+      if (actionForRequest == $(".requests.new")) {
+        $("#request_what_measures").append('<option value="1" selected="selected" class="new_option">medidas externas</option>');
       };
+      $("#outer").removeClass('hidden');
       $(".caja").addClass('hidden');
       $(".bolsa").addClass('hidden');
       $(".exhibidor").addClass('hidden');
@@ -29,11 +27,10 @@ $(".requests.new").ready(function() {
     } else if (productType == 'caja') {
       $(".caja").removeClass('hidden');
       $(".measures").removeClass('hidden');
-      if (counter == 0) {
-        $("#request_what_measures").append('<option value="1" selected="selected" class="new">medidas externas</option>');
-        counter +=1;
-        $("#outer").removeClass('hidden');
+      if (actionForRequest == $(".requests.new")) {
+        $("#request_what_measures").append('<option value="1" selected="selected" class="new_option">medidas externas</option>');
       };
+      $("#outer").removeClass('hidden');
       $(".otro").addClass('hidden');
       $(".bolsa").addClass('hidden');
       $(".exhibidor").addClass('hidden');
@@ -43,7 +40,11 @@ $(".requests.new").ready(function() {
       $("#field_design").removeClass('hidden');
 
     } else if (productType == 'bolsa') {
-      counter -=1;
+      if (actionForRequest == $(".requests.edit")) {
+        $('.new_option').detach();
+      } else {
+        $('.new_option').remove();
+      };
       $(".bolsa").removeClass('hidden');
       $(".measures").addClass('hidden');
       $(".otro").addClass('hidden');
@@ -54,7 +55,11 @@ $(".requests.new").ready(function() {
       $("#field_design").addClass('hidden');
 
     } else if (productType == 'exhibidor') {
-      counter -=1;
+      if (actionForRequest == $(".requests.edit")) {
+        $('.new_option').detach();
+      } else {
+        $('.new_option').remove();
+      };
       $(".exhibidor").removeClass('hidden');
       $(".measures").addClass('hidden');
       $(".otro").addClass('hidden');
@@ -65,7 +70,11 @@ $(".requests.new").ready(function() {
       $("#field_design").addClass('hidden');
 
     } else if (productType == 'seleccione') {
-      counter -=1;
+      if (actionForRequest == $(".requests.edit")) {
+        $('.new_option').detach();
+      } else {
+        $('.new_option').remove();
+      };
       $(".otro").addClass('hidden');
       $(".measures").addClass('hidden');
       $(".bolsa").addClass('hidden');

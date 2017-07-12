@@ -1,0 +1,13 @@
+<% if current_user.role.name == 'manager' %>
+  <% unless params[:action] == 'unassigned_view' %>
+    <%= link_to 'solicitudes sin asignar', filtered_requests_unassigned_view_path %>
+  <% end %>
+
+  <% unless params[:action] == 'assigned_view' %>
+    <%= link_to 'solicitudes asignadas', filtered_requests_assigned_view_path %>
+  <% end %>
+
+  <% unless params[:action] == 'other_users_view' %>
+    <%= link_to 'solicitudes asignadas a otros', filtered_requests_other_users_view_path %>
+  <% end %>
+<% end %>

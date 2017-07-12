@@ -1,8 +1,8 @@
 class RequestsController < ApplicationController
 # Este controller solo debe manejar la creación y modificación de requests individuales por la tienda, managers y designers
-  before_action :set_request, only: [:show, :edit, :update, :destroy, :manager, :manager_view, :confirm, :confirm_view, :price]
-  before_action :get_documents, only: [:show, :confirm, :confirm_view, :manager, :manager_view]
-
+  before_action :authenticate_user!
+  before_action :set_request, only: [:show, :edit, :update, :destroy, :check_assigned, :manager, :manager_view, :confirm, :confirm_view, :price]
+  before_action :get_documents, only: [:edit, :show, :confirm, :confirm_view, :manager, :manager_view]
   # GET /requests
   # GET /requests.json
   def index
@@ -16,6 +16,7 @@ class RequestsController < ApplicationController
   end
 
   def manager
+    check_assigned
   end
 
   def manager_view
@@ -29,6 +30,7 @@ class RequestsController < ApplicationController
   end
 
   def price
+    check_price
   end
 
   # GET /requests/new
@@ -45,7 +47,6 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
-    debugger
     if params[:request][:how_many] == ''
       @request.how_many = nil
     end
@@ -70,26 +71,36 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
   def update
-    request_has_design?
-    upload_specification
     if current_user.role.name == 'store'
-      respond_to do |format|
-        if @request.update(request_params)
-          save_document
-          validate_authorisation
-          save_status
-          save_document_identifier_field
-          format.html { redirect_to @request, notice: 'La solicitud de cotización fue modificada exitosamente.' }
+      request_has_design?
+      upload_specification
+      @request.update(request_params)
+      save_document
+      validate_authorisation
+      save_status
+      save_document_identifier_field
+      if @request.update(request_params) && params[:cancelar]
+        redirect_to filtered_requests_inactive_view_path, notice: 'La solicitud de cotización fue cancelada.'
+      elsif @request.update(request_params)
+        redirect_to request_path(@request), notice: 'La solicitud de cotización fue modificada exitosamente.'
+      else
+        respond_to do |format|
+          format.html { render :show }
+          format.json { render json: @request.errors, status: :unprocessable_entity }
         end
       end
     elsif current_user.role.name == 'manager'
-      if @request.update(request_params)
+      save_status
+      if @request.update(request_params) && params[:asignar]
+        assign_to_manager
         redirect_to manager_view_requests_path(@request), notice: "La solicitud fue asignada a #{current_user.first_name} #{current_user.last_name}"
-      end
-    else
-      respond_to do |format|
-        format.html { render :edit }
-        format.json { render json: @request.errors, status: :unprocessable_entity }
+      elsif @request.update(request_params)
+        redirect_to manager_view_requests_path(@request), notice: "Los campos fueron actualizados correctamente."
+      else
+        respond_to do |format|
+          format.html { render :show }
+          format.json { render json: @request.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -109,16 +120,20 @@ class RequestsController < ApplicationController
     end
   end
 
+  def check_price
+    if @request.status != 'costo asignado'
+      redirect_to requests_path(@request)
+    end
+  end
+
+  def check_assigned
+    redirect_to manager_view_requests_path(@request) if @request.status == 'cotizando'
+  end
+
   def get_documents
     @payment = @request.documents.where(document_type: 'pago')
     @authorisation = @request.documents.where(document_type: 'pedido')
     @specifications = @request.documents.where(document_type: 'especificación')
-  end
-
-  def days_since
-    a = Date.today
-    date = @request.created_at.to_date
-    @days_since = (a - date).to_i
   end
 
   def find_user_in_request(user = current_user)
@@ -272,12 +287,22 @@ class RequestsController < ApplicationController
   def save_status
     check_document_authorisation
     check_payment_authorisation
-    if params[:enviar]
+    if params[:enviar] || params[:reactivar]
       @request.status = 'solicitada'
     elsif params[:guardar]
       @request.status = 'creada'
     elsif (@doc_ok == true && @pay_ok == true)
       @request.status = 'autorizada'
+    elsif params[:cancelar]
+      @request.status = 'cancelada'
+    elsif params[:asignar]
+      @request.status = 'cotizando'
+    elsif params[:enviar_dudas]
+      @request.status = 'devuelta'
+    elsif params[:request][:internal_price]
+      @request.status = 'costo asignado'
+    elsif params[:request][:sales_price]
+      @request.status = 'precio asignado'
     end
   end
 

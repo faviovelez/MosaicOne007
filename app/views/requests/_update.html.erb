@@ -4,16 +4,16 @@
 
   <%= form_for(@request) do |f| %>
 
-    <div class="field">
-      <p>
-        <%= f.label :¿qué_desea_cotizar? %>
-        <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja'], ['bolsa'], ['exhibidor'], ['otro']], selected: @request.product_type) %>
-        <div class="field otro hidden">
-          <%= f.label :¿cuál? %>
-          <%= f.text_field :name_type %>
-        </div>
-      </p>
-    </div>
+  <div class="field">
+    <p>
+      <%= f.label :¿qué_desea_cotizar? %>
+      <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: @request.product_type) %>
+      <div class="field otro hidden">
+        <%= f.label :¿cuál? %>
+        <%= f.text_field :name_type %>
+      </div>
+    </p>
+  </div>
 
     <div class="field">
       <%= f.label :¿qué_cantidad_desea_cotizar? %>
@@ -70,50 +70,65 @@
       </div>
     </div>
 
-    <div class="measures field hidden">
-      <%= f.label :¿qué_medidas_ingresará? %>
-      <%= f.select :what_measures, options_for_select([['seleccione', ''], ['sugerir medidas', '4'], ['medidas internas', '2'], ['ambas', '3']], selected: @request.what_measures, class: 'medidas') %>
-    </div>
+    <% if @request.product_type == 'caja' || @request.product_type == 'otro' %>
+      <div class="measures field">
+    <% else %>
+      <div class="measures field hidden">
+    <% end %>
 
-    <div id="outer" class="hidden" >
-      <div class="field">
-        <%= f.label :largo %>
-        <%= f.text_field :outer_length %>
-        cm
+        <%= f.label :¿qué_medidas_ingresará? %>
+        <%= f.select :what_measures, options_for_select([['seleccione', ''], ['sugerir medidas', '4'], ['medidas externas', '1'], ['medidas internas', '2'], ['ambas', '3']], selected: @request.what_measures, class: 'medidas') %>
       </div>
 
-      <div class="field">
-        <%= f.label :ancho %>
-        <%= f.text_field :outer_widht %>
-        cm
+    <% if @request.what_measures == '1' || @request.what_measures == '3' %>
+      <div id="outer">
+    <% else %>
+      <div id="outer" class="hidden" >
+    <% end %>
+
+        <div class="field">
+          <%= f.label :largo %>
+          <%= f.text_field :outer_length %>
+          cm
+        </div>
+
+        <div class="field">
+          <%= f.label :ancho %>
+          <%= f.text_field :outer_widht %>
+          cm
+        </div>
+
+        <div class="field">
+          <%= f.label :alto %>
+          <%= f.text_field :outer_height %>
+          cm
+        </div>
       </div>
 
-      <div class="field">
-        <%= f.label :alto %>
-        <%= f.text_field :outer_height %>
-        cm
-      </div>
+    <% if @request.what_measures == '2' || @request.what_measures == '3' %>
+      <div id="inner">
+    <% elsif @request.product_type == 'caja' || @request.product_type == 'otro' %>
+      <div id="inner" class="hidden">
+    <% end %>
 
-    </div>
-    <div id="inner" class="hidden">
-      <div class="field">
-        <%= f.label :largo %>
-        <%= f.text_field :inner_length %>
-        cm
-      </div>
+        <div class="field">
+          <%= f.label :largo %>
+          <%= f.text_field :inner_length %>
+          cm
+        </div>
 
-      <div class="field">
-        <%= f.label :ancho %>
-        <%= f.text_field :inner_width %>
-        cm
-      </div>
+        <div class="field">
+          <%= f.label :ancho %>
+          <%= f.text_field :inner_width %>
+          cm
+        </div>
 
-      <div class="field">
-        <%= f.label :alto %>
-        <%= f.text_field :inner_height %>
-        cm
+        <div class="field">
+          <%= f.label :alto %>
+          <%= f.text_field :inner_height %>
+          cm
+        </div>
       </div>
-    </div>
 
     <div class="bolsa hidden">
       <div class="field">
@@ -217,7 +232,7 @@
       ["Sugerir resistencia"]], selected: @request.resistance_main_material) %>
     </div>
 
-    <button type="button" name="button" class="btn btn-primary" id="agregar_material">Agregar material</button>
+    <button type="button" name="button" class="btn" id="agregar_material">Agregar material</button>
 
     <div class="field secondary hidden">
       <%= f.label :material_secundario %>
@@ -407,7 +422,7 @@
 
     <div class="actions">
       <%= f.submit :enviar_cotización, name: 'enviar'%>
-      <% unless @request.status == 'creada' %>
+      <% if @request.status == 'creada' %>
         <%= f.submit :guardar_para_después, name: 'guardar'%>
       <% end %>
     </div>

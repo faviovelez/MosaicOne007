@@ -8,7 +8,9 @@
   <% @object = @requests %>
 <% end %>
 
+<% unless params[:action] == 'inactive_view' %>
   <p id="notice"><%= notice %></p>
+<% end %>
 
 <% @object.each do |request| %>
 
@@ -53,7 +55,12 @@
             <% end %>
           <td> <%= request.status %></td>
           <td> <%= link_to 'detalles', request %> </td>
-          <td> <%= link_to 'confirmar pedido', confirm_requests_path(request) %> </td>
+          <% if request.status == 'costo asignado'  %>
+            <td> <%= link_to 'asignar precio', requests_price_path(request) %> </td>
+          <% elsif request.status == 'precio asignado'  %>
+            <td> <%= link_to 'confirmar pedido', confirm_requests_path(request) %> </td>
+          <% end %>
+
         </tr>
       </tbody>
     </table>

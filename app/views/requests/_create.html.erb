@@ -7,7 +7,7 @@
     <div class="field">
       <p>
         <%= f.label :¿qué_desea_cotizar? %>
-        <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja'], ['bolsa'], ['exhibidor'], ['otro']], selected: @request.product_type) %>
+        <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: @request.product_type) %>
         <div class="field otro hidden">
           <%= f.label :¿cuál? %>
           <%= f.text_field :name_type %>
@@ -217,7 +217,7 @@
       ["Sugerir resistencia"]], selected: @request.resistance_main_material) %>
     </div>
 
-    <button type="button" name="button" class="btn btn-primary" id="agregar_material">Agregar material</button>
+    <button type="button" name="button" class="btn" id="agregar_material">Agregar material</button>
 
     <div class="field secondary hidden">
       <%= f.label :material_secundario %>
@@ -407,9 +407,7 @@
 
     <div class="actions">
       <%= f.submit :enviar_cotización, name: 'enviar'%>
-      <% unless @request.status == 'creada' %>
-        <%= f.submit :guardar_para_después, name: 'guardar'%>
-      <% end %>
+      <%= f.submit :guardar_para_después, name: 'guardar'%>
     </div>
   <% end %>
 

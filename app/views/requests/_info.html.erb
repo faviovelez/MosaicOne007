@@ -1,5 +1,5 @@
 
-  <h3>Datos generales</h3>
+  <h3>datos generales</h3>
   <p><strong>tipo de producto: </strong>
     <%= @request.product_type %>
   </p>
@@ -8,22 +8,10 @@
     <%= @request.quantity  %>
   </p>
 
-  <p><strong>fecha compromiso: </strong>
-    <span class="date">
-      <%= @request.delivery_date %>
-    </span>
-  </p>
-
-  <p><strong>precio de venta objetivo (al cliente): </strong>
-    <span class="pesos">
-      <%= @request.maximum_sales_price %>
-    </span>
-  </p>
-
   <% if @request.product_type != 'exhibidor' %>
-    <h3>datos del producto que irá dentro</h2>
+    <h3>datos del producto</h3>
   <% elsif @request.product_type == 'exhibidor' %>
-    <h3>datos del producto a exhibir </h2>
+    <h3>datos del producto a exhibir </h3>
   <% end %>
 
   <p><strong>tipo de producto: </strong>
@@ -56,10 +44,24 @@
     </p>
   <% end %>
 
-  <h3>detalles del material</h2>
+  <% if @request.product_type == 'otro' %>
+    <% @product = @request.name_type %>
+  <% else %>
+    <% @product = @request.product_type %>
+  <% end %>
+
+  <% if @request.product_type == 'bolsa' || @request.product_type == 'caja'  %>
+    <h3>detalles de las<%= @product%>s cotizadas</h3>
+  <% elsif @request.product_type == 'exhibidor' %>
+    <h3>detalles de los <%= @product%>es cotizados</h3>
+  <% elsif @request.product_type == 'exhibidor' && @request.how_many.count == 1 %>
+    <h3>detalles del <%= @product%> cotizado</h3>
+  <% elsif @request.product_type == 'otro' %>
+    <h3>detalles de los productos tipo <%= @product%> cotizados</h3>
+  <% end %>
 
   <% if @request.product_type == 'bolsa' %>
-    <h4>medidas</h2>
+    <h4>medidas</h4>
 
     <p><strong>largo: </strong>
       <%= @request.bag_length %> cm
@@ -74,7 +76,7 @@
     </p>
 
   <% elsif @request.product_type == 'exhibidor' %>
-    <h4>medidas</h2>
+    <h4>medidas</h4>
 
     <p><strong>altura: </strong>
       <%= @request.exhibitor_height %> cm
@@ -94,7 +96,7 @@
 
   <% elsif @request.product_type == 'caja' || @request.product_type == 'otro' %>
     <% if @request.what_measures == '1' %>
-      <h4>medidas externas</h2>
+      <h4>medidas externas</h4>
 
       <p><strong>largo: </strong>
         <%= @request.outer_length %> cm
@@ -109,7 +111,7 @@
       </p>
 
     <% elsif @request.what_measures == '2' %>
-      <h4>medidas internas</h2>
+      <h4>medidas internas</h4>
 
       <p><strong>largo: </strong>
         <%= @request.inner_length %> cm
@@ -201,6 +203,7 @@
   <% end %>
 
   <% unless @request.impression.blank? %>
+    <h3>tipo de impresión de los productos</h3>
     <p><strong> impresión en: </strong>
       <%= @request.impression_where %>, a
       <%= @request.inks %> tintas
@@ -211,41 +214,70 @@
     </p>
   <% end %>
 
-  <h3>información adicional</h3>
+  <% if @request.design_like.present? || @request.resistance_like.present? || @request.observations.present? || @request.notes.present? || @request.maximum_sales_price.present? || @request.delivery_date.present? %>
+    <h3>información adicional</h3>
 
-  <% unless @request.design_like.blank? %>
-    <p><strong>tipo de armado: </strong>
-      <%= @request.design_like %>
-    </p>
-  <% end %>
+    <% unless @request.design_like.blank? %>
+      <p><strong>tipo de armado: </strong>
+        <%= @request.design_like %>
+      </p>
+    <% end %>
 
-  <% unless @request.resistance_like.blank? %>
-    <p><strong>resistencia: </strong>
-      <%= @request.resistance_like %>
-    </p>
-  <% end %>
+    <% unless @request.resistance_like.blank? %>
+      <p><strong>resistencia: </strong>
+        <%= @request.resistance_like %>
+      </p>
+    <% end %>
 
-  <% unless @request.observations.blank? %>
-    <p><strong>observaciones: </strong>
-      <span class="comments">
-        <%= @request.observations %>
-      </span>
-    </p>
-  <% end %>
+    <% unless @request.observations.blank? %>
+      <p><strong>observaciones: </strong>
+        <span class="comments">
+          <%= @request.observations %>
+        </span>
+      </p>
+    <% end %>
 
-  <% unless @request.notes.blank? %>
-    <p><strong>dudas o anotaciones de quien cotiza: </strong>
-      <span class="comments">
-        <%= @request.notes %>
-      </span>
-    </p>
+    <% unless @request.notes.blank? %>
+      <p><strong>dudas o anotaciones de quien cotiza: </strong>
+        <span class="comments">
+          <%= @request.notes %>
+        </span>
+      </p>
+    <% end %>
+
+    <% unless @request.delivery_date.blank? %>
+      <p><strong>fecha compromiso: </strong>
+        <span class="date">
+          <%= @request.delivery_date %>
+        </span>
+      </p>
+    <% end %>
+
+    <% unless @request.maximum_sales_price.blank? %>
+      <p><strong>precio de venta objetivo (al cliente): </strong>
+        <span class="pesos">
+          <%= @request.maximum_sales_price %>
+        </span>
+      </p>
+    <% end %>
   <% end %>
 
   <% if @request.design_requests.count > 0 %>
     <h3>solicitudes de diseño</h3>
     <% @request.design_requests.each do |design_request| %>
-      <p><strong>tipo de solicitud:</strong><%= design_request.design_type %></p>
-      <p><strong>estatus:</strong><%= design_request.status %></p>
+      <p><strong>tipo de solicitud: </strong><%= design_request.design_type %></p>
+      <p><strong>estatus: </strong><%= design_request.status %></p>
       <p><%= link_to 'ver solicitud', design_request_path(design_request) %></p>
+    <% end %>
+  <% end %>
+
+  <% unless @request.internal_price.blank? %>
+    <h3>Confirmar precio de venta a tienda </h3>
+    <% if current_user.role.name == 'manager' %>
+      <p><strong>costo para diseños de cartón: </strong> <%= @request.internal_cost %> </p>
+    <% end %>
+    <p><strong>costo de venta: </strong> <%= @request.internal_price %> </p>
+    <% unless @request.sales_price.blank? %>
+      <p><strong>precio para el cliente: </strong> <%= @request.sales_price %> </p>
     <% end %>
   <% end %>

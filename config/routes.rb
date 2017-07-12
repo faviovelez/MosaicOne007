@@ -56,6 +56,8 @@ Rails.application.routes.draw do
 
   get 'requests/confirm_view/:id', to: 'requests#confirm_view', as: 'confirm_view_requests'
 
+  get 'requests/price/:id', to: 'requests#price', as: 'requests_price'
+
   get 'requests/manager/:id', to: 'requests#manager', as: 'manager_requests'
 
   get 'requests/manager_view/:id', to: 'requests#manager_view', as: 'manager_view_requests'

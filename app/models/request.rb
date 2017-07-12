@@ -10,8 +10,9 @@ class Request < ActiveRecord::Base
 
   validates :quantity, on: :create, numericality: { only_integer: true, message: "%{value} No es una cantidad válida, solo se aceptan enteros." }
   validates :product_weight, numericality: true, allow_nil: true, on: :create
-  validates :design_like, presence: { message: 'Elija el tipo de armado o sugerir armado.', unless: :product_type_is_not_box}
-  validates :what_measures, presence: { message: 'Debe seleccionar qué medidas ingresará.' }
+  validates :design_like, presence: { message: 'Elija el tipo de armado o sugerir armado.', if: :product_type_is_a_box}
+  validates :what_measures, presence: { message: 'Debe seleccionar qué medidas ingresará.', if: :product_type_is_a_box}
+  validates :internal_cost, presence: { message: 'Debe incluir costo interno y precio de venta a la tienda', if: :internal_price, on: :update}
   validate :delivery_date_future
   validate :fill_name_type, on: :create
   validate :quantity_present, on: :create
@@ -28,8 +29,8 @@ class Request < ActiveRecord::Base
     end
   end
 
-  def product_type_is_not_box
-    product_type != 'caja'
+  def product_type_is_a_box
+    product_type == 'caja'
   end
 
   def fill_name_type

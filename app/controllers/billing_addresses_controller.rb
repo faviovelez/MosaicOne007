@@ -1,4 +1,5 @@
 class BillingAddressesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_billing_address, only: [:show, :edit, :update, :destroy]
   before_action :identify_owner_type, only: [:new, :create, :update]
 

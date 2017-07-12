@@ -1,6 +1,7 @@
 class DesignRequestsController < ApplicationController
-
+  before_action :authenticate_user!
   before_action :set_design_request, only: [:show, :edit, :update, :destroy]
+  before_action :get_documents, only: [:edit, :show]
 
   def index
   end
@@ -20,6 +21,7 @@ class DesignRequestsController < ApplicationController
     @request = Request.find(params[:request_id])
     @design_request = DesignRequest.new(design_params)
     upload_attachment
+    assign_to_current_user
     @design_request.status = 'solicitada'
     respond_to do |format|
       if @design_request.save
@@ -37,6 +39,7 @@ class DesignRequestsController < ApplicationController
 
   def update
     upload_attachment
+    assign_to_current_user
     respond_to do |format|
       if @design_request.update(request_params)
         format.html { redirect_to @design_request, notice: 'La solicitud de diseño fue modificada exitosamente.' }
@@ -56,6 +59,26 @@ class DesignRequestsController < ApplicationController
     end
   end
 
+  def get_documents
+    @attachments = @design_request.documents.where(document_type: 'diseño adjunto')
+    @responses = @design_request.documents.where(document_type: 'respuesta de diseño')
+  end
+
+  def assign_to_current_user(user = current_user, role = current_user.role.name)
+    users = User.joins(:role).where('roles.name' => (role))
+    user_find = false
+    @design_request.users.each do |user|
+      users.each do |other_user|
+        if (user.id == other_user.id)
+          user_find = true
+        end
+      end
+    end
+    if user_find == false
+      @design_request.users << user
+    end
+  end
+
 private
   def set_design_request
     @design_request = DesignRequest.find(params[:id])
@@ -68,7 +91,8 @@ def design_params
          :authorisation,
          :attachment,
          :request_id,
-         :description)
+         :description,
+         :user)
 end
 
 end

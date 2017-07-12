@@ -2,7 +2,8 @@
   <div class="document-link-area">
     <%= label_tag ('pedido autorizado:') %>
     <%= link_to @authorisation.first.document_url, target: '_blank' do %>
-      <%= image_tag '/assets/document_blue.png', alt: 'Ícono documento azul', class: 'document-icon img-responsive' %>
+    <%= image_tag '/assets/document_blue.png', alt: 'Ícono documento azul', class: 'document-icon img-responsive' %>
+      <%= link_to 'ver', @authorisation.first.document_url, target: '_blank' %>
     <% end %>
   </div>
 <% end %>
@@ -11,7 +12,8 @@
   <div class="document-link-area">
     <%= label_tag ('anticipo del pedido:') %>
     <%= link_to @payment.first.document_url, target: '_blank' do %>
-      <%= image_tag '/assets/document_blue.png', alt: 'Ícono documento azul', class: 'document-icon img-responsive' %>
+    <%= image_tag '/assets/document_blue.png', alt: 'Ícono documento azul', class: 'document-icon img-responsive' %>
+      <%= link_to 'ver', @payment.first.document_url, target: '_blank' %>
     <% end %>
   </div>
 <% end %>
@@ -21,7 +23,8 @@
       <% if @request.documents.where(document_type: 'especificación').count == 1 %>
         <%= label_tag ('archivo de especificaciones:') %>
         <%= link_to @specifications.first.document_url, target: '_blank' do %>
-          <%= image_tag '/assets/notes.png', alt: 'Ícono documento naranja', class: 'document-icon img-responsive' %>
+        <%= image_tag '/assets/notes.png', alt: 'Ícono documento naranja', class: 'document-icon img-responsive' %>
+          <%= link_to 'ver', @specifications.first.document_url, target: '_blank' %>
         <% end %>
         <%= link_to 'borrar', document_path(@specifications.first), method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
       <% elsif @request.documents.where(document_type: 'especificación').count > 1 %>
@@ -30,6 +33,7 @@
         <% ((@specifications.length).to_i).times do %>
           <%= link_to @specifications[n].document_url, target: '_blank' do %>
             <%= image_tag '/assets/notes.png', alt: 'Ícono documento naranja', class: 'document-icon img-responsive' %>
+            <%= link_to 'ver', @specifications[n].document_url, target: '_blank' %>
             <% n +=1 %>
           <% end %>
           <% document = @specifications[n-1] %>

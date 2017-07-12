@@ -1,4 +1,5 @@
 class AssignedRequestsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_request
   before_action :filter_requests, only: [:assigned, :unassigned]
 
