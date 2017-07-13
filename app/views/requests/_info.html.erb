@@ -51,7 +51,7 @@
   <% end %>
 
   <% if @request.product_type == 'bolsa' || @request.product_type == 'caja'  %>
-    <h3>detalles de las<%= @product%>s cotizadas</h3>
+    <h3>detalles de las <%= @product%>s cotizadas</h3>
   <% elsif @request.product_type == 'exhibidor' %>
     <h3>detalles de los <%= @product%>es cotizados</h3>
   <% elsif @request.product_type == 'exhibidor' && @request.how_many.count == 1 %>
@@ -248,7 +248,7 @@
     <% unless @request.delivery_date.blank? %>
       <p><strong>fecha compromiso: </strong>
         <span class="date">
-          <%= @request.delivery_date %>
+          <%= I18n.l @request.delivery_date, format: :short %>
         </span>
       </p>
     <% end %>

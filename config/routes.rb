@@ -24,8 +24,6 @@ Rails.application.routes.draw do
 
   get 'filtered_requests/other_users_view'
 
-  get 'filtered_requests/design_view'
-
   get 'filtered_requests/supporters_view'
 
   devise_for :users

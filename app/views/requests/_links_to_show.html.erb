@@ -1,0 +1,26 @@
+<%= link_to 'modificar', edit_request_path(@request) %>
+
+<%= link_to 'ver prospecto', prospect_path(@request.prospect) %>
+
+<%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
+
+<% if @request.design_requests.any? == true %>
+  <%= link_to 'ver trabajos de diseño', request_design_request_path(request_id: @request) %>
+<% end %>
+
+<% if @request.status == 'cancelada' %>
+  <%= link_to 'reactivar', '#myModal', 'data-toggle' => 'modal' %>
+<% else %>
+  <%= link_to 'cancelar', '#myModal', 'data-toggle' => 'modal' %>
+<% end %>
+
+<% if @request.status == 'creada' %>
+  <%= link_to 'ver lista de solicitudes guardadas', filtered_requests_saved_view_path %>
+<% else %>
+  <%= link_to 'ver lista de solicitudes activas', filtered_requests_current_view_path %>
+<% end %>
+
+
+<% unless @request.status == 'creada' || @request.status == 'cancelada' %>
+  <%= link_to 'confirmar pedido', confirm_requests_path(@request) %>
+<% end %>

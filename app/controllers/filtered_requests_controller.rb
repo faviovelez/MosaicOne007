@@ -1,6 +1,6 @@
 class FilteredRequestsController < ApplicationController
   before_action :authenticate_user!
-  
+
   def current_view
     filter_store_active_requests
   end
@@ -52,7 +52,7 @@ class FilteredRequestsController < ApplicationController
     if role == 'manager'
       @assigned = user.requests.where.not('status' => ['creada','expirada','cancelada']).order(:created_at).order(:store_code)
     elsif role == 'designer'
-      @assigned = user.design_requests.where.not('status' => ['concluida','expirada','cancelada']).order(:created_at).order(:store_code)
+      @assigned = user.design_requests.where.not('status' => ['concluida','expirada','cancelada']).order(:created_at)
     end
       @assigned
   end

@@ -1,0 +1,29 @@
+<%= form_for [@design_request] do |f| %>
+
+  <div class="design">
+
+    <div class="field">
+      <%= f.label :notas_o_dudas_del_diseñador %>
+      <%= f.text_area :notes %>
+    </div>
+
+    <div class="field">
+      <%= f.label :subir_archivo %>
+      <%= f.file_field :attachment, multiple: true %>
+    </div>
+
+    <div class="field">
+      <%= f.label :complejidad_del_diseño %>
+      <%= f.select :cost, options_for_select(DesignCost.all.collect{|d| [d.complexity, d.cost]}) %>
+    </div>
+
+    <div class="field hidden">
+      <%= f.label :estatus%>
+      <%= f.text_field :status, value: 'diseño elaborado' %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit :contestar_solicitud, name: 'contestar solicitud'%>
+    </div>
+  </div>
+<% end %>

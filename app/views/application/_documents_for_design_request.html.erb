@@ -1,0 +1,28 @@
+<% unless @design_request.documents.nil? %>
+    <div class="document-link-area">
+      <% if @design_request.documents.where(document_type: 'diseño adjunto').count == 1 %>
+        <%= label_tag ('archivo de especificaciones:') %>
+        <%= link_to @attachments.first.document_url, target: '_blank' do %>
+        <%= image_tag '/assets/multimedia.png', alt: 'Ícono diskette', class: 'document-icon img-responsive' %>
+          <%= link_to 'ver', @attachments.first.document_url, target: '_blank' %>
+        <% end %>
+        <% if current_user.role.name == 'store' %>
+          <%= link_to 'borrar', document_path(@attachments.first), from: 'design_request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
+        <% end %>
+      <% elsif @design_request.documents.where(document_type: 'diseño adjunto').count > 1 %>
+        <%= label_tag ('archivos de especificaciones:') %>
+        <% n = 0 %>
+        <% ((@attachments.length).to_i).times do %>
+          <%= link_to @attachments[n].document_url, target: '_blank' do %>
+            <%= image_tag '/assets/multimedia.png', alt: 'Ícono diskette', class: 'document-icon img-responsive' %>
+            <%= link_to 'ver', @attachments[n].document_url, target: '_blank' %>
+            <% n +=1 %>
+          <% end %>
+          <% document = @attachments[n-1] %>
+          <% if current_user.role.name == 'store' %>
+            <%= link_to 'borrar', document_path(document), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+<% end %>

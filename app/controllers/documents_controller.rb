@@ -54,19 +54,8 @@ class DocumentsController < ApplicationController
   # DELETE /documents/1
   # DELETE /documents/1.json
   def destroy
-    @id = @document.id
     @document.destroy
-    if @request
-      respond_to do |format|
-        format.html { redirect_to request_path(Request.find(@id)), notice: 'El documento fue eliminado correctamente' }
-        format.json { head :no_content }
-      end
-    elsif @design_request
-      respond_to do |format|
-        format.html { redirect_to design_request_path(DesignRequest.find(@id)), notice: 'El documento fue eliminado correctamente' }
-        format.json { head :no_content }
-      end
-    end
+    redirect_to :back, notice: 'El documento fue eliminado correctamente.'
   end
 
   private

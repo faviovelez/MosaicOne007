@@ -12,8 +12,10 @@
       <div class="modal-body">
         <% if @request.status != 'cancelada' %>
           <%= render 'cancel' %>
-        <% else %>
+        <% elsif @request.status == 'cancelada' %>
           <%= render 'reactivate' %>
+        <% elsif @design_request.status == 'diseño elaborado' %>
+          <%= render 'confirm design' %>
         <% end %>
       </div>
       <div class="modal-footer">

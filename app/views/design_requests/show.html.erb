@@ -1,42 +1,5 @@
-  <h3>solicitud de diseño</h3>
-  <p><strong>tipo de solicitud: </strong> <%= @design_request.design_type %></p>
+<%= render 'info' %>
 
-  <p><strong>Descripción de la solicitud: </strong></p>
-  <%= @design_request.description %>
+<%= render 'documents_for_design_request' %>
 
-  <% unless @design_request.documents.nil? %>
-      <div class="document-link-area">
-        <% if @design_request.documents.where(document_type: 'diseño adjunto').count == 1 %>
-          <%= label_tag ('archivo de especificaciones:') %>
-          <%= link_to @attachments.first.document_url, target: '_blank' do %>
-          <%= image_tag '/assets/multimedia.png', alt: 'Ícono diskette', class: 'document-icon img-responsive' %>
-            <%= link_to 'ver', @attachments.first.document_url, target: '_blank' %>
-          <% end %>
-          <% unless current_user.role.name == 'store' %>
-            <%= link_to 'borrar', document_path(@attachments.first), method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
-          <% end %>
-        <% elsif @design_request.documents.where(document_type: 'diseño adjunto').count > 1 %>
-          <%= label_tag ('archivos de especificaciones:') %>
-          <% n = 0 %>
-          <% ((@attachments.length).to_i).times do %>
-            <%= link_to @attachments[n].document_url, target: '_blank' do %>
-              <%= image_tag '/assets/multimedia.png', alt: 'Ícono diskette', class: 'document-icon img-responsive' %>
-              <%= link_to 'ver', @attachments[n].document_url, target: '_blank' %>
-              <% n +=1 %>
-            <% end %>
-            <% document = @attachments[n-1] %>
-            <% unless current_user.role.name == 'store' %>
-              <%= link_to 'borrar', document_path(document), method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
-            <% end %>
-          <% end %>
-        <% end %>
-      </div>
-  <% end %>
-
-  <%= link_to 'solicitar otro trabajo de diseño', new_request_design_request_path(request_id: @design_request.request) %>
-
-  <%= link_to 'ver todos los trabajos de diseño', request_design_request_path(request_id: @design_request.request) %>
-
-  <%= link_to 'editar', edit_design_request_path(@design_request) %>
-
-  <%= link_to 'ver solicitud de cotización', request_path(@design_request.request) %>
+<%= render 'links_for_design_request' %>

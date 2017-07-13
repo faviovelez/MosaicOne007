@@ -22,9 +22,11 @@ class DesignRequestsController < ApplicationController
     @design_request = DesignRequest.new(design_params)
     upload_attachment
     assign_to_current_user
+    debugger
     @design_request.status = 'solicitada'
     respond_to do |format|
       if @design_request.save
+        debugger
         @request.require_design = true
         @request.design_requests << @design_request
         @request.save
@@ -41,7 +43,7 @@ class DesignRequestsController < ApplicationController
     upload_attachment
     assign_to_current_user
     respond_to do |format|
-      if @design_request.update(request_params)
+      if @design_request.update(design_params)
         format.html { redirect_to @design_request, notice: 'La solicitud de diseño fue modificada exitosamente.' }
         format.json { render :index, status: :ok, location: @design_request }
       else
@@ -64,6 +66,7 @@ class DesignRequestsController < ApplicationController
     @responses = @design_request.documents.where(document_type: 'respuesta de diseño')
   end
 
+# Método para managers o designers: asigna la solicitud si no hay otro usuario con el mismo rol en la solicitud
   def assign_to_current_user(user = current_user, role = current_user.role.name)
     users = User.joins(:role).where('roles.name' => (role))
     user_find = false
@@ -92,7 +95,7 @@ def design_params
          :attachment,
          :request_id,
          :description,
-         :user)
+         :notes)
 end
 
 end

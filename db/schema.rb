@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170709162255) do
+ActiveRecord::Schema.define(version: 20170712222556) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -104,6 +104,14 @@ ActiveRecord::Schema.define(version: 20170709162255) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "design_request_users", force: :cascade do |t|
+    t.integer "design_request_id"
+    t.integer "user_id"
+  end
+
+  add_index "design_request_users", ["design_request_id"], name: "index_design_request_users_on_design_request_id", using: :btree
+  add_index "design_request_users", ["user_id"], name: "index_design_request_users_on_user_id", using: :btree
+
   create_table "design_requests", force: :cascade do |t|
     t.string   "design_type"
     t.float    "cost"
@@ -114,11 +122,10 @@ ActiveRecord::Schema.define(version: 20170709162255) do
     t.integer  "request_id"
     t.text     "description"
     t.string   "attachment"
-    t.integer  "user_id"
+    t.text     "notes"
   end
 
   add_index "design_requests", ["request_id"], name: "index_design_requests_on_request_id", using: :btree
-  add_index "design_requests", ["user_id"], name: "index_design_requests_on_user_id", using: :btree
 
   create_table "designers", force: :cascade do |t|
     t.string   "username"
@@ -407,8 +414,9 @@ ActiveRecord::Schema.define(version: 20170709162255) do
   add_foreign_key "bills", "prospects"
   add_foreign_key "carriers", "delivery_addresses"
   add_foreign_key "delivery_packages", "orders"
+  add_foreign_key "design_request_users", "design_requests"
+  add_foreign_key "design_request_users", "users"
   add_foreign_key "design_requests", "requests"
-  add_foreign_key "design_requests", "users"
   add_foreign_key "designers", "users"
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"

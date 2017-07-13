@@ -78,10 +78,13 @@ class RequestsController < ApplicationController
       save_document
       validate_authorisation
       save_status
-      save_document_identifier_field
       if @request.update(request_params) && params[:cancelar]
+        @request.update(status: 'cancelada')
         redirect_to filtered_requests_inactive_view_path, notice: 'La solicitud de cotización fue cancelada.'
       elsif @request.update(request_params)
+        save_document_identifier_field
+        save_status
+        @request.save
         redirect_to request_path(@request), notice: 'La solicitud de cotización fue modificada exitosamente.'
       else
         respond_to do |format|
@@ -311,7 +314,7 @@ class RequestsController < ApplicationController
     check_payment_authorisation
     if @request.status == 'autorizada'
       redirect_to request_path(@request), notice: 'Esta solicitud ya fue autorizada.'
-    elsif ((@request.status != 'autorizada') && (@pay_ok || @doc_ok))
+    elsif @request.status != 'autorizada'
       redirect_to confirm_view_requests_path(@request)
     end
   end

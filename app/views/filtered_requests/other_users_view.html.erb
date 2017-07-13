@@ -37,7 +37,7 @@
             <td> <%= @days %> días </td>
           <% end %>
           <% if request.delivery_date.present? %>
-            <td> <%= request.delivery_date %></td>
+            <td> <%= I18n.l request.delivery_date, format: :short %></td>
           <% else %>
           <td> - </td>
             <% end %>

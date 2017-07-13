@@ -1,0 +1,9 @@
+<h3>solicitud de diseño</h3>
+<p><strong>tipo de solicitud: </strong> <%= @design_request.design_type %></p>
+
+<p><strong>Descripción de la solicitud: </strong></p>
+<%= @design_request.description %>
+
+<% if current_user.role.name == 'store' %>
+  <p><strong>costo: </strong> <%= @design_request.cost %></p>
+<% end %>
