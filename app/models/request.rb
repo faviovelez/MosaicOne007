@@ -82,7 +82,7 @@ class Request < ActiveRecord::Base
       bag_fields = [bag_length, bag_width, bag_height]
       bag_fields.all?
     elsif product_type == 'caja' || product_type == 'otro'
-      outer_fields = [outer_length, outer_widht, outer_height]
+      outer_fields = [outer_length, outer_width, outer_height]
       inner_fields = [inner_length, inner_width, inner_height]
       outer_fields.all? || inner_fields.all?
     end
@@ -100,7 +100,7 @@ class Request < ActiveRecord::Base
         errors[:base] << "Es necesario llenar todas las especificaciones de la bolsa."
       end
     elsif product_type == 'caja' || product_type == 'otro'
-      outer_fields = [outer_length, outer_widht, outer_height]
+      outer_fields = [outer_length, outer_width, outer_height]
       inner_fields = [inner_length, inner_width, inner_height]
       unless outer_fields.all? || inner_fields.all? || product_complete
         errors[:base] << "Es necesario llenar todas las medidas o los detalles del producto."

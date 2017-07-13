@@ -94,7 +94,7 @@
 
         <div class="field">
           <%= f.label :ancho %>
-          <%= f.text_field :outer_widht %>
+          <%= f.text_field :outer_width %>
           cm
         </div>
 
@@ -420,8 +420,18 @@
       <%= f.file_field :specification, multiple: true %>
     </div>
 
+    <div class="field hidden">
+      <%= f.label :estatus %>
+      <% if @request.internal_price.present? %>
+        <%= f.text_field :status, value: 'modificada-recotizar' %>
+      <% else %>
+        <%= f.text_field :status, value: 'modificada' %>
+      <% end %>
+
+    </div>
+
     <div class="actions">
-      <%= f.submit :enviar_cotización, name: 'enviar'%>
+      <%= f.submit :modificar_cotización, name: 'modificar cotización'%>
       <% if @request.status == 'creada' %>
         <%= f.submit :guardar_para_después, name: 'guardar'%>
       <% end %>

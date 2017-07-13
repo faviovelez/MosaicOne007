@@ -32,12 +32,16 @@
           <td> <%= @days %> días </td>
         <% end %>
         <% if request.delivery_date.present? %>
-          <td> <%= I18n.l request.delivery_date, format: :short) %></td>
+          <td> <%= I18n.l request.delivery_date, format: :short %></td>
         <% else %>
         <td> - </td>
           <% end %>
         <td> <%= request.status %></td>
-        <td> <%= link_to 'detalles', manager_requests_path(request) %> </td>
+        <% if request.sensitive_fields_changed || request.internal_price.blank? %>
+          <td> <%= link_to 'cotizar', manager_requests_path(request) %> </td>
+        <% else %>
+          <td> <%= link_to 'detalles', request_path(request) %> </td>
+        <% end %>
       </tr>
     </tbody>
   </table>

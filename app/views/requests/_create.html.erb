@@ -72,7 +72,7 @@
 
     <div class="measures field hidden">
       <%= f.label :¿qué_medidas_ingresará? %>
-      <%= f.select :what_measures, options_for_select([['seleccione', ''], ['sugerir medidas', '4'], ['medidas internas', '2'], ['ambas', '3']], selected: @request.what_measures, class: 'medidas') %>
+      <%= f.select :what_measures, options_for_select([['seleccione', ''], ['sugerir medidas', '4'], ['medidas externas', '1'], ['medidas internas', '2'], ['ambas', '3']], selected: @request.what_measures, class: 'medidas') %>
     </div>
 
     <div id="outer" class="hidden" >
@@ -84,7 +84,7 @@
 
       <div class="field">
         <%= f.label :ancho %>
-        <%= f.text_field :outer_widht %>
+        <%= f.text_field :outer_width %>
         cm
       </div>
 

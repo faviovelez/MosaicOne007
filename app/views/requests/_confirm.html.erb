@@ -5,7 +5,7 @@
   <% unless @request.authorisation_signed %>
     <div class="field">
       <%= f.label :pedido_autorizado %>
-      <%= f.file_field :authorisation_signed %>
+      <%= f.file_field :authorisation %>
     </div>
     <% end %>
 
@@ -22,7 +22,7 @@
   <% unless @request.payment_uploaded %>
     <div class="field">
       <%= f.label :ficha_de_depósito %>
-      <%= f.file_field :payment_uploaded %>
+      <%= f.file_field :payment %>
     </div>
   <% end %>
 

@@ -70,7 +70,7 @@ class FilteredRequestsController < ApplicationController
       assigned = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => (role))
     elsif role == 'designer'
       requests = DesignRequest.where.not('status' => ['concluida','expirada','cancelada'])
-      assigned = DesignRequest.where.not('status' => ['concluida','expirada','cancelada']).joins(user: :role).where('roles.name' => (role))
+      assigned = DesignRequest.where.not('status' => ['concluida','expirada','cancelada']).joins(users: :role).where('roles.name' => (role))
     end
     unassigned = (requests - assigned)
     @unassigned = unassigned.sort_by{ |key| key["created_at"] }

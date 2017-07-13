@@ -2,4 +2,8 @@
 
 <%= render 'documents_for_design_request' %>
 
+<% if @design_request.status == 'solicitada' && current_user.role.name == 'designer' %>
+  <%= render 'form_to_assign' %>
+<% end %>
+
 <%= render 'links_for_design_request' %>

@@ -54,9 +54,13 @@ class DesignRequestsController < ApplicationController
   end
 
   def upload_attachment
-    if params[:design_request][:attachment].present?
+    if (params[:design_request][:attachment].present? && current_user.role.name == 'store')
       params[:design_request][:attachment].each do |file|
         @design_request.documents << Document.create(document: file, document_type: 'diseño adjunto', design_request: @design_request)
+      end
+    elsif (params[:design_request][:attachment].present? && current_user.role.name == 'designer')
+      params[:design_request][:attachment].each do |file|
+        @design_request.documents << Document.create(document: file, document_type: 'respuesta de diseño', design_request: @design_request)
       end
     end
   end

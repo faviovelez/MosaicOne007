@@ -1,4 +1,4 @@
-<%= form_for [@design_request] do |f| %>
+<%= form_for(@design_request) do |f| %>
 
   <div class="design">
 
@@ -18,7 +18,7 @@
     </div>
 
     <div class="field hidden">
-      <%= f.label :estatus%>
+      <%= f.label :estatus %>
       <%= f.text_field :status, value: 'diseño elaborado' %>
     </div>
 

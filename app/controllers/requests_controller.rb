@@ -56,7 +56,6 @@ class RequestsController < ApplicationController
     save_store_request
     save_prospect_to_request
     save_status
-    save_document_identifier_field
     respond_to do |format|
       if @request.save
         format.html { redirect_to @request, notice: 'La solicitud de cotización fue generada exitosamente.' }
@@ -73,8 +72,8 @@ class RequestsController < ApplicationController
   def update
     if current_user.role.name == 'store'
       request_has_design?
-      upload_specification
       @request.update(request_params)
+      sensitive_fields_changed_after_price_set
       save_document
       validate_authorisation
       save_status
@@ -82,7 +81,6 @@ class RequestsController < ApplicationController
         @request.update(status: 'cancelada')
         redirect_to filtered_requests_inactive_view_path, notice: 'La solicitud de cotización fue cancelada.'
       elsif @request.update(request_params)
-        save_document_identifier_field
         save_status
         @request.save
         redirect_to request_path(@request), notice: 'La solicitud de cotización fue modificada exitosamente.'
@@ -217,47 +215,20 @@ class RequestsController < ApplicationController
   end
 
   def save_document
-    search_document_in_request
-    if @find_payment == false
-      if params[:request][:payment_uploaded] != nil
-        payment = Document.create(document: params[:request][:payment_uploaded], document_type: 'pago', request: @request)
-        @request.documents << payment
-      end
-    end
-    if @find_authorisation == false
-      if params[:request][:authorisation_signed] != nil
-        authorisation = Document.create(document: params[:request][:authorisation_signed], document_type: 'pedido', request: @request)
-        @request.documents << authorisation
-      end
-    end
-  end
-
-  def save_document_identifier_field
-    search_document_in_request
-    if @find_payment == true
+    if params[:request][:payment] != nil
+      payment = Document.create(document: params[:request][:payment_uploaded], document_type: 'pago', request: @request)
+      @request.documents << payment
       @request.update(payment_uploaded: true)
     end
-    if @find_authorisation == true
+    if params[:request][:authorisation] != nil
+      authorisation = Document.create(document: params[:request][:authorisation_signed], document_type: 'pedido', request: @request)
+      @request.documents << authorisation
       @request.update(authorisation_signed: true)
     end
-    if @find_specification == true
-      @request.update(specification_document: true)
-    end
-  end
-
-  def search_document_in_request
-    @find_payment = false
-    @find_authorisation = false
-    @find_specification = false
-    @request.documents.each do |document|
-      if (document.document_type == 'pago')
-        @find_payment = true
-      end
-      if (document.document_type == 'pedido')
-        @find_authorisation = true
-      end
-      if (document.document_type == 'especificación')
-        @find_specification = true
+    if params[:request][:specification].present?
+      params[:request][:specification].each do |file|
+        @request.documents << Document.create(document: file, document_type: 'especificación', request: @request)
+        @request.update(specification_document: true)
       end
     end
   end
@@ -287,14 +258,25 @@ class RequestsController < ApplicationController
     @pay_ok
   end
 
-  def save_status
+  def set_authorisation_flag
     check_document_authorisation
     check_payment_authorisation
+    if (@doc_ok == true && @pay_ok == true)
+      if @request.sensitive_fields_changed != true
+        @request.authorisation = true
+      else
+        @request.authorisation = false
+      end
+    end
+  end
+
+  def save_status
+    set_authorisation_flag
     if params[:enviar] || params[:reactivar]
       @request.status = 'solicitada'
     elsif params[:guardar]
       @request.status = 'creada'
-    elsif (@doc_ok == true && @pay_ok == true)
+    elsif @request.authorisation ==  true
       @request.status = 'autorizada'
     elsif params[:cancelar]
       @request.status = 'cancelada'
@@ -310,8 +292,6 @@ class RequestsController < ApplicationController
   end
 
   def check_authorisation
-    check_document_authorisation
-    check_payment_authorisation
     if @request.status == 'autorizada'
       redirect_to request_path(@request), notice: 'Esta solicitud ya fue autorizada.'
     elsif @request.status != 'autorizada'
@@ -319,11 +299,32 @@ class RequestsController < ApplicationController
     end
   end
 
-  def upload_specification
-    if params[:request][:specification].present?
-      params[:request][:specification].each do |file|
-        @request.documents << Document.create(document: file, document_type: 'especificación', request: @request)
+  def sensitive_fields_changed_after_price_set
+    any_sensitive_field_changed = false
+    if ((@request.product_type == 'caja' || @request.product_type == 'otro') && @request.what_measures == '1')
+      if (params[:request][:outer_length] || params[:request][:outer_width] || params[:request][:outer_height])
+        any_sensitive_field_changed = true
       end
+    elsif ((@request.product_type == 'caja' || @request.product_type == 'otro') && @request.what_measures == '2')
+      if (params[:request][:inner_length] || params[:request][:inner_width] || params[:request][:inner_height])
+        any_sensitive_field_changed = true
+      end
+    elsif ((@request.product_type == 'caja' || @request.product_type == 'otro') && @request.what_measures == '3')
+      if (params[:request][:inner_length] || params[:request][:inner_width] || params[:request][:inner_height] || params[:request][:outer_length] || params[:request][:outer_width] || params[:request][:outer_height])
+        any_sensitive_field_changed = true
+      end
+    elsif @request.product_type == 'bolsa'
+      if (params[:request][:bag_length] || params[:request][:bag_width] || params[:request][:bag_height])
+        any_sensitive_field_changed = true
+      end
+    elsif @request.product_type == 'exhibidor'
+      if (params[:request][:exhibitor_height] || params[:request][:tray_quantity?] || params[:request][:tray_length] || params[:request][:tray_width] || params[:request][:tray_divisions])
+        any_sensitive_field_changed = true
+      end
+    end
+    need_another_price = false
+    if (any_sensitive_field_changed && @request.internal_price.present?)
+      @request.sensitive_fields_changed = true
     end
   end
 
@@ -348,7 +349,7 @@ class RequestsController < ApplicationController
        :inner_width,
        :inner_height,
        :outer_length,
-       :outer_widht,
+       :outer_width,
        :outer_height,
        :bag_length,
        :bag_width,
@@ -399,6 +400,10 @@ class RequestsController < ApplicationController
        :authorised_without_doc,
        :specification,
        :what_measures,
-       :specification_document)
+       :specification_document,
+       :payment,
+       :authorisation,
+       :sensitive_fields_changed,
+       :authorisation)
     end
 end

@@ -14,7 +14,7 @@ one:
   inner_width: 1.5
   inner_height: MyString
   outer_length: 1.5
-  outer_widht: 1.5
+  outer_width: 1.5
   outer_height: 1.5
   bag_length: 1.5
   bag_width: 1.5
@@ -35,7 +35,7 @@ one:
   maximum_sales_price: 1.5
   observations: MyText
   notes: MyText
-  prospect_id: 
+  prospect_id:
 
 two:
   product_type: MyString
@@ -51,7 +51,7 @@ two:
   inner_width: 1.5
   inner_height: MyString
   outer_length: 1.5
-  outer_widht: 1.5
+  outer_width: 1.5
   outer_height: 1.5
   bag_length: 1.5
   bag_width: 1.5
@@ -72,4 +72,4 @@ two:
   maximum_sales_price: 1.5
   observations: MyText
   notes: MyText
-  prospect_id: 
+  prospect_id:

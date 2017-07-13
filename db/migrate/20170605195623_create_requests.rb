@@ -14,7 +14,7 @@ class CreateRequests < ActiveRecord::Migration
       t.float :inner_width
       t.string :inner_height
       t.float :outer_length
-      t.float :outer_widht
+      t.float :outer_width
       t.float :outer_height
       t.float :bag_length
       t.float :bag_width

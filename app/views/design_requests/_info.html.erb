@@ -7,3 +7,8 @@
 <% if current_user.role.name == 'store' %>
   <p><strong>costo: </strong> <%= @design_request.cost %></p>
 <% end %>
+
+<% unless @design_request.notes.blank? %>
+  <p><strong>notas o dudas del diseñador: </strong></p>
+  <%= @design_request.notes %>
+<% end %>

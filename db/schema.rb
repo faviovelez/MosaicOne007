@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170712222556) do
+ActiveRecord::Schema.define(version: 20170713223950) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -295,7 +295,7 @@ ActiveRecord::Schema.define(version: 20170712222556) do
     t.float    "inner_width"
     t.string   "inner_height"
     t.float    "outer_length"
-    t.float    "outer_widht"
+    t.float    "outer_width"
     t.float    "outer_height"
     t.float    "bag_length"
     t.float    "bag_width"
@@ -349,6 +349,10 @@ ActiveRecord::Schema.define(version: 20170712222556) do
     t.string   "specification"
     t.string   "what_measures"
     t.boolean  "specification_document"
+    t.boolean  "sensitive_fields_changed"
+    t.string   "payment"
+    t.string   "authorisation"
+    t.boolean  "authorised"
   end
 
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree

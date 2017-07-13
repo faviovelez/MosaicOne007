@@ -1,7 +1,7 @@
-var actionForRequest = $(".requests.new") || $(".requests.edit")
+var actionForRequest = $("body.requests.new") || $("body.requests.edit")
 
 actionForRequest.ready(function() {
-  
+
 /* Este método esconde o muestra las opciones, dependiendo de la elección del tipo de producto, por ejepmlo: medidas externas, medidas de bolsa, medidas de exhibidor, etc. */
   $("#request_product_type").bind('change', function() {
     var productType = $(this).val();
@@ -9,9 +9,6 @@ actionForRequest.ready(function() {
     if (productType == 'otro') {
       $(".otro").removeClass('hidden');
       $(".measures").removeClass('hidden');
-      if (actionForRequest == $(".requests.new")) {
-        $("#request_what_measures").append('<option value="1" selected="selected" class="new_option">medidas externas</option>');
-      };
       $("#outer").removeClass('hidden');
       $(".caja").addClass('hidden');
       $(".bolsa").addClass('hidden');
@@ -27,9 +24,6 @@ actionForRequest.ready(function() {
     } else if (productType == 'caja') {
       $(".caja").removeClass('hidden');
       $(".measures").removeClass('hidden');
-      if (actionForRequest == $(".requests.new")) {
-        $("#request_what_measures").append('<option value="1" selected="selected" class="new_option">medidas externas</option>');
-      };
       $("#outer").removeClass('hidden');
       $(".otro").addClass('hidden');
       $(".bolsa").addClass('hidden');
@@ -296,14 +290,14 @@ $("#request_impression_no").click(function () {
     };
   });
 /* Este método esconde o muestra el checkbox de autorizaciones manuales */
-  var authorisation = $('#request_authorisation_signed');
-  var paymentUploaded = $('#request_payment_uploaded');
+  var authorisation = $('#request_authorisation');
+  var payment = $('#request_payment');
   authorisation.bind('change', function() {
     if (authorisation != '' ){
       $('.authorised_without_doc').addClass('hidden');
     };
   });
-  paymentUploaded.bind('change', function() {
+  payment.bind('change', function() {
     if (paymentUploaded != '' ){
     $('.authorised_without_pay').addClass('hidden');
     };

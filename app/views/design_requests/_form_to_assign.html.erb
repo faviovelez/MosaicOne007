@@ -1,0 +1,12 @@
+<%= form_for(@design_request) do |f| %>
+
+    <div class="field hidden">
+      <%= f.label :estatus %>
+      <%= f.text_field :status, value: 'en proceso' %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit :asignar_diseño, name: 'contestar solicitud'%>
+    </div>
+
+<% end %>

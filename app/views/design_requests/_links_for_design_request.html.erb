@@ -3,7 +3,11 @@
     <%= link_to 'solicitar otro trabajo de diseño', new_request_design_request_path(request_id: @design_request.request) %>
   <% end %>
 
-  <%= link_to 'editar', edit_design_request_path(@design_request) %>
+  <% if current_user.role.name == 'store' && @design_request.status != 'aceptada' %>
+    <%= link_to 'editar', edit_design_request_path(@design_request) %>
+  <% elsif (current_user.role.name == 'designer' && @design_request.status == 'en proceso') %>
+    <%= link_to 'trabajar solicitud', edit_design_request_path(@design_request) %>
+  <% end %>
 
   <% if current_user.role.name == 'store' && @design_request.status == 'diseño elaborado' %>
     <%= link_to 'confirmar diseño', '#myModal', 'data-toggle' => 'modal' %>
