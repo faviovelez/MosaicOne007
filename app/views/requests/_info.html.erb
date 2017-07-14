@@ -14,35 +14,49 @@
     <h3>datos del producto a exhibir </h3>
   <% end %>
 
-  <p><strong>tipo de producto: </strong>
-    <%= @request.product_what %>
-  </p>
-
-  <p><strong>largo: </strong>
-    <%= @request.product_length %> cm
-  </p>
-
-  <p><strong>ancho: </strong>
-    <%= @request.product_width %> cm
-  </p>
-
-  <p><strong>alto: </strong>
-    <%= @request.product_height %> cm
-  </p>
-
-  <p><strong>peso: </strong>
-    <%= @request.product_weight %> kg
-  </p>
-
-  <% unless @request.product_type == 'caja' %>
-    <p><strong>cajas para: </strong>
-      <%= @request.for_what %>
-    </p>
-
-    <p><strong>estiba: </strong>
-      <%= @request.boxes_stow %>
+  <% if @request.product_what.present? %>
+    <p><strong>tipo de producto: </strong>
+      <%= @request.product_what %>
     </p>
   <% end %>
+
+  <% if @request.product_length.present? %>
+    <p><strong>largo: </strong>
+      <%= @request.product_length %> cm
+    </p>
+  <% end %>
+
+  <% if @request.product_width.present? %>
+    <p><strong>ancho: </strong>
+      <%= @request.product_width %> cm
+    </p>
+  <% end %>
+
+  <% if @request.product_height.present? %>
+    <p><strong>alto: </strong>
+      <%= @request.product_height %> cm
+    </p>
+  <% end %>
+
+  <% if @request.product_weight.present? %>
+    <p><strong>peso: </strong>
+      <%= @request.product_weight %> kg
+    </p>
+  <% end %>
+
+    <% unless @request.product_type == 'caja' %>
+      <% if @request.for_what.present? %>
+        <p><strong>cajas para: </strong>
+          <%= @request.for_what %>
+        </p>
+      <% end %>
+
+      <% if @request.for_what.present? %>
+        <p><strong>estiba: </strong>
+          <%= @request.boxes_stow %>
+        </p>
+      <% end %>
+    <% end %>
 
   <% if @request.product_type == 'otro' %>
     <% @product = @request.name_type %>

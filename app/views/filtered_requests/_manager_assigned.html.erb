@@ -37,8 +37,10 @@
         <td> - </td>
           <% end %>
         <td> <%= request.status %></td>
-        <% if request.sensitive_fields_changed || request.internal_price.blank? %>
+        <% if request.internal_price.blank? %>
           <td> <%= link_to 'cotizar', manager_requests_path(request) %> </td>
+        <% elsif request.sensitive_fields_changed %>
+          <td> <%= link_to 're-cotizar', manager_view_requests_path(request) %> </td>
         <% else %>
           <td> <%= link_to 'detalles', request_path(request) %> </td>
         <% end %>

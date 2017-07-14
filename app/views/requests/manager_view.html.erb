@@ -4,4 +4,10 @@
 
 <%= render 'documents_for_request' %>
 
+<% if (current_user.role.name == 'manager' && (@request.main_material == 'sugerir material' || @request.resistance_main_material == 'Sugerir resistencia')) %>
+  <% if (@request.status != 'en producción' || @request.status != 'autorizada') %>
+    <%= link_to 'modificar', edit_request_path(@request) %>
+  <% end %>
+<% end %>
+
 <%= render 'links_for_manager' %>

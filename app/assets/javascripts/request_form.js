@@ -298,7 +298,7 @@ $("#request_impression_no").click(function () {
     };
   });
   payment.bind('change', function() {
-    if (paymentUploaded != '' ){
+    if (payment != '' ){
     $('.authorised_without_pay').addClass('hidden');
     };
   });

@@ -1,4 +1,4 @@
-<% if @request.internal_price.blank? %>
+<% unless @request.status == 'costo asignado' || @request.status == 'precio asignado' || @request.status == 'autorizada' %>
 
   <%= form_for(@request) do |f| %>
     <div class="field">

@@ -1,26 +1,36 @@
-<%= link_to 'modificar', edit_request_path(@request) %>
+<% if current_user.role.name == 'store' || (current_user.role.name == 'manager' && (@request.main_material == 'sugerir material' || @request.resistance_main_material == 'Sugerir resistencia' )) %>
+  <% if (@request.status != 'en producción' || @request.status != 'autorizada') %>
+    <%= link_to 'modificar', edit_request_path(@request) %>
+  <% end %>
+<% end %>
 
-<%= link_to 'ver prospecto', prospect_path(@request.prospect) %>
+<% if current_user.role.name == 'store' %>
 
-<%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
+  <%= link_to 'ver prospecto', prospect_path(@request.prospect) %>
+
+  <%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
+<% end %>
 
 <% if @request.design_requests.any? == true %>
   <%= link_to 'ver trabajos de diseño', request_design_request_path(request_id: @request) %>
 <% end %>
 
-<% if @request.status == 'cancelada' %>
-  <%= link_to 'reactivar', '#myModal', 'data-toggle' => 'modal' %>
-<% else %>
-  <%= link_to 'cancelar', '#myModal', 'data-toggle' => 'modal' %>
-<% end %>
+<% if current_user.role.name == 'store' %>
+  <% if @request.status == 'cancelada' %>
+    <%= link_to 'reactivar', '#myModal', 'data-toggle' => 'modal' %>
+  <% else %>
+    <%= link_to 'cancelar', '#myModal', 'data-toggle' => 'modal' %>
+  <% end %>
 
-<% if @request.status == 'creada' %>
-  <%= link_to 'ver lista de solicitudes guardadas', filtered_requests_saved_view_path %>
-<% else %>
-  <%= link_to 'ver lista de solicitudes activas', filtered_requests_current_view_path %>
-<% end %>
+  <% if @request.status == 'creada' %>
+    <%= link_to 'ver lista de solicitudes guardadas', filtered_requests_saved_view_path %>
+  <% else %>
+    <%= link_to 'ver lista de solicitudes activas', filtered_requests_current_view_path %>
+  <% end %>
 
-
-<% unless @request.status == 'creada' || @request.status == 'cancelada' %>
-  <%= link_to 'confirmar pedido', confirm_requests_path(@request) %>
+  <% if @request.status == 'costo asignado'  %>
+    <%= link_to 'asignar precio', requests_price_path(@request) %>
+  <% elsif @request.status == 'precio asignado' %>
+    <%= link_to 'confirmar pedido', confirm_requests_path(@request) %>
+  <% end %>
 <% end %>

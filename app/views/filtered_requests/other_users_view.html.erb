@@ -27,6 +27,8 @@
           </td>
           <% if request.prospect.present? %>
             <td><%= request.prospect.legal_or_business_name %></td>
+          <% else %>
+          <td> - </td>
           <% end %>
           <% @days = (Date.today - request.created_at.to_date).to_i %>
           <% if @days < 1 %>
@@ -40,20 +42,16 @@
             <td> <%= I18n.l request.delivery_date, format: :short %></td>
           <% else %>
           <td> - </td>
-            <% end %>
-          <td> <%= request.status %></td>
-          <% id = 0 %>
-          <% request.users.each do |user| %>
-            <% if user.role.name == 'manager' %>
-              <% id = user.id %>
-            <% end %>
-            <td>
-              <%= request.users.find(id).first_name %>
-              <%= request.users.find(id).last_name %>
-            </td>
           <% end %>
+          <td> <%= request.status %></td>
+          <td> <% find_manager(request) %>
+              <%= @follower.first_name %>
+              <%= @follower.last_name %>
+            </td>
           <td> <%= link_to 'detalles', request %> </td>
         </tr>
       </tbody>
     </table>
 <% end %>
+
+<%= render 'links_for_manager' %>

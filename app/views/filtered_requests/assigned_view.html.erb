@@ -1,6 +1,8 @@
 
 <% if current_user.role.name == 'manager' %>
   <%= render 'manager_assigned' %>
+  <%= render 'links_for_manager' %>
 <% elsif current_user.role.name == 'designer' %>
   <%= render 'designer_assigned' %>
+  <%= render 'links_for_designer' %>  
 <% end %>
