@@ -15,8 +15,6 @@
 
   <%= link_to 'ver solicitud de cotización', request_path(@design_request.request) %>
 
-  <% if current_user.role.name == 'store' %>
-    <%= link_to 'ver todos las solicitudes de diseño', request_design_request_path(request_id: @design_request.request) %>
-  <% elsif current_user.role.name == 'designer' %>
-    <%= link_to 'ver todos las solicitudes de diseño', filtered_requests_assigned_view_path %>
+  <% if current_user.role.name == 'designer' %>
+    <%= link_to 'ver todas las solicitudes de diseño', filtered_requests_assigned_view_path %>
   <% end %>

@@ -1,6 +1,7 @@
 <% if current_user.role.name == 'store' %>
   <%= render 'update' %>
 <% elsif current_user.role.name == 'designer' && @design_request.status == 'en proceso' %>
+  <%= render 'info' %>
   <%= render 'update_for_designer' %>
 <% end %>
 

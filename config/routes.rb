@@ -2,6 +2,8 @@ Rails.application.routes.draw do
 
   root 'pages#index'
 
+  match '/search_suggestions', to: 'search_suggestions#index', via: :get
+
   get 'orders/special'
 
   get 'orders/catalog'
@@ -26,7 +28,11 @@ Rails.application.routes.draw do
 
   get 'filtered_requests/supporters_view'
 
+  get 'filtered_requests/product_view'
+
   devise_for :users
+
+  resources :products
 
   resources :users do
     resources :requests, controller: 'assigned_requests'

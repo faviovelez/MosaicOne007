@@ -29,6 +29,10 @@ class FilteredRequestsController < ApplicationController
     filter_supporters_view
   end
 
+  def product_view
+    filter_confirmed_requests
+  end
+
 # Método de tienda: muestra solicitudes activas
   def filter_store_active_requests(store = current_user.store)
     @store_active = store.requests.where.not('status' => ['creada','expirada','cancelada']).order(:created_at).order(:store_code)
@@ -81,6 +85,10 @@ class FilteredRequestsController < ApplicationController
   def filter_supporters_view
     @supporters = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => 'manager').order(:created_at).order(:store_code)
     @supporters
+  end
+
+  def filter_confirmed_requests
+    @confirmed = Request.where(status: 'autorizada')
   end
 
 end

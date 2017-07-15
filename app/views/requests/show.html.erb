@@ -4,4 +4,8 @@
 
 <%= render 'modal' %>
 
+<% if current_user.role.name == 'product-admin'%>
+  <%= render 'product_admin_form' %>
+<% end %>
+
 <%= render 'links_to_show' %>

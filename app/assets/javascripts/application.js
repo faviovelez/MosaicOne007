@@ -16,3 +16,8 @@
 //= require request_form
 //= require show
 //= require_tree .
+
+
+$('.search-field').autocomplete
+  appendTo: '.search-form',
+  source: '/search_suggestions'

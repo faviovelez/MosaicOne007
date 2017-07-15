@@ -1,0 +1,121 @@
+<% if @product.errors.any? %>
+  <ul>
+    <% @product.errors.messages.values.each do |msg| %>
+      <%msg.each do  |m| %>
+        <li><%= m %></li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>
+
+<%= form_for(@product) do |f| %>
+
+  <div class="field">
+    <%= f.label :código_anterior %><br>
+    <%= f.text_field :former_code %>
+  </div>
+
+  <div class="field">
+    <%= f.label :código_único %><br>
+    <%= f.text_field :unique_code %>
+  </div>
+
+  <div class="field">
+    <%= f.label :descripción %><br>
+    <%= f.text_field :description %>
+  </div>
+
+  <div class="field">
+    <%= f.label :tipo_de_producto %><br>
+    <%= f.text_field :product_type %>
+  </div>
+
+  <div class="field">
+    <%= f.label :color_exterior_del_cartón %><br>
+    <%= f.text_field :exterior_material_color %>
+  </div>
+
+  <div class="field">
+    <%= f.label :color_interior_del_cartón %><br>
+    <%= f.text_field :interior_material_color %>
+  </div>
+
+  <div class="field">
+    <%= f.label :lleva_impresión? %><br>
+    <%= f.check_box :impression, {multiple: true}, 'sí', '' %>
+  </div>
+
+  <div class="field">
+    <%= f.label :color_exterior_o_diseño %><br>
+    <%= f.text_field :exterior_color_or_design %>
+  </div>
+
+  <div class="field">
+    <%= f.label :material %><br>
+    <%= f.text_field :main_material %>
+  </div>
+
+  <div class="field">
+    <%= f.label :resistencia_del_material %><br>
+    <%= f.text_field :resistance_main_material %>
+  </div>
+
+  <h4>medidas internas</h4>
+
+  <div class="field">
+    <%= f.label :largo %><br>
+    <%= f.text_field :inner_length %>
+  </div>
+
+  <div class="field">
+    <%= f.label :ancho %><br>
+    <%= f.text_field :inner_width %>
+  </div>
+
+  <div class="field">
+    <%= f.label :alto %><br>
+    <%= f.text_field :inner_height %>
+  </div>
+
+  <h4>medidas externas</h4>
+
+  <div class="field">
+    <%= f.label :largo %><br>
+    <%= f.text_field :outer_length %>
+  </div>
+
+  <div class="field">
+    <%= f.label :ancho %><br>
+    <%= f.text_field :outer_width %>
+  </div>
+
+  <div class="field">
+    <%= f.label :alto %><br>
+    <%= f.text_field :outer_height %>
+  </div>
+
+  <div class="field">
+    <%= f.label :tipo_de_armado %><br>
+    <%= f.text_field :design_type %>
+  </div>
+
+  <div class="field">
+    <%= f.label :número_de_piezas %><br>
+    <%= f.number_field :number_of_pieces %>
+  </div>
+
+  <div class="field">
+    <%= f.label :kit_de_accesorios %><br>
+    <%= f.text_field :accesories_kit %>
+  </div>
+
+  <div class="field">
+    <%= f.label :precio_de_venta %><br>
+    <%= f.text_field :price %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit :confirmar %>
+  </div>
+
+<% end %>

@@ -4,7 +4,7 @@
 <p><strong>Descripción de la solicitud: </strong></p>
 <%= @design_request.description %>
 
-<% if current_user.role.name == 'store' %>
+<% if (current_user.role.name == 'store' || current_user.role.name == 'manager') && @design_request.cost.present? %>
   <p><strong>costo: </strong> <%= @design_request.cost %></p>
 <% end %>
 

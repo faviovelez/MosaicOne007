@@ -9,6 +9,8 @@
       <%= link_to 'borrar', document_path(@authorisation.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
     <% end %>
   </div>
+  <% else %>
+    <p><strong> autorizado sin documento firmado </strong></p>
 <% end %>
 
 <% if @request.payment_uploaded %>
@@ -22,6 +24,8 @@
       <%= link_to 'borrar', document_path(@payment.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
     <% end %>
   </div>
+  <% else %>
+    <p><strong> autorizado sin ficha de depósito </strong></p>
 <% end %>
 
 <% if @request.specification_document %>

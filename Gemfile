@@ -47,8 +47,8 @@ end
 
 gem 'devise'
 
-gem 'cancancan', '~> 1.10'
-
 gem 'carrierwave', '~> 1.0'
 
 gem 'rmagick'
+
+gem 'redis', '~>3.2'

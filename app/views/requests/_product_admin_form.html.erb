@@ -1,0 +1,14 @@
+<%= form_for(@request) do |f| %>
+
+    <div class="field">
+      <%= f.label :cancelar_solicitud %>
+      <%= f.check_box :status, { multiple: true }, 'cancelada', nil %>
+    </div>
+
+  <div class="actions">
+    <%= f.submit :confirmar_producto, name: 'confirmar_producto' %>
+  </div>
+
+<%= search_field(:request) %>
+
+<% end %>

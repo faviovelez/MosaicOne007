@@ -44,8 +44,13 @@ class DesignRequestsController < ApplicationController
     assign_to_current_user
     respond_to do |format|
       if @design_request.update(design_params)
-        format.html { redirect_to @design_request, notice: 'La solicitud de diseño fue modificada exitosamente.' }
-        format.json { render :index, status: :ok, location: @design_request }
+        if current_user.role.name == 'designer' && params[:asignar_solicitud]
+          format.html {redirect_to edit_design_request_path(@design_request), notice: "La solicitud fue asignada a #{current_user.first_name} #{current_user.last_name}" }
+        elsif params[:aceptar_diseño]
+          @design_request.update(status: 'aceptada')
+          format.html { redirect_to @design_request, notice: 'La solicitud de diseño fue modificada exitosamente.' }
+          format.json { render :index, status: :ok, location: @design_request }
+        end
       else
         format.html { render :edit }
         format.json { render json: @design_request.errors, status: :unprocessable_entity }

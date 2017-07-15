@@ -1,4 +1,4 @@
-<p> Acepto el costo de <%=@design_request.cost %> pesos para esta solicitud</p>
+<p> Acepto el costo de $<%=@design_request.cost %> pesos + IVA para esta solicitud.</p>
 
 <%= form_for(@design_request) do |f| %>
 
@@ -7,8 +7,13 @@
       <%= f.check_box :status, { multiple: true }, 'aceptada', nil %>
     </div>
 
+    <div class="field hidden">
+      <%= f.label :descripción_de_la_solicitud %>
+      <%= f.text_area :description %>
+    </div>
+
   <div class="actions">
-    <%= f.submit :aceptar_diseño, name: 'aceptar diseño' %>
+    <%= f.submit :aceptar_diseño, name: 'aceptar_diseño' %>
   </div>
 
 <% end %>

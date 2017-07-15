@@ -5,14 +5,12 @@
 <% end %>
 
 <% if current_user.role.name == 'store' %>
-
   <%= link_to 'ver prospecto', prospect_path(@request.prospect) %>
 
-  <%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
-<% end %>
+  <% unless @request.status == 'cancelada' || @request.status == 'creada' %>
+    <%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
+  <% end %>
 
-<% if @request.design_requests.any? == true %>
-  <%= link_to 'ver trabajos de diseño', request_design_request_path(request_id: @request) %>
 <% end %>
 
 <% if current_user.role.name == 'store' %>
