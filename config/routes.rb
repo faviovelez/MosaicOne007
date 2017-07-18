@@ -48,6 +48,7 @@ Rails.application.routes.draw do
 
   resources :requests do
     resources :design_requests, controller: 'design_requests'
+    resources :products
   end
 
   resources :design_requests

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170713223950) do
+ActiveRecord::Schema.define(version: 20170718205024) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,15 @@ ActiveRecord::Schema.define(version: 20170713223950) do
 
   add_index "images", ["product_id"], name: "index_images_on_product_id", using: :btree
 
+  create_table "inventories", force: :cascade do |t|
+    t.integer  "product_id"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "quantity",   default: 0
+  end
+
+  add_index "inventories", ["product_id"], name: "index_inventories_on_product_id", using: :btree
+
   create_table "managers", force: :cascade do |t|
     t.string   "username"
     t.integer  "user_id"
@@ -184,10 +193,13 @@ ActiveRecord::Schema.define(version: 20170713223950) do
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.integer  "order_id"
+    t.integer  "user_id"
+    t.integer  "times_ordered"
   end
 
   add_index "movements", ["order_id"], name: "index_movements_on_order_id", using: :btree
   add_index "movements", ["product_id"], name: "index_movements_on_product_id", using: :btree
+  add_index "movements", ["user_id"], name: "index_movements_on_user_id", using: :btree
 
   create_table "orders", force: :cascade do |t|
     t.string   "status"
@@ -197,20 +209,28 @@ ActiveRecord::Schema.define(version: 20170713223950) do
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
     t.string   "category"
-    t.integer  "times_ordered"
     t.integer  "prospect_id"
     t.integer  "request_id"
     t.integer  "billing_address_id"
-    t.integer  "product_id"
   end
 
   add_index "orders", ["additional_discount_id"], name: "index_orders_on_additional_discount_id", using: :btree
   add_index "orders", ["billing_address_id"], name: "index_orders_on_billing_address_id", using: :btree
   add_index "orders", ["delivery_address_id"], name: "index_orders_on_delivery_address_id", using: :btree
-  add_index "orders", ["product_id"], name: "index_orders_on_product_id", using: :btree
   add_index "orders", ["prospect_id"], name: "index_orders_on_prospect_id", using: :btree
   add_index "orders", ["request_id"], name: "index_orders_on_request_id", using: :btree
   add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree
+
+  create_table "pending_movements", force: :cascade do |t|
+    t.integer  "product_id"
+    t.integer  "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "order_id"
+  end
+
+  add_index "pending_movements", ["order_id"], name: "index_pending_movements_on_order_id", using: :btree
+  add_index "pending_movements", ["product_id"], name: "index_pending_movements_on_product_id", using: :btree
 
   create_table "productions", force: :cascade do |t|
     t.string   "status"
@@ -246,6 +266,16 @@ ActiveRecord::Schema.define(version: 20170713223950) do
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
     t.float    "price"
+    t.float    "bag_length"
+    t.float    "bag_width"
+    t.float    "bag_height"
+    t.float    "exhibitor_height"
+    t.integer  "tray_quantity"
+    t.float    "tray_length"
+    t.float    "tray_width"
+    t.integer  "tray_divisions"
+    t.string   "classification"
+    t.string   "line"
   end
 
   create_table "prospects", force: :cascade do |t|
@@ -425,18 +455,21 @@ ActiveRecord::Schema.define(version: 20170713223950) do
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"
   add_foreign_key "images", "products"
+  add_foreign_key "inventories", "products"
   add_foreign_key "managers", "users"
   add_foreign_key "modified_fields", "requests"
   add_foreign_key "modified_fields", "users"
   add_foreign_key "movements", "orders"
   add_foreign_key "movements", "products"
+  add_foreign_key "movements", "users"
   add_foreign_key "orders", "additional_discounts"
   add_foreign_key "orders", "billing_addresses"
   add_foreign_key "orders", "delivery_addresses"
-  add_foreign_key "orders", "products"
   add_foreign_key "orders", "prospects"
   add_foreign_key "orders", "requests"
   add_foreign_key "orders", "users"
+  add_foreign_key "pending_movements", "orders"
+  add_foreign_key "pending_movements", "products"
   add_foreign_key "productions", "orders"
   add_foreign_key "productions", "users"
   add_foreign_key "prospects", "billing_addresses"

@@ -20,4 +20,13 @@ module ApplicationHelper
     @follower = request.users.find(user_id)
   end
 
+  def value_of_product_type(request)
+    if request.product_type == 'otro'
+      @value = request.name_type
+    else
+      @value = request.product_type
+    end
+    @value
+  end
+
 end

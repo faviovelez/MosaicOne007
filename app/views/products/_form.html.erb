@@ -31,6 +31,16 @@
   </div>
 
   <div class="field">
+    <%= f.label :línea_de_producto %><br>
+    <%= f.text_field :line %>
+  </div>
+
+  <div class="field">
+    <%= f.label :línea_de_producto %><br>
+    <%= f.select :classification, options_for_select(['de línea'], ['especial']) %>
+  </div>
+
+  <div class="field">
     <%= f.label :color_exterior_del_cartón %><br>
     <%= f.text_field :exterior_material_color %>
   </div>

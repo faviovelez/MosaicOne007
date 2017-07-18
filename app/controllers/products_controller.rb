@@ -14,21 +14,42 @@ class ProductsController < ApplicationController
 
   # GET /products/new
   def new
+    if params[:request_id]
+      @request = Request.find(params[:request_id])
+    end
     @product = Product.new
   end
 
   # GET /products/1/edit
   def edit
+    @request = Request.find(params[:request_id])
   end
 
   # POST /products
   # POST /products.json
   def create
+    if params[:request_id]
+      @request = Request.find(params[:request_id])
+    end
+    finded_user = nil
+    users = @request.users
+    store_users = User.joins(:role).where('roles.name' => 'store')
+    users.each do |user|
+      store_users.each do |store_user|
+        if user == store_user
+          finded_user = user
+        end
+      end
+    end
+    finded_user
     @product = Product.new(product_params)
-
     respond_to do |format|
       if @product.save
-        format.html { redirect_to @product, notice: 'Product was successfully created.' }
+        @request.update(status: 'código asignado')
+        @inventory = Inventory.create(product: @product)
+        @order = Order.create(status: 'en espera', user: finded_user, category: 'special', prospect: @request.prospect, request: @request)
+        @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, order: @order)
+        format.html { redirect_to @product, notice: 'Se creó un nuevo producto y una petición de baja de productos en espera del inventario.' }
         format.json { render :show, status: :created, location: @product }
       else
         format.html { render :new }

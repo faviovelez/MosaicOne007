@@ -1,0 +1,257 @@
+<body class="<%= params[:controller] %> <%= params[:action] %>">
+
+  <% if @product.errors.any? %>
+    <ul>
+      <% @product.errors.messages.values.each do |msg| %>
+        <%msg.each do  |m| %>
+          <li><%= m %></li>
+        <% end %>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= form_for [@request, @product] do |f| %>
+
+    <div class="field">
+      <%= f.label :código_anterior %>
+      <%= f.text_field :former_code %>
+    </div>
+
+    <div class="field">
+      <%= f.label :código_único %>
+      <%= f.text_field :unique_code %>
+    </div>
+
+    <div class="field">
+      <%= f.label :descripción %>
+      <%= f.text_field :description %>
+    </div>
+
+    <div class="field">
+      <%= f.label :tipo_de_producto %>
+      <%= f.text_field :product_type, value: value_of_product_type(@request) %>
+    </div>
+
+    <div class="field">
+      <%= f.label :línea_de_producto %>
+      <%= f.text_field :line %>
+    </div>
+
+    <div class="field">
+      <%= f.label :clasificación %>
+      <%= f.select :classification, options_for_select([['de línea'], ['especial']], selected: 'especial')  %>
+    </div>
+
+    <h3>medidas</h3>
+
+    <% if @request.what_measures == '1' || @request.what_measures == '3' %>
+      <h4>medidas externas</h4>
+      <div id="outer">
+    <% else %>
+      <div id="outer" class="hidden" >
+    <% end %>
+
+    <div class="field">
+      <%= f.label :largo %>
+      <%= f.text_field :outer_length, value: @request.outer_length %>
+    </div>
+
+    <div class="field">
+      <%= f.label :ancho %>
+      <%= f.text_field :outer_width, value: @request.outer_width %>
+    </div>
+
+    <div class="field">
+      <%= f.label :alto %>
+      <%= f.text_field :outer_height, value: @request.outer_height %>
+    </div>
+  </div>
+
+    <% if @request.what_measures == '2' || @request.what_measures == '3' %>
+      <h4>medidas internas</h4>
+      <div id="inner">
+    <% else %>
+      <div id="inner" class="hidden">
+    <% end %>
+
+    <div class="field">
+      <%= f.label :largo %>
+      <%= f.text_field :inner_length, value: @request.inner_length %>
+    </div>
+
+    <div class="field">
+      <%= f.label :ancho %>
+      <%= f.text_field :inner_width, value: @request.inner_width %>
+    </div>
+
+    <div class="field">
+      <%= f.label :alto %>
+      <%= f.text_field :inner_height, value: @request.inner_height %>
+    </div>
+  </div>
+
+    <% if @request.product_type == 'bolsa' %>
+      <div class="bolsa">
+    <% else %>
+      <div class="bolsa hidden">
+    <% end %>
+
+      <div class="field">
+        <%= f.label :largo %>
+        <%= f.text_field :bag_length, value: @request.bag_length %>
+        cm
+      </div>
+
+      <div class="field">
+        <%= f.label :fuelle %>
+        <%= f.text_field :bag_width, value: @request.bag_width %>
+        cm
+      </div>
+
+      <div class="field">
+        <%= f.label :alto %>
+        <%= f.text_field :bag_height, value: @request.bag_height %>
+        cm
+      </div>
+    </div>
+
+    <% if @request.product_type == 'exhibidor' %>
+    <div class="exhibidor">
+    <% else %>
+    <div class="exhibidor hidden">
+    <% end %>
+
+      <div class="field">
+        <%= f.label :altura %>
+        <%= f.text_field :exhibitor_height, value: @request.exhibitor_height %>
+        cm
+      </div>
+
+      <div class="field">
+        <%= f.label :cantidad_de_charolas %>
+        <%= f.text_field :tray_quantity, value: @request.tray_quantity %>
+      </div>
+
+      <div class="field">
+        <%= f.label :largo_de_la_charola %>
+        <%= f.text_field :tray_length, value: @request.tray_length %>
+        cm
+      </div>
+
+      <div class="field">
+        <%= f.label :ancho_de_la_charola %>
+        <%= f.text_field :tray_width, value: @request.tray_width %>
+        cm
+      </div>
+
+      <div class="field">
+        <%= f.label :número_de_divisiones_de_las_charolas %>
+        <%= f.text_field :tray_divisions, value: @request.tray_divisions %>
+      </div>
+    </div>
+
+    <h3>material y resistencia</h3>
+
+    <div class="field">
+      <%= f.label :material %>
+      <%= f.select :main_material, options_for_select([['seleccione', ''],
+      ['caple', class: "resistance main caja"],
+      ['sulfatada', class: "resistance main caja"],
+      ['multicapa', class: "resistance main caja"],
+      ['reverso blanco', class: "resistance main caja"],
+      ['reverso gris', class: "resistance main caja"],
+      ['liner', class: "resistance main caja"],
+      ['single face', class: "resistance main caja"],
+      ['microcorrugado', class: "resistance main caja"],
+      ['corrugado', class: "resistance main caja"],
+      ['rígido', class: "resistance main caja"],
+      ['papel kraft', class: "resistance main bolsa"],
+      ['papel bond', class: "resistance main bolsa"],
+      ['sugerir material']], selected: @request.main_material) %>
+    </div>
+
+    <div class="field">
+      <%= f.label :resistencia_del_material %>
+      <%= f.select :resistance_main_material, options_for_select([["seleccione" ,""],
+      ['Buscar resistencia', 'buscar'],
+      ["12 PTS", class: "main plegadizo"],
+      ["14 PTS", class: 'main plegadizo'],
+      ["16 PTS", class: 'main plegadizo'],
+      ["18 PTS", class: 'main plegadizo'],
+      ["20 PTS", class: 'main plegadizo'],
+      ["22 PTS", class: 'main plegadizo'],
+      ["24 PTS", class: 'main plegadizo'],
+      ["170 grs", class: 'main liner'],
+      ["180 grs", class: 'main liner'],
+      ["275 grs", class: 'main liner'],
+      ["300 grs", class: 'main liner'],
+      ["SG - 20 ECT", class: 'main corrugado'],
+      ["7kg - 23 ECT", class: 'main corrugado'],
+      ["9kg - 26 ECT", class: 'main corrugado'],
+      ["11kg - 29 ECT", class: 'main corrugado'],
+      ["12kg - 32 ECT", class: 'main corrugado'],
+      ["14kg - 40 ECT", class: 'main corrugado'],
+      ["16kg - 44 ECT", class: 'main corrugado'],
+      ["18kg - 51 ECT", class: 'main corrugado'],
+      ["No aplica", class: 'main otros'],
+      ["12kg - 36 ECT", class: 'main doble_corrugado'],
+      ["14kg - 42 ECT", class: 'main doble_corrugado'],
+      ["19kg - 48 ECT", class: 'main doble_corrugado'],
+      ["225kg - 51 ECT", class: 'main doble_corrugado'],
+      ["28kg - 61 ECT", class: 'main doble_corrugado'],
+      ["35kg - 71 ECT", class: 'main doble_corrugado'],
+      ["42kg - 82 ECT", class: 'main doble_corrugado'],
+      ["Sugerir resistencia"]], selected: @request.resistance_main_material) %>
+    </div>
+
+    <h3>color e impresión</h3>
+
+    <div class="field">
+      <%= f.label :color_exterior_del_cartón %>
+      <%= f.select :exterior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.exterior_material_color) %>
+    </div>
+
+    <div class="field">
+      <%= f.label :color_interior_del_cartón %>
+      <%= f.select :interior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.interior_material_color) %>
+    </div>
+
+    <div class="field">
+      <% @value = false %>
+      <% if @request.impression == 'si' %>
+        <% @value = true %>
+      <% end %>
+      <%= f.label :¿lleva_impresión? %>
+      <%= label :impression, 'Sí' %>
+      <p class="hidden" id="impression_value"><%=@request.impression%></p>
+      <%= f.radio_button :impression, 'si', value: 'si', checked: @value %>
+      <%= label :impression, 'No' %>
+      <%= f.radio_button :impression, 'no', value: 'no', checked: !@value %>
+    </div>
+
+    <div class="field">
+      <%= f.label :color_exterior_o_diseño %>
+      <%= f.text_field :exterior_color_or_design %>
+    </div>
+
+    <div class="field">
+      <%= f.label :tipo_de_armado %>
+      <%= f.text_field :design_type, value: @request.design_like %>
+    </div>
+
+    <div class="field">
+      <%= f.label :número_de_piezas %>
+      <%= f.number_field :number_of_pieces %>
+    </div>
+
+    <div class="field">
+      <%= f.label :kit_de_accesorios %>
+      <%= f.text_field :accesories_kit %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit :confirmar %>
+    </div>
+
+  <% end %>
+</body>

@@ -1,5 +1,10 @@
 <h2>nuevo producto</h2>
 
-<%= render 'form' %>
+
+<% if params[:request_id] %>
+  <%= render 'create_from_request' %>
+<% else %>
+  <%= render 'form' %>
+<% end %>
 
 <%= link_to 'regresar', products_path %>
