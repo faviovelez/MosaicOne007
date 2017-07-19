@@ -54,9 +54,7 @@ gem 'carrierwave', '~> 1.0'
 gem 'rmagick'
 
 gem 'redis', '~>3.2'
-<<<<<<< 5b4dca693c5f2b1b0952ad570efa8b2b6db7195b
 
 gem 'dotenv-rails'
-=======
 gem 'state_machine'
->>>>>>> load site success
+gem 'faker'
