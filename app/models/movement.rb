@@ -1,4 +1,5 @@
 class Movement < ActiveRecord::Base
+  # Para que sirva como un histórico de todos los movimientos de stock de product: bajas, altas, ventas, devoluciones, cancelaciones que afecten el modelo inventory. 
   belongs_to :product
   belongs_to :order
 

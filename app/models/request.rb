@@ -1,4 +1,5 @@
 class Request < ActiveRecord::Base
+  # Para el formulario de requests (solicitud de pedidos especiales).
   has_many :users, through: :request_users
   belongs_to :prospect
   has_many :documents
@@ -8,19 +9,46 @@ class Request < ActiveRecord::Base
   has_one :order
   has_many :request_users
 
+  # Valida que solo se escriban números en el campo de cantidad y que solo sean enteros.
   validates :quantity, on: :create, numericality: { only_integer: true, message: "%{value} No es una cantidad válida, solo se aceptan enteros." }
+
+  # Valida que solo se escriban números en el campo del peso del producto.
   validates :product_weight, numericality: true, allow_nil: true, on: :create
+
+  # Valida que el tipo de diseño siempre se especifique qué tipo de armado se desea (aunque solo se elija la opción que se sugiera).
   validates :design_like, presence: { message: 'Elija el tipo de armado o sugerir armado.', if: :product_type_is_a_box}
+
+  # Valida que el campo de qué medidas se ingresará (externas, internas, etc.) siempre vaya lleno si el tipo de producto es una caja.
   validates :what_measures, presence: { message: 'Debe seleccionar qué medidas ingresará.', if: :product_type_is_a_box}
+
+  # Valida que el costo interno esté presente cuando el manager escriba el precio de venta para la tienda.
   validates :internal_cost, presence: { message: 'Debe incluir costo interno y precio de venta a la tienda', if: :internal_price, on: :update}
+
+  # Valida que la fecha de entrega al cliente sea en el futuro.
   validate :delivery_date_future
+
+  # Valida que se especifique qué producto se cotiza (diferente a caja o bolsa o exhibidor) cuando se selecciona la opción 'otro'
   validate :fill_name_type, on: :create
+
+  # Valida que se especifique la cantidad de productos a cotizar.
   validate :quantity_present, on: :create
+
+  # Valida que siempre que se elija un material, se agrege la resistencia del mismo (o la opción sugerir resistencia)
   validate :material_and_resistance_presence, on: :create
+
+  # Valida que se elija el tipo de producto que se cotiza.
   validate :product_type_presence, on: :create
+
+  # Valida que si se elige bolsa o exhibidor, estén llenos los campos correspondientes a sus medidas.
   validate :outer_inner_bag_or_exhibitor_fields, on: :create
+
+  # Valida que si se elige la opción sugerir resistencia de material, se den todos los datos del producto que contendrá la caja o bolsa.
   validate :resistance_suggestion, on: :create
+
+  # Valida que si se elige la opción sugerir material, se den todos los datos del producto que contendrá la caja o bolsa.
   validate :measures_suggestion, on: :create
+
+  # Valida que si se seleccionó que sí se requiere impresión, todos los campos de este tipo estén llenos.
   validate :impression_fields_complete, if: :impression_selected, on: :create
 
   def delivery_date_future

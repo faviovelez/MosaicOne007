@@ -1,4 +1,5 @@
 class Order < ActiveRecord::Base
+  # Agrupa todos los movements en un solo pedido.
   belongs_to :user
   belongs_to :delivery_address
   has_one :additional_discount

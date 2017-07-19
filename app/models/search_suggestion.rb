@@ -1,5 +1,5 @@
 class SearchSuggestion
-
+  # Para el formulario de búsqueda que debe estar al hacer pedidos. No lo he terminado.
   def self.seed
     Product.find_each do |place|
       description = Product.description
