@@ -1,4 +1,5 @@
 class DocumentsController < ApplicationController
+  # Este controller es para todos los documentos tanto de DesignRequests como de Requests, crea y borra documentos.
   before_action :authenticate_user!
   before_action :set_document, only: [:show, :edit, :update, :destroy]
 
@@ -25,7 +26,6 @@ class DocumentsController < ApplicationController
   # POST /documents.json
   def create
     Document.new = Document.new(document_params)
-
     respond_to do |format|
       if @document.save
         format.html { redirect_to @document, notice: 'Document was successfully created.' }

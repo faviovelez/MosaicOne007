@@ -1,10 +1,12 @@
 class RequestsController < ApplicationController
-# Este controller solo debe manejar la creación y modificación de requests individuales por la tienda, managers y designers
+# Este controller solo debe manejar la creación y modificación de requests individuales por la tienda o managers, no los filtros para las bandejas de trabajo.
   before_action :authenticate_user!
   before_action :set_request, only: [:show, :edit, :update, :destroy, :check_assigned, :manager, :manager_view, :confirm, :confirm_view, :price, :delete_authorisation_or_payment, :sensitive_fields_changed_after_price_set]
   before_action :get_documents, only: [:edit, :show, :confirm, :confirm_view, :manager, :manager_view]
+
   # GET /requests
   # GET /requests.json
+  # Un Request siempre debe estar ligado a un Prospect cuando se crea.
   def index
     @prospect = Prospect.find(params[:prospect_id])
     @requests = @prospect.requests
@@ -15,20 +17,25 @@ class RequestsController < ApplicationController
   def show
   end
 
+  # Esta acción es para que los managers asignen la Request a su usuario. El método revisa que esté asignada y si es así las pasa a la siguiente pantalla.
   def manager
     check_assigned
   end
 
+  # Esta acción es solo para managers y es la pantalla donde se le asigna el precio o se emiten comentarios de que la Request está incompleta.
   def manager_view
   end
 
+  # Esta acción es para los usuarios 'store' para confirmar que sí están de acuerdo con la Request y la autorizan.
   def confirm
     check_authorisation
   end
 
+  # En esta acción es también para los usuarios 'store' casi igual que la anterior pero muestra los links a los documentos de autorización adjuntos.
   def confirm_view
   end
 
+  # Esta acción es para que los usuarios 'store asignen el precio de venta al público de la cotización que hicieron', se puede ver solo cuando la solicitud tenga costo.
   def price
     check_price
   end
@@ -47,14 +54,21 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
+    # Esta parte es para evitar que el campo se guarde en blanco.
     if params[:request][:how_many] == ''
       @request.how_many = nil
     end
+    # Este método guarda el documento y el campo que detecta si está presente el documento, ya sea de especificaciones (document_type: 'specification') para la Request o de Ficha de depósito (document_type: 'pago') o Pedido autorizado (document_type: 'pedido')
     save_document
+    # Este método guarda el estatus de si la solicitud tiene solicitud de diseño.
     request_has_design?
+    # Este método asigna al usuario actual (solo un usuario por tipo de role).
     assign_to_current_user
+    # Este método asigna la tienda a la Request.
     save_store_request
+    # Este método asigna el prospecto a la Request.
     save_prospect_to_request
+    # Este método actualiza el estatus de la request.
     save_status
     respond_to do |format|
       if @request.save
@@ -71,13 +85,20 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1.json
   def update
     if current_user.role.name == 'store'
+      # Este método guarda el estatus de si la solicitud tiene solicitud de diseño.
       request_has_design?
       @request.update(request_params)
+      # Este método borra las autorizaciones o pagos guardados cuando se modifica la solicitud.
       delete_authorisation_or_payment
+      # Este método guarda el documento y el campo que detecta si está presente el documento, ya sea de especificaciones (document_type: 'specification') para la Request o de Ficha de depósito (document_type: 'pago') o Pedido autorizado (document_type: 'pedido')
       save_document
+      # Este método detecta si la solicitud está autorizada.
       validate_authorisation
+      # Este método guarda el estatus de la autorización en unas variables de instancia.
       set_authorisation_flag
+      # Este método actualiza el estatus de la request.
       save_status
+      # Esta bifurcación del método es para cambiar el estatus a cancelada.
       if @request.update(request_params) && params[:cancelar]
         @request.update(status: 'cancelada')
         redirect_to filtered_requests_inactive_view_path, notice: 'La solicitud de cotización fue cancelada.'
@@ -91,6 +112,7 @@ class RequestsController < ApplicationController
           format.json { render json: @request.errors, status: :unprocessable_entity }
         end
       end
+      # Esta bifurcación del método es para cambiar el estatus cuando se asignó la Request a un 'manager'.
     elsif current_user.role.name == 'manager'
       save_status
       @request.save
@@ -110,6 +132,7 @@ class RequestsController < ApplicationController
 
   # DELETE /requests/1
   # DELETE /requests/1.json
+  # Este método aún no está disponible y quizás lo eliminaré para solo cancelar las solicitudes.
   def destroy
     find_user_in_request(user = current_user)
     if user_find
@@ -123,22 +146,26 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Este método valida si ya se ha asignado el costo, es el que permite o niega el acceso a la vista de confirm.
   def check_price
     if @request.status != 'costo asignado'
       redirect_to requests_path(@request)
     end
   end
 
+  # Este método valida si ya se asignó la solicitud al 'manager' y si es así, redirige a la vista para seguir cotizando.
   def check_assigned
     redirect_to manager_view_requests_path(@request) if @request.status == 'cotizando'
   end
 
+  # Este método muestra los documentos adjuntos en las vistas de cada Request individual.
   def get_documents
     @payment = @request.documents.where(document_type: 'pago')
     @authorisation = @request.documents.where(document_type: 'pedido')
     @specifications = @request.documents.where(document_type: 'especificación')
   end
 
+  # Este método valida si el usuario está en la solicitud, posteriormente lo utilizaré para la seguridad, solo los usuarios ligados a la request (o de la misma tienda del usuario creador de la request podrán verla).
   def find_user_in_request(user = current_user)
     user_find = false
     @request.users.each do |user_in_request|
@@ -149,6 +176,7 @@ class RequestsController < ApplicationController
     user_find
   end
 
+  # Este método es para una búsqueda dentro del formulario, solo valida si se buscará en uno u otro campo de la tabla Product.
   def define_search_field(input = params[:request][:resistance_like])
     if Product.find_by_unique_code(input) != nil
       @product = Product.find_by_unique_code(input)
@@ -157,6 +185,7 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Este método valida si se llenó o no el campo de búsqueda de resistencia o tipo de armado como algún otro producto existente.
   def request_has_design?
     if params[:request][:design_like]
       search_design
@@ -166,6 +195,7 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Este método busca en la tabla producto el cógigo de producto que el usuario puso para buscar alguno, si encuentra el cógidog, trae el tipo de armado de ese producto y lo guarda en la base, de lo contrario, guarda lo que el usuario puso, ejemplo: tipo de armado: 'caja regular'
   def search_design(input = params[:request][:design_like])
     define_search_field
     if (input != nil) && (@product != nil)
@@ -175,6 +205,7 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Misma funcionalidad del método anterior pero para la resistencia de una caja igual a la de otro producto existente.
   def search_resistance(input = params[:request][:resistance_like])
     define_search_field
     if (input != nil) && (@product != nil)
@@ -185,11 +216,13 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Guarda el prospecto a la request.
   def save_prospect_to_request
     @prospect = Prospect.find(params[:prospect_id])
     @request.prospect = @prospect
   end
 
+  # GUarda la tienda a la request
   def save_store_request(store = current_user.store)
     @request.store = store
   end
@@ -210,12 +243,14 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Asigna la solicitud al manager que está solicitando le sea asignada.
   def assign_to_manager
     if params[:asignar]
       assign_to_current_user
     end
   end
 
+  # Guarda el documento y el estatus del campo que dice si se guardó el documento.
   def save_document
     if params[:request][:payment] != nil
       payment = Document.create(document: params[:request][:payment_uploaded], document_type: 'pago', request: @request)
@@ -238,6 +273,7 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Valida si se autorizó con un click la Request.
   def validate_authorisation
     if params[:request][:authorised_without_pay] == '1'
       @request.authorised_without_pay = true
@@ -247,6 +283,7 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Valida si se autorizó con documento de pedido la solicitud.
   def check_document_authorisation
     @doc_ok = false
     if( @request.authorised_without_doc == true) || (@request.authorisation_signed == true)
@@ -255,6 +292,7 @@ class RequestsController < ApplicationController
     @doc_ok
   end
 
+  # Valida si se autorizó con ficha de depósito la solicitud.
   def check_payment_authorisation
     @pay_ok = false
     if (@request.payment_uploaded == true) || (@request.authorised_without_pay == true)
@@ -263,6 +301,7 @@ class RequestsController < ApplicationController
     @pay_ok
   end
 
+  # Si tiene pedido y ficha de depósito o autorización con click, autoriza la solicitud.
   def set_authorisation_flag
     check_document_authorisation
     check_payment_authorisation
@@ -275,6 +314,7 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Guarda y cambia los estatus de la Request.
   def save_status
     set_authorisation_flag
     sensitive_fields_changed_after_price_set
@@ -302,6 +342,7 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Revisa si ya se autorizó la solicitud para que el usuario no vuelva a entrar a esta pantalla.
   def check_authorisation
     if @request.status == 'autorizada'
       redirect_to request_path(@request), notice: 'Esta solicitud ya fue autorizada.'
@@ -310,6 +351,7 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Revisa si los campos que hacen que cambie el precio fueron modificados después de asignar precio.
   def sensitive_fields_changed_after_price_set
     @any_sensitive_field_changed = false
     if @request.status == 'precio asignado' || @request.status == 'costo asignado' || @request.status == 'autorizada'
@@ -344,6 +386,7 @@ class RequestsController < ApplicationController
     end
   end
 
+  # Borra los documentos y autorizaciones con clicks de la solicitud si se regresa el estatus después de haberse modificado los campos que requieren recotizar.
   def delete_authorisation_or_payment
     sensitive_fields_changed_after_price_set
     if (@any_sensitive_field_changed && (@request.status == 'autorizada' || @request.status == 'precio asignado' || @request.status == 'costo asignado' || @request.status == 'modificada-recotizar'))

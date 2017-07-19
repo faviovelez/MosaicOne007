@@ -1,4 +1,5 @@
 class DesignRequestsController < ApplicationController
+  # Este controller es para las solicitudes de diseño. Dentro de cada request, un usuario de Store puede solicitar un trabajo de diseño (hacer un logo, crear una muestra física o un printcard) en cualquier etapa del proceso, excepto cuando está cancelada o concluida, pero esto se restringe en las vistas.
   before_action :authenticate_user!
   before_action :set_design_request, only: [:show, :edit, :update, :destroy]
   before_action :get_documents, only: [:edit, :show]
@@ -17,16 +18,16 @@ class DesignRequestsController < ApplicationController
     @design_request = DesignRequest.new
   end
 
+  # Las solicitudes de diseño las cran los usuarios de 'store', le dan seguimiento los usuarios 'designer'. Este método crea las solicitudes y las asigna al usuario store. Las solicitudes pueden tener archivos adjuntos, se guardan en el modelo document y se relacionan con la solicitud de diseño.
+  # Se guarda el campo design_request como true para identificar que la solicitud tiene una solicitud de diseño y se relaciona la request (solicitud de cotización) con la design request (solicitud de diseño).
   def create
     @request = Request.find(params[:request_id])
     @design_request = DesignRequest.new(design_params)
     upload_attachment
     assign_to_current_user
-    debugger
     @design_request.status = 'solicitada'
     respond_to do |format|
       if @design_request.save
-        debugger
         @request.require_design = true
         @request.design_requests << @design_request
         @request.save
@@ -39,14 +40,17 @@ class DesignRequestsController < ApplicationController
     end
   end
 
+# Este método sirve tanto para que el usuario 'store' como el usurio 'designer' actualicen la solicitu de diseño. Los campos que cada persona puede editar los estoy filtrando desde la vista.
   def update
     upload_attachment
     assign_to_current_user
     respond_to do |format|
       if @design_request.update(design_params)
+        # Esta parte asigna la solicitud (agrega un usuario con role: 'designer') a la solicitud de diseño y lo redirige a la página para trabajar la solicitud de diseño.
         if current_user.role.name == 'designer' && params[:asignar_solicitud]
           format.html {redirect_to edit_design_request_path(@design_request), notice: "La solicitud fue asignada a #{current_user.first_name} #{current_user.last_name}" }
         elsif params[:aceptar_diseño]
+          # Si el usuario 'store' se encuentra en la vista donde puede aceptar el diseño (porque tiene que confirmar el costo), cambia el estatus a 'aceptada'.
           @design_request.update(status: 'aceptada')
           format.html { redirect_to @design_request, notice: 'La solicitud de diseño fue modificada exitosamente.' }
           format.json { render :index, status: :ok, location: @design_request }
@@ -58,6 +62,9 @@ class DesignRequestsController < ApplicationController
     end
   end
 
+  # Borré el método de delete porque prefiero agregar solo una funcionalidad de 'cancelada' para tratar de no borrar casi nada de la plataforma.
+
+  # Este método controla los archivos adjuntos que se pueden adjuntar (pueden ser muchos) a la solicitud de diseño y los separa por usuario por tipo de documento.
   def upload_attachment
     if (params[:design_request][:attachment].present? && current_user.role.name == 'store')
       params[:design_request][:attachment].each do |file|
@@ -70,6 +77,7 @@ class DesignRequestsController < ApplicationController
     end
   end
 
+  # Muestra los documentos en las vistas de design request, separados por tipo.
   def get_documents
     @attachments = @design_request.documents.where(document_type: 'diseño adjunto')
     @responses = @design_request.documents.where(document_type: 'respuesta de diseño')

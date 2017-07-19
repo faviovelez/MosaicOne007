@@ -1,6 +1,9 @@
 class BillingAddressesController < ApplicationController
+  # Este controller es para crear o modificar los datos de facturación.
   before_action :authenticate_user!
   before_action :set_billing_address, only: [:show, :edit, :update, :destroy]
+
+  # Billing address (datos de facturación) debe pertenecer a un owner (que puede ser una tienda o a un prospecto o una orden, pero cada orden debe tener ligada una BIlling Address. Para store siempre será la misma (cuando facture Diseños de Cartón) y puede registrarse desde que se da de alta al cliente o después, ya que el estatus de pedido está en 'autorizada'.
   before_action :identify_owner_type, only: [:new, :create, :update]
 
   def index
@@ -8,6 +11,7 @@ class BillingAddressesController < ApplicationController
 
   def show
   end
+
 
   def new
     if @owner.billing_address.nil?
@@ -54,6 +58,7 @@ class BillingAddressesController < ApplicationController
     end
   end
 
+  # Este método liga la dirección al owner (Store, Prospect u Order)
   def save_billing_address_to_owner
     @owner.billing_address = @billing
     @owner.save
@@ -65,7 +70,8 @@ private
     @billing = BillingAddress.find(params[:id])
   end
 
-  def identify_owner_type
+  # Este método identifica desde qué owner se agrega la dirección, ya están creados los recursos anidados en routes (Store, Prospect u Order)
+    def identify_owner_type
     if params[:store_id]
       @owner = Store.find(params[:store_id])
     elsif params[:prospect_id]

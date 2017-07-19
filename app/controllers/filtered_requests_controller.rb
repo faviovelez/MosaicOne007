@@ -1,34 +1,42 @@
 class FilteredRequestsController < ApplicationController
   before_action :authenticate_user!
 
+  # Método para usuarios 'store' para filtrar las solicitudes activas y crear la vista de bandeja de trabajo (un resumen de que contiene esa Request o solicitud de cotización).
   def current_view
     filter_store_active_requests
   end
 
+  # Método para usuarios 'store' para filtrar las solicitudes inactivas y crear la vista de bandeja de trabajo.
   def inactive_view
     filter_store_inactive_requests
   end
 
+  # Método para usuarios 'store' para filtrar las solicitudes guardadas (que crearon pero no enviaron, para poder editar después y posteriormente enviar a cotización con los usuarios 'manager'), crea la vista de bandeja de trabajo .
   def saved_view
     filter_store_saved_requests
   end
 
+  # Método para usuarios 'designer' y 'manager' para ver las solicitudes que ya están asignadas a ellos, es la vista de bandeja de trabajo.
   def assigned_view
     filter_requests_assigned_to_user
   end
 
+  # Método para usuarios 'designer' y 'manager' para ver las solicitudes en general que no están asignadas a ellos. Es la vista de la bandeja de trabajo. Al ver la solicitud, ellos pueden asignarlas con un botón.
   def unassigned_view
     filter_unassigned_requests
   end
 
+  # Este método lo uso para el dueño de la empresa, para que vea el estatus de las solicitudes que están asignadas a las otras personas que pueden cotizar 'managers'.
   def other_users_view
     filter_requests_assigned_to_others
   end
 
+  # Este método es para crear la bandeja de trabajo para que otros gerentes puedan dar seguimiento a las solicitudes (asignadas y sin asignar).
   def supporters_view
     filter_supporters_view
   end
 
+  # Este método es para crear la bandeja de trabajo para los usuarios 'product-admin' para que puedan ver las solicitudes confirmadas que necesitan que se cree un nuevo producto.
   def product_view
     filter_confirmed_requests
   end
@@ -87,6 +95,7 @@ class FilteredRequestsController < ApplicationController
     @supporters
   end
 
+# Este método filtra las solicitudes autorizadas para que las vean los usuarios 'product-admin'
   def filter_confirmed_requests
     @confirmed = Request.where(status: 'autorizada')
   end

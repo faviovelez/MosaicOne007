@@ -1,10 +1,13 @@
 class ProspectsController < ApplicationController
+  # Este controller es para los prospectos, todas las personas que se atienden deben ir aquí. Se liga su información con la Request (cada request debe pertenecer a un prospect).
   before_action :authenticate_user!
   before_action :set_prospect, only: [:show, :edit, :update, :destroy]
   before_action :set_store, only: [:new, :create, :update]
 
   # GET /prospects
   # GET /prospects.json
+
+  # Crea la vista de todos los prospectos que le pertenecen a una tienda, ya que una tienda puede tener varios usuarios, no queremos ligar solamente el prospecto al usuario, también a la tienda.
   def index
     store_prospects
   end
@@ -42,7 +45,6 @@ class ProspectsController < ApplicationController
   # PATCH/PUT /prospects/1
   # PATCH/PUT /prospects/1.json
   def update
-    save_prospect_to_store
     respond_to do |format|
       if @prospect.update(prospect_params)
         format.html { redirect_to @prospect, notice: 'El prospecto fue modificado exitosamente.' }
@@ -64,25 +66,20 @@ class ProspectsController < ApplicationController
     end
   end
 
-  def save_prospect_to_store
-    @store.prospect = @prospect
-    @store.save
+  def store_prospects(user = current_user)
+    store = current_user.store
+    @prospects = store.prospects
   end
 
-  def store_prospects
-    @store = current_user.store
-    @prospects = @store.prospects
+  def save_store_prospect(user = current_user)
+    store = user.store
+    @prospect.store = store
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_prospect
       @prospect = Prospect.find(params[:id])
-    end
-
-    def save_store_prospect
-      @user = current_user
-      @prospect.store = @store
     end
 
     def set_store

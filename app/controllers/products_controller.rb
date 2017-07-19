@@ -1,4 +1,5 @@
 class ProductsController < ApplicationController
+  # Este controller es para crear, modificar o borrar productos en catálogo, ya sea de línea o especiales (los de Request, una vez que se autorizan).
   before_action :set_product, only: [:show, :edit, :update, :destroy]
 
   # GET /products
@@ -27,21 +28,13 @@ class ProductsController < ApplicationController
 
   # POST /products
   # POST /products.json
+
+  # El método create lo usa 'product-admin', sin embargo este controller genera un Order que debe estar asignada al usuario que creó la Request autorizada que está dando origen a este Producto, por eso el método find_user.
   def create
     if params[:request_id]
       @request = Request.find(params[:request_id])
     end
-    finded_user = nil
-    users = @request.users
-    store_users = User.joins(:role).where('roles.name' => 'store')
-    users.each do |user|
-      store_users.each do |store_user|
-        if user == store_user
-          finded_user = user
-        end
-      end
-    end
-    finded_user
+    find_user
     @product = Product.new(product_params)
     respond_to do |format|
       if @product.save
@@ -60,6 +53,7 @@ class ProductsController < ApplicationController
 
   # PATCH/PUT /products/1
   # PATCH/PUT /products/1.json
+  # Este método también lo puede usar solamente 'product-admin'. Tanto en create como en update falta agregar que pueda subir imágenes (un modelo diferente de documents).
   def update
     respond_to do |format|
       if @product.update(product_params)
@@ -80,6 +74,20 @@ class ProductsController < ApplicationController
       format.html { redirect_to products_url, notice: 'Product was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def find_user
+    finded_user = nil
+    users = @request.users
+    store_users = User.joins(:role).where('roles.name' => 'store')
+    users.each do |user|
+      store_users.each do |store_user|
+        if user == store_user
+          finded_user = user
+        end
+      end
+    end
+    finded_user
   end
 
   private

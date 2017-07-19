@@ -1,4 +1,6 @@
 class DeliveryAddressesController < ApplicationController
+  # Este controller es para crear o modificar las direcciones de entrega. Cada Order tiene una dirección de entrega y esta puede ser la del prospecto (Prospect) o la de la tienda (Store) o la de una paquetería (Carrier).
+
   before_action :authenticate_user!
   before_action :set_delivery_address, only: [:show, :edit, :update, :destroy]
   before_action :identify_owner_type, only: [:new, :create, :update]
@@ -9,6 +11,7 @@ class DeliveryAddressesController < ApplicationController
   def show
   end
 
+  # Solo debe permitir crear una vez la dirección, si detecta que ya tiene, debe mandar a editar.
   def new
     if @owner.delivery_address.nil?
       @delivery = DeliveryAddress.new
@@ -55,6 +58,7 @@ class DeliveryAddressesController < ApplicationController
     end
   end
 
+  # Método para asignar dirección de entrega al owner (Store, Prospect u Order)
   def save_delivery_address_to_owner
     @owner.billing_address = @delivery
     @owner.save

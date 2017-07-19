@@ -1,4 +1,5 @@
 class StoresController < ApplicationController
+  # En este se crean nuevas tiendas (solo el usuario de product-admin deberá poder crearlas y un user 'store' solo podrá modificarlas (algunas modificaciones estarán restringidas)
   before_action :authenticate_user!
   before_action :set_store, only: [:show, :new, :create, :update]
   before_action :require_permission, only: :new
