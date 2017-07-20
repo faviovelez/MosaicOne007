@@ -16,5 +16,8 @@
 !/log/.keep
 /tmp
 /public/uploads
+<<<<<<< 796c7be88a8fdf5b3ff5105074c992b850e6b4a4
 /.env
+=======
 Gemfile.lock
+>>>>>>> permit refresh data
