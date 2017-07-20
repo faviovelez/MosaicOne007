@@ -67,8 +67,8 @@ class ProspectsController < ApplicationController
   end
 
   def store_prospects(user = current_user)
-    store = current_user.store
-    @prospects = store.prospects
+    @store = current_user.store
+    @prospects = @store.prospects
   end
 
   def save_store_prospect(user = current_user)

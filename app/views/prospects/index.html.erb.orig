@@ -24,6 +24,10 @@
 
 <% end %>
 
+<<<<<<< 7fc07ec01a8b4635d23edc828e0978d77e319787
+<%= link_to 'nuevo prospecto', new_store_prospect_path(store_id: @store) %>
+=======
 <%= link_to 'nuevo prospecto', new_store_prospect_path(@store) %>
+>>>>>>> minimal solves
 
 <%= link_to 'inicio', store_path(@store) %>
