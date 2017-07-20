@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Precio de Venta asignado</title>
+  </head>
+  <body>
+    <p>
+      Estimado(a) <%= @user.first_name %> <%= @user.last_name %>.
+      A la solicitud <%= @request.id %> se le ha asignado un costo de venta de <%= number_to_currency(@request.internal_price) %> pesos.
+    </p>
+  </body>
+</html>

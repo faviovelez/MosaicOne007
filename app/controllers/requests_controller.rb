@@ -318,7 +318,6 @@ class RequestsController < ApplicationController
   def save_status
     set_authorisation_flag
     sensitive_fields_changed_after_price_set
-    debugger
     if params[:enviar] || params[:reactivar]
       @request.status = 'solicitada'
     elsif params[:guardar]

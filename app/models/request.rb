@@ -8,6 +8,8 @@ class Request < ActiveRecord::Base
   has_many :design_requests
   has_one :order
   has_many :request_users
+  after_update :send_mail_to_store_users, if: :status_changed_to_cost_assigned
+  after_update :send_mail_to_manager, if: :status_changed_to_price_assigned
 
   # Valida que solo se escriban números en el campo de cantidad y que solo sean enteros.
   validates :quantity, on: :create, numericality: { only_integer: true, message: "%{value} No es una cantidad válida, solo se aceptan enteros." }
@@ -51,22 +53,26 @@ class Request < ActiveRecord::Base
   # Valida que si se seleccionó que sí se requiere impresión, todos los campos de este tipo estén llenos.
   validate :impression_fields_complete, if: :impression_selected, on: :create
 
+  # Si la fecha de entrega existe, validar que no sea en el pasado.
   def delivery_date_future
     if delivery_date.present? && delivery_date < Date.today
       errors[:base] << "La fecha no puede estar en el pasado."
     end
   end
 
+  # Condicional para saber si el producto es una caja
   def product_type_is_a_box
     product_type == 'caja'
   end
 
+  # Validación para que se escriba el producto que se quiere cotizar cuando el cliente elija 'otro' en tipo de producto
   def fill_name_type
     if name_type.blank?
       errors[:base] << "Mencionle el tipo de producto que quiere cotizar." unless product_type != 'otro'
     end
   end
 
+  # Valida que todos los campos del tipo de producto estén llenos o por lo menos toda la descripción del producto que irá dentro de la caja o bolsa.
   def resistance_suggestion
     if (main_material == 'sugerir material' || resistance_main_material == 'Sugerir resistencia')
       unless field_type_complete || product_complete
@@ -75,10 +81,12 @@ class Request < ActiveRecord::Base
     end
   end
 
+  # Validación para asegurar que se ponga la cantidad a cotizar.
   def quantity_present
     errors[:base] << "Es necesario anotar la cantidad a cotizar." if quantity.blank?
   end
 
+  # Validación para que se pongan la resistencia de cada material elegido (hay 3 pares de campos: material y su resistencia)
   def material_and_resistance_presence
     material_fields = [main_material, secondary_material, third_material]
     resistance_fields = [resistance_main_material, resistance_secondary_material, resistance_third_material]
@@ -98,10 +106,12 @@ class Request < ActiveRecord::Base
     end
   end
 
+  # Validación para que se agregue el tipo de producto
   def product_type_presence
     errors[:base] << "El tipo de producto no puede ir vacío." if product_type.blank?
   end
 
+  # Condición que evalúa si todos los campos de medidas están completos.
   def field_type_complete
     if product_type == 'exhibidor'
       exhibitor_fields = [exhibitor_height, tray_quantity, tray_length, tray_width, tray_divisions]
@@ -116,6 +126,7 @@ class Request < ActiveRecord::Base
     end
   end
 
+  # Validación que evalua si todos los campos del tipo de producto están llenos y despliega el error a menos que los campos del producto que irá dentro estén completos.
   def outer_inner_bag_or_exhibitor_fields
     if product_type == 'exhibidor'
       exhibitor_fields = [exhibitor_height, tray_quantity, tray_length, tray_width, tray_divisions]
@@ -136,12 +147,14 @@ class Request < ActiveRecord::Base
     end
   end
 
+  # Validación que evalúa si los campos de la descripción del producto que irán dentro están completos para poder elegir las opciones de sugerir medidas.
   def measures_suggestion
     if what_measures == 'sugerir medidas'
       errors[:base] << "Es necesario llenar todas las medidas o los detalles del producto." unless product_complete
     end
   end
 
+  # Validación que evalúa campos adicionales (cuántos productos son, si las cajas son para estibar o almacenar) pero sólo si el producto es una caja y se pide sugerir material o resistencia.
   def product_complete
     @product_fields = []
     if resistance_main_material == 'Sugerir resistencia' || main_material == 'sugerir material'
@@ -154,13 +167,33 @@ class Request < ActiveRecord::Base
     end
   end
 
+  # Validación que evalúa si los campos de impresión están completos al seleccionar que lleva impresión.
   def impression_fields_complete
     impression_fields = [inks, impression_finishing, impression_where]
     errors[:base] << "Es necesario llenar todos los datos de impresión." unless impression_fields.all?
   end
 
+  # Condicional que evalúa si se eligió que sí lleva impresión.
   def impression_selected
     impression == 'si'
+  end
+
+  def send_mail_to_store_users
+    RequestMailer.status_change_to_store(self).deliver_later
+  end
+
+  def send_mail_to_manager
+    RequestMailer.status_change_to_manager(self).deliver_later
+  end
+
+  # Valida que se haya hecho una transición de cotizando a costo asignado
+  def status_changed_to_cost_assigned
+    (status == 'costo asignado' && status_was == 'cotizando')
+  end
+
+  # Valida que se haya hecho una transición de costo asignado a precio asignado
+  def status_changed_to_price_assigned
+    (status == 'precio asignado' && status_was == 'costo asignado')
   end
 
 end

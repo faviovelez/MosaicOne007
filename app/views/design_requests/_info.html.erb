@@ -5,7 +5,7 @@
 <%= @design_request.description %>
 
 <% if (current_user.role.name == 'store' || current_user.role.name == 'manager') && @design_request.cost.present? %>
-  <p><strong>costo: </strong> <%= @design_request.cost %></p>
+  <p><strong>costo: </strong> <%= number_to_currency(@design_request.cost) %></p>
 <% end %>
 
 <% unless @design_request.notes.blank? %>

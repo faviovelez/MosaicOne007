@@ -2,7 +2,7 @@ class ProspectsController < ApplicationController
   # Este controller es para los prospectos, todas las personas que se atienden deben ir aquí. Se liga su información con la Request (cada request debe pertenecer a un prospect).
   before_action :authenticate_user!
   before_action :set_prospect, only: [:show, :edit, :update, :destroy]
-  before_action :set_store, only: [:new, :create, :update]
+  before_action :set_store, only: [:index, :new, :create, :update]
 
   # GET /prospects
   # GET /prospects.json
@@ -83,7 +83,7 @@ class ProspectsController < ApplicationController
     end
 
     def set_store
-      @store = Store.find(params[:store_id])
+      @store = current_user.store
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

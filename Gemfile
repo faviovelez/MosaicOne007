@@ -53,4 +53,4 @@ gem 'rmagick'
 
 gem 'redis', '~>3.2'
 
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'dotenv-rails'

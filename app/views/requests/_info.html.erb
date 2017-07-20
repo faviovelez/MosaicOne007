@@ -270,7 +270,7 @@
     <% unless @request.maximum_sales_price.blank? %>
       <p><strong>precio de venta objetivo (al cliente): </strong>
         <span class="pesos">
-          <%= @request.maximum_sales_price %>
+          <%= number_to_currency(@request.maximum_sales_price) %>
         </span>
       </p>
     <% end %>
@@ -282,7 +282,7 @@
       <p><strong>tipo de solicitud: </strong><%= design_request.design_type %></p>
       <p><strong>estatus: </strong><%= design_request.status %></p>
       <% if design_request.cost.present? && (current_user.role.name == 'store' || current_user.role.name == 'manager') %>
-        <p><strong>costo: </strong><%= design_request.cost %></p>
+        <p><strong>costo: </strong><%= number_to_currency(design_request.cost) %></p>
       <% end %>
       <p><%= link_to 'ver solicitud', design_request_path(design_request) %></p>
     <% end %>
@@ -291,10 +291,16 @@
   <% unless @request.internal_price.blank? %>
     <h3>Confirmar precio de venta a tienda </h3>
     <% if current_user.role.name == 'manager' %>
-      <p><strong>costo para diseños de cartón: </strong> <%= @request.internal_cost %> </p>
+      <p><strong>costo para diseños de cartón: </strong> <%= number_to_currency(@request.internal_cost) %> </p>
     <% end %>
-    <p><strong>costo de venta: </strong> <%= @request.internal_price %> </p>
+    <p><strong>costo de venta: </strong> <%= number_to_currency(@request.internal_price) %> </p>
     <% unless @request.sales_price.blank? %>
-      <p><strong>precio para el cliente: </strong> <%= @request.sales_price %> </p>
+      <p><strong>precio para el cliente: </strong> <%= number_to_currency(@request.sales_price) %> </p>
     <% end %>
+  <% end %>
+
+  <% if @request.date_finished.present? %>
+    <p><strong>fecha de finalización de la producción: </strong>
+      <%= @request.date_finished %>
+    </p>
   <% end %>

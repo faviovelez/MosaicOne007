@@ -1,0 +1,57 @@
+<%= form_for(@prospect) do |f| %>
+
+  <div class="field">
+    <%= f.label :nombre_del_prospecto %>
+    <%= f.text_field :legal_or_business_name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :giro_comercial %>
+    <%= f.text_field :prospect_type %>
+  </div>
+
+  <div class="field">
+    <%= f.label :primer_nombre %>
+    <%= f.text_field :contact_first_name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :segundo_nombre %>
+    <%= f.text_field :contact_middle_name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :apellido_paterno %>
+    <%= f.text_field :contact_last_name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :apellido_materno %>
+    <%= f.text_field :second_last_name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :puesto_del_contacto %>
+    <%= f.text_field :contact_position %>
+  </div>
+
+  <div class="field">
+    <%= f.label :teléfono_directo %>
+    <%= f.text_field :direct_phone %>
+  </div>
+
+  <div class="field">
+    <%= f.label :extensión %>
+    <%= f.text_field :extension %>
+  </div>
+
+  <div class="field">
+    <%= f.label :celular %>
+    <%= f.text_field :cell_phone %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit :guardar_prospecto %>
+  </div>
+
+<% end %>
