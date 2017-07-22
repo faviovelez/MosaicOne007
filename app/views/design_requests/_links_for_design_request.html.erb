@@ -1,15 +1,15 @@
 
-  <% if current_user.role.name == 'store' %>
+  <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
     <%= link_to 'solicitar otro trabajo de diseño', new_request_design_request_path(request_id: @design_request.request) %>
   <% end %>
 
-  <% if current_user.role.name == 'store' && @design_request.status != 'aceptada' %>
+  <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status != 'aceptada' %>
     <%= link_to 'editar', edit_design_request_path(@design_request) %>
   <% elsif (current_user.role.name == 'designer' && @design_request.status == 'en proceso') %>
     <%= link_to 'trabajar solicitud', edit_design_request_path(@design_request) %>
   <% end %>
 
-  <% if current_user.role.name == 'store' && @design_request.status == 'diseño elaborado' %>
+  <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status == 'diseño elaborado' %>
     <%= link_to 'confirmar diseño', '#myModal', 'data-toggle' => 'modal' %>
   <% end %>
 

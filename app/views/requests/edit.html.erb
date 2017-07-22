@@ -1,6 +1,6 @@
-<% if current_user.role.name == 'store' %>
+<% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
   <%= render 'update' %>
-<% elsif current_user.role.name == 'manager' %>
+<% elsif current_user.role.name == 'manager' || current_user.role.name == 'director' %>
   <%= render 'info' %>
   <%= render 'update_for_manager' %>
 <% end %>

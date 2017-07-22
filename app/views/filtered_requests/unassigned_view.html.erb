@@ -1,6 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<% if current_user.role.name == 'manager' %>
+<% if current_user.role.name == 'manager' || current_user.role.name == 'director' %>
   <%= render 'manager_unassigned' %>
 <% elsif current_user.role.name == 'designer' %>
   <%= render 'designer_unassigned' %>

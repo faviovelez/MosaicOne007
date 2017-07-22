@@ -1,4 +1,4 @@
-<% if current_user.role.name == 'store' %>
+<% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
   <%= render 'update' %>
 <% elsif current_user.role.name == 'designer' && @design_request.status == 'en proceso' %>
   <%= render 'info' %>

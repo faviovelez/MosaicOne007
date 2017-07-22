@@ -8,8 +8,6 @@ class Request < ActiveRecord::Base
   has_many :design_requests
   has_one :order
   has_many :request_users
-  after_update :send_mail_to_store_users, if: :status_changed_to_cost_assigned
-  after_update :send_mail_to_manager, if: :status_changed_to_price_assigned
 
   # Valida que solo se escriban números en el campo de cantidad y que solo sean enteros.
   validates :quantity, on: :create, numericality: { only_integer: true, message: "%{value} No es una cantidad válida, solo se aceptan enteros." }
@@ -52,6 +50,17 @@ class Request < ActiveRecord::Base
 
   # Valida que si se seleccionó que sí se requiere impresión, todos los campos de este tipo estén llenos.
   validate :impression_fields_complete, if: :impression_selected, on: :create
+
+  after_update :send_mail_to_store_users_cost, if: :status_changed_to_cost_assigned
+
+  # Envía un correo elecrónico notificando que se asignó el precio de venta a la solicitud
+  after_update :send_mail_to_manager_price, if: :status_changed_to_price_assigned
+
+  # Envía un correo elecrónico notificando que la tienda autorizó la solicitud
+  after_update :send_mail_to_manager_authorised, if: :status_changed_to_authorised
+
+  # Envía un correo elecrónico notificando que la tienda canceló la solicitud
+  after_update :send_mail_to_manager_cancelled, if: :status_changed_to_cancelled
 
   # Si la fecha de entrega existe, validar que no sea en el pasado.
   def delivery_date_future
@@ -178,22 +187,44 @@ class Request < ActiveRecord::Base
     impression == 'si'
   end
 
-  def send_mail_to_store_users
-    RequestMailer.status_change_to_store(self).deliver_later
+  # Envía un correo elecrónico notificando que se asignó el costo a su solicitud
+  def send_mail_to_store_users_cost
+    RequestMailer.status_cost_assigned(self).deliver_later
   end
 
-  def send_mail_to_manager
-    RequestMailer.status_change_to_manager(self).deliver_later
+  # Envía un correo elecrónico notificando que se asignó el precio de venta a la solicitud
+  def send_mail_to_manager_price
+    RequestMailer.status_price_assigned(self).deliver_later
+  end
+
+  # Envía un correo elecrónico notificando que la tienda autorizó la solicitud
+  def send_mail_to_manager_authorised
+    RequestMailer.status_authorised(self).deliver_later
+  end
+
+  # Envía un correo elecrónico notificando que la tienda canceló la solicitud
+  def send_mail_to_manager_cancelled
+    RequestMailer.status_cancelled(self).deliver_later
   end
 
   # Valida que se haya hecho una transición de cotizando a costo asignado
   def status_changed_to_cost_assigned
-    (status == 'costo asignado' && status_was == 'cotizando')
+    (status == 'costo asignado' && status_was == 'cotizando' && internal_price.present?)
   end
 
   # Valida que se haya hecho una transición de costo asignado a precio asignado
   def status_changed_to_price_assigned
-    (status == 'precio asignado' && status_was == 'costo asignado')
+    (status == 'precio asignado' && status_was == 'costo asignado' && sales_price.present?)
+  end
+
+  # Valida si el estatus cambió a autorizada.
+  def status_changed_to_authorised
+    (status == 'autorizada' && status_was == 'precio asignado')
+  end
+
+  # Valida si el estatus cambió a cancelada.
+  def status_changed_to_cancelled
+    (status == 'cancelada' && status_was != 'cancelada')
   end
 
 end

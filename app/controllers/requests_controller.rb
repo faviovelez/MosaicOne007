@@ -84,7 +84,9 @@ class RequestsController < ApplicationController
   # PATCH/PUT /requests/1
   # PATCH/PUT /requests/1.json
   def update
-    if current_user.role.name == 'store'
+    # Este método salva el estatus anterior de la solicitud
+    save_last_status
+    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       # Este método guarda el estatus de si la solicitud tiene solicitud de diseño.
       request_has_design?
       @request.update(request_params)
@@ -99,8 +101,10 @@ class RequestsController < ApplicationController
       # Este método actualiza el estatus de la request.
       save_status
       # Esta bifurcación del método es para cambiar el estatus a cancelada.
-      if @request.update(request_params) && params[:cancelar]
+      if params[:cancelar].present?
+        debugger
         @request.update(status: 'cancelada')
+        @request.save
         redirect_to filtered_requests_inactive_view_path, notice: 'La solicitud de cotización fue cancelada.'
       elsif @request.update(request_params)
         save_status
@@ -113,7 +117,7 @@ class RequestsController < ApplicationController
         end
       end
       # Esta bifurcación del método es para cambiar el estatus cuando se asignó la Request a un 'manager'.
-    elsif current_user.role.name == 'manager'
+    elsif current_user.role.name == 'manager' || current_user.role.name == 'director'
       save_status
       @request.save
       if @request.update(request_params) && params[:asignar]
@@ -227,14 +231,19 @@ class RequestsController < ApplicationController
     @request.store = store
   end
 
-# Método para managers o designers: asigna la solicitud si no hay otro usuario con el mismo rol en la solicitud
+# Método para managers, director, o designers: asigna la solicitud si no hay otro usuario con el mismo rol en la solicitud
   def assign_to_current_user(user = current_user, role = current_user.role.name)
-    users = User.joins(:role).where('roles.name' => (role))
     user_find = false
-    @request.users.each do |user|
-      users.each do |other_user|
-        if (user.id == other_user.id)
-          user_find = true
+    if role == 'manager' || role == 'director'
+      @request.users.each do |user|
+        if user.role.name == 'manager' || user.role.name == 'director'
+            user_find = true
+        end
+      end
+    else
+      @request.users.each do |user|
+        if user.role.name == (role)
+            user_find = true
         end
       end
     end
@@ -252,13 +261,13 @@ class RequestsController < ApplicationController
 
   # Guarda el documento y el estatus del campo que dice si se guardó el documento.
   def save_document
-    if params[:request][:payment] != nil
+    if params[:request][:payment].present?
       payment = Document.create(document: params[:request][:payment_uploaded], document_type: 'pago', request: @request)
       @request.documents << payment
       @request.update(payment_uploaded: true)
       @request.save
     end
-    if params[:request][:authorisation] != nil
+    if params[:request][:authorisation].present?
       authorisation = Document.create(document: params[:request][:authorisation_signed], document_type: 'pedido', request: @request)
       @request.documents << authorisation
       @request.update(authorisation_signed: true)
@@ -318,25 +327,25 @@ class RequestsController < ApplicationController
   def save_status
     set_authorisation_flag
     sensitive_fields_changed_after_price_set
-    if params[:enviar] || params[:reactivar]
+    if params[:enviar].present?
       @request.status = 'solicitada'
-    elsif params[:guardar]
+    elsif params[:guardar].present?
       @request.status = 'creada'
     elsif ((@sensitive_fields_changed || @request.sensitive_fields_changed) && @request.internal_price.present?)
       @request.status = 'modificada-recotizar'
-    elsif params[:modificar_cotización]
+    elsif params[:modificar_cotización].present?
       @request.status = @request.status
     elsif @request.authorised ==  true
       @request.status = 'autorizada'
-    elsif params[:cancelar]
+    elsif params[:cancelar].present?
       @request.status = 'cancelada'
-    elsif params[:asignar]
+    elsif params[:asignar].present?
       @request.status = 'cotizando'
-    elsif params[:enviar_dudas]
+    elsif params[:enviar_dudas].present?
       @request.status = 'devuelta'
-    elsif params[:request][:internal_price]
+    elsif params[:request][:internal_price].present?
       @request.status = 'costo asignado'
-    elsif params[:request][:sales_price]
+    elsif params[:request][:sales_price].present?
       @request.status = 'precio asignado'
     end
   end
@@ -403,6 +412,29 @@ class RequestsController < ApplicationController
       @request.authorisation = nil
       @request.authorised = nil
       @request.save
+    end
+  end
+
+  def save_last_status
+    @value = @request.status
+    if @request.status != 'cancelada'
+      @request.update(last_status: @request.status)
+      @request.save
+    end
+    assign_reactivate_status
+    @request.update(last_status: @value)
+    @request.save
+  end
+
+  def assign_reactivate_status
+    if params[:reactivar].present?
+      if (@request.last_status == nil || @request.last_status.blank?)
+        @request.update(status: 'solicitada')
+        @request.save
+      else
+        @request.update(status: @request.last_status)
+        @request.save
+      end
     end
   end
 
@@ -482,6 +514,7 @@ class RequestsController < ApplicationController
        :payment,
        :authorisation,
        :sensitive_fields_changed,
-       :authorised)
+       :authorised,
+       :last_status)
     end
 end

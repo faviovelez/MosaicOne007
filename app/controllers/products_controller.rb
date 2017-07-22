@@ -79,7 +79,7 @@ class ProductsController < ApplicationController
   def find_user
     finded_user = nil
     users = @request.users
-    store_users = User.joins(:role).where('roles.name' => 'store')
+    store_users = User.joins(:role).where("roles.name = ? OR roles.name = ?", "store", "store-admin")
     users.each do |user|
       store_users.each do |store_user|
         if user == store_user

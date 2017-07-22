@@ -16,12 +16,12 @@ class FilteredRequestsController < ApplicationController
     filter_store_saved_requests
   end
 
-  # Método para usuarios 'designer' y 'manager' para ver las solicitudes que ya están asignadas a ellos, es la vista de bandeja de trabajo.
+  # Método para usuarios 'designer', 'manager' y 'director' para ver las solicitudes que ya están asignadas a ellos, es la vista de bandeja de trabajo.
   def assigned_view
     filter_requests_assigned_to_user
   end
 
-  # Método para usuarios 'designer' y 'manager' para ver las solicitudes en general que no están asignadas a ellos. Es la vista de la bandeja de trabajo. Al ver la solicitud, ellos pueden asignarlas con un botón.
+  # Método para usuarios 'designer', 'manager' y 'director' para ver las solicitudes en general que no están asignadas a ellos. Es la vista de la bandeja de trabajo. Al ver la solicitud, ellos pueden asignarlas con un botón.
   def unassigned_view
     filter_unassigned_requests
   end
@@ -59,9 +59,9 @@ class FilteredRequestsController < ApplicationController
     @store_saved
   end
 
-# Método de managers y designers: muestra solicitudes o solicitudes de diseño asignadas al usuario logueado
+# Método de managers, director y designers: muestra solicitudes o solicitudes de diseño asignadas al usuario logueado
   def filter_requests_assigned_to_user(user = current_user, role = current_user.role.name)
-    if role == 'manager'
+    if role == 'manager' || role == 'director'
       @assigned = user.requests.where.not('status' => ['creada','expirada','cancelada']).order(:created_at).order(:store_code)
     elsif role == 'designer'
       @assigned = user.design_requests.where.not('status' => ['concluida','expirada','cancelada']).order(:created_at)
@@ -69,20 +69,20 @@ class FilteredRequestsController < ApplicationController
       @assigned
   end
 
-# Método para managers exclusivo para el Dr. Luis, para ver las solicitudes asignadas a otros gerentes
+# Método para director exclusivo para el Dr. Luis, para ver las solicitudes asignadas a otros gerentes
   def filter_requests_assigned_to_others(user = current_user)
-    @assigned_to_others = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => 'manager').where.not('users.id' => (user)).order(:created_at).order(:store_code)
+    @assigned_to_others = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' =>  'director').where.not('users.id' => (user)).order(:created_at).order(:store_code)
     @assigned_to_others
   end
 
 # Método para managers y designers: muestra las solicitudes o solicitudes de diseño sin asignar
   def filter_unassigned_requests(role = current_user.role.name)
-    if role == 'manager'
+    if role == 'manager' || role == 'director'
       requests = Request.where.not('status' => ['creada','expirada','cancelada'])
-      assigned = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => (role))
+      assigned = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director")
     elsif role == 'designer'
       requests = DesignRequest.where.not('status' => ['concluida','expirada','cancelada'])
-      assigned = DesignRequest.where.not('status' => ['concluida','expirada','cancelada']).joins(users: :role).where('roles.name' => (role))
+      assigned = DesignRequest.where.not('status' => ['concluida','expirada','cancelada']).joins(users: :role).where('roles.name' => 'designer')
     end
     unassigned = (requests - assigned)
     @unassigned = unassigned.sort_by{ |key| key["created_at"] }
@@ -91,7 +91,7 @@ class FilteredRequestsController < ApplicationController
 
 # Este método sirve para que usuarios con roles distintos a Manager o Designer puedan ver el estatus
   def filter_supporters_view
-    @supporters = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' => 'manager').order(:created_at).order(:store_code)
+    @supporters = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").order(:created_at).order(:store_code)
     @supporters
   end
 

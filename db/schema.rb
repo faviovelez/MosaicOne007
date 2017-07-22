@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170719014339) do
+ActiveRecord::Schema.define(version: 20170721203138) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,15 +127,6 @@ ActiveRecord::Schema.define(version: 20170719014339) do
 
   add_index "design_requests", ["request_id"], name: "index_design_requests_on_request_id", using: :btree
 
-  create_table "designers", force: :cascade do |t|
-    t.string   "username"
-    t.integer  "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "designers", ["user_id"], name: "index_designers_on_user_id", using: :btree
-
   create_table "documents", force: :cascade do |t|
     t.integer  "request_id"
     t.datetime "created_at",        null: false
@@ -166,15 +157,6 @@ ActiveRecord::Schema.define(version: 20170719014339) do
   end
 
   add_index "inventories", ["product_id"], name: "index_inventories_on_product_id", using: :btree
-
-  create_table "managers", force: :cascade do |t|
-    t.string   "username"
-    t.integer  "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "managers", ["user_id"], name: "index_managers_on_user_id", using: :btree
 
   create_table "modified_fields", force: :cascade do |t|
     t.string   "field"
@@ -384,6 +366,7 @@ ActiveRecord::Schema.define(version: 20170719014339) do
     t.string   "payment"
     t.string   "authorisation"
     t.boolean  "authorised"
+    t.string   "last_status"
   end
 
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree
@@ -452,12 +435,10 @@ ActiveRecord::Schema.define(version: 20170719014339) do
   add_foreign_key "design_request_users", "design_requests"
   add_foreign_key "design_request_users", "users"
   add_foreign_key "design_requests", "requests"
-  add_foreign_key "designers", "users"
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"
   add_foreign_key "images", "products"
   add_foreign_key "inventories", "products"
-  add_foreign_key "managers", "users"
   add_foreign_key "modified_fields", "requests"
   add_foreign_key "modified_fields", "users"
   add_foreign_key "movements", "orders"

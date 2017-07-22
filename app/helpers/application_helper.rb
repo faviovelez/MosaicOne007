@@ -1,6 +1,6 @@
 module ApplicationHelper
 
-  def find_manager(request, role = 'manager')
+  def find_manager(request, role = 'manager' || role = 'director')
     user_id = 0
     request.users.each do |user_in_request|
       if (user_in_request.role.name == role)

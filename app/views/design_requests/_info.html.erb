@@ -4,7 +4,7 @@
 <p><strong>Descripción de la solicitud: </strong></p>
 <%= @design_request.description %>
 
-<% if (current_user.role.name == 'store' || current_user.role.name == 'manager') && @design_request.cost.present? %>
+<% if ((current_user.role.name == 'store' || current_user.role.name == 'store-admin') || current_user.role.name == 'manager' || current_user.role.name == 'director' ) && @design_request.cost.present? %>
   <p><strong>costo: </strong> <%= number_to_currency(@design_request.cost) %></p>
 <% end %>
 

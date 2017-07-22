@@ -6,7 +6,7 @@
           <%= image_tag '/assets/specifications.png', alt: 'Ícono especificaciones', class: 'document-icon img-responsive' %>
           <%= link_to 'ver', @attachments.first.document_url, target: '_blank' %>
         <% end %>
-        <% if (current_user.role.name == 'store' && @design_request.status != 'aceptada') %>
+        <% if ((current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status != 'aceptada') %>
           <%= link_to 'borrar', document_path(@attachments.first), from: 'design_request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
         <% end %>
       <% elsif @attachments.count > 1 %>
@@ -19,7 +19,7 @@
             <% n +=1 %>
           <% end %>
           <% document = @attachments[n-1] %>
-          <% if current_user.role.name == 'store' && @design_request.status != 'aceptada' %>
+          <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status != 'aceptada' %>
             <%= link_to 'borrar', document_path(document), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
           <% end %>
         <% end %>

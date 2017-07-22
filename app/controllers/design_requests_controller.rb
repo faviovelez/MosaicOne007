@@ -66,7 +66,7 @@ class DesignRequestsController < ApplicationController
 
   # Este método controla los archivos adjuntos que se pueden adjuntar (pueden ser muchos) a la solicitud de diseño y los separa por usuario por tipo de documento.
   def upload_attachment
-    if (params[:design_request][:attachment].present? && current_user.role.name == 'store')
+    if (params[:design_request][:attachment].present? && (current_user.role.name == 'store' || current_user.role.name == 'store-admin'))
       params[:design_request][:attachment].each do |file|
         @design_request.documents << Document.create(document: file, document_type: 'diseño adjunto', design_request: @design_request)
       end
@@ -85,13 +85,10 @@ class DesignRequestsController < ApplicationController
 
 # Método para managers o designers: asigna la solicitud si no hay otro usuario con el mismo rol en la solicitud
   def assign_to_current_user(user = current_user, role = current_user.role.name)
-    users = User.joins(:role).where('roles.name' => (role))
     user_find = false
     @design_request.users.each do |user|
-      users.each do |other_user|
-        if (user.id == other_user.id)
-          user_find = true
-        end
+      if user.role.name == (role)
+        user_find = true
       end
     end
     if user_find == false
