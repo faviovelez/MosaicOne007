@@ -62,6 +62,9 @@ class Request < ActiveRecord::Base
   # Envía un correo elecrónico notificando que la tienda canceló la solicitud
   after_update :send_mail_to_manager_cancelled, if: :status_changed_to_cancelled
 
+  # Envía un correo elecrónico notificando que la tienda reactivó la solicitud
+  after_update :send_mail_to_manager_reactivated, if: :cancelled_request_is_reactivated
+
   # Si la fecha de entrega existe, validar que no sea en el pasado.
   def delivery_date_future
     if delivery_date.present? && delivery_date < Date.today
@@ -207,6 +210,9 @@ class Request < ActiveRecord::Base
     RequestMailer.status_cancelled(self).deliver_later
   end
 
+  def send_mail_to_manager_reactivated
+    RequestMailer.request_reactivated(self).deliver_later
+  end
   # Valida que se haya hecho una transición de cotizando a costo asignado
   def status_changed_to_cost_assigned
     (status == 'costo asignado' && status_was == 'cotizando' && internal_price.present?)
@@ -225,6 +231,11 @@ class Request < ActiveRecord::Base
   # Valida si el estatus cambió a cancelada.
   def status_changed_to_cancelled
     (status == 'cancelada' && status_was != 'cancelada')
+  end
+
+  # Valida si el estatus cambió de cancelada a cualquier otro.
+  def cancelled_request_is_reactivated
+    (status != 'cancelada' && status_was == 'cancelada')
   end
 
 end
