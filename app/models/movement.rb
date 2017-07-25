@@ -1,7 +1,14 @@
 class Movement < ActiveRecord::Base
-  # Para que sirva como un histórico de todos los movimientos de stock de product: bajas, altas, ventas, devoluciones, cancelaciones que afecten el modelo inventory. 
+  # Para que sirva como un histórico de todos los movimientos de stock de product: bajas, altas, ventas, devoluciones, cancelaciones que afecten el modelo inventory.
   belongs_to :product
   belongs_to :order
+  belongs_to :store
+  belongs_to :supplier
+  belongs_to :user
+  belongs_to :business_unit
+  belongs_to :prospect
+  belongs_to :bill
+  has_one :wharehouse_entry
 
   after_save :new_movement, on: :create, if: :pending_quantity_greater_than_zero
   after_save :sum_quantity, if: :type_is_alta
@@ -41,12 +48,14 @@ class Movement < ActiveRecord::Base
   end
 
   def sum_quantity
+    # Utilizar wharehouse_entry e Inventory para esto, en lugar de solo inventory
     q = Inventory.find_by_product_id(product).quantity.to_i
     q += quantity
     q.save
   end
 
   def substract_quantity
+    # Utilizar wharehouse_entry e inventory para esto, en lugar de solo inventory
     q = Inventory.find_by_product_id(product).quantity.to_i
     q -= quantity
     q.save

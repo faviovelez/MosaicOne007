@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  payment_date: 2017-07-25
+  amount: 1.5
+  bill_received_id: 
+  supplier_id: 
+
+two:
+  payment_date: 2017-07-25
+  amount: 1.5
+  bill_received_id: 
+  supplier_id: 

@@ -1,13 +1,12 @@
 class Request < ActiveRecord::Base
   # Para el formulario de requests (solicitud de pedidos especiales).
   has_many :users, through: :request_users
+  has_many :request_users
   belongs_to :prospect
   has_many :documents
-  has_many :modified_fields
   belongs_to :store
   has_many :design_requests
   has_one :order
-  has_many :request_users
 
   # Valida que solo se escriban números en el campo de cantidad y que solo sean enteros.
   validates :quantity, on: :create, numericality: { only_integer: true, message: "%{value} No es una cantidad válida, solo se aceptan enteros." }

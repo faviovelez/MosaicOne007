@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  month: MyString
+  year: MyString
+  sales_amount: 1.5
+  sales_quantity: 1
+  cost: 1.5
+  cost_pending: MyString
+
+two:
+  month: MyString
+  year: MyString
+  sales_amount: 1.5
+  sales_quantity: 1
+  cost: 1.5
+  cost_pending: MyString

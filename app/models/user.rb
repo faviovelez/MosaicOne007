@@ -11,5 +11,8 @@ class User < ActiveRecord::Base
   has_many :design_request_users
   belongs_to :role
   has_many :prospects
-  belongs_to :delivery_address
+  has_many :orders
+  has_many :movements
+  has_many :pending_movements
+  has_many :user_sales
 end

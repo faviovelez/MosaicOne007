@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  folio: MyString
+  date_of_bill: 2017-07-25
+  subtotal: 1.5
+  taxes_rate: 1.5
+  taxes: 1.5
+  total_amount: 1.5
+  supplier_id: 
+  product_id: 
+  payment_day: 2017-07-25
+  payment_complete: false
+  payment_on_time: false
+
+two:
+  folio: MyString
+  date_of_bill: 2017-07-25
+  subtotal: 1.5
+  taxes_rate: 1.5
+  taxes: 1.5
+  total_amount: 1.5
+  supplier_id: 
+  product_id: 
+  payment_day: 2017-07-25
+  payment_complete: false
+  payment_on_time: false

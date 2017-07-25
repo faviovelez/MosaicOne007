@@ -6,4 +6,7 @@ class Prospect < ActiveRecord::Base
   belongs_to :delivery_address
   belongs_to :user
   has_many :orders
+  has_many :movements
+  has_many :pending_movements
+  has_many :prospect_sales
 end
