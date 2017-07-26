@@ -1,0 +1,9 @@
+<% if @store.errors.any? %>
+  <ul>
+    <% @store.errors.messages.values.each do |msg| %>
+      <%msg.each do  |m| %>
+        <li><%= m %></li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>
