@@ -79,7 +79,7 @@ class FilteredRequestsController < ApplicationController
   def filter_unassigned_requests(role = current_user.role.name)
     if role == 'manager' || role == 'director'
       requests = Request.where.not('status' => ['creada','expirada','cancelada'])
-      assigned = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director")
+      assigned = requests.joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director")
     elsif role == 'designer'
       requests = DesignRequest.where.not('status' => ['concluida','expirada','cancelada'])
       assigned = DesignRequest.where.not('status' => ['concluida','expirada','cancelada']).joins(users: :role).where('roles.name' => 'designer')

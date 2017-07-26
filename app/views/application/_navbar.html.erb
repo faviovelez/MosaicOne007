@@ -16,6 +16,7 @@
         <% if current_user %>
           <p class="greeting">Bienvenido(a), </p>
             <p class="username">
+            <%= current_user.role.name %>
             <%= current_user.first_name %>
             <%= current_user.last_name %>
           </p>
