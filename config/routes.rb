@@ -4,15 +4,7 @@ Rails.application.routes.draw do
 
   match '/search_suggestions', to: 'search_suggestions#index', via: :get
 
-  get 'orders/special'
-
-  get 'orders/catalog'
-
-  get 'orders/index'
-
   get 'pages/index'
-
-  get 'prospects/index'
 
   get 'filtered_requests/current_view'
 
@@ -43,7 +35,7 @@ Rails.application.routes.draw do
   end
 
   resources :stores do
-    resources :prospects, :requests, :billing_addresses, :delivery_addresses
+    resources :prospects, :requests, :billing_addresses, :delivery_addresses, :orders
   end
 
   resources :requests do
@@ -70,6 +62,12 @@ Rails.application.routes.draw do
   get 'design_requests/designer/:id', to: 'design_requests#designer_view', as: 'designer_view_requests'
 
   get 'design_requests/designer/:id', to: 'design_requests#designer', as: 'designer_requests'
+
+  get 'warehouse_movements/new'
+
+  get 'warehouse_movements/edit'
+
+  get 'warehouse_movements/show'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

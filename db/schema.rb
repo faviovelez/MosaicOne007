@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170725193121) do
+ActiveRecord::Schema.define(version: 20170726002700) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,6 +106,12 @@ ActiveRecord::Schema.define(version: 20170725193121) do
   end
 
   add_index "carriers", ["delivery_address_id"], name: "index_carriers_on_delivery_address_id", using: :btree
+
+  create_table "configurations", force: :cascade do |t|
+    t.string   "warehouse_cost_type"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
 
   create_table "delivery_addresses", force: :cascade do |t|
     t.string   "street"
@@ -211,8 +217,8 @@ ActiveRecord::Schema.define(version: 20170725193121) do
     t.integer  "product_id"
     t.integer  "quantity"
     t.string   "movement_type"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.integer  "order_id"
     t.integer  "user_id"
     t.float    "cost"
@@ -220,16 +226,17 @@ ActiveRecord::Schema.define(version: 20170725193121) do
     t.integer  "store_id"
     t.float    "initial_price"
     t.integer  "supplier_id"
-    t.integer  "entry_movement"
     t.integer  "business_unit_id"
     t.integer  "prospect_id"
     t.integer  "bill_id"
+    t.integer  "product_request_id"
   end
 
   add_index "movements", ["bill_id"], name: "index_movements_on_bill_id", using: :btree
   add_index "movements", ["business_unit_id"], name: "index_movements_on_business_unit_id", using: :btree
   add_index "movements", ["order_id"], name: "index_movements_on_order_id", using: :btree
   add_index "movements", ["product_id"], name: "index_movements_on_product_id", using: :btree
+  add_index "movements", ["product_request_id"], name: "index_movements_on_product_request_id", using: :btree
   add_index "movements", ["prospect_id"], name: "index_movements_on_prospect_id", using: :btree
   add_index "movements", ["store_id"], name: "index_movements_on_store_id", using: :btree
   add_index "movements", ["supplier_id"], name: "index_movements_on_supplier_id", using: :btree
@@ -272,8 +279,8 @@ ActiveRecord::Schema.define(version: 20170725193121) do
   create_table "pending_movements", force: :cascade do |t|
     t.integer  "product_id"
     t.integer  "quantity"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.integer  "order_id"
     t.float    "cost"
     t.string   "unique_code"
@@ -285,12 +292,14 @@ ActiveRecord::Schema.define(version: 20170725193121) do
     t.integer  "business_unit_id"
     t.integer  "prospect_id"
     t.integer  "bill_id"
+    t.integer  "product_request_id"
   end
 
   add_index "pending_movements", ["bill_id"], name: "index_pending_movements_on_bill_id", using: :btree
   add_index "pending_movements", ["business_unit_id"], name: "index_pending_movements_on_business_unit_id", using: :btree
   add_index "pending_movements", ["order_id"], name: "index_pending_movements_on_order_id", using: :btree
   add_index "pending_movements", ["product_id"], name: "index_pending_movements_on_product_id", using: :btree
+  add_index "pending_movements", ["product_request_id"], name: "index_pending_movements_on_product_request_id", using: :btree
   add_index "pending_movements", ["prospect_id"], name: "index_pending_movements_on_prospect_id", using: :btree
   add_index "pending_movements", ["store_id"], name: "index_pending_movements_on_store_id", using: :btree
   add_index "pending_movements", ["supplier_id"], name: "index_pending_movements_on_supplier_id", using: :btree
@@ -359,6 +368,7 @@ ActiveRecord::Schema.define(version: 20170725193121) do
     t.string   "classification"
     t.string   "line"
     t.string   "image"
+    t.integer  "pieces_per_package"
   end
 
   create_table "products_bills", force: :cascade do |t|
@@ -587,9 +597,7 @@ ActiveRecord::Schema.define(version: 20170725193121) do
   create_table "warehouse_entries", force: :cascade do |t|
     t.integer  "product_id"
     t.integer  "quantity"
-    t.float    "cost"
     t.integer  "entry_number"
-    t.integer  "user_id"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
     t.integer  "movement_id"
@@ -597,7 +605,6 @@ ActiveRecord::Schema.define(version: 20170725193121) do
 
   add_index "warehouse_entries", ["movement_id"], name: "index_warehouse_entries_on_movement_id", using: :btree
   add_index "warehouse_entries", ["product_id"], name: "index_warehouse_entries_on_product_id", using: :btree
-  add_index "warehouse_entries", ["user_id"], name: "index_warehouse_entries_on_user_id", using: :btree
 
   add_foreign_key "bill_receiveds", "products"
   add_foreign_key "bill_receiveds", "suppliers"
@@ -620,6 +627,7 @@ ActiveRecord::Schema.define(version: 20170725193121) do
   add_foreign_key "movements", "bills"
   add_foreign_key "movements", "business_units"
   add_foreign_key "movements", "orders"
+  add_foreign_key "movements", "product_requests"
   add_foreign_key "movements", "products"
   add_foreign_key "movements", "prospects"
   add_foreign_key "movements", "stores"
@@ -637,6 +645,7 @@ ActiveRecord::Schema.define(version: 20170725193121) do
   add_foreign_key "pending_movements", "bills"
   add_foreign_key "pending_movements", "business_units"
   add_foreign_key "pending_movements", "orders"
+  add_foreign_key "pending_movements", "product_requests"
   add_foreign_key "pending_movements", "products"
   add_foreign_key "pending_movements", "prospects"
   add_foreign_key "pending_movements", "stores"
@@ -667,5 +676,4 @@ ActiveRecord::Schema.define(version: 20170725193121) do
   add_foreign_key "users", "stores"
   add_foreign_key "warehouse_entries", "movements"
   add_foreign_key "warehouse_entries", "products"
-  add_foreign_key "warehouse_entries", "users"
 end
