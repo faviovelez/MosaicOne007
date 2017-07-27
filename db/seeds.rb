@@ -6,14 +6,20 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 {
-  "store":            "store user",
-  "manager":          "can assign price",
-  "designer":         "can respond design requests",
-  "director":         "can access all reports",
-  "store-admin":      "can acces all sections of POS and reports",
-  "manager-admin":    "can follow status of requests and orders",
-  "wharehouse-staff": "can process orders and enter new production",
-  "product-admin":    "can create products and assign product code and co..."
+  "platform-admin":   "Crea usuarios de todos los tipos, actualiza formularios",
+  "director":         "Tiene acceso a todos los procesos y funciones de manager, puede crear usuarios manager",
+  "manager":          "Asigna precio a cotizaciones y puede asignar costo a las entradas de materiales",
+  "store":            "Crea prospectos, cotizaciones y pedidos, autoriza, cancela o reactiva cotizaciones y pedidos",
+  "store-admin":      "Con acceso a todas las secciones, reportes y funcionalidades de tienda y puede crear usuarios store",
+  "product-admin":    "Crea y modifica productos, asigna costos a entradas de mercancías, crea usuarios product-staff",
+  "product-staff":    "Crea y modifica productos, asigna costos a entradas de mercancías",
+  "wharehouse-admin": "Maneja inventario, órdenes de producción, prepara pedidos y crea usuarios wharehouse-staff",
+  "wharehouse-staff": "Maneja inventario, órdenes de producción, prepara pedidos",
+  "admin-desk":       "Crea usuarios tipo drivers, crea envíos y factura, elabora pedidos y cotizaciones",
+  "designer-admin":   "Da respuesta a las solicitudes de diseño y puede crear usuarios designer",
+  "designer":         "Da respuesta a las solicitudes de diseño",
+  "driver":           "Entrega mercancía",
+  "viewer":           "Da seguimiento a pedidos y cotizaciones"
 }.each do |name, description|
   Role.find_or_create_by(name: name, description: description)
 end
