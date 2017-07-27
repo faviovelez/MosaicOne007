@@ -18,6 +18,6 @@
 //= require_tree .
 
 
-$('.search-field').autocomplete
-  appendTo: '.search-form',
-  source: '/search_suggestions'
+//$('.search-field').autocomplete
+  //appendTo: '.search-form',
+  //source: '/search_suggestions'

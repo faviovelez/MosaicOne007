@@ -17,3 +17,5 @@
 /tmp
 /public/uploads
 /.env
+Gemfile.lock
+.ruby-version

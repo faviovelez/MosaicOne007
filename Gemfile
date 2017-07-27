@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.7.1'
 # Use postgresql as the database for Active Record
-gem 'pg', '~> 0.15'
+gem 'pg', '~> 0.15.1'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -35,6 +35,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  gem 'pry'
+  gem 'faker'
+  gem 'dotenv-rails'
 end
 
 group :development do
@@ -46,11 +49,7 @@ group :development do
 end
 
 gem 'devise'
-
 gem 'carrierwave', '~> 1.0'
-
 gem 'rmagick'
-
 gem 'redis', '~>3.2'
-
-gem 'dotenv-rails'
+gem 'state_machine'
