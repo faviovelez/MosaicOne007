@@ -15,4 +15,9 @@ class User < ActiveRecord::Base
   has_many :movements
   has_many :pending_movements
   has_many :user_sales
+
+  validates :first_name, presence: { message: 'Por favor escriba el primer nombre del usuario.'}
+
+  validates :last_name, presence: { message: 'Por favor anote los apellidos del usuario.'}
+
 end
