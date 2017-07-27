@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170726002700) do
+ActiveRecord::Schema.define(version: 20170726220755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,12 @@ ActiveRecord::Schema.define(version: 20170726002700) do
   add_index "bills", ["prospect_id"], name: "index_bills_on_prospect_id", using: :btree
   add_index "bills", ["store_id"], name: "index_bills_on_store_id", using: :btree
 
+  create_table "business_groups", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "business_unit_sales", force: :cascade do |t|
     t.integer  "business_unit_id"
     t.string   "month"
@@ -94,9 +100,12 @@ ActiveRecord::Schema.define(version: 20170726002700) do
 
   create_table "business_units", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.integer  "business_group_id"
   end
+
+  add_index "business_units", ["business_group_id"], name: "index_business_units_on_business_group_id", using: :btree
 
   create_table "carriers", force: :cascade do |t|
     t.string   "name"
@@ -369,7 +378,10 @@ ActiveRecord::Schema.define(version: 20170726002700) do
     t.string   "line"
     t.string   "image"
     t.integer  "pieces_per_package"
+    t.integer  "business_unit_id"
   end
+
+  add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
 
   create_table "products_bills", force: :cascade do |t|
     t.integer  "product_id"
@@ -412,9 +424,11 @@ ActiveRecord::Schema.define(version: 20170726002700) do
     t.integer  "billing_address_id"
     t.integer  "delivery_address_id"
     t.string   "second_last_name"
+    t.integer  "business_unit_id"
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
+  add_index "prospects", ["business_unit_id"], name: "index_prospects_on_business_unit_id", using: :btree
   add_index "prospects", ["delivery_address_id"], name: "index_prospects_on_delivery_address_id", using: :btree
   add_index "prospects", ["store_id"], name: "index_prospects_on_store_id", using: :btree
 
@@ -612,6 +626,7 @@ ActiveRecord::Schema.define(version: 20170726002700) do
   add_foreign_key "bills", "prospects"
   add_foreign_key "bills", "stores"
   add_foreign_key "business_unit_sales", "business_units"
+  add_foreign_key "business_units", "business_groups"
   add_foreign_key "carriers", "delivery_addresses"
   add_foreign_key "delivery_attempts", "orders"
   add_foreign_key "delivery_attempts", "product_requests"
@@ -655,10 +670,12 @@ ActiveRecord::Schema.define(version: 20170726002700) do
   add_foreign_key "product_requests", "orders"
   add_foreign_key "product_requests", "products"
   add_foreign_key "product_sales", "products"
+  add_foreign_key "products", "business_units"
   add_foreign_key "products_bills", "bills"
   add_foreign_key "products_bills", "products"
   add_foreign_key "prospect_sales", "prospects"
   add_foreign_key "prospects", "billing_addresses"
+  add_foreign_key "prospects", "business_units"
   add_foreign_key "prospects", "delivery_addresses"
   add_foreign_key "prospects", "stores"
   add_foreign_key "request_users", "requests"

@@ -9,4 +9,5 @@ class Product < ActiveRecord::Base
   has_many :bills, through: :products_bills
   has_many :product_requests
   has_many :product_sales
+  belongs_to :business_unit
 end
