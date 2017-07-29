@@ -63,7 +63,9 @@ Rails.application.routes.draw do
 
   get 'design_requests/designer/:id', to: 'design_requests#designer', as: 'designer_requests'
 
-  get 'warehouse/new'
+  get 'warehouse/new_own_entry'
+
+  get 'warehouse/new_supplier_entry'
 
   get 'warehouse/edit'
 
