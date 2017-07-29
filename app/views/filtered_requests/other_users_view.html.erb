@@ -1,20 +1,19 @@
-<p id="notice"><%= notice %></p>
-<% @assigned_to_others.each do |request| %>
 
     <table>
       <thead>
-        <tr>
-          <th>tienda</th>
-          <th>cantidad</th>
-          <th>producto</th>
-          <th>prospecto</th>
-          <th>creada hace</th>
-          <th>fecha compromiso</th>
-          <th>estatus</th>
-          <th>atendida por</th>
+        <tr class="table-titles">
+          <th class="col-md-2">Tienda</th>
+          <th class="quantity col-md-1">Cantidad</th>
+          <th class="product col-md-1">Producto</th>
+          <th class="date col-md-1">Solicitada</th>
+          <th class="delivery-date col-md-1">Entregar</th>
+          <th class="col-md-1">Cotiza</th>
+          <th class="status col-md-2">Estatus</th>
+        </tr>
         </tr>
       </thead>
       <tbody>
+      <% @assigned_to_others.each do |request| %>
         <tr>
           <td> <%= request.store.store_code %> - <%= request.store.store_name %> </td>
           <td><%= request.quantity %></td>
@@ -25,11 +24,6 @@
               <%= request.product_type %>
             <% end %>
           </td>
-          <% if request.prospect.present? %>
-            <td><%= request.prospect.legal_or_business_name %></td>
-          <% else %>
-          <td> - </td>
-          <% end %>
           <% @days = (Date.today - request.created_at.to_date).to_i %>
           <% if @days < 1 %>
             <td> hoy </td>
@@ -43,15 +37,21 @@
           <% else %>
           <td> - </td>
           <% end %>
+          <td>
+            <% find_manager(request) %>
+            <%= @follower.first_name %>
+            <%= @follower.last_name %>
+          </td>
           <td> <%= request.status %></td>
-          <td> <% find_manager(request) %>
-              <%= @follower.first_name %>
-              <%= @follower.last_name %>
-            </td>
-          <td> <%= link_to 'detalles', request %> </td>
+          <td class="col-md-1">
+            <%= link_to request do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <span>Ver</span>
+            <% end %>
+          </td>
         </tr>
-      </tbody>
-    </table>
-<% end %>
+      <% end %>
+    </tbody>
+  </table>
 
 <%= render 'links_for_manager' %>

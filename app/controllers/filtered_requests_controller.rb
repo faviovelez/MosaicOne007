@@ -71,7 +71,7 @@ class FilteredRequestsController < ApplicationController
 
 # Método para director exclusivo para el Dr. Luis, para ver las solicitudes asignadas a otros gerentes
   def filter_requests_assigned_to_others(user = current_user)
-    @assigned_to_others = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where('roles.name' =>  'director').where.not('users.id' => (user)).order(:created_at).order(:store_code)
+    @assigned_to_others = Request.where.not('status' => ['creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").where.not('users.id' => (user)).order(:created_at).order(:store_code)
     @assigned_to_others
   end
 

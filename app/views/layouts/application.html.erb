@@ -4,16 +4,47 @@
   <title>Sistema DC</title>
   <%= stylesheet_link_tag    'bootstrap', media: 'all', 'data-turbolinks-track' => true %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag    'application', 'https://fonts.googleapis.com/css?family=Open+Sans:300,400', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag    'font-awesome', media: 'all', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
   <meta name="robots" content="noindex"
 </head>
 
-<body>
+<% if params[:controller] == 'devise/sessions' %>
+  <body class=" background-img">
+<% else %>
+  <body>
+<% end %>
+
   <%= render 'navbar' %>
-  <p class="notice"><%= notice %></p>
-  <%= yield %>
-  <p class="alert"><%= alert %></p>
-</body>
+
+  <% if notice %>
+    <div class="notice">
+      <%= notice %>
+      <button type="button" class="close" data-dismiss="notice" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+  <% end %>
+
+  <% if alert %>
+    <div class="alert">
+      <%= alert %>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+  <% end %>
+
+  <% if current_user %>
+    <%= render 'vertical_navbar' %>
+    <div class="flex">
+      <div class="centered">
+        <%= yield %>
+      </div>
+  <% else %>
+    <div class="centered-without-margin">
+      <%= yield %>
+    </div>
+  <% end %>
+    </div>
+  </body>
 <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
 <%= javascript_include_tag 'bootstrap', 'data-turbolinks-track' => true %>
 </html>
