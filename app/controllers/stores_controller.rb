@@ -65,7 +65,7 @@ private
   end
 
   def require_permission(role = current_user.role.name)
-    if role != 'guard'
+    if role != 'platform-admin'
       redirect_to root_path
     end
   end

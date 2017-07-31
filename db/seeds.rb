@@ -61,41 +61,13 @@ end
   StoreType.find_or_create_by(hash)
 end
 
-[
-  { store_type: "tienda propia", store_code: "003", store_name: "calzada", discount: 0.0 },
-  { store_type: "corporativo", store_code: "003", store_name: "calzada", discount: 0.0 },
-  { store_type: "distribuidor", store_code: "003", store_name: "calzada", discount: 0.0 },
-  { store_type: "franquicia", store_code: "000", store_name: "aguascalientes", discount: 0.0 }
-].each do |hash|
-  Store.find_or_create_by(hash)
-end
+master_user = Role.find_by_name('platform-admin')
 
-if User.first.nil?
-  20.times do |n|
-    password = Faker::Internet.password(10, 20, true, true)
-    User.create(
-      email: Faker::Internet.email,
-      first_name: Faker::Name.name,
-      middle_name: Faker::Name.name,
-      last_name: Faker::Name.last_name,
-      password: password,
-      password_confirmation: password
-    )
-  end
-end
-
-if User.first.role.nil?
-
-  User.first.update_attributes(role: Role.all.sample, store:  Store.all.sample)
-
-  valids_users = User.where.not(id: User.first.id)
-
-  2.times do
-    valids_users.sample.update_attributes(role: Role.where(name: 'manager').first, store: Store.find(User.first.store_id))
-  end
-
-end
-
-User.where(role: nil).each do |user|
-  user.update_attributes(role: Role.all.sample, store:  Store.all.sample)
-end
+User.create(
+  email: "admin@adminmosaictech.com",
+  first_name: "administrador",
+  last_name: "diseños de cartón",
+  password: 123456,
+  password_confirmation: 1234567
+  role: master_user
+)

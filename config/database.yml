@@ -81,5 +81,5 @@ test:
 production:
   <<: *default
   database: mosaicone007_production
-  username: mosaicone007
+  username: <%= ENV['MOSAICONE007_DATABASE_USERNAME'] %>
   password: <%= ENV['MOSAICONE007_DATABASE_PASSWORD'] %>
