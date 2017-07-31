@@ -29,4 +29,12 @@ module ApplicationHelper
     @value
   end
 
+  def sum_quantity(requests)
+    @result = 0
+    requests.each do |r|
+      @result += r.quantity
+    end
+    @result
+  end
+
 end

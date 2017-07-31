@@ -24,11 +24,48 @@
   Role.find_or_create_by(name: name, description: description)
 end
 
+# Deben existir por lo menos dos Business Groups: Uno para tiendas propias y otro para tiendas externas
 [
-  { store_type: "franquicia", store_code: "000", store_name: "aguascalientes", discount: 0.2 },
-  { store_type: "tienda", store_code: "001", store_name: "diseños de carton", discount: 0.5 },
-  { store_type: "tienda propia", store_code: "003", store_name: "calzada", discount: 35.0 },
-  { store_type: "tienda propia", store_code: "003", store_name: "calzada", discount: 0.35 }
+  { name: "default compañía" },
+  { name: "default terceros" }
+].each do |hash|
+  BusinessGroup.find_or_create_by(hash)
+end
+
+# Se establece por default la configuración de tipo de costeo a PEPS en la tabla CostType
+[
+  { warehouse_cost_type: "PEPS", description: "Primeras entradas, primeras salidas", selected: true },
+  { warehouse_cost_type: "UEPS", description: "Últimas entradas, primeras salidas", selected: false }
+].each do |hash|
+  CostType.find_or_create_by(hash)
+end
+
+# Cada tienda debe pertenecer a un Business Unit y cada Business Unit debe pertenecer a un Business Group, se crean defaults para funcionalidad inicial que deben ser modificadas (y/o agregadas nuevas)
+default = BusinessGroup.find_by_name('default compañía')
+default_terceros = BusinessGroup.find_by_name('default terceros')
+
+[
+  { name: "default compañía", business_group: default},
+  { name: "default terceros", business_group: default_terceros}
+].each do |hash|
+  BusinessUnit.find_or_create_by(hash)
+end
+
+# Se crea el modelo Store_type para los distintos tipos de tiendas. Al crear una tienda, se puede elegir entre los business_units default o los creados o modificados por los usuarios.
+[
+  { store_type: "tienda propia", business_unit: default },
+  { store_type: "corporativo", business_unit: default },
+  { store_type: "distribuidor", business_unit: default_terceros },
+  { store_type: "franquicia", business_unit: default_terceros }
+].each do |hash|
+  StoreType.find_or_create_by(hash)
+end
+
+[
+  { store_type: "tienda propia", store_code: "003", store_name: "calzada", discount: 0.0 },
+  { store_type: "corporativo", store_code: "003", store_name: "calzada", discount: 0.0 },
+  { store_type: "distribuidor", store_code: "003", store_name: "calzada", discount: 0.0 },
+  { store_type: "franquicia", store_code: "000", store_name: "aguascalientes", discount: 0.0 }
 ].each do |hash|
   Store.find_or_create_by(hash)
 end

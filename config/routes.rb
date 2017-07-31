@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
 
+  get 'movements/index'
+
+  get 'movements/edit'
+
   root 'pages#index'
 
   match '/search_suggestions', to: 'search_suggestions#index', via: :get
@@ -23,6 +27,10 @@ Rails.application.routes.draw do
   get 'filtered_requests/product_view'
 
   devise_for :users
+
+  get 'products/catalogue'
+
+  get 'products/special'
 
   resources :products
 
@@ -67,8 +75,17 @@ Rails.application.routes.draw do
 
   get 'warehouse/new_supplier_entry'
 
-  get 'warehouse/edit'
+  get 'warehouse/edit/:id', to: 'warehouse#edit', as: 'warehouse_edit_entry'
 
   get 'warehouse/show'
+
+  get 'warehouse/index'
+
+  get 'warehouse/orders'
+
+  get 'warehouse/orders_products/:id', to: 'warehouse#orders_products', as: 'warehouse_order_products'
+
+  patch 'warehouse/form_for_movement/:id', to: 'warehouse#form_for_movement', as: 'form_for_movement', controller: 'warehouse'
+
 
 end

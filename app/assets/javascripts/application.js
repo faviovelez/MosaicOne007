@@ -21,3 +21,9 @@
 //$('.search-field').autocomplete
   //appendTo: '.search-form',
   //source: '/search_suggestions'
+
+$(document).ready(function() {
+  $('.carousel').carousel({
+    interval: false
+  });
+});

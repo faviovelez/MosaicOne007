@@ -170,6 +170,19 @@ textarea:focus, input:focus{
   box-shadow: none;
 }
 
+.main-button-small {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  background-color: #00B3D3;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0%;
+  box-shadow: none;
+  color: #fff;
+  vertical-align: middle;
+}
+
 .background-img {
   background-image: url('slide-2.jpg');
 }
@@ -185,6 +198,20 @@ textarea:focus, input:focus{
   border-radius: 0%;
   box-shadow: none;
 }
+
+.secondary-button-small {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  background-color: #BAFF29;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0%;
+  box-shadow: none;
+  color: #fff;
+  vertical-align: middle;
+}
+
 
 .container-log-in {
   margin-top: 15vh;
@@ -244,6 +271,9 @@ table {
   text-align: center;
 }
 
+th {
+  text-align: center;
+}
 input.main-button{
   color: #EAEFEE;
 }
@@ -264,6 +294,18 @@ a.link {
   height: 4rem;
 }
 
+img.small-img {
+  max-height: 30vh !important;
+  width: auto !important;
+}
+
+.img-td {
+  height: 10vh;
+}
+.carousel-control.left, .carousel-control.right {
+    background-image: none
+}
+
 td {
   height: 3rem;
 }
@@ -272,6 +314,17 @@ tr:hover {
   background-color: #EAEFEE;
   opacity: .70;
 }
+
+tr.no-shadow {
+  background-color: none;
+  opacity: 1;
+}
+
+tr.image-tr:hover {
+  background-color: #fff;
+  opacity: 1;
+}
+
 
 .link-to-price {
   color: #D72638;

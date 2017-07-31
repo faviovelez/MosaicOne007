@@ -32,14 +32,14 @@
       <%= f.text_field :product_type, value: value_of_product_type(@request) %>
     </div>
 
-    <div class="field">
+    <div class="field hidden">
       <%= f.label :línea_de_producto %>
-      <%= f.text_field :line %>
+      <%= f.select :line, options_for_select([['seleccione', ''], ['hogar'], ['alimentos y regalos'], ['oficina'], ['empaque y embalaje'], ['ecológica'],['exhibidores'], ['diseños especiales']], selected: 'diseños especiales') %>)
     </div>
 
     <div class="field">
       <%= f.label :clasificación %>
-      <%= f.select :classification, options_for_select([['de línea'], ['especial']], selected: 'especial')  %>
+      <%= f.select :classification, options_for_select([['especial']], selected: 'especial')  %>
     </div>
 
     <h3>medidas</h3>
@@ -116,9 +116,9 @@
     </div>
 
     <% if @request.product_type == 'exhibidor' %>
-    <div class="exhibidor">
+      <div class="exhibidor">
     <% else %>
-    <div class="exhibidor hidden">
+      <div class="exhibidor hidden">
     <% end %>
 
       <div class="field">
@@ -247,6 +247,16 @@
     <div class="field">
       <%= f.label :kit_de_accesorios %>
       <%= f.text_field :accesories_kit %>
+    </div>
+
+    <div class="field">
+      <%= f.label :unidad_de_negocio %>
+      <%= f.select :business_unit, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}) %>
+    </div>
+
+    <div class="field">
+      <%= f.label :imágenes %><br>
+      <%= f.file_field :image, multiple: true %>
     </div>
 
     <div class="actions">

@@ -14,7 +14,7 @@
 
   <div class="field">
     <%= f.label :tipo_de_tienda %>
-    <%= f.select :store_type, options_for_select(['tienda propia','franquicia', 'corporativo']) %>
+    <%= f.select :store_type, options_for_select(StoreType.all.collect{|t| [t.name, t.id]}) %>
   </div>
 
   <div class="field">
@@ -23,8 +23,8 @@
   </div>
 
   <div class="field">
-    <%= f.label :nombre_del_grupo_de_tiendas %>
-    <%= f.select :discount, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}) %>
+    <%= f.label :grupo_de_tiendas %>
+    <%= f.select :business_unit, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}) %>
   </div>
 
   <div class="actions">

@@ -27,17 +27,17 @@
 
   <div class="field">
     <%= f.label :tipo_de_producto %><br>
-    <%= f.text_field :product_type %>
+    <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: @product.product_type) %>
   </div>
 
   <div class="field">
     <%= f.label :línea_de_producto %><br>
-    <%= f.text_field :line %>
+    <%= f.select :line, options_for_select([['seleccione', ''], ['hogar'], ['alimentos y regalos'], ['oficina'], ['empaque y embalaje'], ['ecológica'],['exhibidores'], ['diseños especiales']], selected: 'seleccione') %>
   </div>
 
   <div class="field">
-    <%= f.label :línea_de_producto %><br>
-    <%= f.select :classification, options_for_select(['de línea'], ['especial']) %>
+    <%= f.label :clasificación %><br>
+    <%= f.select :classification, options_for_select(['de línea'], selected: 'de línea') %>
   </div>
 
   <div class="field">
@@ -122,6 +122,16 @@
   <div class="field">
     <%= f.label :precio_de_venta %><br>
     <%= f.text_field :price %>
+  </div>
+
+  <div class="field">
+    <%= f.label :unidad_de_negocio %>
+    <%= f.select :business_unit, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}) %>
+  </div>
+
+  <div class="field">
+    <%= f.label :imágenes %><br>
+    <%= f.file_field :image, multiple: true %>
   </div>
 
   <div class="actions">
