@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727191946) do
+ActiveRecord::Schema.define(version: 20170731010600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,10 +116,12 @@ ActiveRecord::Schema.define(version: 20170727191946) do
 
   add_index "carriers", ["delivery_address_id"], name: "index_carriers_on_delivery_address_id", using: :btree
 
-  create_table "configurations", force: :cascade do |t|
+  create_table "cost_types", force: :cascade do |t|
     t.string   "warehouse_cost_type"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
+    t.string   "description"
+    t.boolean  "selected"
   end
 
   create_table "delivery_addresses", force: :cascade do |t|
@@ -142,8 +144,10 @@ ActiveRecord::Schema.define(version: 20170727191946) do
     t.integer  "order_id"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
+    t.integer  "movement_id"
   end
 
+  add_index "delivery_attempts", ["movement_id"], name: "index_delivery_attempts_on_movement_id", using: :btree
   add_index "delivery_attempts", ["order_id"], name: "index_delivery_attempts_on_order_id", using: :btree
   add_index "delivery_attempts", ["product_request_id"], name: "index_delivery_attempts_on_product_request_id", using: :btree
 
@@ -226,8 +230,8 @@ ActiveRecord::Schema.define(version: 20170727191946) do
     t.integer  "product_id"
     t.integer  "quantity"
     t.string   "movement_type"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
     t.integer  "order_id"
     t.integer  "user_id"
     t.float    "cost"
@@ -239,10 +243,13 @@ ActiveRecord::Schema.define(version: 20170727191946) do
     t.integer  "prospect_id"
     t.integer  "bill_id"
     t.integer  "product_request_id"
+    t.date     "maximum_date"
+    t.integer  "delivery_package_id"
   end
 
   add_index "movements", ["bill_id"], name: "index_movements_on_bill_id", using: :btree
   add_index "movements", ["business_unit_id"], name: "index_movements_on_business_unit_id", using: :btree
+  add_index "movements", ["delivery_package_id"], name: "index_movements_on_delivery_package_id", using: :btree
   add_index "movements", ["order_id"], name: "index_movements_on_order_id", using: :btree
   add_index "movements", ["product_id"], name: "index_movements_on_product_id", using: :btree
   add_index "movements", ["product_request_id"], name: "index_movements_on_product_request_id", using: :btree
@@ -302,6 +309,7 @@ ActiveRecord::Schema.define(version: 20170727191946) do
     t.integer  "prospect_id"
     t.integer  "bill_id"
     t.integer  "product_request_id"
+    t.date     "maximum_date"
   end
 
   add_index "pending_movements", ["bill_id"], name: "index_pending_movements_on_bill_id", using: :btree
@@ -535,8 +543,10 @@ ActiveRecord::Schema.define(version: 20170727191946) do
     t.string   "authorisation"
     t.boolean  "authorised"
     t.string   "last_status"
+    t.integer  "product_id"
   end
 
+  add_index "requests", ["product_id"], name: "index_requests_on_product_id", using: :btree
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree
   add_index "requests", ["store_id"], name: "index_requests_on_store_id", using: :btree
 
@@ -559,6 +569,15 @@ ActiveRecord::Schema.define(version: 20170727191946) do
   end
 
   add_index "store_sales", ["store_id"], name: "index_store_sales_on_store_id", using: :btree
+
+  create_table "store_types", force: :cascade do |t|
+    t.string   "store_type"
+    t.integer  "business_unit_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "store_types", ["business_unit_id"], name: "index_store_types_on_business_unit_id", using: :btree
 
   create_table "stores", force: :cascade do |t|
     t.datetime "created_at",          null: false
@@ -649,6 +668,7 @@ ActiveRecord::Schema.define(version: 20170727191946) do
   add_foreign_key "business_unit_sales", "business_units"
   add_foreign_key "business_units", "business_groups"
   add_foreign_key "carriers", "delivery_addresses"
+  add_foreign_key "delivery_attempts", "movements"
   add_foreign_key "delivery_attempts", "orders"
   add_foreign_key "delivery_attempts", "product_requests"
   add_foreign_key "delivery_packages", "delivery_attempts"
@@ -662,6 +682,7 @@ ActiveRecord::Schema.define(version: 20170727191946) do
   add_foreign_key "inventories", "products"
   add_foreign_key "movements", "bills"
   add_foreign_key "movements", "business_units"
+  add_foreign_key "movements", "delivery_packages"
   add_foreign_key "movements", "orders"
   add_foreign_key "movements", "product_requests"
   add_foreign_key "movements", "products"
@@ -704,9 +725,11 @@ ActiveRecord::Schema.define(version: 20170727191946) do
   add_foreign_key "prospects", "stores"
   add_foreign_key "request_users", "requests"
   add_foreign_key "request_users", "users"
+  add_foreign_key "requests", "products"
   add_foreign_key "requests", "prospects"
   add_foreign_key "requests", "stores"
   add_foreign_key "store_sales", "stores"
+  add_foreign_key "store_types", "business_units"
   add_foreign_key "stores", "billing_addresses"
   add_foreign_key "stores", "business_units"
   add_foreign_key "stores", "delivery_addresses"

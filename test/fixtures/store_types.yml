@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  store_type: MyString
+  business_unit_id: 
+
+two:
+  store_type: MyString
+  business_unit_id: 

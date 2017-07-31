@@ -7,4 +7,34 @@ class WarehouseController < ApplicationController
   def new_supplier_entry
   end
 
+  def orders_products
+    @requests = Order.find(params[:id]).product_requests.where('product_requests.status' => 'asignado')
+  end
+
+  def index
+    @entries = WarehouseEntry.joins(:movement).where('movements.cost' => nil)
+  end
+
+  def edit
+    @entry = WarehouseEntry.find(params[:id])
+    @movement = @entry.movement
+    @entry_id = @entry.id
+  end
+
+  def orders
+    @orders = Order.where(status: 'en espera')
+  end
+
+  def form_for_movement
+    @movement = Movement.find(params[:id])
+    @movement.cost = params[:movement][:cost]
+    if @movement.save
+      redirect_to warehouse_index_path, notice: 'Se guardó el costo exitosamente.'
+    else
+      redirect_to root_path, alert: 'No se pudo guardar el movimiento.'
+    end
+
+  end
+
+
 end

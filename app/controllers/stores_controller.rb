@@ -61,7 +61,7 @@ private
   end
 
   def store_params
-    params.require(:store).permit(:store_type, :store_code, :store_name, :group, :discount)
+    params.require(:store).permit(:store_type, :store_code, :store_name, :group, :discount, :business_unit, :delivery_address, :billing_address)
   end
 
   def require_permission(role = current_user.role.name)

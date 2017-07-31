@@ -97,7 +97,7 @@ class FilteredRequestsController < ApplicationController
 
 # Este método filtra las solicitudes autorizadas para que las vean los usuarios 'product-admin'
   def filter_confirmed_requests
-    @confirmed = Request.where(status: 'autorizada')
+    @confirmed = Request.where('status' => ['autorizada', 'código asignado'])
   end
 
 end

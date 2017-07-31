@@ -1,0 +1,28 @@
+<table>
+  <thead>
+    <tr class="table-titles">
+      <th class="col-md-1">Folio</th>
+      <th class="col-md-1">Producto</th>
+      <th class="col-md-2">Color / Diseño</th>
+      <th class="col-md-1">Cantidad</th>
+      <th class="col-md-1">Fecha</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @entries.each do |entry| %>
+    <tr>
+      <td> <%= entry.id %> </td>
+      <td> <%=  entry.product.unique_code %> </td>
+      <td> <%=  entry.product.exterior_color_or_design %> </td>
+      <td> <%=  entry.quantity %> </td>
+      <td> <%= I18n.l entry.created_at.to_date, format: :short %> </td>
+      <td class="col-md-1">
+        <%= link_to warehouse_edit_entry_path(entry) do %>
+          <i class="fa fa-money link-to-details" aria-hidden="true"></i>
+          <span>Costo</span>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

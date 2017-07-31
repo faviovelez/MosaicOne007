@@ -6,4 +6,5 @@ class BusinessUnit < ActiveRecord::Base
   belongs_to :business_group
   has_many :prospects
   has_many :products
+  has_many :stores
 end

@@ -1,17 +1,16 @@
-
-<% @confirmed.each do |request| %>
   <table>
     <thead>
-      <tr>
-        <th>tienda</th>
-        <th>cantidad</th>
-        <th>producto</th>
-        <th>creada hace</th>
-        <th>fecha compromiso</th>
-        <th>estatus</th>
+      <tr class="table-titles">
+        <th class="col-md-2">Tienda</th>
+        <th class="quantity col-md-1">Cantidad</th>
+        <th class="product col-md-1">Producto</th>
+        <th class="date col-md-1">Solicitada</th>
+        <th class="delivery-date col-md-1">Entregar</th>
+        <th class="status col-md-1">Estatus</th>
       </tr>
     </thead>
     <tbody>
+    <% @confirmed.each do |request| %>
       <tr>
         <td> <%= request.store.store_code %> - <%= request.store.store_name %> </td>
         <td><%= request.quantity %></td>
@@ -36,8 +35,21 @@
         <td> - </td>
           <% end %>
         <td> <%= request.status %></td>
-        <td> <%= link_to 'asignar código', request_path(request) %> </td>
+        <td class="col-md-1">
+          <%= link_to new_request_product_path(request) do %>
+            <i class="fa fa-book link-to-confirm" aria-hidden="true"></i>
+            <span class="link-to-confirm">Nuevo</span>
+          <% end %>
+        </td>
+        <% if request.product %>
+          <td class="col-md-1">
+            <%= link_to edit_request_product_path(request_id: request, id: request.product) do %>
+              <i class="fa fa-folder-open link-to-details" aria-hidden="true"></i>
+              <span class="link-to-details">Modificar</span>
+            <% end %>
+          </td>
+        <% end %>
         </tr>
+      <% end %>
     </tbody>
   </table>
-<% end %>

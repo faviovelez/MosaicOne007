@@ -1,1 +1,33 @@
+  <table>
+    <thead>
+      <tr class="table-titles">
+        <th>Código</th>
+        <th>Descripción</th>
+        <th>Color/Diseño</th>
+        <th>Línea de producto</th>
+        <th>Precio</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @products.each do |product| %>
+        <tr>
+          <td class="col-md-1"><%= product.unique_code %></td>
+          <td class="col-md-2"><%= product.description %></td>
+          <td class="col-md-1"><%= product.exterior_color_or_design %></td>
+          <td class="col-md-1"><%= product.line %></td>
+          <td class="col-md-1"><%=product.price %></td>
+          <td class="col-md-1">
+            <%= link_to product do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <span>Detalles</span>
+              <% end %>
+          </td>
+        </tr>
+    <% end %>
+
+    </tbody>
+
+  </table>
+
 <%= link_to 'nuevo producto', new_product_path %>

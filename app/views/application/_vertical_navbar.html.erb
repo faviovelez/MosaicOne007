@@ -17,14 +17,14 @@
         <%-# Aquí inicia el área que muestra los links para manager o director %>
         <% if current_user.role.name == 'manager' || current_user.role.name == 'director' %>
 
-        <% if params[:controller] == 'pages' && params[:action] == 'index' %>
-          <li class="vertical-link actual-vertical-link">
-        <% else %>
-          <li class="vertical-link">
-        <% end %>
-            <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Inicio', root_path, class: 'text-link'  %>
-          </li>
+          <% if params[:controller] == 'pages' && params[:action] == 'index' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Inicio', root_path, class: 'text-link'  %>
+            </li>
 
           <% if params[:action] == 'unassigned_view' %>
             <%-# Aplica formato si está seleccionada %>
@@ -57,30 +57,32 @@
                 <%= link_to 'Cotizaciones asignadas a otros', filtered_requests_other_users_view_path, class: 'text-link'  %>
               </li>
           <% end %>
-          <%-# Aquí termina el área que muestra los links solo para director %>
+            <%-# Aquí termina el área que muestra los links solo para director %>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para manager o director %>
 
         <%-# Aquí inicia el área que muestra los links para store o store-admin %>
         <% if current_user.role.name == 'store' || current_user.role.name == 'store-admin' %>
 
-        <% if params[:controller] == 'pages' && params[:action] == 'index' %>
-          <li class="vertical-link actual-vertical-link">
-        <% else %>
-          <li class="vertical-link">
-        <% end %>
-            <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Inicio', root_path, class: 'text-link'  %>
-          </li>
+          <% if params[:controller] == 'pages' && params[:action] == 'index' %>
+          <%-# Aplica formato si está seleccionada %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Inicio', root_path, class: 'text-link'  %>
+            </li>
 
-        <% if params[:controller] == 'orders' && params[:action] == 'new' %>
-          <li class="vertical-link actual-vertical-link">
-        <% else %>
-          <li class="vertical-link">
-        <% end %>
-            <i class="fa fa-send-o other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Nuevo pedido', new_store_order_path(current_user.store), class: 'text-link'  %>
-          </li>
+          <% if params[:controller] == 'orders' && params[:action] == 'new' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-send-o other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Nuevo pedido', new_store_order_path(current_user.store), class: 'text-link'  %>
+            </li>
 
           <% if params[:controller] == 'orders' && params[:action] == 'index' %>
             <li class="vertical-link actual-vertical-link">
@@ -130,14 +132,14 @@
               <%= link_to 'Dar de alta un prospecto', new_store_prospect_path(current_user.store), class: 'text-link'  %>
             </li>
 
-        <% if params[:controller] == 'prospects' && params[:action] == 'index' %>
-          <li class="vertical-link actual-vertical-link">
-        <% else %>
-          <li class="vertical-link">
-        <% end %>
-            <i class="fa fa-users other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Ver lista de prospectos', store_prospects_path(current_user.store), class: 'text-link'  %>
-          </li>
+          <% if params[:controller] == 'prospects' && params[:action] == 'index' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-users other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Ver lista de prospectos', store_prospects_path(current_user.store), class: 'text-link'  %>
+            </li>
 
         <% end %>
         <%-# Aquí termina el área que muestra los links para store o store-admin %>
@@ -145,32 +147,32 @@
         <% if current_user.role.name == 'designer' || current_user.role.name == 'designer-admin' %>
         <%# Aquí inicia el área que muestra los links para designer o designer-admin %>
 
-        <% if params[:controller] == 'pages' && params[:action] == 'index' %>
-          <li class="vertical-link actual-vertical-link">
-        <% else %>
-          <li class="vertical-link">
-        <% end %>
-            <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Inicio', root_path, class: 'text-link'  %>
-          </li>
+          <% if params[:controller] == 'pages' && params[:action] == 'index' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Inicio', root_path, class: 'text-link'  %>
+            </li>
 
-        <% if params[:action] == 'unassigned_view' %>
-          <li class="vertical-link actual-vertical-link">
-        <% else %>
-          <li class="vertical-link">
-        <% end %>
-        <i class="fa fa-briefcase other-nav-icons" aria-hidden="true"></i>
-        <%= link_to 'Sol. de diseño sin asignar', filtered_requests_unassigned_view_path, class: 'text-link' %>
-          </li>
+          <% if params[:action] == 'unassigned_view' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-briefcase other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Sol. de diseño sin asignar', filtered_requests_unassigned_view_path, class: 'text-link' %>
+            </li>
 
-        <% if params[:action] == 'assigned_view' %>
-          <li class="vertical-link actual-vertical-link">
-        <% else %>
-          <li class="vertical-link">
-        <% end %>
-        <i class="fa fa-tags other-nav-icons" aria-hidden="true"></i>
-        <%= link_to 'Sol. de diseño asignadas a mi', filtered_requests_assigned_view_path, class: 'text-link' %>
-          </li>
+          <% if params[:action] == 'assigned_view' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-tags other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Sol. de diseño asignadas a mi', filtered_requests_assigned_view_path, class: 'text-link' %>
+            </li>
 
         <% end %>
         <%-# Aquí termina el área que muestra los links para designer o designer-admin %>
@@ -178,14 +180,14 @@
         <%# Aquí inicia el área que muestra los links para product-staff o product-admin %>
         <% if current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin' %>
 
-        <% if params[:controller] == 'pages' && params[:action] == 'index' %>
-          <li class="vertical-link actual-vertical-link">
-        <% else %>
-          <li class="vertical-link">
-        <% end %>
-            <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Inicio', root_path, class: 'text-link'  %>
-          </li>
+          <% if params[:controller] == 'pages' && params[:action] == 'index' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Inicio', root_path, class: 'text-link'  %>
+            </li>
 
           <% if params[:controller] == 'products' && params[:action] == 'new'  %>
             <li class="vertical-link actual-vertical-link">
@@ -202,8 +204,26 @@
             <li class="vertical-link">
           <% end %>
           <i class="fa fa-cubes other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Ver lista de productos', products_path, class: 'text-link' %>
+          <%= link_to 'Todos los productos', products_path, class: 'text-link' %>
             </li>
+
+          <% if params[:controller] == 'products' && params[:action] == 'catalogue'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-barcode other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Productos de línea', products_catalogue_path, class: 'text-link' %>
+            </li>
+
+            <% if params[:controller] == 'products' && params[:action] == 'special'  %>
+              <li class="vertical-link actual-vertical-link">
+            <% else %>
+              <li class="vertical-link">
+            <% end %>
+            <i class="fa fa-tag other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Productos especiales', products_special_path, class: 'text-link' %>
+              </li>
 
           <% if params[:controller] == 'filtered_requests' && params[:action] == 'product_view'  %>
             <li class="vertical-link actual-vertical-link">
@@ -211,8 +231,17 @@
             <li class="vertical-link">
           <% end %>
           <i class="fa fa-pencil-square-o other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Nuevos pedidos especiales', filtered_requests_product_view_path, class: 'text-link' %>
+          <%= link_to 'Crear producto especial', filtered_requests_product_view_path, class: 'text-link' %>
             </li>
+
+            <% if params[:controller] == 'movements' && params[:action] == 'index'  %>
+              <li class="vertical-link actual-vertical-link">
+            <% else %>
+              <li class="vertical-link">
+            <% end %>
+            <i class="fa fa-money other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Costos de producción', warehouse_index_path, class: 'text-link' %>
+              </li>
 
         <% end %>
         <%-# Aquí termina el área que muestra los links para product-staff o product-admin %>
@@ -220,14 +249,14 @@
         <%-# Aquí inicia el área que muestra los links para warehouse-staff o warehouse-admin %>
         <% if current_user.role.name == 'warehouse-staff' || current_user.role.name == 'warehouse-admin' %>
 
-        <% if params[:controller] == 'pages' && params[:action] == 'index' %>
-          <li class="vertical-link actual-vertical-link">
-        <% else %>
-          <li class="vertical-link">
-        <% end %>
-            <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Inicio', root_path, class: 'text-link'  %>
-          </li>
+          <% if params[:controller] == 'pages' && params[:action] == 'index' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-home other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Inicio', root_path, class: 'text-link'  %>
+            </li>
 
           <% if params[:controller] == 'warehouse' && params[:action] == 'new_own_entry'  %>
             <li class="vertical-link actual-vertical-link">
@@ -246,6 +275,7 @@
           <i class="fa fa-truck other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Alta productos de terceros', warehouse_new_supplier_entry_path, class: 'text-link' %>
             </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para warehouse-staff o warehouse-admin %>
 
