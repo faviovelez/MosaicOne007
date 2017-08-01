@@ -204,7 +204,7 @@ class RequestsController < ApplicationController
     define_search_field
     if (input != nil) && (@product != nil)
       @request.design_like = @product.design_type
-    elsif (input != nil) && (@product = nil)
+    elsif (input != nil) && (@product == nil)
       @request.design_like = input
     end
   end
@@ -215,7 +215,7 @@ class RequestsController < ApplicationController
     if (input != nil) && (@product != nil)
       @request.design_like = @product.design_type
       @request.resistance_like = @product.resistance_main_material
-    elsif (input != nil) && (@product = nil)
+    elsif (input != nil) && (@product == nil)
       @request.resistance_like = input
     end
   end

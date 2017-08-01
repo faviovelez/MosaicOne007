@@ -300,6 +300,16 @@
               <%= link_to 'Inicio', root_path, class: 'text-link'  %>
             </li>
 
+          <% if params[:controller] == 'stores' && params[:action] == 'index' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+            <i class="fa fa-book other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Lista de tiendas', stores_path, class: 'text-link'  %>
+          </li>
+
+
             <% if params[:controller] == 'stores' && params[:action] == 'new' %>
               <li class="vertical-link actual-vertical-link">
             <% else %>

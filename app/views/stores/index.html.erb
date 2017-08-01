@@ -1,0 +1,25 @@
+<table>
+  <thead>
+    <tr class="table-titles">
+      <th class="col-md-1">Código</th>
+      <th class="col-md-2">Nombre</th>
+      <th class="col-md-2">Tipo de tienda</th>
+      <th class="col-md-2">Unidad de negocio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <% @stores.each do |store| %>
+      <td><%=store.store_code %></td>
+      <td><%=store.store_name %></td>
+      <td><%=store.store_type.store_type %></td>
+      <td><%=store.business_unit.name %></td>
+      <td class="col-md-1">
+        <%= link_to edit_store_path(store) do %>
+          <i class="fa fa-pencil-square-o link-to-details" aria-hidden="true"></i>
+          <span>Editar</span>
+        <% end %>
+
+      </td>
+    </tr>
+  <% end %>

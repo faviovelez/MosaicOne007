@@ -41,25 +41,32 @@ end
 end
 
 # Cada tienda debe pertenecer a un Business Unit y cada Business Unit debe pertenecer a un Business Group, se crean defaults para funcionalidad inicial que deben ser modificadas (y/o agregadas nuevas)
-default = BusinessGroup.find_by_name('default compañía')
-default_terceros = BusinessGroup.find_by_name('default terceros')
+default_business_group = BusinessGroup.find_by_name('default compañía')
+default_terceros_business_group = BusinessGroup.find_by_name('default terceros')
 
 [
-  { name: "default compañía", business_group: default},
-  { name: "default terceros", business_group: default_terceros}
+  { name: "default compañía", business_group: default_business_group},
+  { name: "default terceros", business_group: default_terceros_business_group}
 ].each do |hash|
   BusinessUnit.find_or_create_by(hash)
 end
 
+default_business_unit = BusinessUnit.find_by_name('default compañía')
+default_terceros_business_unit = BusinessUnit.find_by_name('default terceros')
+
 # Se crea el modelo Store_type para los distintos tipos de tiendas. Al crear una tienda, se puede elegir entre los business_units default o los creados o modificados por los usuarios.
 [
-  { store_type: "tienda propia", business_unit: default },
-  { store_type: "corporativo", business_unit: default },
-  { store_type: "distribuidor", business_unit: default_terceros },
-  { store_type: "franquicia", business_unit: default_terceros }
+  { store_type: "tienda propia", business_unit_id: default_business_unit },
+  { store_type: "corporativo", business_unit_id: default_business_unit },
+  { store_type: "distribuidor", business_unit_id: default_terceros_business_unit },
+  { store_type: "franquicia", business_unit_id: default_terceros_business_unit }
 ].each do |hash|
   StoreType.find_or_create_by(hash)
 end
+
+store_type_default = StoreType.find_by_store_type('corporativo')
+
+default_store = Store.create(store_name: 'corporativo', store_code: '000', store_type: store_type_default, business_unit: default_business_unit)
 
 master_user = Role.find_by_name('platform-admin')
 
@@ -68,6 +75,6 @@ User.create(
   first_name: "administrador",
   last_name: "diseños de cartón",
   password: 123456,
-  password_confirmation: 1234567
-  role: master_user
-)
+  password_confirmation: 123456,
+  role: master_user,
+  store: default_store)

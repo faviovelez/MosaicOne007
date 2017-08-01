@@ -14,7 +14,7 @@
 
   <div class="field">
     <%= f.label :tipo_de_tienda %>
-    <%= f.select :store_type, options_for_select(StoreType.all.collect{|t| [t.store_type, t.id]}) %>
+    <%= f.select :store_type_id, options_for_select(StoreType.all.collect{|t| [t.store_type, t.id]}) %>
   </div>
 
   <div class="field">
@@ -24,11 +24,11 @@
 
   <div class="field">
     <%= f.label :grupo_de_tiendas %>
-    <%= f.select :business_unit, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}) %>
+    <%= f.select :business_unit_id, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}) %>
   </div>
 
   <div class="actions">
-    <%= f.submit :crear_tienda %>
+    <%= f.submit :editar_tienda %>
   </div>
 
 <% end %>
