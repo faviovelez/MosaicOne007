@@ -10,6 +10,7 @@ class Store < ActiveRecord::Base
   belongs_to :billing_address
   has_many :store_sales
   belongs_to :business_unit
+  belongs_to :store_type
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 

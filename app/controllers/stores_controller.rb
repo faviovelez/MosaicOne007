@@ -1,10 +1,11 @@
 class StoresController < ApplicationController
   # En este se crean nuevas tiendas (solo el usuario de product-admin deberá poder crearlas y un user 'store' solo podrá modificarlas (algunas modificaciones estarán restringidas)
   before_action :authenticate_user!
-  before_action :set_store, only: [:show, :new, :create, :update]
+  before_action :set_store, only: [:show, :edit, :update]
   before_action :require_permission, only: :new
 
   def index
+    @stores = Store.all
   end
 
   def show
@@ -33,7 +34,7 @@ class StoresController < ApplicationController
 
   def update
     respond_to do |format|
-      if @delivery.update(prospect_params)
+      if @store.update(store_params)
         format.html { redirect_to @store, notice: 'La tienda fue modificado exitosamente.' }
         format.json { render :show, status: :ok, location: @store }
       else
@@ -43,8 +44,8 @@ class StoresController < ApplicationController
     end
   end
 
-  # DELETE /prospects/1
-  # DELETE /prospects/1.json
+  # DELETE /stores/1
+  # DELETE /stores/1.json
   def destroy
     @store.destroy
     respond_to do |format|
@@ -53,19 +54,22 @@ class StoresController < ApplicationController
     end
   end
 
-
 private
 
   def set_store
-    @store = current_user.store
+    if current_user.role.name == 'platform-admin'
+      @store = Store.find(params[:id])
+    else
+      @store = current_user.store
+    end
   end
 
   def store_params
-    params.require(:store).permit(:store_type, :store_code, :store_name, :group, :discount, :business_unit, :delivery_address, :billing_address)
+    params.require(:store).permit(:store_type_id, :store_code, :store_name, :group, :discount, :business_unit_id, :delivery_address, :billing_address)
   end
 
   def require_permission(role = current_user.role.name)
-    if role != 'guard'
+    if role != 'platform-admin'
       redirect_to root_path
     end
   end

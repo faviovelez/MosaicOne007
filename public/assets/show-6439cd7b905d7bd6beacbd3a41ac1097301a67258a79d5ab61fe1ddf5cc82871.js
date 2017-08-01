@@ -1,0 +1,1 @@
+var counter=0;$(".confirm").ready(function(){$("#show").click(function(){event.preventDefault(),0==counter?($("#information").removeClass("hidden"),counter+=1,$("#show").text("Ocultar detalles")):counter>0&&($("#information").addClass("hidden"),counter-=1,$("#show").text("Mostrar detalles"))})});

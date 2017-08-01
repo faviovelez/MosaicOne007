@@ -1,0 +1,1 @@
+(function(){$(function(){return $(".notice").on("click",function(n){return $(n.target).hide("slow")})}),$(function(){return $(".alert").on("click",function(n){return $(n.target).hide("slow")})})}).call(this);

@@ -27,6 +27,11 @@
         <li>
           <%= link_to 'Regístrate', new_user_registration_path %>
         </li>
+
+        <li>
+          <%= link_to 'Configuración', '#' %>
+        </li>
+
       <% else %>
         <li>
           <%= link_to 'Cerrar Sesión', destroy_user_session_path, method: :delete %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170731010600) do
+ActiveRecord::Schema.define(version: 20170731224314) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -582,18 +582,19 @@ ActiveRecord::Schema.define(version: 20170731010600) do
   create_table "stores", force: :cascade do |t|
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
-    t.string   "store_type"
     t.string   "store_code"
     t.string   "store_name"
     t.float    "discount"
     t.integer  "delivery_address_id"
     t.integer  "billing_address_id"
     t.integer  "business_unit_id"
+    t.integer  "store_type_id"
   end
 
   add_index "stores", ["billing_address_id"], name: "index_stores_on_billing_address_id", using: :btree
   add_index "stores", ["business_unit_id"], name: "index_stores_on_business_unit_id", using: :btree
   add_index "stores", ["delivery_address_id"], name: "index_stores_on_delivery_address_id", using: :btree
+  add_index "stores", ["store_type_id"], name: "index_stores_on_store_type_id", using: :btree
 
   create_table "suppliers", force: :cascade do |t|
     t.string   "name"
@@ -733,6 +734,7 @@ ActiveRecord::Schema.define(version: 20170731010600) do
   add_foreign_key "stores", "billing_addresses"
   add_foreign_key "stores", "business_units"
   add_foreign_key "stores", "delivery_addresses"
+  add_foreign_key "stores", "store_types"
   add_foreign_key "user_requests", "requests"
   add_foreign_key "user_requests", "users"
   add_foreign_key "user_sales", "users"

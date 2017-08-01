@@ -28,6 +28,10 @@ Rails.application.routes.draw do
 
   devise_for :users
 
+  namespace :admin do
+    resources :users
+  end
+
   get 'products/catalogue'
 
   get 'products/special'
@@ -86,6 +90,5 @@ Rails.application.routes.draw do
   get 'warehouse/orders_products/:id', to: 'warehouse#orders_products', as: 'warehouse_order_products'
 
   patch 'warehouse/form_for_movement/:id', to: 'warehouse#form_for_movement', as: 'form_for_movement', controller: 'warehouse'
-
 
 end

@@ -1,0 +1,52 @@
+<h2>Crear usuario</h2>
+
+<%= form_for(@user) do |f| %>
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :nombre %><br />
+    <%= f.text_field :first_name, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :segundo_nombre %><br />
+    <%= f.text_field :middle_name, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :apellidos %><br />
+    <%= f.text_field :last_name, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :rol_de_usuario %><br />
+    <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
+  </div>
+
+  <div class="field">
+    <%= f.label :tienda %><br />
+    <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password %>
+    <% if @minimum_password_length %>
+    <em>(<%= @minimum_password_length %> characters minimum)</em>
+    <% end %><br />
+    <%= f.password_field :password, autocomplete: "off" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "off" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Sign up" %>
+  </div>
+
+<% end %>

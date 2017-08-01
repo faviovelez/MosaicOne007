@@ -17,5 +17,6 @@
 /tmp
 /public/uploads
 /.env
+/.env.production
 Gemfile.lock
 .ruby-version
