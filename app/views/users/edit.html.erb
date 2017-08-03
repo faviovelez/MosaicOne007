@@ -2,32 +2,36 @@
 
 <%= form_for(@user) do |f| %>
 
-  <div class="field">
+<h2 class="info-title">Crear usuario</h2>
+
+<div class="form-container">
+
+  <div class="form-inside-style">
     <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true %>
+    <%= f.email_field :email, class: 'form-inside', autofocus: true %>
   </div>
 
-  <div class="field">
+  <div class="form-inside-style">
     <%= f.label :nombre %><br />
-    <%= f.text_field :first_name, autofocus: true %>
+    <%= f.text_field :first_name, class: 'form-inside', autofocus: true %>
   </div>
 
-  <div class="field">
+  <div class="form-inside-style">
     <%= f.label :segundo_nombre %><br />
-    <%= f.text_field :middle_name, autofocus: true %>
+    <%= f.text_field :middle_name, class: 'form-inside', autofocus: true %>
   </div>
 
-  <div class="field">
+  <div class="form-inside-style">
     <%= f.label :apellidos %><br />
-    <%= f.text_field :last_name, autofocus: true %>
+    <%= f.text_field :last_name, class: 'form-inside', autofocus: true %>
   </div>
 
-  <div class="field">
+  <div class="form-inside-style">
     <%= f.label :rol_de_usuario %><br />
     <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
   </div>
 
-  <div class="field">
+  <div class="form-inside-style">
     <%= f.label :tienda %><br />
     <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
   </div>
@@ -36,34 +40,31 @@
     <div>Esperando confirmación de: <%= resource.unconfirmed_email %></div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :password %> <i>(Déjalo en blanco si no quieres cambiarlo)</i><br />
-    <%= f.password_field :password, autocomplete: "off" %>
+  <div class="form-inside-style">
+    <%= f.label :contraseña %> <i>(Déjalo en blanco si no quieres cambiarlo)</i><br />
     <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> mínimo número de caracteres</em>
-    <% end %>
+    <em>(<%= @minimum_password_length %> mínimo número de caracteres)</em>
+    <% end %><br />
+    <%= f.password_field :password, autocomplete: "off", class: 'form-inside' %>
   </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %>
+    <div class="field">
+      <%= f.label :contraseña_actual %> <i>(Necesitamos tu password para realizar los cambios)</i><br />
+      <%= f.password_field :current_password, autocomplete: "off", class: 'form-inside', %>
+    </div>
+
+  <div class="form-inside-style">
+    <%= f.label :confirmación_de_contraseña %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-inside' %>
   </div>
 
-  <div class="field">
-    <%= f.label :current_password %> <i>(Necesitamos tu password para realizar los cambios)</i><br />
-    <%= f.password_field :current_password, autocomplete: "off" %>
-  </div>
+</div>
 
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
+<div class="actions">
+  <%= f.submit "Actualizar", class: 'main-button' %>
+</div>
 
 <% end %>
-
-<h3>Cancelar cuenta</h3>
-
-<p><%= button_to "Cancelar cuenta", registration_path(resource_name), data: { confirm: "¿Estás seguro?" }, method: :delete %></p>
 
 
 <%= link_to "Atrás", :back %>

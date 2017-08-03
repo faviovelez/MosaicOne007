@@ -3,68 +3,68 @@
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= devise_error_messages! %>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true %>
-  </div>
+  <h2 class="info-title">Crear usuario</h2>
 
-  <div class="field">
-    <%= f.label :nombre %><br />
-    <%= f.text_field :first_name, autofocus: true %>
-  </div>
+  <div class="form-container">
 
-  <div class="field">
-    <%= f.label :segundo_nombre %><br />
-    <%= f.text_field :middle_name, autofocus: true %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :email %><br />
+      <%= f.email_field :email, class: 'form-inside', autofocus: true %>
+    </div>
 
-  <div class="field">
-    <%= f.label :apellidos %><br />
-    <%= f.text_field :last_name, autofocus: true %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :nombre %><br />
+      <%= f.text_field :first_name, class: 'form-inside', autofocus: true %>
+    </div>
 
-  <div class="field">
-    <%= f.label :rol_de_usuario %><br />
-    <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :segundo_nombre %><br />
+      <%= f.text_field :middle_name, class: 'form-inside', autofocus: true %>
+    </div>
 
-  <div class="field">
-    <%= f.label :tienda %><br />
-    <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :apellidos %><br />
+      <%= f.text_field :last_name, class: 'form-inside', autofocus: true %>
+    </div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Esperando confirmación de: <%= resource.unconfirmed_email %></div>
-  <% end %>
+    <div class="form-inside-style">
+      <%= f.label :rol_de_usuario %><br />
+      <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
+    </div>
 
-  <div class="field">
-    <%= f.label :password %> <i>(Déjalo en blanco si no quieres cambiarlo)</i><br />
-    <%= f.password_field :password, autocomplete: "off" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> mínimo número de caracteres</em>
+    <div class="form-inside-style">
+      <%= f.label :tienda %><br />
+      <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
+    </div>
+
+    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+      <div>Esperando confirmación de: <%= resource.unconfirmed_email %></div>
     <% end %>
-  </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :contraseña %> <i>(Déjalo en blanco si no quieres cambiarlo)</i><br />
+      <% if @minimum_password_length %>
+      <em>(<%= @minimum_password_length %> mínimo número de caracteres)</em>
+      <% end %><br />
+      <%= f.password_field :password, autocomplete: "off", class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :current_password %> <i>(Necesitamos tu password para realizar los cambios)</i><br />
-    <%= f.password_field :current_password, autocomplete: "off" %>
+      <div class="field">
+        <%= f.label :contraseña_actual %> <i>(Necesitamos tu password para realizar los cambios)</i><br />
+        <%= f.password_field :current_password, autocomplete: "off", class: 'form-inside' %>
+      </div>
+
+    <div class="form-inside-style">
+      <%= f.label :confirmación_de_contraseña %><br />
+      <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-inside' %>
+    </div>
+
   </div>
 
   <div class="actions">
-    <%= f.submit "Update" %>
+    <%= f.submit "Actualizar", class: 'main-button' %>
   </div>
 
 <% end %>
-
-<h3>Cancelar cuenta</h3>
-
-<p><%= button_to "Cancelar cuenta", registration_path(resource_name), data: { confirm: "¿Estás seguro?" }, method: :delete %></p>
-
 
 <%= link_to "Atrás", :back %>

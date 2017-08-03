@@ -18,6 +18,11 @@ p.info > strong {
   color: #D72638;
 }
 
+.bottom-link {
+  position: fixed;
+  bottom: 2vh;
+}
+
 .info-container {
   margin-top: 3rem;
   margin-bottom: 3rem;
@@ -67,9 +72,18 @@ p.info > strong {
 }
 
 .form-container {
-  margin-right: 15vw;
-  margin-left: 20vw;
+  display: flex;
+  flex-wrap: wrap;
+  width: 80vw;
+  height: 30vh;
 }
+
+.button-container {
+  width: 70vw;
+  height: 30vh;
+  margin 0 auto;
+}
+
 
 .centered-without-margin {
   position: relative;
@@ -81,6 +95,7 @@ p.info > strong {
   vertical-align: middle;
   z-index: 5;
 }
+
 
 .notice {
   background-color: #3BE524;
@@ -137,6 +152,10 @@ input.form-inside {
   margin: 0;
 }
 
+select {
+  margin-top: 1.5rem;
+}
+
 .form-inside-style > label {
   text-align: left;
   font-size: 1.4rem;
@@ -175,6 +194,7 @@ select {
   text-align: left;
   border-radius: 10px;
 }
+
 
 .long-sign-in {
   width: 30vw;
@@ -410,8 +430,8 @@ td {
 }
 
 tr:hover {
-  background-color: #EAEFEE;
-  opacity: .70;
+  background-color: #F4F9F8;
+  opacity: .99;
 }
 
 tr.no-shadow {
