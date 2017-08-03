@@ -1,0 +1,10 @@
+<%= content_for :stylesheet do %>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<% end %>
+
+<%= content_for :javascript do %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<%= javascript_include_tag 'warehouse' %>
+<% end %>
+
+<%= render partial: 'own_products' %>

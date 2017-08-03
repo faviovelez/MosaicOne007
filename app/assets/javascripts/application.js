@@ -15,7 +15,6 @@
 //= require turbolinks
 //= require request_form
 //= require show
-//= require_tree .
 
 
 //$('.search-field').autocomplete

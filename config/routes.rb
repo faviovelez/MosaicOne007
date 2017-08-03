@@ -36,7 +36,9 @@ Rails.application.routes.draw do
 
   get 'products/special'
 
-  resources :products
+  resources :products do
+    get 'images/:path', to: 'products#images', as: 'product_images'
+  end
 
   resources :users do
     resources :requests, controller: 'assigned_requests'
@@ -80,6 +82,8 @@ Rails.application.routes.draw do
   get 'warehouse/new_supplier_entry'
 
   get 'warehouse/edit/:id', to: 'warehouse#edit', as: 'warehouse_edit_entry'
+
+  get 'warehouse/get/:product', to: 'warehouse#get_product', as: 'warehouse_get_product'
 
   get 'warehouse/show'
 
