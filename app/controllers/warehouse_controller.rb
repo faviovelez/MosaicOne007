@@ -2,6 +2,8 @@ class WarehouseController < ApplicationController
   # Este controller se utilizará para la funcionalidad de warehouse con varios modelos.
 
   def new_own_entry
+    role = Role.find_by_name('wharehouse-staff')
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
   end
 
   def new_supplier_entry
