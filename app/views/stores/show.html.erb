@@ -1,3 +1,50 @@
-<%= link_to 'nuevo prospecto', new_store_prospect_path(@store) %>
 
-<%= link_to 'ver lista de prospectos', store_prospects_path(@store) %>
+<div class="info-container">
+
+  <h3 class="info-title">
+    <%= @store.store_code %> -
+    <%= @store.store_name %>
+  </h3>
+
+  <p class="info">
+    <strong>Tipo: </strong>
+    <%= @store.store_type.store_type %>
+  </p>
+
+  <p class="info">
+    <strong>Unidad de negocio: </strong>
+    <%= @store.business_unit.name %>
+  </p>
+
+  <h4 class="info-subtitle">Datos de contacto</h4>
+
+  <p class="info">
+    <strong>Correo:</strong>
+    <%=@store.email %>
+  </p>
+
+  <p class="info">
+    <strong>Teleléfono fijo:</strong>
+    <%=@store.phone %>
+  </p>
+
+  <p class="info">
+    <strong>Celular:</strong>
+    <%=@store.cellphone %>
+  </p>
+
+  <p>
+    <% if @store.billing_address.present? %>
+      <%= link_to 'Datos de facturación', billing_address_path(id: @store.billing_address) %>
+    <% end %>
+    <% if @store.delivery_address.present? %>
+      <%= link_to 'Dirección de entrega principal', delivery_address_path(id: @store.delivery_address) %>
+    <% end %>
+    <% if current_user.role.name == 'platform-admin' %>
+      <%= link_to 'Eliminar tienda', store_path(@store), class: 'red', method: :delete, data: { confirm: '¿Está seguro que desea eliminar esta tienda?' } %>
+    <% end %>
+  </p>
+
+</div>
+
+<%= link_to 'Regresar', :back %>

@@ -14,12 +14,20 @@
       <td><%=store.store_name %></td>
       <td><%=store.store_type.store_type %></td>
       <td><%=store.business_unit.name %></td>
+
+      <td class="col-md-1">
+        <%= link_to store_path(store) do %>
+          <i class="fa fa-eye link-to-details" aria-hidden="true"></i>
+          <span>Ver</span>
+        <% end %>
+      </td>
+
       <td class="col-md-1">
         <%= link_to edit_store_path(store) do %>
           <i class="fa fa-pencil-square-o link-to-details" aria-hidden="true"></i>
           <span>Editar</span>
         <% end %>
-
       </td>
+
     </tr>
   <% end %>
