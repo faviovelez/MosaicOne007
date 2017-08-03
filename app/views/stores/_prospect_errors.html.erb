@@ -1,9 +1,0 @@
-<% if @prospect.errors.any? %>
-  <ul>
-    <% @prospect.errors.messages.values.each do |msg| %>
-      <%msg.each do  |m| %>
-        <li><%= m %></li>
-      <% end %>
-    <% end %>
-  </ul>
-<% end %>
