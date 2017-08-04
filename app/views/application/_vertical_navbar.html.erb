@@ -129,7 +129,7 @@
             <li class="vertical-link">
           <% end %>
               <i class="fa fa-user-plus other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Dar de alta un prospecto', new_store_prospect_path(current_user.store), class: 'text-link'  %>
+              <%= link_to 'Alta de prospectos', new_store_prospect_path(current_user.store), class: 'text-link'  %>
             </li>
 
           <% if params[:controller] == 'prospects' && params[:action] == 'index' %>
@@ -138,8 +138,36 @@
             <li class="vertical-link">
           <% end %>
               <i class="fa fa-users other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Ver lista de prospectos', store_prospects_path(current_user.store), class: 'text-link'  %>
+              <%= link_to 'Lista de prospectos', store_prospects_path(current_user.store), class: 'text-link'  %>
             </li>
+
+            <% if params[:controller] == 'delivery_addresses' %>
+             <li class="vertical-link actual-vertical-link">
+            <% else %>
+             <li class="vertical-link">
+            <% end %>
+             <i class="fa fa-truck other-nav-icons" aria-hidden="true"></i>
+               <% if current_user.store.delivery_address %>
+                 <%= link_to 'Dirección de entrega', store_delivery_address_path(store_id: current_user.store, id:current_user.store.delivery_address), class: 'text-link' %>
+               <% else %>
+                 <%= link_to 'Dirección de entrega', new_store_delivery_address_path(current_user.store), class: 'text-link' %>
+               <% end %>
+             </li>
+
+        <% if current_user.role.name == 'store-admin' %>
+         <% if params[:controller] == 'billing_addresses' %>
+          <li class="vertical-link actual-vertical-link">
+         <% else %>
+          <li class="vertical-link">
+         <% end %>
+          <i class="fa fa-address-book-o other-nav-icons" aria-hidden="true"></i>
+            <% if current_user.store.billing_address %>
+              <%= link_to 'Datos de facturación', store_billing_address_path(store_id: current_user.store, id:current_user.store.billing_address), class: 'text-link'  %>
+            <% else %>
+              <%= link_to 'Datos de facturación', new_store_billing_address_path(current_user.store), class: 'text-link'  %>
+            <% end %>
+          </li>
+        <% end %>
 
         <% end %>
         <%-# Aquí termina el área que muestra los links para store o store-admin %>
@@ -189,7 +217,7 @@
               <%= link_to 'Inicio', root_path, class: 'text-link'  %>
             </li>
 
-          <% if params[:controller] == 'products' && params[:action] == 'new'  %>
+          <% if (params[:controller] == 'products' && params[:action] == 'new' && params[:request_id].nil?)   %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
@@ -225,7 +253,7 @@
             <%= link_to 'Productos especiales', products_special_path, class: 'text-link' %>
               </li>
 
-          <% if params[:controller] == 'filtered_requests' && params[:action] == 'product_view'  %>
+          <% if ((params[:controller] == 'filtered_requests' && params[:action] == 'product_view') || params[:request_id].present?)  %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">

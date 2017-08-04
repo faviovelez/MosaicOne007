@@ -1,1 +1,58 @@
-<%= link_to 'editar', edit_billing_address_path(@billing)%>
+<div class="show-container" id="billing-container">
+
+  <h2 class="info-title">Datos de facturación </h2>
+
+    <p><strong>Tipo de persona: </strong>
+      <%= @billing.type_of_person.titleize %>
+    </p>
+
+    <p><strong>Nombre o Razón Social: </strong>
+      <%= @billing.business_name %>
+    </p>
+
+    <p class='uppercase'>
+      <strong>rfc: </strong>
+      <%= @billing.rfc %>
+    </p>
+
+    <p><strong>Calle: </strong>
+      <%= @billing.street  %>
+    </p>
+
+    <p><strong>Número exterior: </strong>
+      <%= @billing.exterior_number %>
+    </p>
+
+    <p><strong>Número interior: </strong>
+      <%= @billing.interior_number %>
+    </p>
+
+    <p><strong>Colonia: </strong>
+      <%= @billing.neighborhood %>
+    </p>
+
+    <p><strong>Código postal: </strong>
+      <%= @billing.zipcode %>
+    </p>
+
+    <p><strong>Ciudad: </strong>
+      <%= @billing.city %>
+    </p>
+
+    <p><strong>Estado: </strong>
+      <%= @billing.state %>
+    </p>
+
+    <p><strong>País: </strong>
+      <%= @billing.country %>
+    </p>
+</div>
+
+<br>
+<br>
+<br>
+<br>
+
+<% if current_user.role.name == 'store-admin'%>
+  <%= link_to 'Modificar datos de facturación', edit_billing_address_path(@billing)%>
+<% end %>

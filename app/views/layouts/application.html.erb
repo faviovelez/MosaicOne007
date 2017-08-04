@@ -15,7 +15,7 @@
 
   <%= favicon_link_tag 'Mosaic-tech-cuadros.png' %>
   <%= csrf_meta_tags %>
-  <meta name="robots" content="noindex"
+  <meta name="robots" content="noindex">
 </head>
 
 <% if params[:controller] == 'devise/sessions' %>
@@ -45,10 +45,16 @@
     <div class="flex">
       <div class="centered">
         <%= yield %>
+        <div class="bottom-nav">
+          <%= link_to 'Regresar', :back, class: 'bottom-link' %>
+        </div>
       </div>
   <% else %>
     <div class="centered-without-margin">
       <%= yield %>
+      <div class="bottom-nav">
+        <%= link_to 'Regresar', :back, class: 'bottom-link' %>
+      </div>
     </div>
   <% end %>
     </div>

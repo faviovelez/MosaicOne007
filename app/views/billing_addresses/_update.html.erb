@@ -1,64 +1,68 @@
 <%= form_for(@billing) do |f| %>
 
-  <div class="field">
-    <%= f.label :tipo_de_persona %>
-    <%= f.select :type_of_person, options_for_select(['persona física', 'persona moral']) %>
-  </div>
+  <h2 class="info-title">Datos de facturación </h2>
 
-  <div class="field">
-    <%= f.label :nombre_o_razón_social %>
-    <%= f.text_field :business_name %>
-  </div>
+  <div class="form-container">
 
-  <div class="field">
-    <p class="mayus">
-      <%= f.label :rfc %>
-      <%= f.text_field :rfc, maxlength: 13 %>
-    </p>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :tipo_de_persona %>
+      <%= f.select :type_of_person, options_for_select(['persona física', 'persona moral'], selected: @billing.type_of_person) %>
+    </div>
 
-  <div class="field">
-    <%= f.label :calle %>
-    <%= f.text_field :street %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :nombre_o_razón_social %>
+      <%= f.text_field :business_name, value: @billing.business_name, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :número_exterior %>
-    <%= f.text_field :exterior_number %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :rfc, class: 'uppercase' %>
+      <%= f.text_field :rfc, maxlength: 13, value: @billing.rfc, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :número_interior %>
-    <%= f.text_field :interior_number %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :calle %>
+      <%= f.text_field :street, value: @billing.street, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :colonia %>
-    <%= f.text_field :neighborhood %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :número_exterior %>
+      <%= f.text_field :exterior_number, value: @billing.exterior_number, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :código_postal %>
-    <%= f.text_field :zipcode, maxlength: 5 %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :número_interior %>
+      <%= f.text_field :interior_number, value: @billing.interior_number, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :ciudad %>
-    <%= f.text_field :city %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :colonia %>
+      <%= f.text_field :neighborhood, value: @billing.neighborhood, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :estado %>
-    <%= f.text_field :state %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :código_postal %>
+      <%= f.text_field :zipcode, maxlength: 5, value: @billing.zipcode, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :país %>
-    <%= f.text_field :country %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :ciudad %>
+      <%= f.text_field :city, value: @billing.city, class: 'form-inside' %>
+    </div>
 
-  <div class="actions">
-    <%= f.submit :guardar_direccion, name: 'guardar' %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :estado %>
+      <%= f.text_field :state, value: @billing.state, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :país %>
+      <%= f.text_field :country, value: @billing.country, class: 'form-inside' %>
+    </div>
+
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :Guardar, name: 'guardar', class: 'main-button' %>
+      </div>
+    </div>
 
 <% end %>

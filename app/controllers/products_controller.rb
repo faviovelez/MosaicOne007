@@ -9,8 +9,7 @@ class ProductsController < ApplicationController
   end
 
   def images
-    @path = params[:path]
-    render :show
+    render :images
   end
 
   def catalogue
@@ -36,7 +35,7 @@ class ProductsController < ApplicationController
 
   # GET /products/1/edit
   def edit
-    @request = Request.find(params[:request_id])
+    @product = Product.find(params[:id])
   end
 
   # POST /products

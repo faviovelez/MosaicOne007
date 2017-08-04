@@ -28,6 +28,8 @@ Rails.application.routes.draw do
 
   devise_for :users
 
+  resources :delivery_addresses
+
   namespace :admin do
     resources :users
   end
@@ -37,7 +39,8 @@ Rails.application.routes.draw do
   get 'products/special'
 
   resources :products do
-    get 'images/:path', to: 'products#images', as: 'product_images'
+    get 'images', to: 'products#images', as: 'product_images'
+    resources :images, controller: 'products'
   end
 
   resources :users do
