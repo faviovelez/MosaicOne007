@@ -1,0 +1,14 @@
+<%= form_for(@movement) do |f| %>
+
+  <div class="field">
+    <%= f.label :product_id, 'Selecionar producto' %><br>
+    <%= f.select :product_id, products_collection %>
+  </div>
+
+  <div id='productInfo'>
+    <%= link_to product_product_images_path(product_id: 0), id: 'link_to_images' do %>
+      <%= image_tag 'product_small.png', class: 'hidden', id: 'not_image_temp' %>
+    <% end %>
+  </div>
+
+<% end %>

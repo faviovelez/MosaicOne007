@@ -57,10 +57,8 @@ a.text-link {
   vertical-align: middle;
 }
 
-a.text-link
-
-.vertical-link:hover {
-  background-color: #232c37;
+a.text-link:hover {
+  color: #36c6d3  ;
 }
 
 a.text-link:hover, a.text-link:active, a.text-link:visited, a.text-link:focus {

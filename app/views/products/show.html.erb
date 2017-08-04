@@ -1,39 +1,117 @@
-  <% if @product.images.count > 0 %>
-    <div id="<%= @product.id %>" class="carousel slide" data-ride="carousel">
-      <!-- Indicators -->
-      <ol class="carousel-indicators">
-        <% n = 0 %>
-        <li data-target="<%= @product.id %>" data-slide-to="<% n %>" class="active"></li>
-        <% (@product.images.length - 1).times do%>
-          <% n += 1 %>
-          <li data-target="<%= @product.id %>" data-slide-to="<% n %>"></li>
-        <% end %>
-      </ol>
+<div class="show-container">
 
-      <!-- Wrapper for slides -->
-      <div class="carousel-inner" role="listbox">
-        <div class="item active">
-          <%= link_to @product.images[n].image_url, target: '_blank' do %>
-            <%= image_tag @product.images[n].image_url(:small), class: 'small-img' %>
-          <% end %>
-        </div>
-        <% @product.images.each do |image| %>
-          <div class="item">
-            <%= link_to image.image_url, target: '_blank' do %>
-              <%= image_tag image.image_url(:small), class: 'small-img' %>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
+  <h2 class="info-title">Detalles del Producto</h2>
 
-      <!-- Controls -->
-      <a class="left carousel-control" href="#<%= @product.id %>" role="button" data-slide="prev">
-        <i class="fa fa-chevron-left glyphicon-chevron-left" aria-hidden="true"></i>
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="right carousel-control" href="#<%= @product.id %>" role="button" data-slide="next">
-        <i class="fa fa-chevron-right glyphicon-chevron-right" aria-hidden="true"></i>
-        <span class="sr-only">Next</span>
-      </a>
-    </div>
-  <% end %>
+  <p> <strong>Código anterior: </strong>
+    <%= @product.former_code %>
+  </p>
+
+  <p> <strong>Código único: </strong>
+    <%= @product.unique_code %>
+  </p>
+
+  <p> <strong>Descripción: </strong>
+    <%= @product.description %>
+  </p>
+
+  <p> <strong>Tipo de producto: </strong>
+    <%= @product.product_type %>
+  </p>
+
+  <p> <strong>Línea de producto: </strong>
+    <%= @product.line %>
+  </p>
+
+  <p> <strong>Clasificación: </strong>
+    <%= @product.classification %>
+  </p>
+
+
+  <p> <strong>Color exterior del cartón: </strong>
+    <%= @product.exterior_material_color %>
+  </p>
+
+
+  <p> <strong>Color interior del cartón: </strong>
+    <%= @product.interior_material_color %>
+  </p>
+
+  <h3>Color e Impresión</h3>
+
+  <p> <strong>Lleva impresión?: </strong>
+    <% if @product.impression == true %>
+      Sí
+    <% else %>
+      No
+    <% end %>
+  </p>
+
+  <p> <strong>Color o diseño: </strong>
+    <%= @product.exterior_color_or_design %>
+  </p>
+
+  <p> <strong>Material: </strong>
+    <%= @product.main_material %>
+  </p>
+
+  <p> <strong>Resistencia: </strong>
+    <%= @product.resistance_main_material %>
+  </p>
+
+  <h4>Medidas Internas</h4>
+
+  <p> <strong>Largo: </strong>
+    <%= @product.inner_length %> cm
+  </p>
+
+
+  <p> <strong>Ancho: </strong>
+    <%= @product.inner_width %> cm
+  </p>
+
+  <p> <strong>Alto: </strong>
+    <%= @product.inner_height %> cm
+  </p>
+
+
+  <h4>Medidas Externas</h4>
+
+  <p> <strong>Largo: </strong>
+    <%= @product.outer_length %> cm
+  </p>
+
+  <p> <strong>Ancho: </strong>
+    <%= @product.outer_width %> cm
+  </p>
+
+
+  <p> <strong>Alto: </strong>
+    <%= @product.outer_height %> cm
+  </p>
+
+  <h4>Diseño e Información Adicional</h4>
+
+  <p> <strong>Tipo de armado: </strong>
+    <%= @product.design_type %>
+  </p>
+
+  <p> <strong>Piezas: </strong>
+    <%= @product.number_of_pieces %>
+  </p>
+
+  <p> <strong>Accesorios: </strong>
+    <%= @product.accesories_kit %>
+  </p>
+
+  <p> <strong>Precio de venta: </strong>
+    <%= number_to_currency(@product.price) %>
+  </p>
+
+  <p> <strong>Unidad de negocio: </strong>
+    <% if @product.business_unit %>
+      <%= @product.business_unit.name %>
+    <% end %>
+  </p>
+
+  <h3 class="show-container">Imágenes</h3>
+</div>

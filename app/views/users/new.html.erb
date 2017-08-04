@@ -1,57 +1,64 @@
 
 <%= form_for(@user) do |f| %>
+<br />
+<br />
+<br />
+<br />
 
-  <h2 class="info-title">Crear usuario</h2>
+<h2 class="info-title">Crear usuario</h2>
 
-  <div class="form-container">
+<div class="form-container">
 
-    <div class="form-inside-style">
-      <%= f.label :email %><br />
-      <%= f.email_field :email, class: 'form-inside', autofocus: true %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :nombre %><br />
-      <%= f.text_field :first_name, class: 'form-inside', autofocus: true %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :segundo_nombre %><br />
-      <%= f.text_field :middle_name, class: 'form-inside', autofocus: true %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :apellidos %><br />
-      <%= f.text_field :last_name, class: 'form-inside', autofocus: true %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :rol_de_usuario %><br />
-      <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :tienda %><br />
-      <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
-    </div>
-
-    <div class="form-inside-style"><br /><br />
-      <%= f.label :password %>
-      <% if @minimum_password_length %>
-      <em>(Mínimo <%= @minimum_password_length %> caracteres)</em>
-      <% end %>
-      <%= f.password_field :password, autocomplete: "off", class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :password_confirmation %><br />
-      <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-inside' %>
-    </div>
-
+  <div class="form-inside-style">
+    <%= f.label :primer_nombre %>
+    <%= f.text_field :first_name, class: 'form-inside', autofocus: true %>
   </div>
 
-  <div class="actions">
-    <%= f.submit "Crear", class: 'main-button' %>
+  <div class="form-inside-style">
+    <%= f.label :segundo_nombre %>
+    <%= f.text_field :middle_name, class: 'form-inside', autofocus: true %>
   </div>
+
+  <div class="form-inside-style">
+    <%= f.label :apellidos %>
+    <%= f.text_field :last_name, class: 'form-inside', autofocus: true %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= f.label :email %>
+    <%= f.email_field :email, class: 'form-inside', autofocus: true %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= f.label :rol_de_usuario %>
+    <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= f.label :tienda %>
+    <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= f.label :password %>
+    <% if @minimum_password_length %>
+    <em>(Mínimo <%= @minimum_password_length %> caracteres)</em>
+    <% end %>
+    <%= f.password_field :password, autocomplete: "off", class: 'form-inside' %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= f.label :password_confirmation %>
+    <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-inside' %>
+  </div>
+
+  <div class="button-container">
+    <div class="actions">
+      <%= f.submit "Crear", class: 'main-button bottom-button' %>
+    </div>
+  </div>
+
+</div>
+
 
 <% end %>

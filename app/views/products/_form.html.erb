@@ -10,132 +10,166 @@
 
 <%= form_for(@product) do |f| %>
 
-  <div class="field">
-    <%= f.label :código_anterior %><br>
-    <%= f.text_field :former_code %>
-  </div>
+  <% if params[:action] == 'new' %>
+    <h2 class="info-title">Crear Producto</h2>
+  <% elsif params[:action] == 'edit' %>
+  <h2 class="info-title">Modificar Producto</h2>
 
-  <div class="field">
-    <%= f.label :código_único %><br>
-    <%= f.text_field :unique_code %>
-  </div>
+  <% end %>
 
-  <div class="field">
-    <%= f.label :descripción %><br>
-    <%= f.text_field :description %>
-  </div>
+  <div class="form-container">
 
-  <div class="field">
-    <%= f.label :tipo_de_producto %><br>
-    <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: @product.product_type) %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :código_anterior %>
+      <%= f.text_field :former_code, value: @product.former_code, class: 'form-inside'  %>
+    </div>
 
-  <div class="field">
-    <%= f.label :línea_de_producto %><br>
-    <%= f.select :line, options_for_select([['seleccione', ''], ['hogar'], ['alimentos y regalos'], ['oficina'], ['empaque y embalaje'], ['ecológica'],['exhibidores'], ['diseños especiales']], selected: 'seleccione') %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :código_único %>
+      <%= f.text_field :unique_code, value: @product.unique_code, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :clasificación %><br>
-    <%= f.select :classification, options_for_select(['de línea'], selected: 'de línea') %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :descripción %>
+      <%= f.text_field :description, value: @product.description, class: 'form-inside', size: 65 %>
+    </div>
 
-  <div class="field">
-    <%= f.label :color_exterior_del_cartón %><br>
-    <%= f.text_field :exterior_material_color %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :tipo_de_producto %>
+      <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: (@product.product_type || 'seleccione')) %>
+    </div>
 
-  <div class="field">
-    <%= f.label :color_interior_del_cartón %><br>
-    <%= f.text_field :interior_material_color %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :línea_de_producto %>
+      <%= f.select :line, options_for_select([['seleccione', ''], ['hogar'], ['alimentos y regalos'], ['oficina'], ['empaque y embalaje'], ['ecológica'],['exhibidores'], ['diseños especiales']], selected: (@product.line || 'seleccione')) %>
+    </div>
 
-  <div class="field">
-    <%= f.label :lleva_impresión? %><br>
-    <%= f.check_box :impression, {multiple: true}, 'sí', '' %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :clasificación %>
+      <%= f.select :classification, options_for_select(['de línea'], selected: (@product.classification || 'de línea')) %>
+    </div>
 
-  <div class="field">
-    <%= f.label :color_exterior_o_diseño %><br>
-    <%= f.text_field :exterior_color_or_design %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :color_exterior_del_cartón %>
+      <%= f.text_field :exterior_material_color, value: @product.exterior_material_color, class: 'form-inside'  %>
+    </div>
 
-  <div class="field">
-    <%= f.label :material %><br>
-    <%= f.text_field :main_material %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :color_interior_del_cartón %>
+      <%= f.text_field :interior_material_color, value: @product.interior_material_color, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :resistencia_del_material %><br>
-    <%= f.text_field :resistance_main_material %>
-  </div>
+    <h3>Color e Impresión</h3>
 
-  <h4>medidas internas</h4>
+    <div class="impresssion-div">
+      <div class="form-inside-style">
+        <%= f.label :lleva_impresión? %>
+        <%= f.check_box :impression, {multiple: true, checked: @product.impression}, true, false %>
+      </div>
+    </div>
 
-  <div class="field">
-    <%= f.label :largo %><br>
-    <%= f.text_field :inner_length %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :color_o_diseño %>
+      <%= f.text_field :exterior_color_or_design, value: @product.exterior_color_or_design, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :ancho %><br>
-    <%= f.text_field :inner_width %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :material %>
+      <%= f.text_field :main_material, value: @product.main_material, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :alto %><br>
-    <%= f.text_field :inner_height %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :resistencia %>
+      <%= f.text_field :resistance_main_material, value: @product.resistance_main_material, class: 'form-inside' %>
+    </div>
 
-  <h4>medidas externas</h4>
+    <h4>Medidas Internas</h4>
 
-  <div class="field">
-    <%= f.label :largo %><br>
-    <%= f.text_field :outer_length %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :largo %>
+      <%= f.text_field :inner_length, value: @product.inner_length, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :ancho %><br>
-    <%= f.text_field :outer_width %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :ancho %>
+      <%= f.text_field :inner_width, value: @product.inner_width, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :alto %><br>
-    <%= f.text_field :outer_height %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :alto %>
+      <%= f.text_field :inner_height, value: @product.inner_height, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :tipo_de_armado %><br>
-    <%= f.text_field :design_type %>
-  </div>
+    <h4>Medidas Externas</h4>
 
-  <div class="field">
-    <%= f.label :número_de_piezas %><br>
-    <%= f.number_field :number_of_pieces %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :largo %>
+      <%= f.text_field :outer_length, value: @product.outer_length, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :kit_de_accesorios %><br>
-    <%= f.text_field :accesories_kit %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :ancho %>
+      <%= f.text_field :outer_width, value: @product.outer_width, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :precio_de_venta %><br>
-    <%= f.text_field :price %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :alto %>
+      <%= f.text_field :outer_height, value: @product.outer_height, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :unidad_de_negocio %>
-    <%= f.select :business_unit, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}) %>
-  </div>
+    <h4>Diseño e Información Adicional</h4>
 
-  <div class="field">
-    <%= f.label :imágenes %><br>
-    <%= f.file_field :image, multiple: true %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :tipo_de_armado %>
+      <%= f.text_field :design_type, value: @product.design_type, class: 'form-inside' %>
+    </div>
 
-  <div class="actions">
-    <%= f.submit :confirmar %>
+    <div class="form-inside-style">
+      <%= f.label :Piezas %>
+      <%= f.number_field :number_of_pieces, value: @product.number_of_pieces, min: 0, max: 20, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :kit_de_accesorios %>
+      <%= f.text_field :accesories_kit, value: @product.accesories_kit, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :precio_de_venta %>
+      <%= f.text_field :price, value: @product.price, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :unidad_de_negocio %>
+      <%= f.select :business_unit, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}, selected: @product.business_unit) %>
+    </div>
+
+    <% if @product.images.count > 0 %>
+      <div class="images-container">
+        <h3 class="show-container" id="img-title-prod">Imágenes</h3>
+        <%= render 'images' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :agregar_más_imágenes %>
+        <%= f.file_field :image, multiple: true %><br>
+      </div>
+    <% else %>
+
+      <div class="form-inside-style">
+        <%= f.label :imágenes %>
+        <%= f.file_field :image, multiple: true %><br>
+      </div>
+    <% end %>
+
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :Confirmar, class: 'main-button' %>
+      </div>
+    </div>
+
+
+
   </div>
 
 <% end %>

@@ -1,11 +1,15 @@
 class ProductsController < ApplicationController
   # Este controller es para crear, modificar o borrar productos en catálogo, ya sea de línea o especiales (los de Request, una vez que se autorizan).
-  before_action :set_product, only: [:show, :edit, :update, :destroy]
+  before_action :set_product, only: [:show, :edit, :update, :destroy, :images]
 
   # GET /products
   # GET /products.json
   def index
     @products = Product.all
+  end
+
+  def images
+    render :images
   end
 
   def catalogue
@@ -31,7 +35,7 @@ class ProductsController < ApplicationController
 
   # GET /products/1/edit
   def edit
-    @request = Request.find(params[:request_id])
+    @product = Product.find(params[:id])
   end
 
   # POST /products
@@ -118,6 +122,8 @@ class ProductsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_product
       @product = Product.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      @product = Product.find(params[:product_id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

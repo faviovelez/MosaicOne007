@@ -1,29 +1,45 @@
-<% @prospects.each do |prospect| %>
 
 <table>
   <thead>
-    <tr>
-      <th>Nombre o razón social</th>
-      <th>Giro o actividad</th>
-      <th>Tipo de prospecto</th>
+    <tr class="table-titles">
+      <th class="col-md-3">Nombre o razón social</th>
+      <th class="col-md-1">Giro o actividad</th>
+      <th class="col-md-1">Tipo de prospecto</th>
     </tr>
   </thead>
   <tbody>
+    <% @prospects.each do |prospect| %>
     <tr>
       <td> <%= prospect.legal_or_business_name %> </td>
       <td> <%= prospect.business_type %> </td>
       <td> <%= prospect.prospect_type %> </td>
-      <td> <%= link_to 'ver prospecto', prospect_path(prospect) %> </td>
-      <td> <%= link_to 'nueva cotización', new_prospect_request_path(prospect) %> </td>
+      <td class="col-md-1">
+        <%= link_to prospect do %>
+          <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+          <span>Detalles</span>
+          <% end %>
+      </td>
+      <td class="col-md-1">
+        <%= link_to edit_prospect_path(prospect) do %>
+          <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
+          <span class="link-to-confirm">Modificar</span>
+          <% end %>
+      </td>
+      <td class="col-md-1">
+        <%= link_to new_prospect_request_path(prospect) do %>
+          <i class="fa fa-pencil-square link-to-price" aria-hidden="true"></i>
+          <span class="link-to-price">Cotizar</span>
+          <% end %>
+      </td>
       <% if prospect.requests.count >= 1 %>
-        <td> <%= link_to 'ver cotizaciones', prospect_requests_path(prospect) %> </td>
+        <td class="col-md-1">
+          <%= link_to prospect_requests_path(prospect) do %>
+            <i class="fa fa-book link-to-details" aria-hidden="true"></i>
+            <span>Cotizaciones</span>
+            <% end %>
+        </td>
       <% end %>
     </tr>
+  <% end %>
   </tbody>
 </table>
-
-<% end %>
-
-<%= link_to 'nuevo prospecto', new_store_prospect_path(@store) %>
-
-<%= link_to 'inicio', store_path(@store) %>
