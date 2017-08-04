@@ -1,3 +1,6 @@
+body {
+  overflow-x:hidden;
+}
 
 .hidden {
   display: none;
@@ -20,12 +23,6 @@ p.info > strong {
 
 .capitalize {
   text-transform: capitalize;
-}
-
-.bottom-link {
-  position: fixed;
-  bottom: 2vh;
-  left: 55vw;
 }
 
 .uppercase {
@@ -575,7 +572,6 @@ color: #0288D1;
 .custom-link-bottom {
   padding: 2rem;
 }
-
 
 .table-titles, .table-titles:hover {
   background-color: #D72638;

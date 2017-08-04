@@ -7,9 +7,9 @@
       <%= f.check_box :status, { multiple: true }, 'aceptada', nil %>
     </div>
 
-    <div class="field hidden">
+    <div class="field form-inside-style hidden">
       <%= f.label :descripción_de_la_solicitud %>
-      <%= f.text_area :description %>
+      <%= f.text_area :description, class: 'form-inside' %>
     </div>
 
     <div class="actions">

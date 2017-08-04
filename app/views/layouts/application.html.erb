@@ -44,19 +44,13 @@
     <%= render 'vertical_navbar' %>
     <div class="flex">
       <div class="centered">
+        <%= render 'bottom_nav' %>
         <%= yield %>
-        <div class="bottom-nav">
-          <%= link_to 'Regresar', :back, class: 'bottom-link' %>
-          <%= render 'links_to_show', class: 'bottom-link' %>
-        </div>
       </div>
   <% else %>
     <div class="centered-without-margin">
+      <%= render 'bottom_nav' %>
       <%= yield %>
-      <div class="bottom-nav">
-        <%= render 'links_to_show', class: 'bottom-link' %>
-        <%= link_to 'Regresar', :back, class: 'bottom-link' %>
-      </div>
     </div>
   <% end %>
     </div>

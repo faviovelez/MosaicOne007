@@ -1,20 +1,20 @@
 
   <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
-    <%= link_to 'solicitar otro trabajo de diseño', new_request_design_request_path(request_id: @design_request.request) %>
+    <%= link_to 'Solicitar otro trabajo de diseño', new_request_design_request_path(request_id: @design_request.request) %>
   <% end %>
 
   <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status != 'aceptada' %>
-    <%= link_to 'editar', edit_design_request_path(@design_request) %>
+    <%= link_to 'Editar', edit_design_request_path(@design_request) %>
   <% elsif (current_user.role.name == 'designer' && @design_request.status == 'en proceso') %>
-    <%= link_to 'trabajar solicitud', edit_design_request_path(@design_request) %>
+    <%= link_to 'Trabajar solicitud', edit_design_request_path(@design_request) %>
   <% end %>
 
   <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status == 'diseño elaborado' %>
-    <%= link_to 'confirmar diseño', '#myModal', 'data-toggle' => 'modal' %>
+    <%= link_to 'Confirmar diseño', '#myModal', 'data-toggle' => 'modal' %>
   <% end %>
 
-  <%= link_to 'ver solicitud de cotización', request_path(@design_request.request) %>
+  <%= link_to 'Ver solicitud de cotización', request_path(@design_request.request) %>
 
   <% if current_user.role.name == 'designer' %>
-    <%= link_to 'ver todas las solicitudes de diseño', filtered_requests_assigned_view_path %>
+    <%= link_to 'Ver todas las solicitudes de diseño', filtered_requests_assigned_view_path %>
   <% end %>

@@ -2,6 +2,33 @@ nav {
   font-family: 'Open Sans', sans-serif;
 }
 
+body {
+  overflow-x:hidden;
+}
+
+.bottom-nav {
+  position: fixed;
+  height: 5vh;
+  width: 80vw;
+  background-color: #fff;
+  opacity: .5
+  right: 0;
+  left: 20vw;
+  margin: 0;
+  padding: 0;
+  bottom: 0;
+  z-index: 100000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom-nav > a {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+
 .navbar.navbar-default {
   height: 8vh;
   margin: 0 !important;

@@ -1,14 +1,14 @@
   <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') || ((current_user.role.name == 'manager' || current_user.role.name == 'director') && (@request.main_material == 'sugerir material' || @request.resistance_main_material == 'Sugerir resistencia' )) %>
     <% if (@request.status != 'en producción' && @request.status != 'autorizada' && @request.status != 'cancelada') %>
-      <%= link_to 'Modificar', edit_request_path(@request) %>
+      <%= link_to 'Modificar', edit_request_path(@request), class: 'bottom-link' %>
     <% end %>
   <% end %>
 
   <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
-    <%= link_to 'Ver prospecto', prospect_path(@request.prospect) %>
+    <%= link_to 'Ver prospecto', prospect_path(@request.prospect), class: 'bottom-link' %>
 
     <% unless @request.status == 'cancelada' || @request.status == 'creada' %>
-      <%= link_to 'Solicitar trabajo de diseño', new_request_design_request_path(@request) %>
+      <%= link_to 'Solicitar trabajo de diseño', new_request_design_request_path(@request), class: 'bottom-link' %>
     <% end %>
 
   <% end %>

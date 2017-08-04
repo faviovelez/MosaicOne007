@@ -1,7 +1,0 @@
-  <% unless params[:action] == 'unassigned_view' %>
-    <%= link_to 'solicitudes sin asignar', filtered_requests_unassigned_view_path %>
-  <% end %>
-
-  <% unless params[:action] == 'assigned_view' %>
-    <%= link_to 'solicitudes asignadas', filtered_requests_assigned_view_path %>
-  <% end %>
