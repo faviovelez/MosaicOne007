@@ -1,13 +1,13 @@
 <% if @request.design_requests.any? == true %>
-  <%= link_to 'ver trabajos de diseño', request_design_request_path(request_id: @request) %>
+  <%= link_to 'Ver trabajos de diseño', request_design_request_path(request_id: @request), class: 'custom-link-bottom' %>
 <% end %>
 
-<%= link_to 'regresar a la solicitud', requests_path(@request) %>
+<%= link_to 'Regresar a la solicitud', requests_path(@request), class: 'custom-link-bottom' %>
 
-<%= link_to 'modificar solicitud', edit_request_path(@request) %>
+<%= link_to 'Modificar solicitud', edit_request_path(@request), class: 'custom-link-bottom' %>
 
-<%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
+<%= link_to 'Solicitar trabajo de diseño', new_request_design_request_path(@request), class: 'custom-link-bottom' %>
 
-<%= link_to 'ver prospecto', prospect_path(@request.prospect) %>
+<%= link_to 'Ver prospecto', prospect_path(@request.prospect), class: 'custom-link-bottom' %>
 
-<%= link_to 'ver lista de solicitudes activas', filtered_requests_current_view_path %>
+<%= link_to 'Ver solicitudes activas', filtered_requests_current_view_path, class: 'custom-link-bottom' %>

@@ -26,6 +26,11 @@ label {
 }
 
 .modal-content {
+  z-index: 50000;
+}
+
+#no-margin {
+  margin-left: 0
 }
 
 .modal-body {
@@ -38,6 +43,11 @@ label {
 }
 
 h4#myModalLabel {
-  color: black;
+  color: #D72638;
+  font-size: 24px;
+}
+
+h4#myModalLabelGreen {
+  color: #009CB7;
   font-size: 24px;
 }

@@ -1,0 +1,37 @@
+<div class="links-in-bottom">
+
+  <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') || ((current_user.role.name == 'manager' || current_user.role.name == 'director') && (@request.main_material == 'sugerir material' || @request.resistance_main_material == 'Sugerir resistencia' )) %>
+    <% if (@request.status != 'en producción' && @request.status != 'autorizada' && @request.status != 'cancelada') %>
+      <%= link_to 'Modificar', edit_request_path(@request), class: 'custom-link-bottom' %>
+    <% end %>
+  <% end %>
+
+  <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+    <%= link_to 'Ver prospecto', prospect_path(@request.prospect), class: 'custom-link-bottom' %>
+
+    <% unless @request.status == 'cancelada' || @request.status == 'creada' %>
+      <%= link_to 'Solicitar trabajo de diseño', new_request_design_request_path(@request), class: 'custom-link-bottom' %>
+    <% end %>
+
+  <% end %>
+
+  <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+    <% if @request.status == 'cancelada' %>
+      <%= link_to 'Reactivar', '#myModal', 'data-toggle' => 'modal', class: 'custom-link-bottom' %>
+    <% else %>
+      <%= link_to 'Cancelar', '#myModal', 'data-toggle' => 'modal', class: 'custom-link-bottom' %>
+    <% end %>
+
+    <% if @request.status == 'creada' %>
+      <%= link_to 'Ver solicitudes guardadas', filtered_requests_saved_view_path, class: 'custom-link-bottom' %>
+    <% else %>
+      <%= link_to 'Ver solicitudes activas', filtered_requests_current_view_path, class: 'custom-link-bottom' %>
+    <% end %>
+
+    <% if @request.status == 'costo asignado'  %>
+      <%= link_to 'Asignar precio', requests_price_path(@request), class: 'custom-link-bottom' %>
+    <% elsif @request.status == 'precio asignado' %>
+      <%= link_to 'Confirmar pedido', confirm_requests_path(@request), class: 'custom-link-bottom' %>
+    <% end %>
+  <% end %>
+</div>

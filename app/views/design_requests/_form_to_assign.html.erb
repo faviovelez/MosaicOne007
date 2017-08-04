@@ -1,12 +1,18 @@
 <%= form_for(@design_request) do |f| %>
 
+  <div class="form-container">
+
     <div class="field hidden">
       <%= f.label :estatus %>
       <%= f.text_field :status, value: 'en proceso' %>
     </div>
 
+    <div class="button-container">
+
     <div class="actions">
-      <%= f.submit :asignar_solicitud, name: 'asignar_solicitud'%>
+      <%= f.submit :asignar_solicitud, name: 'asignar_solicitud', class: 'main-button capitalize'%>
     </div>
+  </div>
+</div>
 
 <% end %>

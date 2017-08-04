@@ -1,58 +1,62 @@
 
-  <h3>datos generales</h3>
-  <p><strong>tipo de producto: </strong>
+<div class="show-container" id="request-container">
+
+  <h2 class="title-request">Solicitud <%= @request.id %></h2>
+
+  <h3>Datos generales</h3>
+  <p><strong>Tipo de producto: </strong>
     <%= @request.product_type %>
   </p>
 
-  <p><strong>cantidad: </strong>
+  <p><strong>Cantidad: </strong>
     <%= @request.quantity  %>
   </p>
 
   <% if @request.product_type != 'exhibidor' %>
-    <h3>datos del producto</h3>
+    <h3>Datos del producto</h3>
   <% elsif @request.product_type == 'exhibidor' %>
-    <h3>datos del producto a exhibir </h3>
+    <h3>Datos del producto a exhibir </h3>
   <% end %>
 
   <% if @request.product_what.present? %>
-    <p><strong>tipo de producto: </strong>
+    <p><strong>Tipo de producto: </strong>
       <%= @request.product_what %>
     </p>
   <% end %>
 
   <% if @request.product_length.present? %>
-    <p><strong>largo: </strong>
+    <p><strong>Largo: </strong>
       <%= @request.product_length %> cm
     </p>
   <% end %>
 
   <% if @request.product_width.present? %>
-    <p><strong>ancho: </strong>
+    <p><strong>Ancho: </strong>
       <%= @request.product_width %> cm
     </p>
   <% end %>
 
   <% if @request.product_height.present? %>
-    <p><strong>alto: </strong>
+    <p><strong>Alto: </strong>
       <%= @request.product_height %> cm
     </p>
   <% end %>
 
   <% if @request.product_weight.present? %>
-    <p><strong>peso: </strong>
+    <p><strong>Peso (total): </strong>
       <%= @request.product_weight %> kg
     </p>
   <% end %>
 
     <% unless @request.product_type == 'caja' %>
       <% if @request.for_what.present? %>
-        <p><strong>cajas para: </strong>
+        <p><strong>Cajas para: </strong>
           <%= @request.for_what %>
         </p>
       <% end %>
 
       <% if @request.for_what.present? %>
-        <p><strong>estiba: </strong>
+        <p><strong>Estiba: </strong>
           <%= @request.boxes_stow %>
         </p>
       <% end %>
@@ -65,186 +69,186 @@
   <% end %>
 
   <% if @request.product_type == 'bolsa' || @request.product_type == 'caja'  %>
-    <h3>detalles de las <%= @product%>s cotizadas</h3>
+    <h3>Detalles de las <%= @product%>s cotizadas</h3>
   <% elsif @request.product_type == 'exhibidor' %>
-    <h3>detalles de los <%= @product%>es cotizados</h3>
+    <h3>Detalles de los <%= @product%>es cotizados</h3>
   <% elsif @request.product_type == 'exhibidor' && @request.how_many.count == 1 %>
-    <h3>detalles del <%= @product%> cotizado</h3>
+    <h3>Detalles del <%= @product%> cotizado</h3>
   <% elsif @request.product_type == 'otro' %>
-    <h3>detalles de los productos tipo <%= @product%> cotizados</h3>
+    <h3>Detalles de los productos tipo <%= @product%> cotizados</h3>
   <% end %>
 
   <% if @request.product_type == 'bolsa' %>
-    <h4>medidas</h4>
+    <h4>Medidas</h4>
 
-    <p><strong>largo: </strong>
+    <p><strong>Largo: </strong>
       <%= @request.bag_length %> cm
     </p>
 
-    <p><strong>ancho: </strong>
+    <p><strong>Ancho: </strong>
       <%= @request.bag_width %> cm
     </p>
 
-    <p><strong>alto: </strong>
+    <p><strong>Alto: </strong>
       <%= @request.bag_height %> cm
     </p>
 
   <% elsif @request.product_type == 'exhibidor' %>
-    <h4>medidas</h4>
+    <h4>Medidas</h4>
 
-    <p><strong>altura: </strong>
+    <p><strong>Altura del exhibidor: </strong>
       <%= @request.exhibitor_height %> cm
     </p>
 
-    <p><strong>cantidad de charolas: </strong>
-      <%= @request.tray_quantity %> cm
+    <p><strong>Cantidad de charolas: </strong>
+      <%= @request.tray_quantity %>
     </p>
 
-    <p><strong>largo de las charolas: </strong>
+    <p><strong>Largo de las charolas: </strong>
       <%= @request.tray_length %> cm
     </p>
 
-    <p><strong>ancho de las charolas: </strong>
+    <p><strong>Ancho de las charolas: </strong>
       <%= @request.tray_width %> cm
     </p>
 
   <% elsif @request.product_type == 'caja' || @request.product_type == 'otro' %>
     <% if @request.what_measures == '1' %>
-      <h4>medidas externas</h4>
+      <h4>Medidas externas</h4>
 
       <p><strong>largo: </strong>
         <%= @request.outer_length %> cm
       </p>
 
-      <p><strong>ancho: </strong>
+      <p><strong>Ancho: </strong>
         <%= @request.outer_width %> cm
       </p>
 
-      <p><strong>alto: </strong>
+      <p><strong>Alto: </strong>
         <%= @request.outer_height %> cm
       </p>
 
     <% elsif @request.what_measures == '2' %>
-      <h4>medidas internas</h4>
+      <h4>Medidas internas</h4>
 
-      <p><strong>largo: </strong>
+      <p><strong>Largo: </strong>
         <%= @request.inner_length %> cm
       </p>
 
-      <p><strong>ancho: </strong>
+      <p><strong>Ancho: </strong>
         <%= @request.inner_width %> cm
       </p>
 
-      <p><strong>alto: </strong>
+      <p><strong>Alto: </strong>
         <%= @request.inner_height %> cm
       </p>
 
     <% elsif @request.what_measures == '3' %>
-      <h4>medidas internas</h4>
-      <p><strong>largo: </strong>
+      <h4>Medidas internas</h4>
+      <p><strong>Largo: </strong>
         <%= @request.inner_length %> cm
       </p>
 
-      <p><strong>ancho: </strong>
+      <p><strong>Ancho: </strong>
         <%= @request.inner_width %> cm
       </p>
 
-      <p><strong>alto: </strong>
+      <p><strong>Alto: </strong>
         <%= @request.inner_height %> cm
       </p>
 
-      <h4>medidas externas</h4>
+      <h4>Medidas externas</h4>
 
       <p><strong>largo: </strong>
         <%= @request.outer_length %> cm
       </p>
 
-      <p><strong>ancho: </strong>
+      <p><strong>Ancho: </strong>
         <%= @request.outer_width %> cm
       </p>
 
-      <p><strong>alto: </strong>
+      <p><strong>Alto: </strong>
         <%= @request.outer_height %> cm
       </p>
     <% end %>
   <% end %>
 
-  <p><strong>tipo de cartón:</strong>
+  <p><strong>Tipo de cartón:</strong>
     <%= @request.main_material %>
   </p>
 
-  <p><strong>resistencia: </strong>
+  <p><strong>Resistencia: </strong>
     <%= @request.resistance_main_material %>
   </p>
 
   <% if @request.main_material == 'rígido' %>
-    <p><strong>color de papel:</strong>
+    <p><strong>Color de papel:</strong>
       <%= @request.rigid_color %>
     </p>
 
-    <p><strong>tipo de papel: </strong>
+    <p><strong>Tipo de papel: </strong>
       <%= @request.paper_type_rigid %>
     </p>
 
   <% else %>
-    <p><strong>color exterior (base): </strong>
+    <p><strong>Color exterior (base): </strong>
       <%= @request.exterior_material_color %>
     </p>
 
-    <p><strong>color interior (base): </strong>
+    <p><strong>Color interior (base): </strong>
       <%= @request.interior_material_color %>
     </p>
   <% end %>
 
   <% unless @request.secondary_material.blank? %>
-    <p><strong>otro material: </strong>
+    <p><strong>Otro material: </strong>
       <%= @request.secondary_material %>
     </p>
 
-    <p><strong>resistencia de segundo material: </strong>
+    <p><strong>Resistencia de segundo material: </strong>
       <%= @request.resistance_secondary_material %>
     </p>
   <% end %>
 
   <% unless @request.third_material.blank? %>
-    <p><strong>material adicional: </strong>
+    <p><strong>Material adicional: </strong>
       <%= @request.third_material %>
     </p>
 
-    <p><strong>resistencia de material adicional: </strong>
+    <p><strong>Resistencia de material adicional: </strong>
       <%= @request.resistance_third_material %>
     </p>
   <% end %>
 
   <% unless @request.impression.blank? %>
-    <h3>tipo de impresión de los productos</h3>
-    <p><strong> impresión en: </strong>
+    <h3>Tipo de impresión de los productos</h3>
+    <p><strong> Impresión en: </strong>
       <%= @request.impression_where %>, a
       <%= @request.inks %> tintas
     </p>
 
-    <p><strong>acabado:</strong>
+    <p><strong>Acabados:</strong>
       <%= @request.impression_finishing %>
     </p>
   <% end %>
 
   <% if @request.design_like.present? || @request.resistance_like.present? || @request.observations.present? || @request.notes.present? || @request.maximum_sales_price.present? || @request.delivery_date.present? %>
-    <h3>información adicional</h3>
+    <h3>Información adicional</h3>
 
     <% unless @request.design_like.blank? %>
-      <p><strong>tipo de armado: </strong>
+      <p><strong>Tipo de armado: </strong>
         <%= @request.design_like %>
       </p>
     <% end %>
 
     <% unless @request.resistance_like.blank? %>
-      <p><strong>resistencia: </strong>
+      <p><strong>Resistencia: </strong>
         <%= @request.resistance_like %>
       </p>
     <% end %>
 
     <% unless @request.observations.blank? %>
-      <p><strong>observaciones: </strong>
+      <p><strong>Observaciones: </strong>
         <span class="comments">
           <%= @request.observations %>
         </span>
@@ -252,7 +256,7 @@
     <% end %>
 
     <% unless @request.notes.blank? %>
-      <p><strong>dudas o anotaciones de quien cotiza: </strong>
+      <p><strong>Dudas o anotaciones de quien cotiza: </strong>
         <span class="comments">
           <%= @request.notes %>
         </span>
@@ -260,7 +264,7 @@
     <% end %>
 
     <% unless @request.delivery_date.blank? %>
-      <p><strong>fecha compromiso: </strong>
+      <p><strong>Fecha compromiso: </strong>
         <span class="date">
           <%= I18n.l @request.delivery_date, format: :short %>
         </span>
@@ -268,7 +272,7 @@
     <% end %>
 
     <% unless @request.maximum_sales_price.blank? %>
-      <p><strong>precio de venta objetivo (al cliente): </strong>
+      <p><strong>Precio de venta objetivo (al cliente): </strong>
         <span class="pesos">
           <%= number_to_currency(@request.maximum_sales_price) %>
         </span>
@@ -277,30 +281,31 @@
   <% end %>
 
   <% if @request.design_requests.count > 0 %>
-    <h3>solicitudes de diseño</h3>
+    <h3>Solicitudes de diseño</h3>
     <% @request.design_requests.each do |design_request| %>
-      <p><strong>tipo de solicitud: </strong><%= design_request.design_type %></p>
-      <p><strong>estatus: </strong><%= design_request.status %></p>
+      <p><strong>Tipo de solicitud: </strong><%= design_request.design_type %></p>
+      <p><strong>Estatus: </strong><%= design_request.status %></p>
       <% if design_request.cost.present? && ((current_user.role.name == 'store' || current_user.role.name == 'store-admin') || current_user.role.name == 'manager' || current_user.role.name == 'director') %>
-        <p><strong>costo: </strong><%= number_to_currency(design_request.cost) %></p>
+        <p><strong>Costo: </strong><%= number_to_currency(design_request.cost) %></p>
       <% end %>
-      <p><%= link_to 'ver solicitud', design_request_path(design_request) %></p>
+      <p><%= link_to 'Ver solicitud', design_request_path(design_request) %></p>
     <% end %>
   <% end %>
 
   <% unless @request.internal_price.blank? %>
-    <h3>Confirmar precio de venta a tienda </h3>
+    <h3>Costo y precio</h3>
     <% if current_user.role.name == 'manager' || current_user.role.name == 'director' %>
-      <p><strong>costo para diseños de cartón: </strong> <%= number_to_currency(@request.internal_cost) %> </p>
+      <p><strong>Costo para Diseños de Cartón: </strong> <%= number_to_currency(@request.internal_cost) %> </p>
     <% end %>
-    <p><strong>costo de venta: </strong> <%= number_to_currency(@request.internal_price) %> </p>
+    <p><strong>Costo de venta: </strong> <%= number_to_currency(@request.internal_price) %> </p>
     <% unless @request.sales_price.blank? %>
-      <p><strong>precio para el cliente: </strong> <%= number_to_currency(@request.sales_price) %> </p>
+      <p><strong>Precio para cliente: </strong> <%= number_to_currency(@request.sales_price) %> </p>
     <% end %>
   <% end %>
 
   <% if @request.date_finished.present? %>
-    <p><strong>fecha de finalización de la producción: </strong>
+    <p><strong>Fecha de finalización de la producción: </strong>
       <%= @request.date_finished %>
     </p>
   <% end %>
+</div>

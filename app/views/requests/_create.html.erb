@@ -4,429 +4,441 @@
 
   <%= form_for [@prospect, @request] do |f| %>
 
-  <h2 class="info-title">Datos de la cotización </h2>
+    <h2 class="info-title">Datos de la cotización </h2>
 
-  <div class="form-container">
+    <div class="form-container">
 
-    <h3>Datos generales</h3>
-      <div class="field form-inside-style">
-        <p>
-          <%= f.label :¿qué_desea_cotizar? %>
+      <h3>Datos generales</h3>
+      <div class="impresssion-div">
+        <div class="field form-inside-style">
+          <%= f.label :¿qué_desea_cotizar?, id: 'label-form-que-desea' %>
           <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: @request.product_type) %>
-          <div class="field form-inside-style otro hidden">
-            <%= f.label :¿cuál? %>
-            <%= f.text_field :name_type, class: 'form-inside' %>
+        </div>
+        <div class="field form-inside-style otro hidden">
+          <%= f.label :¿cuál?, class: 'capitalize' %>
+          <%= f.text_field :name_type, class: 'form-inside' %>
+        </div>
+
+        <div class="field form-inside-style">
+          <%= f.label :cantidad %>
+          <%= f.text_field :quantity, class: 'form-inside' %>
+        </div>
+      </div>
+
+      <div class="producto">
+        <h3>Información del producto</h3>
+
+        <div class="outer">
+          <div class="field form-inside-style">
+            <%= f.label :¿qué_irá_en_la_caja_bolsa_o_exhibidor? %>
+            <%= f.text_field :product_what, class: 'form-inside' %>
           </div>
-        </p>
-      </div>
 
-      <div class="field form-inside-style">
-        <%= f.label :¿qué_cantidad_desea_cotizar? %>
-        <%= f.text_field :quantity, class: 'form-inside' %>
-      </div>
+          <div class="field form-inside-style">
+            <%= f.label 'productos por caja, bolsa o exhibidor' %>
+            <%= f.text_field :how_many, class: 'form-inside' %>
+          </div>
 
-    <div class="producto">
-      <h3>Información del producto</h3>
+          <div class="field form-inside-style">
+            <%= f.label :largo %>
+            <%= f.text_field :product_length, maxlength:10, class: 'form-inside' %>
+            cm
+          </div>
 
-      <div class="field form-inside-style">
-        <%= f.label '¿qué irá en la caja, bolsa o exhibidor?' %>
-        <%= f.text_field :product_what, class: 'form-inside' %>
-      </div>
+          <div class="field form-inside-style">
+            <%= f.label :ancho %>
+            <%= f.text_field :product_width, maxlength:10, class: 'form-inside' %>
+            cm
+          </div>
 
-      <div class="field form-inside-style">
-        <%= f.label 'productos por caja, bolsa o exhibidor' %>
-        <%= f.text_field :how_many, class: 'form-inside' %>
-      </div>
+          <div class="field form-inside-style">
+            <%= f.label :alto %>
+            <%= f.text_field :product_height, maxlength:10, class: 'form-inside' %>
+            cm
+          </div>
 
-      <div class="field form-inside-style">
-        <%= f.label :largo %>
-        <%= f.text_field :product_length, class: 'form-inside' %>
-        cm
+          <div class="field form-inside-style">
+            <%= f.label 'peso (total)' %>
+            <%= f.text_field :product_weight, maxlength:10, class: 'form-inside' %>
+            kg
+          </div>
+        </div>
       </div>
-
-      <div class="field form-inside-style">
-        <%= f.label :ancho %>
-        <%= f.text_field :product_width, class: 'form-inside' %>
-        cm
-      </div>
-
-      <div class="field form-inside-style">
-        <%= f.label :alto %>
-        <%= f.text_field :product_height, class: 'form-inside' %>
-        cm
-      </div>
-
-      <div class="field form-inside-style">
-        <%= f.label :peso_total_de_los_productos %>
-        <%= f.text_field :product_weight, class: 'form-inside' %>
-        kg
-      </div>
-    </div>
 
       <div class="caja hidden">
         <h3>Detalles adicionales</h3>
 
-        <div class="field form-inside-style">
-          <%= f.label :¿las_cajas_son_para_almacenar_o_transportar? %>
-          <%= f.select :for_what, options_for_select([['seleccione', ''], ['sin información'], ['almacenar'], ['transportar']], selected: @request.for_what) %>
-        </div>
+        <div class="product">
+          <div class="field form-inside-style">
+            <%= f.label :uso_de_las_cajas %>
+            <%= f.select :for_what, options_for_select([['seleccione', ''], ['sin información'], ['almacenar'], ['transportar']], selected: @request.for_what) %>
+          </div>
 
-        <div class="field form-inside-style">
-          <%= f.label :¿cuántas_cajas_se_van_a_estibar? %>
-          <%= f.select :boxes_stow, options_for_select([['Seleccione', ''], ['ninguna'], ['sin información'], ['1 - 3'], ['4 - 6'], ['7 - 9'], ['10 o más']], selected: @request.boxes_stow) %>
-        </div>
-      </div>
-
-      <h3>Medidas</h3>
-      <div class="measures field hidden">
-        <%= f.label :¿qué_medidas_ingresará? %>
-        <%= f.select :what_measures, options_for_select([['seleccione', ''], ['sugerir medidas', '4'], ['medidas externas', '1'], ['medidas internas', '2'], ['ambas', '3']], selected: @request.what_measures, class: 'medidas') %>
-      </div>
-
-      <div id="outer" class="hidden" >
-        <div class="field form-inside-style">
-          <%= f.label :largo %>
-          <%= f.text_field :outer_length, class: 'form-inside' %>
-          cm
-        </div>
-
-        <div class="field form-inside-style">
-          <%= f.label :ancho %>
-          <%= f.text_field :outer_width, class: 'form-inside' %>
-          cm
-        </div>
-
-        <div class="field form-inside-style">
-          <%= f.label :alto %>
-          <%= f.text_field :outer_height, class: 'form-inside' %>
-          cm
-        </div>
-
-      </div>
-      <div id="inner" class="hidden">
-        <div class="field form-inside-style">
-          <%= f.label :largo %>
-          <%= f.text_field :inner_length, class: 'form-inside' %>
-          cm
-        </div>
-
-        <div class="field form-inside-style">
-          <%= f.label :ancho %>
-          <%= f.text_field :inner_width, class: 'form-inside' %>
-          cm
-        </div>
-
-        <div class="field form-inside-style">
-          <%= f.label :alto %>
-          <%= f.text_field :inner_height, class: 'form-inside' %>
-          cm
+          <div class="field form-inside-style">
+            <%= f.label :cantidad_de_cajas_a_la_estiba %>
+            <%= f.select :boxes_stow, options_for_select([['Seleccione', ''], ['ninguna'], ['sin información'], ['1 - 3'], ['4 - 6'], ['7 - 9'], ['10 o más']], selected: @request.boxes_stow) %>
+          </div>
         </div>
       </div>
 
-      <div class="bolsa hidden">
-        <div class="field form-inside-style">
-          <%= f.label :largo %>
-          <%= f.text_field :bag_length, class: 'form-inside' %>
-          cm
+        <h3>Medidas</h3>
+        <div class="impresssion-div">
+
+          <div class="measures field form-inside-style hidden">
+            <%= f.label :medidas %>
+            <%= f.select :what_measures, options_for_select([['seleccione', ''], ['sugerir medidas', '4'], ['medidas externas', '1'], ['medidas internas', '2'], ['ambas', '3']], selected: @request.what_measures, class: 'medidas') %>
+          </div>
         </div>
 
-        <div class="field form-inside-style">
-          <%= f.label :fuelle %>
-          <%= f.text_field :bag_width, class: 'form-inside' %>
-          cm
+        <div id="outer" class="outer hidden" >
+          <h4>Externas</h4>
+
+          <div class="field form-inside-style">
+            <%= f.label :largo %>
+            <%= f.text_field :outer_length, class: 'form-inside' %>
+            cm
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :ancho %>
+            <%= f.text_field :outer_width, class: 'form-inside' %>
+            cm
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :alto %>
+            <%= f.text_field :outer_height, class: 'form-inside' %>
+            cm
+          </div>
+
+        </div>
+        <div id="inner" class="inner hidden">
+          <h4>Internas</h4>
+          <div class="field form-inside-style">
+            <%= f.label :largo %>
+            <%= f.text_field :inner_length, class: 'form-inside' %>
+            cm
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :ancho %>
+            <%= f.text_field :inner_width, class: 'form-inside' %>
+            cm
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :alto %>
+            <%= f.text_field :inner_height, class: 'form-inside' %>
+            cm
+          </div>
         </div>
 
-        <div class="field form-inside-style">
-          <%= f.label :alto %>
-          <%= f.text_field :bag_height, class: 'form-inside' %>
-          cm
-        </div>
-      </div>
+        <div class="bolsa hidden">
+          <div class="field form-inside-style">
+            <%= f.label :largo %>
+            <%= f.text_field :bag_length, class: 'form-inside' %>
+            cm
+          </div>
 
-      <div class="exhibidor hidden">
-        <div class="field form-inside-style">
-          <%= f.label :altura %>
-          <%= f.text_field :exhibitor_height, class: 'form-inside' %>
-          cm
-        </div>
+          <div class="field form-inside-style">
+            <%= f.label :fuelle %>
+            <%= f.text_field :bag_width, class: 'form-inside' %>
+            cm
+          </div>
 
-        <div class="field form-inside-style">
-          <%= f.label :cantidad_de_charolas %>
-          <%= f.text_field :tray_quantity, class: 'form-inside' %>
-        </div>
-
-        <div class="field form-inside-style">
-          <%= f.label :largo_de_la_charola %>
-          <%= f.text_field :tray_length, class: 'form-inside' %>
-          cm
+          <div class="field form-inside-style">
+            <%= f.label :alto %>
+            <%= f.text_field :bag_height, class: 'form-inside' %>
+            cm
+          </div>
         </div>
 
+        <div class="exhibidor hidden">
+          <div class="field form-inside-style">
+            <%= f.label :altura %>
+            <%= f.text_field :exhibitor_height, class: 'form-inside' %>
+            cm
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :cantidad_de_charolas %>
+            <%= f.text_field :tray_quantity, class: 'form-inside' %>
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :largo_de_la_charola %>
+            <%= f.text_field :tray_length, class: 'form-inside' %>
+            cm
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :ancho_de_la_charola %>
+            <%= f.text_field :tray_width, class: 'form-inside' %>
+            cm
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :número_de_divisiones_de_las_charolas %>
+            <%= f.text_field :tray_divisions, class: 'form-inside' %>
+          </div>
+      </div>
+
+        <h3>Material y resistencia</h3>
+
         <div class="field form-inside-style">
-          <%= f.label :ancho_de_la_charola %>
-          <%= f.text_field :tray_width, class: 'form-inside' %>
-          cm
+          <%= f.label :material_principal %>
+          <%= f.select :main_material, options_for_select([['seleccione', ''],
+          ['caple', class: "resistance main caja"],
+          ['sulfatada', class: "resistance main caja"],
+          ['multicapa', class: "resistance main caja"],
+          ['reverso blanco', class: "resistance main caja"],
+          ['reverso gris', class: "resistance main caja"],
+          ['liner', class: "resistance main caja"],
+          ['single face', class: "resistance main caja"],
+          ['microcorrugado', class: "resistance main caja"],
+          ['corrugado', class: "resistance main caja"],
+          ['rígido', class: "resistance main caja"],
+          ['papel kraft', class: "resistance main bolsa"],
+          ['papel bond', class: "resistance main bolsa"],
+          ['sugerir material']], selected: @request.main_material) %>
         </div>
 
-        <div class="field form-inside-style">
-          <%= f.label :número_de_divisiones_de_las_charolas %>
-          <%= f.text_field :tray_divisions, class: 'form-inside' %>
+        <div class="field form-inside-style main">
+          <%= f.label :resistencia_del_material %>
+          <%= f.select :resistance_main_material, options_for_select([["seleccione" ,""],
+          ['Buscar resistencia', 'buscar'],
+          ["12 PTS", class: "main plegadizo hidden"],
+          ["14 PTS", class: 'main plegadizo hidden'],
+          ["16 PTS", class: 'main plegadizo hidden'],
+          ["18 PTS", class: 'main plegadizo hidden'],
+          ["20 PTS", class: 'main plegadizo hidden'],
+          ["22 PTS", class: 'main plegadizo hidden'],
+          ["24 PTS", class: 'main plegadizo hidden'],
+          ["170 grs", class: 'main liner hidden'],
+          ["180 grs", class: 'main liner hidden'],
+          ["275 grs", class: 'main liner hidden'],
+          ["300 grs", class: 'main liner hidden'],
+          ["SG - 20 ECT", class: 'main corrugado hidden'],
+          ["7kg - 23 ECT", class: 'main corrugado hidden'],
+          ["9kg - 26 ECT", class: 'main corrugado hidden'],
+          ["11kg - 29 ECT", class: 'main corrugado hidden'],
+          ["12kg - 32 ECT", class: 'main corrugado hidden'],
+          ["14kg - 40 ECT", class: 'main corrugado hidden'],
+          ["16kg - 44 ECT", class: 'main corrugado hidden'],
+          ["18kg - 51 ECT", class: 'main corrugado hidden'],
+          ["No aplica", class: 'main otros hidden'],
+          ["12kg - 36 ECT", class: 'main doble_corrugado hidden'],
+          ["14kg - 42 ECT", class: 'main doble_corrugado hidden'],
+          ["19kg - 48 ECT", class: 'main doble_corrugado hidden'],
+          ["225kg - 51 ECT", class: 'main doble_corrugado hidden'],
+          ["28kg - 61 ECT", class: 'main doble_corrugado hidden'],
+          ["35kg - 71 ECT", class: 'main doble_corrugado hidden'],
+          ["42kg - 82 ECT", class: 'main doble_corrugado hidden'],
+          ["Sugerir resistencia"]], selected: @request.resistance_main_material) %>
         </div>
-    </div>
 
-      <h3>Material y resistencia</h3>
+        <button type="button" name="button" class="secondary-button-small" id="agregar_material" >Agregar material</button>
 
-      <div class="field form-inside-style">
-        <%= f.label :material_principal %>
-        <%= f.select :main_material, options_for_select([['seleccione', ''],
-        ['caple', class: "resistance main caja"],
-        ['sulfatada', class: "resistance main caja"],
-        ['multicapa', class: "resistance main caja"],
-        ['reverso blanco', class: "resistance main caja"],
-        ['reverso gris', class: "resistance main caja"],
-        ['liner', class: "resistance main caja"],
-        ['single face', class: "resistance main caja"],
-        ['microcorrugado', class: "resistance main caja"],
-        ['corrugado', class: "resistance main caja"],
-        ['rígido', class: "resistance main caja"],
-        ['papel kraft', class: "resistance main bolsa"],
-        ['papel bond', class: "resistance main bolsa"],
-        ['sugerir material']], selected: @request.main_material) %>
-      </div>
+        <div class="field form-inside-style secondary hidden">
+          <%= f.label :material_secundario %>
+          <%= f.select :secondary_material, options_for_select([['seleccione', ''],
+          ['caple', class: "resistance secondary caja"],
+          ['sulfatada', class: "resistance secondary caja"],
+          ['multicapa', class: "resistance secondary caja"],
+          ['reverso blanco', class: "resistance secondary caja"],
+          ['reverso gris', class: "resistance secondary caja"],
+          ['liner', class: "resistance secondary caja"],
+          ['single face', class: "resistance secondary caja"],
+          ['microcorrugado', class: "resistance secondary caja"],
+          ['corrugado', class: "resistance secondary caja"],
+          ['rígido', class: "resistance secondary caja"],
+          ['papel arroz', class: "resistance secondary bolsa"],
+          ['celofán', class: "resistance secondary bolsa"],
+          ['sugerir material']], selected: @request.secondary_material) %>
+        </div>
 
-      <div class="field form-inside-style main">
-        <%= f.label :resistencia_del_material %>
-        <%= f.select :resistance_main_material, options_for_select([["seleccione" ,""],
-        ['Buscar resistencia', 'buscar'],
-        ["12 PTS", class: "main plegadizo hidden"],
-        ["14 PTS", class: 'main plegadizo hidden'],
-        ["16 PTS", class: 'main plegadizo hidden'],
-        ["18 PTS", class: 'main plegadizo hidden'],
-        ["20 PTS", class: 'main plegadizo hidden'],
-        ["22 PTS", class: 'main plegadizo hidden'],
-        ["24 PTS", class: 'main plegadizo hidden'],
-        ["170 grs", class: 'main liner hidden'],
-        ["180 grs", class: 'main liner hidden'],
-        ["275 grs", class: 'main liner hidden'],
-        ["300 grs", class: 'main liner hidden'],
-        ["SG - 20 ECT", class: 'main corrugado hidden'],
-        ["7kg - 23 ECT", class: 'main corrugado hidden'],
-        ["9kg - 26 ECT", class: 'main corrugado hidden'],
-        ["11kg - 29 ECT", class: 'main corrugado hidden'],
-        ["12kg - 32 ECT", class: 'main corrugado hidden'],
-        ["14kg - 40 ECT", class: 'main corrugado hidden'],
-        ["16kg - 44 ECT", class: 'main corrugado hidden'],
-        ["18kg - 51 ECT", class: 'main corrugado hidden'],
-        ["No aplica", class: 'main otros hidden'],
-        ["12kg - 36 ECT", class: 'main doble_corrugado hidden'],
-        ["14kg - 42 ECT", class: 'main doble_corrugado hidden'],
-        ["19kg - 48 ECT", class: 'main doble_corrugado hidden'],
-        ["225kg - 51 ECT", class: 'main doble_corrugado hidden'],
-        ["28kg - 61 ECT", class: 'main doble_corrugado hidden'],
-        ["35kg - 71 ECT", class: 'main doble_corrugado hidden'],
-        ["42kg - 82 ECT", class: 'main doble_corrugado hidden'],
-        ["Sugerir resistencia"]], selected: @request.resistance_main_material) %>
-      </div>
+        <div class="field form-inside-style secondary hidden">
+          <%= f.label :resistencia_del_material %>
+          <%= f.select :resistance_secondary_material, options_for_select([["seleccione", ''],
+          ["12 PTS", class: "secondary plegadizo hidden"],
+          ["14 PTS", class: 'secondary plegadizo hidden'],
+          ["16 PTS", class: 'secondary plegadizo hidden'],
+          ["18 PTS", class: 'secondary plegadizo hidden'],
+          ["20 PTS", class: 'secondary plegadizo hidden'],
+          ["22 PTS", class: 'secondary plegadizo hidden'],
+          ["24 PTS", class: 'secondary plegadizo hidden'],
+          ["170 grs", class: 'secondary liner hidden'],
+          ["180 grs", class: 'secondary liner hidden'],
+          ["275 grs", class: 'secondary liner hidden'],
+          ["300 grs", class: 'secondary liner hidden'],
+          ["SG - 20 ECT", class: 'secondary corrugado hidden'],
+          ["7kg - 23 ECT", class: 'secondary corrugado hidden'],
+          ["9kg - 26 ECT", class: 'secondary corrugado hidden'],
+          ["11kg - 29 ECT", class: 'secondary corrugado hidden'],
+          ["12kg - 32 ECT", class: 'secondary corrugado hidden'],
+          ["14kg - 40 ECT", class: 'secondary corrugado hidden'],
+          ["16kg - 44 ECT", class: 'secondary corrugado hidden'],
+          ["18kg - 51 ECT", class: 'secondary corrugado hidden'],
+          ["No aplica", class: 'secondary otros hidden'],
+          ["12kg - 36 ECT", class: 'secondary doble_corrugado hidden'],
+          ["14kg - 42 ECT", class: 'secondary doble_corrugado hidden'],
+          ["19kg - 48 ECT", class: 'secondary doble_corrugado hidden'],
+          ["225kg - 51 ECT", class: 'secondary doble_corrugado hidden'],
+          ["28kg - 61 ECT", class: 'secondary doble_corrugado hidden'],
+          ["35kg - 71 ECT", class: 'secondary doble_corrugado hidden'],
+          ["42kg - 82 ECT", class: 'secondary doble_corrugado hidden'],
+          ["Sugerir resistencia"]], selected: @request.resistance_secondary_material) %>
+        </div>
 
-      <button type="button" name="button" class="btn" id="agregar_material">Agregar material</button>
+        <div class="field form-inside-style third hidden">
+          <%= f.label :material_adicional %>
+          <%= f.select :third_material, options_for_select([['seleccione', ''],
+          ['caple', class: "resistance third caja"],
+          ['sulfatada', class: "resistance third caja"],
+          ['multicapa', class: "resistance third caja"],
+          ['reverso blanco', class: "resistance third caja"],
+          ['reverso gris', class: "resistance third caja"],
+          ['liner', class: "resistance third caja"],
+          ['single face', class: "resistance third caja"],
+          ['microcorrugado', class: "resistance third caja"],
+          ['corrugado', class: "resistance third caja"],
+          ['rígido', class: "resistance third caja"],
+          ['papel arroz', class: "resistance third bolsa"],
+          ['celofán', class: "resistance third bolsa"],
+          ['papel bond', class: "resistance main bolsa"],
+          ['sugerir material']], selected: @request.third_material) %>
+        </div>
 
-      <div class="field form-inside-style secondary hidden">
-        <%= f.label :material_secundario %>
-        <%= f.select :secondary_material, options_for_select([['seleccione', ''],
-        ['caple', class: "resistance secondary caja"],
-        ['sulfatada', class: "resistance secondary caja"],
-        ['multicapa', class: "resistance secondary caja"],
-        ['reverso blanco', class: "resistance secondary caja"],
-        ['reverso gris', class: "resistance secondary caja"],
-        ['liner', class: "resistance secondary caja"],
-        ['single face', class: "resistance secondary caja"],
-        ['microcorrugado', class: "resistance secondary caja"],
-        ['corrugado', class: "resistance secondary caja"],
-        ['rígido', class: "resistance secondary caja"],
-        ['papel arroz', class: "resistance secondary bolsa"],
-        ['celofán', class: "resistance secondary bolsa"],
-        ['sugerir material']], selected: @request.secondary_material) %>
-      </div>
+        <div class="field form-inside-style third hidden">
+          <%= f.label :resistencia_del_material %>
+          <%= f.select :resistance_third_material, options_for_select([["seleccione", ''],
+          ["Sugerir resistencia", class: 'third plegadizo hidden'],
+          ["12 PTS", class: "third plegadizo hidden"],
+          ["14 PTS", class: 'third plegadizo hidden'],
+          ["16 PTS", class: 'third plegadizo hidden'],
+          ["18 PTS", class: 'third plegadizo hidden'],
+          ["20 PTS", class: 'third plegadizo hidden'],
+          ["22 PTS", class: 'third plegadizo hidden'],
+          ["24 PTS", class: 'third plegadizo hidden'],
+          ["170 grs", class: 'third liner hidden'],
+          ["180 grs", class: 'third liner hidden'],
+          ["275 grs", class: 'third liner hidden'],
+          ["300 grs", class: 'third liner hidden'],
+          ["SG - 20 ECT", class: 'third corrugado hidden'],
+          ["7kg - 23 ECT", class: 'third corrugado hidden'],
+          ["9kg - 26 ECT", class: 'third corrugado hidden'],
+          ["11kg - 29 ECT", class: 'third corrugado hidden'],
+          ["12kg - 32 ECT", class: 'third corrugado hidden'],
+          ["14kg - 40 ECT", class: 'third corrugado hidden'],
+          ["16kg - 44 ECT", class: 'third corrugado hidden'],
+          ["18kg - 51 ECT", class: 'third corrugado hidden'],
+          ["No aplica", class: 'third otros hidden'],
+          ["12kg - 36 ECT", class: 'third doble_corrugado hidden'],
+          ["14kg - 42 ECT", class: 'third doble_corrugado hidden'],
+          ["19kg - 48 ECT", class: 'third doble_corrugado hidden'],
+          ["225kg - 51 ECT", class: 'third doble_corrugado hidden'],
+          ["28kg - 61 ECT", class: 'third doble_corrugado hidden'],
+          ["35kg - 71 ECT", class: 'third doble_corrugado hidden'],
+          ["42kg - 82 ECT", class: 'third doble_corrugado hidden'],
+          ["Sugerir resistencia"]], selected: @request.resistance_third_material) %>
+        </div>
 
-      <div class="field form-inside-style secondary hidden">
-        <%= f.label :resistencia_del_material %>
-        <%= f.select :resistance_secondary_material, options_for_select([["seleccione", ''],
-        ["12 PTS", class: "secondary plegadizo hidden"],
-        ["14 PTS", class: 'secondary plegadizo hidden'],
-        ["16 PTS", class: 'secondary plegadizo hidden'],
-        ["18 PTS", class: 'secondary plegadizo hidden'],
-        ["20 PTS", class: 'secondary plegadizo hidden'],
-        ["22 PTS", class: 'secondary plegadizo hidden'],
-        ["24 PTS", class: 'secondary plegadizo hidden'],
-        ["170 grs", class: 'secondary liner hidden'],
-        ["180 grs", class: 'secondary liner hidden'],
-        ["275 grs", class: 'secondary liner hidden'],
-        ["300 grs", class: 'secondary liner hidden'],
-        ["SG - 20 ECT", class: 'secondary corrugado hidden'],
-        ["7kg - 23 ECT", class: 'secondary corrugado hidden'],
-        ["9kg - 26 ECT", class: 'secondary corrugado hidden'],
-        ["11kg - 29 ECT", class: 'secondary corrugado hidden'],
-        ["12kg - 32 ECT", class: 'secondary corrugado hidden'],
-        ["14kg - 40 ECT", class: 'secondary corrugado hidden'],
-        ["16kg - 44 ECT", class: 'secondary corrugado hidden'],
-        ["18kg - 51 ECT", class: 'secondary corrugado hidden'],
-        ["No aplica", class: 'secondary otros hidden'],
-        ["12kg - 36 ECT", class: 'secondary doble_corrugado hidden'],
-        ["14kg - 42 ECT", class: 'secondary doble_corrugado hidden'],
-        ["19kg - 48 ECT", class: 'secondary doble_corrugado hidden'],
-        ["225kg - 51 ECT", class: 'secondary doble_corrugado hidden'],
-        ["28kg - 61 ECT", class: 'secondary doble_corrugado hidden'],
-        ["35kg - 71 ECT", class: 'secondary doble_corrugado hidden'],
-        ["42kg - 82 ECT", class: 'secondary doble_corrugado hidden'],
-        ["Sugerir resistencia"]], selected: @request.resistance_secondary_material) %>
-      </div>
+        <h3>Color e impresión</h3>
 
-      <div class="field form-inside-style third hidden">
-        <%= f.label :material_adicional %>
-        <%= f.select :third_material, options_for_select([['seleccione', ''],
-        ['caple', class: "resistance third caja"],
-        ['sulfatada', class: "resistance third caja"],
-        ['multicapa', class: "resistance third caja"],
-        ['reverso blanco', class: "resistance third caja"],
-        ['reverso gris', class: "resistance third caja"],
-        ['liner', class: "resistance third caja"],
-        ['single face', class: "resistance third caja"],
-        ['microcorrugado', class: "resistance third caja"],
-        ['corrugado', class: "resistance third caja"],
-        ['rígido', class: "resistance third caja"],
-        ['papel arroz', class: "resistance third bolsa"],
-        ['celofán', class: "resistance third bolsa"],
-        ['papel bond', class: "resistance main bolsa"],
-        ['sugerir material']], selected: @request.third_material) %>
-      </div>
-
-      <div class="field form-inside-style third hidden">
-        <%= f.label :resistencia_del_material %>
-        <%= f.select :resistance_third_material, options_for_select([["seleccione", ''],
-        ["Sugerir resistencia", class: 'third plegadizo hidden'],
-        ["12 PTS", class: "third plegadizo hidden"],
-        ["14 PTS", class: 'third plegadizo hidden'],
-        ["16 PTS", class: 'third plegadizo hidden'],
-        ["18 PTS", class: 'third plegadizo hidden'],
-        ["20 PTS", class: 'third plegadizo hidden'],
-        ["22 PTS", class: 'third plegadizo hidden'],
-        ["24 PTS", class: 'third plegadizo hidden'],
-        ["170 grs", class: 'third liner hidden'],
-        ["180 grs", class: 'third liner hidden'],
-        ["275 grs", class: 'third liner hidden'],
-        ["300 grs", class: 'third liner hidden'],
-        ["SG - 20 ECT", class: 'third corrugado hidden'],
-        ["7kg - 23 ECT", class: 'third corrugado hidden'],
-        ["9kg - 26 ECT", class: 'third corrugado hidden'],
-        ["11kg - 29 ECT", class: 'third corrugado hidden'],
-        ["12kg - 32 ECT", class: 'third corrugado hidden'],
-        ["14kg - 40 ECT", class: 'third corrugado hidden'],
-        ["16kg - 44 ECT", class: 'third corrugado hidden'],
-        ["18kg - 51 ECT", class: 'third corrugado hidden'],
-        ["No aplica", class: 'third otros hidden'],
-        ["12kg - 36 ECT", class: 'third doble_corrugado hidden'],
-        ["14kg - 42 ECT", class: 'third doble_corrugado hidden'],
-        ["19kg - 48 ECT", class: 'third doble_corrugado hidden'],
-        ["225kg - 51 ECT", class: 'third doble_corrugado hidden'],
-        ["28kg - 61 ECT", class: 'third doble_corrugado hidden'],
-        ["35kg - 71 ECT", class: 'third doble_corrugado hidden'],
-        ["42kg - 82 ECT", class: 'third doble_corrugado hidden'],
-        ["Sugerir resistencia"]], selected: @request.resistance_third_material) %>
-      </div>
-
-      <h3>Color e impresión</h3>
-
-      <div class="field form-inside-style">
-        <%= f.label :color_exterior_del_cartón %>
-        <%= f.select :exterior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.exterior_material_color) %>
-      </div>
-
-      <div class="field form-inside-style">
-        <%= f.label :color_interior_del_cartón %>
-        <%= f.select :interior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.interior_material_color) %>
-      </div>
-
-      <div class="rigid hidden">
         <div class="field form-inside-style">
-          <%= f.label :color_del_papel_en_cartón_rígido %>
-          <%= f.text_field :rigid_color, class: 'form-inside' %>
+          <%= f.label :color_exterior_del_cartón %>
+          <%= f.select :exterior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.exterior_material_color) %>
         </div>
 
         <div class="field form-inside-style">
-          <%= f.label :tipo_de_papel %>
-          <%= f.text_field :paper_type_rigid, class: 'form-inside' %>
+          <%= f.label :color_interior_del_cartón %>
+          <%= f.select :interior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.interior_material_color) %>
         </div>
-      </div>
 
-      <div class="field form-inside-style">
-        <% @value = false %>
-        <% if @request.impression == 'si' %>
-          <% @value = true %>
-        <% end %>
-        <%= f.label :¿lleva_impresión? %>
-        <%= label :impression, 'Sí' %>
-        <p class="hidden" id="impression_value"><%=@request.impression%></p>
-        <%= f.radio_button :impression, 'si', value: 'si', checked: @value %>
-        <%= label :impression, 'No' %>
-        <%= f.radio_button :impression, 'no', value: 'no', checked: !@value %>
-      </div>
+        <div class="rigid hidden">
+          <div class="field form-inside-style">
+            <%= f.label 'color del papel (cartón rígido)' %>
+            <%= f.text_field :rigid_color, class: 'form-inside' %>
+          </div>
 
-      <div class="impression hidden">
+          <div class="field form-inside-style">
+            <%= f.label :tipo_de_papel %>
+            <%= f.text_field :paper_type_rigid, class: 'form-inside' %>
+          </div>
+        </div>
+
+        <div class="impresssion-div">
+          <div class="field form-inside-style">
+            <% @value = false %>
+            <% if @request.impression == 'si' %>
+              <% @value = true %>
+            <% end %>
+            <%= f.label :Impresión %>
+            <%= label :impression, 'Sí' %>
+            <p class="hidden" id="impression_value"><%=@request.impression%></p>
+            <%= f.radio_button :impression, 'si', value: 'si', checked: @value %>
+            <%= label :impression, 'No' %>
+            <%= f.radio_button :impression, 'no', value: 'no', checked: !@value %>
+          </div>
+        </div>
+
+        <div class="impression hidden">
+          <div class="field form-inside-style">
+            <%= f.label :cantidad_de_tintas %>
+            <%= f.select :inks, options_for_select([['Seleccione', ''], ['1'], ['2'], ['3'], ['4 o más']], selected: @request.inks)  %>
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :acabados %>
+            <%= f.select :impression_finishing, options_for_select([['Seleccione', ''], ['Sin acabados'], ['Barniz de máquina'], ['Barniz UV'], ['Plastificado mate'], ['Plastificado brillante'], ['Hot stamping']], selected: @request.impression_finishing) %>
+          </div>
+
+          <div class="field form-inside-style">
+            <%= f.label :impresión_en %>
+            <%= f.select :impression_where, options_for_select([['seleccione', ''], ['exterior'], ['interior'], ['interior y exterior']], selected: @request.impression_where) %>
+          </div>
+        </div>
+
+        <h3>Información adicional</h3>
+
         <div class="field form-inside-style">
-          <%= f.label :cantidad_de_tintas %>
-          <%= f.select :inks, options_for_select([['Seleccione', ''], ['1'], ['2'], ['3'], ['4 o más']], selected: @request.inks)  %>
+          <%= f.label :fecha_máxima_de_entrega_al_cliente %>
+          <%= f.date_field :delivery_date, class: 'form-inside' %>
         </div>
 
         <div class="field form-inside-style">
-          <%= f.label :¿la_impresión_lleva_algún_acabado? %>
-          <%= f.select :impression_finishing, options_for_select([['Seleccione', ''], ['Sin acabados'], ['Barniz de máquina'], ['Barniz UV'], ['Plastificado mate'], ['Plastificado brillante'], ['Hot stamping']], selected: @request.impression_finishing) %>
+          <%= f.label :precio_máximo_de_venta_al_cliente %>
+          <%= f.text_field :maximum_sales_price, class: 'form-inside' %>
+        </div>
+
+        <div id="field_design" class="field form-inside-style hidden">
+          <%= f.label :tipo_de_armado %>
+          <%= f.select :design_like, options_for_select([['Seleccione', ''], ['Muñeca'], ['Regalo'], ['Regalo con ventana'], ['Lonchera'], ['Caja regular CR'], ['Maletín'], ['Cierre automático'], ['Medicina o perfume'], [' Pizza'], ['Sugerir armado']], selected: @request.design_like) %>
+        </div>
+
+        <div class="field form-inside-style hidden" id="resistencia_como">
+          <%= f.label :tipo_de_resistencia_como %>
+          <%= f.text_field :resistance_like, class: 'form-inside' %>
         </div>
 
         <div class="field form-inside-style">
-          <%= f.label :en_qué_parte_va_la_impresión? %>
-          <%= f.select :impression_where, options_for_select([['seleccione', ''], ['exterior'], ['interior'], ['interior y exterior']], selected: @request.impression_where) %>
+          <%= f.label :observaciones_adicionales %>
+          <%= f.text_area :observations, class: 'form-inside observations-notes' %>
         </div>
-      </div>
 
-      <h3>Información adicional</h3>
+        <h3>Archivos adjuntos</h3>
 
-      <div class="field form-inside-style">
-        <%= f.label :fecha_máxima_de_entrega_al_cliente %>
-        <%= f.date_field :delivery_date, class: 'form-inside' %>
-      </div>
-
-      <div class="field form-inside-style">
-        <%= f.label :precio_máximo_de_venta_al_cliente %>
-        <%= f.text_field :maximum_sales_price, class: 'form-inside' %>
-      </div>
-
-      <div id="field_design" class="field form-inside-style hidden">
-        <%= f.label :tipo_de_armado %>
-        <%= f.select :design_like, options_for_select([['Seleccione', ''], ['Muñeca'], ['Regalo'], ['Regalo con ventana'], ['Lonchera'], ['Caja regular CR'], ['Maletín'], ['Cierre automático'], ['Medicina o perfume'], [' Pizza'], ['Sugerir armado']], selected: @request.design_like) %>
-      </div>
-
-      <div class="field form-inside-style hidden" id="resistencia_como">
-        <%= f.label :tipo_de_resistencia_como %>
-        <%= f.text_field :resistance_like, class: 'form-inside' %>
-      </div>
-
-      <div class="field form-inside-style">
-        <%= f.label :observaciones_adicionales %>
-        <%= f.text_area :observations, class: 'form-inside' %>
-      </div>
-
-      <h3>Archivos adjuntos</h3>
-
-      <div class="field form-inside-style">
-        <%= f.label :archivos_de_referencia %>
-        <%= f.file_field :specification, multiple: true %>
-      </div>
-
-      <div class="button-container">
-        <div class="actions">
-          <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button' %>
-          <%= f.submit :guardar_para_después, name: 'guardar', class: 'secondary-button' %>
+        <div class="field form-inside-style">
+          <%= f.label :archivos_de_referencia %>
+          <%= f.file_field :specification, multiple: true %>
         </div>
-      </div>
+
+        <div class="button-container">
+          <div class="actions">
+            <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button' %>
+            <%= f.submit :guardar_para_después, name: 'guardar', class: 'secondary-button' %>
+          </div>
+        </div>
 
     </div>
 

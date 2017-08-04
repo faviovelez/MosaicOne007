@@ -1,10 +1,16 @@
 <%= form_for(@request) do |f| %>
 
-  <div class="field hidden">
-    <%= f.text_field :product_what %>
+<div class="form-container">
+
+  <div class="field form-inside-style hidden">
+    <%= f.text_field :product_what, class: 'form-inside' %>
   </div>
 
-  <div class="actions">
-    <%= f.submit :asignar, name: 'asignar' %>
+  <div class="button-container">
+
+    <div class="actions">
+      <%= f.submit :asignar, name: 'asignar', class: 'main-button capitalize' %>
+    </div>
   </div>
+</div>
 <% end %>

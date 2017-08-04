@@ -25,4 +25,10 @@ $(document).ready(function() {
   $('.carousel').carousel({
     interval: false
   });
+
+  payment.bind('change', function() {
+    if (payment != '' ){
+      $('.authorised_without_pay').addClass('hidden');
+    };
+  });
 });

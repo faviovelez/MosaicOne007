@@ -1,18 +1,18 @@
-<p>Si cancela esta solicitud, ya no se le dará seguimiento pero podrá reactivarla en cualquier momento en la bandeja de solicitudes inactivas. Si se realizó algún trabajo de diseño con costo, éste le será facturado a su cuenta.</p>
+<p class="individual-font justify">Si cancela esta solicitud, ya no se le dará seguimiento pero podrá reactivarla en cualquier momento en la bandeja de solicitudes inactivas. Si se realizó algún trabajo de diseño con costo, éste le será facturado a su cuenta.</p>
 
 <% if @request.status == 'en producción' || 'producto terminado' %>
-  <p>Si se realizó algún gasto de producción, este será cobrado a su cuenta.</p>
+  <p class="individual-font justify">Si se realizó algún gasto de producción, este será cobrado a su cuenta.</p>
 <% end %>
 
 <%= form_for(@request) do |f| %>
 
-    <div class="field">
+    <div class="field form-inside-style" id="no-margin">
       <%= f.label :cancelar_solicitud %>
       <%= f.check_box :status, { multiple: true }, 'cancelada', nil %>
     </div>
 
   <div class="actions">
-    <%= f.submit :cancelar, name: 'cancelar' %>
+    <%= f.submit :cancelar, name: 'cancelar', class: 'third-button capitalize' %>
   </div>
 
 <% end %>

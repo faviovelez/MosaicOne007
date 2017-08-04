@@ -1,133 +1,145 @@
 <body class="<%= params[:controller] %> <%= params[:action] %>">
 
   <%= render 'request_errors' %>
-  <h2>modificar datos de la solicitud</h2>
 
   <%= form_for(@request) do |f| %>
-  <div class="field hidden">
-    <p>
-      <%= f.label :¿qué_desea_cotizar? %>
-      <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: @request.product_type) %>
-      <div class="field otro hidden">
-        <%= f.label :¿cuál? %>
-        <%= f.text_field :name_type %>
+
+  <h2 class="info-title"> Modificar cotización </h2>
+
+  <div class="form-container">
+
+    <div class="impresssion-div">
+      <div class="field form-inside-style">
+        <%= f.label :¿qué_desea_cotizar?, id: 'label-form-que-desea' %>
+        <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: @request.product_type) %>
       </div>
-    </p>
-  </div>
-
-    <div class="field hidden">
-      <%= f.label :¿qué_cantidad_desea_cotizar? %>
-      <%= f.text_field :quantity %>
-    </div>
-
-  <div class="producto hidden">
-    <p>Información del producto</p>
-
-    <div class="field hidden">
-      <%= f.label '¿qué irá en la caja, bolsa o exhibidor?' %>
-      <%= f.text_field :product_what %>
-    </div>
-
-    <div class="field hidden">
-      <%= f.label 'productos por caja, bolsa o exhibidor' %>
-      <%= f.text_field :how_many %>
-    </div>
-
-    <div class="field hidden">
-      <%= f.label :largo %>
-      <%= f.text_field :product_length %>
-      cm
-    </div>
-
-    <div class="field hidden">
-      <%= f.label :ancho %>
-      <%= f.text_field :product_width %>
-      cm
-    </div>
-
-    <div class="field hidden">
-      <%= f.label :alto %>
-      <%= f.text_field :product_height %>
-      cm
-    </div>
-
-    <div class="field hidden">
-      <%= f.label :peso_total_de_los_productos %>
-      <%= f.text_field :product_weight %>
-      kg
-    </div>
-  </div>
-
-    <div class="caja hidden hidden">
-      <div class="field">
-        <%= f.label :¿las_cajas_son_para_almacenar_o_transportar? %>
-        <%= f.select :for_what, options_for_select([['seleccione', ''], ['sin información'], ['almacenar'], ['transportar']], selected: @request.for_what) %>
+      <div class="field form-inside-style otro hidden">
+        <%= f.label :¿cuál?, class: 'capitalize' %>
+        <%= f.text_field :name_type, class: 'form-inside' %>
       </div>
 
-      <div class="field hidden">
-        <%= f.label :¿cuántas_cajas_se_van_a_estibar? %>
-        <%= f.select :boxes_stow, options_for_select([['Seleccione', ''], ['ninguna'], ['sin información'], ['1 - 3'], ['4 - 6'], ['7 - 9'], ['10 o más']], selected: @request.boxes_stow) %>
+      <div class="field form-inside-style">
+        <%= f.label :cantidad %>
+        <%= f.text_field :quantity, class: 'form-inside' %>
       </div>
     </div>
 
-    <% if @request.product_type == 'caja' || @request.product_type == 'otro' %>
-      <div class="measures field">
-    <% else %>
-      <div class="measures field hidden">
-    <% end %>
+    <div class="producto hidden">
+      <h3>Información del producto</h3>
+
+      <div class="outer">
+        <div class="field form-inside-style">
+          <%= f.label :¿qué_irá_en_la_caja_bolsa_o_exhibidor? %>
+          <%= f.text_field :product_what, class: 'form-inside' %>
+        </div>
+
+        <div class="field form-inside-style">
+          <%= f.label 'productos por caja, bolsa o exhibidor' %>
+          <%= f.text_field :how_many, class: 'form-inside' %>
+        </div>
+
+        <div class="field form-inside-style">
+          <%= f.label :largo %>
+          <%= f.text_field :product_length, maxlength:10, class: 'form-inside' %>
+          cm
+        </div>
+
+        <div class="field form-inside-style">
+          <%= f.label :ancho %>
+          <%= f.text_field :product_width, maxlength:10, class: 'form-inside' %>
+          cm
+        </div>
+
+        <div class="field form-inside-style">
+          <%= f.label :alto %>
+          <%= f.text_field :product_height, maxlength:10, class: 'form-inside' %>
+          cm
+        </div>
+
+        <div class="field form-inside-style">
+          <%= f.label 'peso (total)' %>
+          <%= f.text_field :product_weight, maxlength:10, class: 'form-inside' %>
+          kg
+        </div>
+      </div>
+    </div>
+
+    <div class="caja hidden">
+      <h3>Detalles adicionales</h3>
+
+      <div class="product">
+        <div class="field form-inside-style">
+          <%= f.label :¿las_cajas_son_para_almacenar_o_transportar? %>
+          <%= f.select :for_what, options_for_select([['seleccione', ''], ['sin información'], ['almacenar'], ['transportar']], selected: @request.for_what) %>
+        </div>
+
+        <div class="field form-inside-style">
+          <%= f.label :¿cuántas_cajas_se_van_a_estibar? %>
+          <%= f.select :boxes_stow, options_for_select([['Seleccione', ''], ['ninguna'], ['sin información'], ['1 - 3'], ['4 - 6'], ['7 - 9'], ['10 o más']], selected: @request.boxes_stow) %>
+        </div>
+      </div>
+    </div>
+
+    <h3>Medidas</h3>
+    <div class="impresssion-div">
+
+      <% if @request.product_type == 'caja' || @request.product_type == 'otro' %>
+        <div class="measures field form-inside-style">
+      <% else %>
+        <div class="measures field form-inside-style hidden">
+      <% end %>
+
         <%= f.label :¿qué_medidas_ingresará? %>
         <%= f.select :what_measures, options_for_select([['seleccione', ''], ['sugerir medidas', '4'], ['medidas externas', '1'], ['medidas internas', '2'], ['ambas', '3']], selected: @request.what_measures, class: 'medidas') %>
       </div>
+    </div>
 
-    <% if @request.what_measures == '1' || @request.what_measures == '3' %>
-      <div id="outer">
-      <h3>medidas externas</h3>
-    <% else %>
-      <div id="outer" class="hidden" >
-        <h3>medidas externas</h3>
-    <% end %>
+      <% if @request.what_measures == '1' || @request.what_measures == '3' %>
+        <div id="outer" class="outer">
+      <% else %>
+        <div id="outer" class="outer hidden" >
+      <% end %>
 
-        <div class="field">
-          <%= f.label :largo %>
-          <%= f.text_field :outer_length %>
-          cm
-        </div>
-
-        <div class="field">
-          <%= f.label :ancho %>
-          <%= f.text_field :outer_width %>
-          cm
-        </div>
-
-        <div class="field">
-          <%= f.label :alto %>
-          <%= f.text_field :outer_height %>
-          cm
-        </div>
+      <div class="field form-inside-style">
+        <%= f.label :largo %>
+        <%= f.text_field :outer_length, class: 'form-inside' %>
+        cm
       </div>
 
+      <div class="field form-inside-style">
+        <%= f.label :ancho %>
+        <%= f.text_field :outer_width, class: 'form-inside' %>
+        cm
+      </div>
+
+      <div class="field form-inside-style">
+        <%= f.label :alto %>
+        <%= f.text_field :outer_height, class: 'form-inside' %>
+        cm
+      </div>
+    </div>
+
     <% if @request.what_measures == '2' || @request.what_measures == '3' %>
-      <div id="inner">
+      <div id="inner" class="inner">
     <% else %>
-      <div id="inner" class="hidden">
+      <div id="inner" class="inner hidden">
     <% end %>
-    <h3>medidas internas</h3>
 
-        <div class="field">
+        <div class="field form-inside-style">
           <%= f.label :largo %>
-          <%= f.text_field :inner_length %>
+          <%= f.text_field :inner_length, class: 'form-inside' %>
           cm
         </div>
 
-        <div class="field">
+        <div class="field form-inside-style">
           <%= f.label :ancho %>
-          <%= f.text_field :inner_width %>
+          <%= f.text_field :inner_width, class: 'form-inside' %>
           cm
         </div>
 
-        <div class="field">
+        <div class="field form-inside-style">
           <%= f.label :alto %>
-          <%= f.text_field :inner_height %>
+          <%= f.text_field :inner_height, class: 'form-inside' %>
           cm
         </div>
       </div>
@@ -138,23 +150,21 @@
       <div class="bolsa hidden">
     <% end %>
 
-    <h3>medidas de la bolsa</h3>
-
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :largo %>
-        <%= f.text_field :bag_length %>
+        <%= f.text_field :bag_length, class: 'form-inside' %>
         cm
       </div>
 
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :fuelle %>
-        <%= f.text_field :bag_width %>
+        <%= f.text_field :bag_width, class: 'form-inside' %>
         cm
       </div>
 
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :alto %>
-        <%= f.text_field :bag_height %>
+        <%= f.text_field :bag_height, class: 'form-inside' %>
         cm
       </div>
     </div>
@@ -165,42 +175,38 @@
       <div class="exhibidor hidden">
     <% end %>
 
-    <h3>medidas del exhibidor</h3>
-
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :altura %>
-        <%= f.text_field :exhibitor_height %>
+        <%= f.text_field :exhibitor_height, class: 'form-inside' %>
         cm
       </div>
 
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :cantidad_de_charolas %>
-        <%= f.text_field :tray_quantity %>
+        <%= f.text_field :tray_quantity, class: 'form-inside' %>
       </div>
 
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :largo_de_la_charola %>
-        <%= f.text_field :tray_length %>
+        <%= f.text_field :tray_length, class: 'form-inside' %>
         cm
       </div>
 
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :ancho_de_la_charola %>
-        <%= f.text_field :tray_width %>
+        <%= f.text_field :tray_width, class: 'form-inside' %>
         cm
       </div>
 
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :número_de_divisiones_de_las_charolas %>
-        <%= f.text_field :tray_divisions %>
+        <%= f.text_field :tray_divisions, class: 'form-inside' %>
       </div>
   </div>
 
+  <h3>Material y resistencia</h3>
 
-  <h3>materiales y resistencia</h3>
-
-  <% if @request.main_material == 'sugerir material' %>
-    <div class="field">
+    <div class="field form-inside-style">
       <%= f.label :material_principal %>
       <%= f.select :main_material, options_for_select([['seleccione', ''],
       ['caple', class: "resistance main caja"],
@@ -217,10 +223,8 @@
       ['papel bond', class: "resistance main bolsa"],
       ['sugerir material']], selected: @request.main_material) %>
     </div>
-  <% end %>
 
-  <% if @request.resistance_main_material == 'Sugerir resistencia' %>
-    <div class="field main">
+    <div class="field form-inside-style main">
       <%= f.label :resistencia_del_material %>
       <%= f.select :resistance_main_material, options_for_select([["seleccione" ,""],
       ['Buscar resistencia', 'buscar'],
@@ -253,11 +257,10 @@
       ["42kg - 82 ECT", class: 'main doble_corrugado hidden'],
       ["Sugerir resistencia"]], selected: @request.resistance_main_material) %>
     </div>
-  <% end %>
 
-    <button type="button" name="button" class="btn" id="agregar_material">Agregar material</button>
+    <button type="button" name="button" class="secondary-button-small" id="agregar_material" >Agregar material</button>
 
-    <div class="field secondary hidden">
+    <div class="field form-inside-style secondary hidden">
       <%= f.label :material_secundario %>
       <%= f.select :secondary_material, options_for_select([['seleccione', ''],
       ['caple', class: "resistance secondary caja"],
@@ -275,7 +278,7 @@
       ['sugerir material']], selected: @request.secondary_material) %>
     </div>
 
-    <div class="field secondary hidden">
+    <div class="field form-inside-style secondary hidden">
       <%= f.label :resistencia_del_material %>
       <%= f.select :resistance_secondary_material, options_for_select([["seleccione", ''],
       ["12 PTS", class: "secondary plegadizo hidden"],
@@ -308,7 +311,7 @@
       ["Sugerir resistencia"]], selected: @request.resistance_secondary_material) %>
     </div>
 
-    <div class="field third hidden">
+    <div class="field form-inside-style third hidden">
       <%= f.label :material_adicional %>
       <%= f.select :third_material, options_for_select([['seleccione', ''],
       ['caple', class: "resistance third caja"],
@@ -327,7 +330,7 @@
       ['sugerir material']], selected: @request.third_material) %>
     </div>
 
-    <div class="field third hidden">
+    <div class="field form-inside-style third hidden">
       <%= f.label :resistencia_del_material %>
       <%= f.select :resistance_third_material, options_for_select([["seleccione", ''],
       ["Sugerir resistencia", class: 'third plegadizo hidden'],
@@ -361,75 +364,99 @@
       ["Sugerir resistencia"]], selected: @request.resistance_third_material) %>
     </div>
 
-    <div class="field">
+    <h3>Color e impresión</h3>
+
+    <div class="field form-inside-style">
       <%= f.label :color_exterior_del_cartón %>
       <%= f.select :exterior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.exterior_material_color) %>
     </div>
 
-    <div class="field">
+    <div class="field form-inside-style">
       <%= f.label :color_interior_del_cartón %>
       <%= f.select :interior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.interior_material_color) %>
     </div>
 
     <div class="rigid hidden">
-      <div class="field">
-        <%= f.label :color_del_papel_en_cartón_rígido %>
-        <%= f.text_field :rigid_color %>
+      <div class="field form-inside-style">
+        <%= f.label 'color del papel (cartón rígido)' %>
+        <%= f.text_field :rigid_color, class: 'form-inside' %>
       </div>
 
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :tipo_de_papel %>
-        <%= f.text_field :paper_type_rigid %>
+        <%= f.text_field :paper_type_rigid, class: 'form-inside' %>
       </div>
     </div>
 
-    <div class="field">
-      <% @value = false %>
-      <% if @request.impression == 'si' %>
-        <% @value = true %>
-      <% end %>
-      <%= f.label :¿lleva_impresión? %>
-      <%= label :impression, 'Sí' %>
-      <p class="hidden" id="impression_value"><%=@request.impression%></p>
-      <%= f.radio_button :impression, 'si', value: 'si', checked: @value %>
-      <%= label :impression, 'No' %>
-      <%= f.radio_button :impression, 'no', value: 'no', checked: !@value %>
+    <div class="impresssion-div">
+      <div class="field form-inside-style">
+        <% @value = false %>
+        <% if @request.impression == 'si' %>
+          <% @value = true %>
+        <% end %>
+        <%= f.label :¿lleva_impresión? %>
+        <%= label :impression, 'Sí' %>
+        <p class="hidden" id="impression_value"><%=@request.impression%></p>
+        <%= f.radio_button :impression, 'si', value: 'si', checked: @value %>
+        <%= label :impression, 'No' %>
+        <%= f.radio_button :impression, 'no', value: 'no', checked: !@value %>
+      </div>
     </div>
 
     <div class="impression">
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :cantidad_de_tintas %>
         <%= f.select :inks, options_for_select([['Seleccione', ''], ['1'], ['2'], ['3'], ['4 o más']], selected: @request.inks)  %>
       </div>
 
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :¿la_impresión_lleva_algún_acabado? %>
         <%= f.select :impression_finishing, options_for_select([['Seleccione', ''], ['Sin acabados'], ['Barniz de máquina'], ['Barniz UV'], ['Plastificado mate'], ['Plastificado brillante'], ['Hot stamping']], selected: @request.impression_finishing) %>
       </div>
 
-      <div class="field">
+      <div class="field form-inside-style">
         <%= f.label :en_qué_parte_va_la_impresión? %>
         <%= f.select :impression_where, options_for_select([['seleccione', ''], ['exterior'], ['interior'], ['interior y exterior']], selected: @request.impression_where) %>
       </div>
     </div>
 
-    <div id="field_design" class="field hidden">
+    <h3>Información adicional</h3>
+
+    <div class="field form-inside-style">
+      <%= f.label :fecha_máxima_de_entrega_al_cliente %>
+      <%= f.date_field :delivery_date, class: 'form-inside' %>
+    </div>
+
+    <div class="field form-inside-style">
+      <%= f.label :precio_máximo_de_venta_al_cliente %>
+      <%= f.text_field :maximum_sales_price, class: 'form-inside' %>
+    </div>
+
+    <div id="field_design" class="field form-inside-style hidden">
       <%= f.label :tipo_de_armado %>
       <%= f.select :design_like, options_for_select([['Seleccione', ''], ['Muñeca'], ['Regalo'], ['Regalo con ventana'], ['Lonchera'], ['Caja regular CR'], ['Maletín'], ['Cierre automático'], ['Medicina o perfume'], [' Pizza'], ['Sugerir armado']], selected: @request.design_like) %>
     </div>
 
-    <div class="field hidden" id="resistencia_como">
+    <div class="field form-inside-style hidden" id="resistencia_como">
       <%= f.label :tipo_de_resistencia_como %>
-      <%= f.text_field :resistance_like %>
+      <%= f.text_field :resistance_like, class: 'form-inside' %>
     </div>
 
-    <div class="actions">
-      <% if @request.status == 'creada' %>
-        <%= f.submit :enviar_cotización, name: 'enviar'%>
-      <% else %>
-        <%= f.submit :modificar_cotización, name: 'modificar_cotización'%>
-      <% end %>
+    <div class="field form-inside-style">
+      <%= f.label :notas %>
+      <%= f.text_area :notes, class: 'form-inside observations-notes' %>
     </div>
+
+    <div class="button-container">
+      <div class="actions">
+        <% if @request.status == 'creada' %>
+          <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button capitalize'%>
+        <% else %>
+          <%= f.submit :modificar_cotización, name: 'modificar_cotización', class: 'third-button capitalize' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
   <% end %>
 
 </body>
