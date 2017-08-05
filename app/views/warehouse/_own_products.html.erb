@@ -2,7 +2,7 @@
 
   <div class="field">
     <%= f.label :product_id, 'Selecionar producto' %><br>
-    <%= f.select :product_id, products_collection %>
+    <%= f.select :product_id, products_collection, include_blank: true %>
   </div>
 
   <div id='productInfo'>

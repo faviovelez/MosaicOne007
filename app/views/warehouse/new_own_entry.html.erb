@@ -5,7 +5,9 @@
 <%= content_for :javascript do %>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 <%= javascript_include_tag 'warehouse' %>
 <% end %>
 
 <%= render partial: 'own_products' %>
+<%= render partial: 'product_show_template' %>
