@@ -2,6 +2,93 @@ body {
   overflow-x:hidden;
 }
 
+label {
+  padding-right: 1.5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+button.close {
+  padding-left: 1rem;
+}
+
+button#btn-notice {
+  padding-right: 1.5rem;
+}
+
+#notice {
+background-color: #3BE524;
+opacity: .70;
+z-index: 30;
+position: absolute;
+top: 8vh;
+right: 0vh;
+font-family: 'Open Sans', sans-serif;
+padding: 2rem;
+color: #fff;
+}
+
+.alert {
+background-color: #D72638;
+opacity: .80;
+z-index: 30;
+position: absolute;
+top: 8vh;
+right: 0vh;
+font-family: 'Open Sans', sans-serif;
+padding: 2rem;
+color: #fff;
+}
+
+.space {
+  display: block;
+  height: 15vh;
+  color: red;
+}
+.document-icon {
+  width: 5rem;
+  height: 5rem;
+  padding: 2px;
+  border: solid 1px #EFEFEF;
+  box-shadow: 1px 1px 5px #999;
+  border-radius: 100%;
+}
+
+.document-link-area {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0rem;
+}
+
+.modal-content {
+  z-index: 50000;
+}
+
+#no-margin {
+  margin-left: 0
+}
+
+.modal-body {
+  border-bottom: none;
+  border: none;
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+h4#myModalLabel {
+  color: #D72638;
+  font-size: 24px;
+}
+
+h4#myModalLabelGreen {
+  color: #009CB7;
+  font-size: 24px;
+}
+
 .hidden {
   display: none;
 }
@@ -192,10 +279,11 @@ p.info > strong {
 #request-container {
   font-family: 'Open Sans', sans-serif;
 }
+
 .button-container {
   width: 70vw;
   height: 30vh;
-  margin 0 auto;
+  margin: 0 auto;
 }
 
 .form-container > h3, h4 {
@@ -219,30 +307,6 @@ p.info > strong {
   width: 70vw;
   vertical-align: middle;
   z-index: 5;
-}
-
-  #notice {
-  background-color: #3BE524;
-  opacity: .70;
-  z-index: 30;
-  position: absolute;
-  top: 8vh;
-  right: 0vh;
-  font-family: 'Open Sans', sans-serif;
-  padding: 2rem;
-  color: #fff;
-}
-
-.alert {
-  background-color: #D72638;
-  opacity: .80;
-  z-index: 30;
-  position: absolute;
-  top: 8vh;
-  right: 0vh;
-  font-family: 'Open Sans', sans-serif;
-  padding: 2rem;
-  color: #fff;
 }
 
 textarea:focus, input:focus{
@@ -482,9 +546,10 @@ select {
   vertical-align: middle;
 }
 
-.secondary-button-small:hover,
 .main-button:hover,
-.secondary-button:hover {
+.secondary-button:hover,
+.secondary-button-small:hover,
+.third-button:hover {
   color: #0288D1;
 }
 

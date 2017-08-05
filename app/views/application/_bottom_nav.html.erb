@@ -1,20 +1,16 @@
 
 <% if current_user %>
   <div class="bottom-nav">
-    <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') || ((current_user.role.name == 'manager' || current_user.role.name == 'director') && (@request.main_material == 'sugerir material' || @request.resistance_main_material == 'Sugerir resistencia' )) %>
-      <% if @request && params[:controller] != 'design_requests' %>
-        <% if (@request.status != 'en producción' && @request.status != 'autorizada' && @request.status != 'cancelada') %>
+    <% if params[:controller] == 'requests' && params[:action] != 'new' %>
+      <% if current_user.role.name == 'store' || current_user.role.name == 'store-admin' || ((current_user.role.name == 'manager' || current_user.role.name == 'director') && (@request.main_material == 'sugerir material' || @request.resistance_main_material == 'Sugerir resistencia' )) %>
+        <% if (@request.status != 'en producción' && @request.status != 'autorizada' && @request.status != 'cancelada' && params[:action] != 'edit') %>
           <%= link_to 'Modificar', edit_request_path(@request) %>
         <% end %>
       <% end %>
     <% end %>
 
     <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
-      <% if @request %>
-
-        <% if @request.design_requests.any? == true %>
-          <%= link_to 'Ver trabajos de diseño', request_design_request_path(request_id: @request), class: 'custom-link-bottom' %>
-        <% end %>
+      <% if params[:controller] == 'requests' && params[:action] != 'new' %>
 
         <%= link_to 'Ver prospecto', prospect_path(@request.prospect), class: 'custom-link-bottom' %>
 
@@ -28,9 +24,9 @@
           <%= link_to 'Cancelar', '#myModal', 'data-toggle' => 'modal' %>
         <% end %>
 
-        <% if @request.status == 'costo asignado'  %>
+        <% if (@request.status == 'costo asignado' && params[:action] != 'price')  %>
           <%= link_to 'Asignar precio', requests_price_path(@request) %>
-        <% elsif @request.status == 'precio asignado' %>
+        <% elsif @request.status == 'precio asignado' && (params[:action] != 'confirm' || params[:action] != 'confirm_view') %>
           <%= link_to 'Confirmar pedido', confirm_requests_path(@request) %>
         <% end %>
       <% end %>

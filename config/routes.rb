@@ -28,11 +28,11 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  resources :delivery_addresses
-
   namespace :admin do
-    resources :users
+    resources :users, as: 'admin_users', controller: 'admin_users'
   end
+
+  resources :delivery_addresses
 
   get 'products/catalogue'
 
