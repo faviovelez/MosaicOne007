@@ -232,7 +232,7 @@
     </p>
   <% end %>
 
-  <% if @request.design_like.present? || @request.resistance_like.present? || @request.observations.present? || @request.notes.present? || @request.maximum_sales_price.present? || @request.delivery_date.present? %>
+  <% if (@request.design_like.present? || @request.resistance_like.present? || @request.observations.present? || @request.notes.present? || @request.maximum_sales_price.present? || @request.delivery_date.present?) %>
     <h3>Información adicional</h3>
 
     <% unless @request.design_like.blank? %>

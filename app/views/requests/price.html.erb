@@ -1,13 +1,3 @@
 <%= render 'info' %>
 
 <%= render 'price' %>
-
-<% if @request.design_requests.any? == true %>
-  <%= link_to 'ver trabajos de diseño', request_design_request_path(request_id: @request) %>
-<% end %>
-
-<%= link_to 'solicitar trabajo de diseño', new_request_design_request_path(@request) %>
-
-<%= link_to 'modificar', edit_request_path(@request) %>
-
-<%= link_to 'ver prospecto', prospect_path(@request.prospect) %>
