@@ -3,7 +3,7 @@ class DeliveryAddressesController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_delivery_address, only: [:show, :edit, :update, :destroy]
-  before_action :identify_owner_type, only: [:new, :create, :update]
+  before_action :identify_owner_type, only: [:new, :create]
 
   def index
   end
@@ -36,9 +36,8 @@ class DeliveryAddressesController < ApplicationController
   end
 
   def update
-    save_delivery_address_to_owner
     respond_to do |format|
-      if @delivery.update(prospect_params)
+      if @delivery.update(delivery_params)
         format.html { redirect_to @delivery, notice: 'La dirección de entrega fue modificado exitosamente.' }
         format.json { render :show, status: :ok, location: @delivery }
       else

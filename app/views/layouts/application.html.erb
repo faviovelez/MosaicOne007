@@ -27,9 +27,9 @@
   <%= render 'navbar' %>
 
   <% if notice %>
-    <div class="notice">
+    <div class="alert alert-success alert-dismissable notice" role="alert" id="notice">
       <%= notice %>
-      <button type="button" class="close" data-dismiss="notice" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     </div>
   <% end %>
 

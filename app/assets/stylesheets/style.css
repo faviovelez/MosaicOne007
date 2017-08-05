@@ -221,7 +221,7 @@ p.info > strong {
   z-index: 5;
 }
 
-.notice {
+  #notice {
   background-color: #3BE524;
   opacity: .70;
   z-index: 30;
