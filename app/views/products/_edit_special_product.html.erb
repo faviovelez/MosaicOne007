@@ -252,6 +252,11 @@
       </div>
 
       <div class="form-inside-style">
+        <%= f.label :piezas_por_paquete %>
+        <%= f.number_field :pieces_per_package, min: 0, max: 200, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
         <%= f.label :imágenes %><br>
         <%= f.file_field :image, multiple: true %>
       </div>
