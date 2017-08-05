@@ -209,11 +209,17 @@ p.info > strong {
   margin: 0 4rem;
 }
 
+.center-field {
+  padding-top: 8rem;
+  vertical-align: middle;
+}
+
 .img-carousel {
   width: 15vw;
   height: auto;
-  margin: 1rem auto;
+  margin-top: 1rem;
   padding: 0 auto;
+  margin-bottom: 7rem;
 }
 
 #img-title-prod {
