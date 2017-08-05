@@ -1,15 +1,10 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :create, :update, :destroy]
 
   def index
   end
 
   def new
-    debugger
     @user = User.new(user_params)
-  end
-
-  def savenew
   end
 
   def show
@@ -17,7 +12,6 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    debugger
     respond_to do |format|
       if @user.save
         format.html { redirect_to root_path, notice: 'El usuario fue dado de alta exitosamente.' }
@@ -35,9 +29,9 @@ class UsersController < ApplicationController
   end
 
   def update
-    if params[:user][:password].blank?
-      params[:user].delete(:password)
-      params[:user].delete(:password_confirmation)
+    if params[:admin_user][:password].blank?
+      params[:admin_user].delete(:password)
+      params[:admin_user].delete(:password_confirmation)
     end
     respond_to do |format|
       if @user.update(user_params)
@@ -54,13 +48,13 @@ class UsersController < ApplicationController
 
 private
 
-def user_params
-  params.permit(:first_name, :middle_name, :last_name, :store_id, :role_id, :email, :password, :password_confirmation)
-end
+  def user_params
+    params.require(:user).permit(:first_name, :middle_name, :last_name, :store_id, :role_id, :email, :password, :password_confirmation)
+  end
 
-def set_user
-  @user = User.find(params[:id])
-end
+  def set_user
+    @user = User.find(params[:id])
+  end
 
 
 end

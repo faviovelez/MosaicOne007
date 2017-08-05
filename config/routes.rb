@@ -28,11 +28,11 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  resources :delivery_addresses
-
   namespace :admin do
-    resources :users
+    resources :users, as: 'admin_users', controller: 'admin_users'
   end
+
+  resources :delivery_addresses
 
   get 'products/catalogue'
 
@@ -41,10 +41,6 @@ Rails.application.routes.draw do
   resources :products do
     get 'images', to: 'products#images', as: 'product_images'
     resources :images, controller: 'products'
-  end
-
-  resources :users do
-    resources :requests, controller: 'assigned_requests'
   end
 
   resources :prospects do
@@ -87,12 +83,15 @@ Rails.application.routes.draw do
   get 'warehouse/new_supplier_entry'
 
   get 'warehouse/edit/:id/', to: 'warehouse#edit', as: 'warehouse_edit_entry'
+
   delete 'warehouse/delete/:id/:entry_codes', to: 'warehouse#destroy', as: 'warehouse_delete_entry'
+
   get 'warehouse/get/:product', to: 'warehouse#get_product', as: 'warehouse_get_product'
 
   get 'warehouse/show/:entry_codes', to: 'warehouse#show', as: 'warehouse_show'
 
   get 'warehouse/index'
+
   post 'warehouse/save_own_product'
 
   get 'warehouse/orders'

@@ -22,21 +22,25 @@
     </div>
   <% end %>
 
-  <% if @request.status == 'solicitada' || @request.status == 'modificada' || @request.status == 'devuelta' %>
-    <%= form_for(@request) do |t| %>
-      <div class="form-container">
-        <div class="field form-inside-style">
-          <%= t.label :notas_para_la_tienda %>
-          <%= t.text_area :notes, class: 'form-inside' %>
-        </div>
+  <% if @request.status == 'solicitada' || @request.status == 'modificada' || @request.status == 'devuelta' || @request.status == 'cotizando' %>
+    <div class="form-container">
 
-        <div class="button-container" id="dudas-div">
-          <div class="actions">
-            <%= t.submit :enviar_dudas, name: 'devuelta', class: 'third-button capitalize' %>
+      <h3>¿Solicitud incompleta?</h3>
+      <%= form_for(@request) do |t| %>
+        <div class="form-container">
+          <div class="field form-inside-style">
+            <%= t.label :notas_para_la_tienda %>
+            <%= t.text_area :notes, class: 'form-inside observations-notes' %>
+          </div>
+
+          <div class="button-container" id="dudas-div">
+            <div class="actions">
+              <%= t.submit :enviar_dudas, name: 'devuelta', class: 'third-button capitalize' %>
+            </div>
           </div>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   <% end %>
 
 <% end %>

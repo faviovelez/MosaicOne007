@@ -26,11 +26,4 @@ $(document).ready(function() {
     interval: false
   });
 
-  if (typeof payment !== 'undefined') {
-    payment.bind('change', function() {
-      if (payment != '' ){
-        $('.authorised_without_pay').addClass('hidden');
-      }
-    });
-  }
 });

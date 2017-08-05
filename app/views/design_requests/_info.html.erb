@@ -1,17 +1,17 @@
 <div class="info-container">
 
   <h3>solicitud de diseño</h3>
-  <p><strong>tipo de solicitud: </strong> <%= @design_request.design_type %></p>
+  <p><strong>Tipo de solicitud: </strong> <%= @design_request.design_type %></p>
 
   <p><strong>Descripción de la solicitud: </strong></p>
   <%= @design_request.description %>
 
   <% if ((current_user.role.name == 'store' || current_user.role.name == 'store-admin') || current_user.role.name == 'manager' || current_user.role.name == 'director' ) && @design_request.cost.present? %>
-    <p><strong>costo: </strong> <%= number_to_currency(@design_request.cost) %></p>
+    <p><strong>Costo: </strong> <%= number_to_currency(@design_request.cost) %></p>
   <% end %>
 
   <% unless @design_request.notes.blank? %>
-    <p><strong>notas o dudas del diseñador: </strong></p>
+    <p><strong>Notas o dudas del diseñador: </strong></p>
     <%= @design_request.notes %>
   <% end %>
 
