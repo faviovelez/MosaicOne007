@@ -1,14 +1,25 @@
-<%= form_for(@movement) do |f| %>
+<table class="table" id="productsList">
+  <thead>
+    <tr>
+      <th>Codigo unico</th>
+      <th>Descripcion</th>
+      <th>Image</th>
+      <th>Cantidad</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id='trForProduct1'>
+      <td class='select'>
+        <%= select_tag :product1, options_for_select(products_collection), include_blank: true %>
+        <a href='#' class='btn btn-danger hidden'>X</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-  <div class="field">
-    <%= f.label :product_id, 'Selecionar producto' %><br>
-    <%= f.select :product_id, products_collection, include_blank: true %>
-  </div>
-
-  <div id='productInfo'>
-    <%= link_to product_product_images_path(product_id: 0), id: 'link_to_images' do %>
-      <%= image_tag 'product_small.png', class: 'hidden', id: 'not_image_temp' %>
-    <% end %>
-  </div>
-
-<% end %>
+<div id='productInfo'>
+  <%= link_to product_product_images_path(product_id: 0), id: 'link_to_images' do %>
+    <%= image_tag 'product_small.png', class: 'hidden', id: 'not_image_temp' %>
+  <% end %>
+</div>

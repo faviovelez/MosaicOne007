@@ -1,18 +1,6 @@
 <script type="text/template" class="template">
-  <table class="table" id="{{= rc.id }}">
-    <thead>
-      <tr>
-        <th>Image</th>
-        <th>Codigo unico</th>
-        <th>Descripcion</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class='image'><a href="{{= rc.link }}" ><img src="{{= rc.image }}" alt="{{= rc.description }}" /></a></td>
-        <td class='unique_code'>{{= rc.unique_code }}</td>
-        <td class='description'>{{= rc.description }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <td id='description_{{= rc.id}}'>{{= rc.description }}</td>
+  <td id='image_{{= rc.id}}'><a href="{{= rc.link }}" ><img src="{{= rc.image }}" alt="{{= rc.description }}" /></a></td>
+  <td id='numbers_{{= rc.id}}'><input type='text' id='numProduct_{{= rc.id }}' /></td>
+  <td id='add{{= rc.id}}'><a href='#' id='addNew{{= rc.id }}' class='btn btn-primary'>Agregar Nuevo</a></td>
 </script>
