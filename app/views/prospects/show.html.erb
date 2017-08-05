@@ -1,13 +1,26 @@
-<%= render 'info' %>
 
-<%= link_to 'nueva cotización', new_prospect_request_path(@prospect) %>
+<div class="show-container" id="prospect-container">
+  <h2 class="info-title"> <%= @prospect.legal_or_business_name %></h2>
 
-<% if @prospect.requests.count >= 1 %>
-  <%= link_to 'ver cotizaciones', prospect_requests_path(@prospect) %>
-<% end %>
+  <p><strong>Giro:</strong>
+    <%= @prospect.prospect_type %>
+  </p>
 
-<% if @prospect.store.prospects.count >= 1 %>
-  <%= link_to 'ver lista de prospectos', store_prospects_path(@prospect.store) %>
-<% end %>
+  <h3>Datos de contacto</h3>
 
-<%= link_to 'inicio', store_path(@prospect.store) %>
+  <p><strong>Puesto:</strong>
+    <%= @prospect.contact_position %>
+  </p>
+
+  <p><strong>Nombre del contacto:</strong>
+    <%= @prospect.contact_first_name %> <%= @prospect.contact_middle_name %> <%= @prospect.contact_last_name %> <%= @prospect.second_last_name %>
+  </p>
+
+  <p><strong>Teléfono directo: </strong>
+    <%= @prospect.direct_phone %> <strong>Extensión: </strong> <%= @prospect.extension %>
+  </p>
+
+  <p><strong>Teléfono celular:</strong>
+    <%= @prospect.cell_phone %>
+  </p>
+</div>

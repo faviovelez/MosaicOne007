@@ -1,45 +1,44 @@
+<h3>Archivos de diseño</h3>
 <% unless @design_request.documents.nil? %>
+  <h4>Especificaciones de diseño</h4>
     <div class="document-link-area">
       <% if @attachments.count == 1 %>
-        <%= label_tag ('archivo de especificaciones:') %>
         <%= link_to @attachments.first.document_url, target: '_blank' do %>
           <%= image_tag '/assets/specifications.png', alt: 'Ícono especificaciones', class: 'document-icon img-responsive' %>
-          <%= link_to 'ver', @attachments.first.document_url, target: '_blank' %>
+          <%= link_to 'Ver', @attachments.first.document_url, target: '_blank' %>
         <% end %>
         <% if ((current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status != 'aceptada') %>
-          <%= link_to 'borrar', document_path(@attachments.first), from: 'design_request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
+          <%= link_to 'Borrar', document_path(@attachments.first), from: 'design_request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
         <% end %>
       <% elsif @attachments.count > 1 %>
-        <%= label_tag ('archivos de especificaciones:') %>
         <% n = 0 %>
         <% ((@attachments.length).to_i).times do %>
           <%= link_to @attachments[n].document_url, target: '_blank' do %>
             <%= image_tag '/assets/specifications.png', alt: 'Ícono especificaciones', class: 'document-icon img-responsive' %>
-            <%= link_to 'ver', @attachments[n].document_url, target: '_blank' %>
+            <%= link_to 'Ver', @attachments[n].document_url, target: '_blank' %>
             <% n +=1 %>
           <% end %>
           <% document = @attachments[n-1] %>
           <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status != 'aceptada' %>
-            <%= link_to 'borrar', document_path(document), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
+            <%= link_to 'Borrar', document_path(document), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
           <% end %>
         <% end %>
       <% end %>
     </div>
 
     <div class="document-link-area">
+      <h4>Diseños elaborados</h4>
       <% if @responses.count == 1 %>
-        <%= label_tag ('archivos de diseño:') %>
         <%= link_to @responses.first.document_url, target: '_blank' do %>
           <%= image_tag '/assets/diseno.png', alt: 'Ícono diseño', class: 'document-icon img-responsive' %>
-          <%= link_to 'ver', @responses.first.document_url, target: '_blank' %>
+          <%= link_to 'Ver', @responses.first.document_url, target: '_blank' %>
         <% end %>
       <% elsif @responses.count > 1 %>
-        <%= label_tag ('archivos de diseño:') %>
         <% n = 0 %>
         <% ((@responses.length).to_i).times do %>
           <%= link_to @responses[n].document_url, target: '_blank' do %>
             <%= image_tag '/assets/diseno.png', alt: 'Ícono diseño', class: 'document-icon img-responsive' %>
-            <%= link_to 'ver', @responses[n].document_url, target: '_blank' %>
+            <%= link_to 'Ver', @responses[n].document_url, target: '_blank' %>
             <% n +=1 %>
           <% end %>
         <% end %>

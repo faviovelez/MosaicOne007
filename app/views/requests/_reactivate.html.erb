@@ -1,14 +1,14 @@
-<p>Deseo continuar con el proceso de cotización de esta solicitud.</p>
+<p class="individual-font justify">Deseo continuar con el proceso de cotización de esta solicitud.</p>
 
 <%= form_for(@request) do |f| %>
 
-    <div class="field">
+    <div class="field form-inside-style" id="no-margin">
     <%= f.label :reactivar_solicitud %>
     <%= f.check_box :status, { multiple: true }, 'solicitada', nil %>
     </div>
 
   <div class="actions">
-    <%= f.submit :reactivar, name: 'reactivar' %>
+    <%= f.submit :reactivar, name: 'reactivar', class: 'main-button capitalize' %>
   </div>
 
 <% end %>

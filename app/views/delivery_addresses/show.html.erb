@@ -1,2 +1,49 @@
-<h1>DeliveryAddresses#show</h1>
-<p>Find me in app/views/delivery_addresses/show.html.erb</p>
+<div class="show-container" id="delivery-container">
+
+  <h2 class="info-title">Dirección de entrega </h2>
+
+    <p><strong>Calle: </strong>
+      <%= @delivery.street  %>
+    </p>
+
+    <p><strong>Número exterior: </strong>
+      <%= @delivery.exterior_number %>
+    </p>
+
+    <p><strong>Número interior: </strong>
+      <%= @delivery.interior_number %>
+    </p>
+
+    <p><strong>Colonia: </strong>
+      <%= @delivery.neighborhood %>
+    </p>
+
+    <p><strong>Código postal: </strong>
+      <%= @delivery.zipcode %>
+    </p>
+
+    <p><strong>Ciudad: </strong>
+      <%= @delivery.city %>
+    </p>
+
+    <p><strong>Estado: </strong>
+      <%= @delivery.state %>
+    </p>
+
+    <p><strong>País: </strong>
+      <%= @delivery.country %>
+    </p>
+
+    <p><strong>Referencias adicionales: </strong>
+      <%= @delivery.additional_references %>
+    </p>
+
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<% if current_user.role.name == 'store-admin'%>
+  <%= link_to 'Modificar dirección de entrega', edit_delivery_address_path(@delivery)%>
+<% end %>

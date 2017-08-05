@@ -1,51 +1,59 @@
 <%= form_for(@delivery) do |f| %>
 
-  <div class="field">
-    <%= f.label :calle %>
-    <%= f.text_field :street %>
-  </div>
+<h2 class="info-title">Dirección de entrega </h2>
 
-  <div class="field">
-    <%= f.label :número_exterior %>
-    <%= f.text_field :exterior_number %>
-  </div>
+  <div class="form-container">
 
-  <div class="field">
-    <%= f.label :número_interior %>
-    <%= f.text_field :interior_number %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :calle %>
+      <%= f.text_field :street, value: @delivery.street, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :colonia %>
-    <%= f.text_field :neighborhood %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :número_exterior %>
+      <%= f.text_field :exterior_number, value: @delivery.exterior_number, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :código_postal %>
-    <%= f.text_field :zipcode, maxlength: 5 %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :número_interior %>
+      <%= f.text_field :interior_number, value: @delivery.interior_number, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :ciudad %>
-    <%= f.text_field :city %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :colonia %>
+      <%= f.text_field :neighborhood, value: @delivery.neighborhood, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :estado %>
-    <%= f.text_field :state %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :código_postal %>
+      <%= f.text_field :zipcode, maxlength: 5, value: @delivery.zipcode, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :país %>
-    <%= f.text_field :country %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :ciudad %>
+      <%= f.text_field :city, value: @delivery.city, class: 'form-inside' %>
+    </div>
 
-  <div class="field">
-    <%= f.label :referencias_adicionales %>
-    <%= f.text_area :additional_references %>
-  </div>
+    <div class="form-inside-style">
+      <%= f.label :estado %>
+      <%= f.text_field :state, value: @delivery.state, class: 'form-inside' %>
+    </div>
 
-  <div class="actions">
-    <%= f.submit :guardar_direccion, name: 'guardar' %>
+    <div class="form-inside-style">
+      <%= f.label :país %>
+      <%= f.text_field :country, value: @delivery.country, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :referencias_adicionales %>
+      <%= f.text_area :additional_references, value: @delivery.additional_references, class: 'form-inside' %>
+    </div>
+
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :Guardar, name: 'guardar', class: 'main-button' %>
+      </div>
+    </div>
+
   </div>
 <% end %>

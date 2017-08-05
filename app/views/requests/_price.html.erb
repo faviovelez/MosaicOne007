@@ -1,12 +1,17 @@
 <%= form_for(@request) do |f| %>
 
-  <div class="field">
-    <%= f.label :precio_de_venta %>
-    <%= f.text_field :sales_price %>
-  </div>
+  <div class="form-container">
 
-  <div class="actions">
-    <%= f.submit :asignar_precio, name: 'asignar_precio' %>
+    <div class="field form-inside-style">
+      <%= f.label :precio_de_venta %>
+      <%= f.text_field :sales_price, class: 'form-inside' %>
+    </div>
+
+    <div class="button-container">
+      <div class="actions">
+      <%= f.submit :asignar_precio, name: 'asignar_precio', class: 'main-button' %>
+      </div>
+    </div>
   </div>
 
 <% end %>

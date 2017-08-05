@@ -1,13 +1,11 @@
 <body class="<%= params[:action] %>">
 
-  <button type="button" name="button" id="show">Mostrar detales</button>
+  <button type="button" name="button" id="show" class="secondary-button-small">Mostrar detales</button>
 
   <div class="hidden" id="information">
     <%= render 'info' %>
   </div>
 
   <%= render 'confirm_with_data' %>
-
-  <%= render 'links_for_confirm'%>
 
 </body>

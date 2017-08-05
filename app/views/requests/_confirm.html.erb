@@ -1,43 +1,53 @@
-<p>Para autorizar la solicitud es necesario subir el anticipo y el pedido firmado, o marcar la casilla correspondiente si no tienes alguno de los documentos.</p>
+<p class="individual-font">Para autorizar la solicitud es necesario subir el anticipo y el pedido firmado, o marcar la casilla correspondiente si no tienes alguno de los documentos.</p>
 
 <%= form_for(@request) do |f| %>
 
-  <% unless @request.authorisation_signed %>
-    <div class="field">
-      <%= f.label :pedido_autorizado %>
-      <%= f.file_field :authorisation %>
+  <div class="form-container">
+
+    <div class="authorisation">
+    <% unless @request.authorisation_signed %>
+      <div class="field form-inside-style">
+        <%= f.label :pedido_autorizado %>
+        <%= f.file_field :authorisation %>
+      </div>
+      <% end %>
+
+      <% if @request.authorised_without_doc == true  %>
+        <p> Si deseas subir el pedido autorizado, desmarca este campo y sube un archivo. </p>
+      <% else %>
+      <% end %>
+
+      <div class="field authorised_without_doc form-inside-style">
+        <%= f.label :autorizar_sin_documento_firmado, class: 'padding-top' %>
+        <%= f.check_box(:authorised_without_doc, checked_value: '1', unchecked_value: '0') %>
+      </div>
     </div>
+
+    <div class="authorisation">
+    <% unless @request.payment_uploaded %>
+      <div class="field form-inside-style">
+        <%= f.label :ficha_de_depósito %>
+        <%= f.file_field :payment %>
+      </div>
     <% end %>
 
-    <% if @request.authorised_without_doc == true  %>
-      <p> Si deseas subir el pedido autorizado, desmarca este campo y sube un archivo. </p>
+    <% if @request.authorised_without_pay == true  %>
+      <p> Si deseas subir la ficha de depósito, desmarca este campo y sube un archivo. </p>
     <% else %>
     <% end %>
 
-    <div class="field authorised_without_doc">
-      <%= f.label :autorizar_sin_documento_firmado %>
-      <%= f.check_box(:authorised_without_doc, checked_value: '1', unchecked_value: '0') %>
-    </div>
-
-  <% unless @request.payment_uploaded %>
-    <div class="field">
-      <%= f.label :ficha_de_depósito %>
-      <%= f.file_field :payment %>
-    </div>
-  <% end %>
-
-  <% if @request.authorised_without_pay == true  %>
-    <p> Si deseas subir la ficha de depósito, desmarca este campo y sube un archivo. </p>
-  <% else %>
-  <% end %>
-
-    <div class="field authorised_without_pay">
-      <%= f.label :autorizar_sin_ficha_de_depósito %>
+    <div class="field authorised_without_pay form-inside-style">
+      <%= f.label :autorizar_sin_ficha_de_depósito, class: 'padding-top' %>
       <%= f.check_box(:authorised_without_pay, checked_value: '1', unchecked_value: '0') %>
     </div>
-
-  <div class="actions">
-    <%= f.submit :confirmar_pedido, name: 'confirmar' %>
   </div>
+
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :confirmar_pedido, name: 'confirmar', class: 'main-button capitalize' %>
+      </div>
+    </div>
+
+</div>
 
 <% end %>

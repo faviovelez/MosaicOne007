@@ -1,7 +1,20 @@
 class WarehouseController < ApplicationController
   # Este controller se utilizará para la funcionalidad de warehouse con varios modelos.
+  before_action :authenticate_user!
 
   def new_own_entry
+    @movement = Movement.new
+    role = Role.find_by_name('warehouse-staff')
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
+  end
+
+  def get_product
+    product = Product.find(params[:product])
+    if product.present?
+      render json: {product: product, images: product.images}
+    else
+      render json: {product: false}
+    end
   end
 
   def new_supplier_entry

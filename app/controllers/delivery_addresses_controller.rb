@@ -3,7 +3,7 @@ class DeliveryAddressesController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_delivery_address, only: [:show, :edit, :update, :destroy]
-  before_action :identify_owner_type, only: [:new, :create, :update]
+  before_action :identify_owner_type, only: [:new, :create]
 
   def index
   end
@@ -22,9 +22,9 @@ class DeliveryAddressesController < ApplicationController
 
   def create
     @delivery = DeliveryAddress.new(delivery_params)
-    save_delivery_address_to_owner
     respond_to do |format|
       if @delivery.save
+        save_delivery_address_to_owner
         format.html { redirect_to @delivery, notice: 'La dirección de entrega fue dada de alta exitosamente.' }
         format.json { render :show, status: :created, location: @delivery }
       else
@@ -36,9 +36,8 @@ class DeliveryAddressesController < ApplicationController
   end
 
   def update
-    save_delivery_address_to_owner
     respond_to do |format|
-      if @delivery.update(prospect_params)
+      if @delivery.update(delivery_params)
         format.html { redirect_to @delivery, notice: 'La dirección de entrega fue modificado exitosamente.' }
         format.json { render :show, status: :ok, location: @delivery }
       else
@@ -60,7 +59,7 @@ class DeliveryAddressesController < ApplicationController
 
   # Método para asignar dirección de entrega al owner (Store, Prospect u Order)
   def save_delivery_address_to_owner
-    @owner.billing_address = @delivery
+    @owner.delivery_address = @delivery
     @owner.save
   end
 

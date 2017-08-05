@@ -1,58 +1,63 @@
+<h3>Archivos adjuntos</h3>
+
 <% if @request.authorisation_signed %>
+  <h4>Autorización</h4>
   <div class="document-link-area">
-    <%= label_tag ('pedido autorizado:') %>
     <%= link_to @authorisation.first.document_url, target: '_blank' do %>
       <%= image_tag '/assets/authorisation.png', alt: 'Ícono documento autorización', class: 'document-icon img-responsive' %>
-      <%= link_to 'ver', @authorisation.first.document_url, target: '_blank' %>
+      <%= link_to 'Ver', @authorisation.first.document_url, target: '_blank' %>
     <% end %>
     <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin')) %>
-      <%= link_to 'borrar', document_path(@authorisation.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
+      <%= link_to 'Borrar', document_path(@authorisation.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
     <% end %>
   </div>
   <% else %>
-    <p><strong> autorizado sin documento firmado </strong></p>
+    <h4>Autorización</h4>
+    <p class="individual-font">Autorizado sin documento firmado</p>
 <% end %>
 
 <% if @request.payment_uploaded %>
+  <h4>Ficha de depósito</h4>
   <div class="document-link-area">
-    <%= label_tag ('anticipo del pedido:') %>
     <%= link_to @payment.first.document_url, target: '_blank' do %>
       <%= image_tag '/assets/deposit.png', alt: 'Ícono documento pago', class: 'document-icon img-responsive' %>
-      <%= link_to 'ver', @payment.first.document_url, target: '_blank' %>
+      <%= link_to 'Ver', @payment.first.document_url, target: '_blank' %>
     <% end %>
     <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin')) %>
-      <%= link_to 'borrar', document_path(@payment.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
+      <%= link_to 'Borrar', document_path(@payment.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
     <% end %>
   </div>
   <% else %>
-    <p><strong> autorizado sin ficha de depósito </strong></p>
+    <h4>Ficha de depósito</h4>
+    <p class="individual-font">Autorizado sin ficha de depósito</p>
 <% end %>
 
 <% if @request.specification_document %>
+  <% if @specifications.count == 1 %>
+    <h4>Documento de especificación</h4>
     <div class="document-link-area">
-      <% if @specifications.count == 1 %>
-        <%= label_tag ('archivo de especificaciones:') %>
-        <%= link_to @specifications.first.document_url, target: '_blank' do %>
+      <%= link_to @specifications.first.document_url, target: '_blank' do %>
+        <%= image_tag '/assets/notes.png', alt: 'Ícono especificaciones de solicitud', class: 'document-icon img-responsive' %>
+        <%= link_to 'Ver', @specifications.first.document_url, target: '_blank' %>
+      <% end %>
+      <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin')) %>
+        <%= link_to 'Borrar', document_path(@specifications.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
+      <% end %>
+    <% elsif @specifications.count > 1 %>
+      <h4>Documentos de especificaciones</h4>
+      <div class="document-link-area">
+      <% n = 0 %>
+      <% ((@specifications.length).to_i).times do %>
+        <%= link_to @specifications[n].document_url, target: '_blank' do %>
           <%= image_tag '/assets/notes.png', alt: 'Ícono especificaciones de solicitud', class: 'document-icon img-responsive' %>
-          <%= link_to 'ver', @specifications.first.document_url, target: '_blank' %>
+          <%= link_to 'Ver', @specifications[n].document_url, target: '_blank' %>
         <% end %>
+        <% document = @specifications[n] %>
         <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin')) %>
-          <%= link_to 'borrar', document_path(@specifications.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
-        <% end %>
-      <% elsif @specifications.count > 1 %>
-        <%= label_tag ('archivos de especificaciones:') %>
-        <% n = 0 %>
-        <% ((@specifications.length).to_i).times do %>
-          <%= link_to @specifications[n].document_url, target: '_blank' do %>
-            <%= image_tag '/assets/notes.png', alt: 'Ícono especificaciones de solicitud', class: 'document-icon img-responsive' %>
-            <%= link_to 'ver', @specifications[n].document_url, target: '_blank' %>
-          <% end %>
-          <% document = @specifications[n] %>
-          <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin')) %>
-            <%= link_to 'borrar', document_path(document), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
-            <% n +=1 %>
-          <% end %>
+          <%= link_to 'Borrar', document_path(document), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
+          <% n +=1 %>
         <% end %>
       <% end %>
+    <% end %>
     </div>
 <% end %>

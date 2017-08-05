@@ -15,7 +15,6 @@
 //= require turbolinks
 //= require request_form
 //= require show
-//= require_tree .
 
 
 //$('.search-field').autocomplete
@@ -25,5 +24,11 @@
 $(document).ready(function() {
   $('.carousel').carousel({
     interval: false
+  });
+
+  payment.bind('change', function() {
+    if (payment != '' ){
+      $('.authorised_without_pay').addClass('hidden');
+    };
   });
 });

@@ -1,3 +1,6 @@
+body {
+  overflow-x:hidden;
+}
 
 .hidden {
   display: none;
@@ -18,9 +21,12 @@ p.info > strong {
   color: #D72638;
 }
 
-.bottom-link {
-  position: fixed;
-  bottom: 2vh;
+.capitalize {
+  text-transform: capitalize;
+}
+
+.uppercase {
+  text-transform: uppercase;
 }
 
 .info-container {
@@ -33,6 +39,30 @@ p.info > strong {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   display: inline-block;
   border-radius: 5%;
+}
+
+#prospect-container {
+  width: 40vw;
+  margin-left: 20vw;
+}
+
+#prospect-container > p,
+#billing-container > p,
+#delivery-container > p {
+  padding: 1rem 3rem;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.8rem;
+}
+
+#billing-container > p {
+  padding: 1rem 3rem;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.8rem;
+}
+
+.long-form {
+  padding-left: 10vw;
+  padding-right: 10vw;
 }
 
 .info-title {
@@ -71,19 +101,114 @@ p.info > strong {
   z-index: 5;
 }
 
+.white {
+  color: #fff;
+  text-decoration: none;
+}
+
 .form-container {
   display: flex;
   flex-wrap: wrap;
-  width: 80vw;
+  width: 75vw;
   height: 30vh;
+  justify-content: center;
 }
 
+.show-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 75vw;
+  justify-content: center;
+  margin: 0 4rem;
+}
+
+.img-carousel {
+  width: 15vw;
+  height: auto;
+  margin: 1rem auto;
+  padding: 0 auto;
+}
+
+#img-title-prod {
+  margin-top: 2.5rem;
+}
+
+.show-container > p {
+  padding-right: 3rem;
+}
+
+.bolsa,
+.outer,
+.inner,
+.exhibidor,
+.otros,
+.product,
+.ahotirisation,
+.impresssion-second-div,
+.impression {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.padding-top {
+  padding-top: 3rem;
+}
+
+.observations-notes, .observations-notes > textarea {
+  width: 60rem;
+  vertical-align: middle;
+}
+
+.individual-font {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.impresssion-div {
+  display: flex;
+  justify-content: center;
+  width: 75vw;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.document-link-area {
+  display: flex;
+  width: 75vw;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.document-link-area > a {
+  padding: 0 0.5rem;
+}
+
+#edit-request-button-container,
+#confirm-cost-div,
+#dudas-div {
+  height: 12vh;
+}
+
+#request-container {
+  font-family: 'Open Sans', sans-serif;
+}
 .button-container {
   width: 70vw;
   height: 30vh;
   margin 0 auto;
 }
 
+.form-container > h3, h4 {
+  width: 75vw;
+  color: #273B4F;
+  text-align: center;
+}
+
+.show-container > h3, h4, h2 {
+  width: 75vw;
+  color: #273B4F;
+  text-align: center;
+}
 
 .centered-without-margin {
   position: relative;
@@ -96,8 +221,7 @@ p.info > strong {
   z-index: 5;
 }
 
-
-.notice {
+  #notice {
   background-color: #3BE524;
   opacity: .70;
   z-index: 30;
@@ -121,15 +245,6 @@ p.info > strong {
   color: #fff;
 }
 
-.third-button {
-  /*faltan cambios */
-  opacity: .95;
-  width: 40vw;
-  background-color: #D72638;
-  height: 12vh;
-  margin-bottom: 3rem;
-}
-
 textarea:focus, input:focus{
   outline: none;
 }
@@ -138,8 +253,8 @@ input.main-button{
   color: #EAEFEE;
 }
 
-
-input.form-inside {
+input.form-inside,
+textarea.form-inside {
   text-align: center;
   font-size: 1.5rem;
   font-family: 'Open Sans', sans-serif;
@@ -157,6 +272,14 @@ select {
 }
 
 .form-inside-style > label {
+  text-align: left;
+  font-size: 1.4rem;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  color: #545454;
+}
+
+label#label-form-que-desea {
   text-align: left;
   font-size: 1.4rem;
   font-family: 'Open Sans', sans-serif;
@@ -194,7 +317,6 @@ select {
   text-align: left;
   border-radius: 10px;
 }
-
 
 .long-sign-in {
   width: 30vw;
@@ -284,10 +406,40 @@ select {
   box-shadow: none;
 }
 
+.third-button {
+  /*faltan cambios */
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  background-color: #D72638;
+  color: #fff;
+  height: 50px;
+  padding: 0 2.5rem;
+  border: none;
+  border-radius: 0%;
+  box-shadow: none;
+  opacity: .95;
+}
+
+.modal-backdrop.fade.in{
+  z-index: 0;
+}
+
+.modal-backdrop.fade.in {
+  z-index: 0;
+}
+
+.justify {
+  text-align: justify;
+}
+
 .button-margin {
   margin-top: 5rem;
 }
 
+.modal-dialog {
+  margin-top: 10vh;
+}
 .main-button-small {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -308,26 +460,32 @@ select {
 .secondary-button {
   margin-top: 1.5rem;
   margin-bottom: 2rem;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   background-color: #BAFF29;
   height: 50px;
   padding: 0 2.5rem;
   border: none;
   border-radius: 0%;
   box-shadow: none;
+  color: #364150;
 }
 
 .secondary-button-small {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-left: 2rem;
   font-size: 1.2rem;
   background-color: #BAFF29;
-  padding: 0.5rem;
+  padding: 1rem;
   border: none;
-  border-radius: 0%;
+  border-radius: 15px;
   box-shadow: none;
-  color: #fff;
+  color: #364150;
   vertical-align: middle;
+}
+
+.secondary-button-small:hover,
+.main-button:hover,
+.secondary-button:hover {
+  color: #0288D1;
 }
 
 .container-log-in {
@@ -390,6 +548,7 @@ select {
 table {
   margin-left: 0.5vw;
   text-align: center;
+  margin-bottom: 8rem;
 }
 
 th {
@@ -404,6 +563,14 @@ a.link {
 
 .link-to-details:hover, .link-to-details:active {
   color: #0288D1;
+}
+
+.title-request {
+color: #0288D1;
+}
+
+.custom-link-bottom {
+  padding: 2rem;
 }
 
 .table-titles, .table-titles:hover {

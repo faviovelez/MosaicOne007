@@ -2,18 +2,20 @@
 <html>
 <head>
   <title>Sistema DC</title>
-  <%= stylesheet_link_tag    'bootstrap', media: 'all', 'data-turbolinks-track' => true %>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= stylesheet_link_tag    'application', 'https://fonts.googleapis.com/css?family=Open+Sans:300,400', media: 'all', 'data-turbolinks-track' => true %>
-  <%= stylesheet_link_tag    'font-awesome', media: 'all', 'data-turbolinks-track' => true %>
-  <%= stylesheet_link_tag    'navigation', media: 'all', 'data-turbolinks-track' => true %>
-  <%= stylesheet_link_tag    'style', media: 'all', 'data-turbolinks-track' => true %>
-  <%= stylesheet_link_tag    'autocomplete', media: 'all', 'data-turbolinks-track' => true %>
-  <%= stylesheet_link_tag    'requests', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag    'bootstrap', media: 'all' %>
+  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <%= stylesheet_link_tag    'application', 'https://fonts.googleapis.com/css?family=Open+Sans:300,400', media: 'all' %>
+  <%= stylesheet_link_tag    'font-awesome', media: 'all' %>
+  <%= stylesheet_link_tag    'navigation', media: 'all' %>
+  <%= stylesheet_link_tag    'style', media: 'all' %>
+  <%= stylesheet_link_tag    'autocomplete', media: 'all' %>
+  <%= stylesheet_link_tag    'requests', media: 'all' %>
+
+  <%= content_for :stylesheet %>
 
   <%= favicon_link_tag 'Mosaic-tech-cuadros.png' %>
   <%= csrf_meta_tags %>
-  <meta name="robots" content="noindex"
+  <meta name="robots" content="noindex">
 </head>
 
 <% if params[:controller] == 'devise/sessions' %>
@@ -25,9 +27,9 @@
   <%= render 'navbar' %>
 
   <% if notice %>
-    <div class="notice">
+    <div class="alert alert-success alert-dismissable notice" role="alert" id="notice">
       <%= notice %>
-      <button type="button" class="close" data-dismiss="notice" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     </div>
   <% end %>
 
@@ -42,15 +44,18 @@
     <%= render 'vertical_navbar' %>
     <div class="flex">
       <div class="centered">
+        <%= render 'bottom_nav' %>
         <%= yield %>
       </div>
   <% else %>
     <div class="centered-without-margin">
+      <%= render 'bottom_nav' %>
       <%= yield %>
     </div>
   <% end %>
     </div>
   </body>
-<%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-<%= javascript_include_tag 'bootstrap', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'application' %>
+<%= javascript_include_tag 'bootstrap' %>
+<%= content_for :javascript %>
 </html>

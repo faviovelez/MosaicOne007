@@ -269,8 +269,15 @@ actionForRequest.ready(function() {
     } else if (clickCounter == 1) {
       $(".field.third.hidden").removeClass('hidden');
       clickCounter +=1;
+      $("#agregar_material").text('Quitar material');
+    } else if (clickCounter > 1) {
+      $(".field.third").addClass('hidden');
+      clickCounter -=1;
+      $("#agregar_material").text('Agregar material');
     };
   });
+
+
 
 $("#request_impression_si").click(function () {
   $(".impression").removeClass('hidden');
@@ -295,11 +302,6 @@ $("#request_impression_no").click(function () {
   authorisation.bind('change', function() {
     if (authorisation != '' ){
       $('.authorised_without_doc').addClass('hidden');
-    };
-  });
-  payment.bind('change', function() {
-    if (payment != '' ){
-    $('.authorised_without_pay').addClass('hidden');
     };
   });
 

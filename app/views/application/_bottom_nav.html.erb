@@ -1,0 +1,63 @@
+
+<% if current_user %>
+  <div class="bottom-nav">
+    <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') || ((current_user.role.name == 'manager' || current_user.role.name == 'director') && (@request.main_material == 'sugerir material' || @request.resistance_main_material == 'Sugerir resistencia' )) %>
+      <% if @request && params[:controller] != 'design_requests' %>
+        <% if (@request.status != 'en producción' && @request.status != 'autorizada' && @request.status != 'cancelada') %>
+          <%= link_to 'Modificar', edit_request_path(@request) %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+      <% if @request %>
+
+        <% if @request.design_requests.any? == true %>
+          <%= link_to 'Ver trabajos de diseño', request_design_request_path(request_id: @request), class: 'custom-link-bottom' %>
+        <% end %>
+
+        <%= link_to 'Ver prospecto', prospect_path(@request.prospect), class: 'custom-link-bottom' %>
+
+        <% unless ((@request.status == 'cancelada' || @request.status == 'creada' && params[:controller] != 'design_requests') || params[:controller] == 'design_requests') %>
+          <%= link_to 'Solicitar trabajo de diseño', new_request_design_request_path(@request) %>
+        <% end %>
+
+        <% if (@request.status == 'cancelada' && params[:controller] != 'design_requests') %>
+          <%= link_to 'Reactivar', '#myModal', 'data-toggle' => 'modal' %>
+        <% elsif (@request.status != 'cancelada' && params[:controller] != 'design_requests') %>
+          <%= link_to 'Cancelar', '#myModal', 'data-toggle' => 'modal' %>
+        <% end %>
+
+        <% if @request.status == 'costo asignado'  %>
+          <%= link_to 'Asignar precio', requests_price_path(@request) %>
+        <% elsif @request.status == 'precio asignado' %>
+          <%= link_to 'Confirmar pedido', confirm_requests_path(@request) %>
+        <% end %>
+      <% end %>
+
+    <% end %>
+
+    <% if params[:controller] == 'design_requests' %>
+      <% if @design_request && params[:action] != 'new' %>
+
+        <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status != 'aceptada' %>
+          <%= link_to 'Editar', edit_design_request_path(@design_request) %>
+        <% elsif (current_user.role.name == 'designer' && @design_request.status == 'en proceso') %>
+          <%= link_to 'Trabajar solicitud', edit_design_request_path(@design_request) %>
+        <% end %>
+
+        <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @design_request.status == 'diseño elaborado' %>
+          <%= link_to 'Confirmar diseño', '#myModal', 'data-toggle' => 'modal' %>
+        <% end %>
+
+        <%= link_to 'Ver solicitud de cotización', request_path(@design_request.request) %>
+      <% end %>
+
+      <% if current_user.role.name == 'designer' %>
+        <%= link_to 'Ver las solicitudes de diseño', filtered_requests_assigned_view_path %>
+      <% end %>
+    <% end %>
+
+    <%= link_to 'Regresar', :back, class: 'bottom-link' %>
+  </div>
+<% end %>

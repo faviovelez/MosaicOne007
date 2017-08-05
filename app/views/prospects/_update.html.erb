@@ -2,58 +2,66 @@
 
 <%= form_for(@prospect) do |f| %>
 
-  <div class="field">
+<h2 class="info-title">Modificar Prospecto </h2>
+
+<div class="form-container">
+
+  <div class="form-inside-style">
     <%= f.label :nombre_del_prospecto %>
-    <%= f.text_field :legal_or_business_name %>
+    <%= f.text_field :legal_or_business_name, class: 'form-inside' %>
   </div>
 
-  <div class="field">
+  <div class="form-inside-style">
     <%= f.label :giro_comercial %>
-    <%= f.text_field :prospect_type %>
+    <%= f.text_field :prospect_type, class: 'form-inside' %>
   </div>
 
-  <div class="field">
-    <%= f.label :primer_nombre %>
-    <%= f.text_field :contact_first_name %>
-  </div>
+  <h3>Datos de contacto</h3>
 
-  <div class="field">
-    <%= f.label :segundo_nombre %>
-    <%= f.text_field :contact_middle_name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :apellido_paterno %>
-    <%= f.text_field :contact_last_name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :apellido_materno %>
-    <%= f.text_field :second_last_name %>
-  </div>
-
-  <div class="field">
+  <div class="form-inside-style long-form">
     <%= f.label :puesto_del_contacto %>
-    <%= f.text_field :contact_position %>
+    <%= f.text_field :contact_position, class: 'form-inside' %>
   </div>
 
-  <div class="field">
+  <div class="form-inside-style">
+    <%= f.label :primer_nombre %>
+    <%= f.text_field :contact_first_name, class: 'form-inside' %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= f.label :segundo_nombre %>
+    <%= f.text_field :contact_middle_name, class: 'form-inside' %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= f.label :apellido_paterno %>
+    <%= f.text_field :contact_last_name, class: 'form-inside' %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= f.label :apellido_materno %>
+    <%= f.text_field :second_last_name, class: 'form-inside' %>
+  </div>
+
+  <div class="form-inside-style">
     <%= f.label :teléfono_directo %>
-    <%= f.text_field :direct_phone, maxlength: 10 %>
+    <%= f.text_field :direct_phone, maxlength: 10, class: 'form-inside' %>
   </div>
 
-  <div class="field">
+  <div class="form-inside-style">
     <%= f.label :extensión %>
-    <%= f.text_field :extension %>
+    <%= f.text_field :extension, maxlength: 10, class: 'form-inside' %>
   </div>
 
-  <div class="field">
+  <div class="form-inside-style">
     <%= f.label :celular %>
-    <%= f.text_field :cell_phone, maxlength: 10 %>
+    <%= f.text_field :cell_phone, maxlength: 10, class: 'form-inside' %>
   </div>
 
-  <div class="actions">
-    <%= f.submit :guardar_prospecto %>
+  <div class="button-container">
+    <div class="actions">
+      <%= f.submit :Modificar, class: 'main-button' %>
+    </div>
   </div>
 
 <% end %>
