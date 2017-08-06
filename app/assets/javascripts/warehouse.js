@@ -8,13 +8,49 @@ $(function(){
   var formatState = function(state){
     var r = /\d+/;
     var code = state.text.match(r);
+    var element = $('#' + state.element.parentElement.id);
+    if (findInSelect($(element).val(), $(element).attr('id'))) {
+      return '';
+    }
     return code;
+  };
+
+  $('#saveInfo').click(function(){
+    var data = {};
+    $.each($('tr[id^=trForProduct]'), function(){
+      data[$(this).attr('id')] = {
+        id       : $(this).find('select').val(),
+        cantidad : $(this).find('input[id^=numProduct]').val()
+      };
+    });
+    $.ajax({
+      url: '/warehouse/save_own_product',
+      data: data,
+      method: 'post'
+    }).done(function(response) {
+      debugger
+    });
+    return false;
+  });
+
+  var findInSelect = function(findCode, id){
+    var find = false;
+    $.each($('select'), function(){
+      if ($(this).val().toString() === findCode.toString() && $(this).attr('id') !== id){
+        find = true;
+        return true;
+      }
+    });
+    return find;
   };
 
   var changeAction = function(element, inc, dec){
     if ($(element).val() === null) {
       $('td[id$=product'+dec+']').remove();
     } else {
+      if (findInSelect($(element).val(), $(element).attr('id'))) {
+        return false;
+      }
       $.ajax({
         url: '/warehouse/get/' + $(element).val(),
         method: 'get'

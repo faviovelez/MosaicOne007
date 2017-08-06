@@ -91,6 +91,7 @@ Rails.application.routes.draw do
   get 'warehouse/show'
 
   get 'warehouse/index'
+  post 'warehouse/save_own_product'
 
   get 'warehouse/orders'
 

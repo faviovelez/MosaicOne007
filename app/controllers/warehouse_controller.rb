@@ -17,6 +17,24 @@ class WarehouseController < ApplicationController
     end
   end
 
+  def save_own_product
+    @collection = []
+    params.select {|p| p.match('trForProduct').present? }.each do |product|
+      attributes = product.second
+      product = Product.find(attributes.first.second).first
+      @collection << Movement.new(
+        product: product,
+        quantity:  attributes[:cantidad],
+        movement_type: 'alta',
+        user: current_user,
+        unique_code: product.unique_code,
+        store: current_user.store,
+        business_unit: current_user.store.business_unit
+      )
+    end
+    setMovements
+  end
+
   def new_supplier_entry
   end
 
@@ -49,5 +67,16 @@ class WarehouseController < ApplicationController
 
   end
 
+  private
 
+  def setMovements
+    @collection.each do |movement|
+      if movement.save
+        movement.warehouse_entry = WarehouseEntry.create(
+          product: movement.product,
+          quantity: movement.quantity
+        )
+      end
+    end
+  end
 end
