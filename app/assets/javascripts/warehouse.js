@@ -8,6 +8,9 @@ $(function(){
   var formatState = function(state){
     var r = /\d+/;
     var code = state.text.match(r);
+    if (state.text === 'Selecionar un producto') {
+      return state.text;
+    }
     if (state.id === '') {
       return state.text;
     }
@@ -18,21 +21,38 @@ $(function(){
     return code;
   };
 
+  var checkNotEmpty = function(){
+    var allFill = true;
+    $.each($('input[id^=numProduct_product]'), function(){
+      if ($(this).val() === ''){
+        allFill = false;
+        $(this).parent().addClass('has-error');
+      } else {
+        $(this).parent().removeClass('has-error').addClass('has-success');
+      }
+    });
+    return allFill;
+  };
+
   $('#saveInfo').click(function(){
-    var data = {};
-    $.each($('tr[id^=trForProduct]'), function(){
-      data[$(this).attr('id')] = {
-        id       : $(this).find('select').val(),
-        cantidad : $(this).find('input[id^=numProduct]').val()
-      };
-    });
-    $.ajax({
-      url: '/warehouse/save_own_product',
-      data: data,
-      method: 'post'
-    }).done(function(response) {
-      debugger
-    });
+    if (checkNotEmpty()){
+      var data = {};
+      $.each($('tr[id^=trForProduct]'), function(){
+        data[$(this).attr('id')] = {
+          id       : $(this).find('select').val(),
+          cantidad : $(this).find('input[id^=numProduct]').val()
+        };
+      });
+      $.ajax({
+        url: '/warehouse/save_own_product',
+        data: data,
+        method: 'post'
+      }).done(function(response) {
+        debugger
+      });
+    } else {
+
+    }
     return false;
   });
 
