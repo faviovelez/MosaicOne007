@@ -8,6 +8,9 @@ $(function(){
   var formatState = function(state){
     var r = /\d+/;
     var code = state.text.match(r);
+    if (state.id === '') {
+      return state.text;
+    }
     var element = $('#' + state.element.parentElement.id);
     if (findInSelect($(element).val(), $(element).attr('id'))) {
       return '';
@@ -46,7 +49,10 @@ $(function(){
 
   var changeAction = function(element, inc, dec){
     if ($(element).val() === null) {
-      $('td[id$=product'+dec+']').remove();
+      var tr = $('td[id$=product'+dec+']').parent();
+      var selectId = $(tr).find('select').attr('id');
+      $('#' + selectId).select2('destroy');
+      $(tr).remove();
     } else {
       if (findInSelect($(element).val(), $(element).attr('id'))) {
         return false;
@@ -72,31 +78,26 @@ $(function(){
           } )
         );
         $('#numProduct_'+ id).mask("000", {placeholder: "___"}).css({'text-align': 'center'});
-        if ($('tr[id^=trForProduct]').length === dec){
-          $('#addNew' + id).click(function(){
-            var tr = "<tr id='trForProduct"+ inc +"'>" +
-              "<td class='select'>" +
-              "<select id='selectForProduct"+ inc +"'></select>" +
-              "<a href='#' class='btn btn-danger hidden'>X</a>" +
-              "</td>" +
-              "</tr>";
-            $('tbody').append(tr);
-            $('#selectForProduct'+ inc).append($('#product1').html());
-            $('#selectForProduct'+ inc).select2({
-              templateSelection: formatState,
-              multiple: true,
-              maximumSelectionLength: 1
-            })
+        $('#addNew' + id).click(function(){
+          var tr = "<tr id='trForProduct"+ inc +"'>" +
+            "<td class='select'>" +
+            "<select id='selectForProduct"+ inc +"'></select>" +
+            "</td>" +
+            "</tr>";
+          $('tbody').prepend(tr);
+          $('#selectForProduct'+ inc).append($('select:last').html());
+          $('#selectForProduct'+ inc).select2({
+            templateSelection: formatState,
+            multiple: true,
+            maximumSelectionLength: 1
+          })
             .change(function(){
               var dec = parseInt($(this).attr('id').match(/\d+/)[0]);
               changeAction(this, dec + 1, dec);
             });
-            $(this).addClass('hidden');
-            return false;
-          });
-        } else {
-          $('#addNew' + id).addClass('hidden');
-        }
+          $(this).addClass('hidden');
+          return false;
+        });
       });
     }
   };

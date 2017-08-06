@@ -4,7 +4,7 @@ class WarehouseEntry < ActiveRecord::Base
   belongs_to :user
   belongs_to :movement
 
-  after_save :check_products
+  before_save :check_products
 
   def check_products
     self.entry_number = WarehouseEntry.where(
