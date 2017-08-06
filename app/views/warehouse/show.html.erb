@@ -1,0 +1,25 @@
+<table class="table" id="productsList">
+  <thead>
+    <tr>
+      <th>Codigo unico</th>
+      <th>Descripcion</th>
+      <th>Image</th>
+      <th>Cantidad</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @movements.each do |movement| %>
+      <tr id="trForProduct<%= movement.product.id %>">
+        <td><%= movement.product.unique_code %></td>
+        <td><%= movement.product.description %></td>
+        <td><%= image_tag image(movement) %></td>
+        <td><%= movement.quantity %></td>
+        <td>
+          <%= link_to 'Editar', warehouse_edit_entry_path(movement.warehouse_entry, @codes), class: 'btn btn-success' %>
+          <%= link_to 'Eliminar', warehouse_delete_entry_path(movement.warehouse_entry, @codes), class: 'btn btn-danger', method: :delete %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

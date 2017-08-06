@@ -47,11 +47,7 @@ $(function(){
         url: '/warehouse/save_own_product',
         data: data,
         method: 'post'
-      }).done(function(response) {
-        debugger
       });
-    } else {
-
     }
     return false;
   });

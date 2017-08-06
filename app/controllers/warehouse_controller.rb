@@ -33,6 +33,13 @@ class WarehouseController < ApplicationController
       )
     end
     setMovements
+    codes = @collection.map {|movement| movement.id}.join('-')
+    redirect_to warehouse_show_path(codes), notice: 'Todos los registros almacenados.'
+  end
+
+  def show
+    @movements = Movement.where(id: params[:entry_codes].split('-'))
+    @codes = params[:entry_codes]
   end
 
   def new_supplier_entry
@@ -50,6 +57,14 @@ class WarehouseController < ApplicationController
     @entry = WarehouseEntry.find(params[:id])
     @movement = @entry.movement
     @entry_id = @entry.id
+  end
+
+  def destroy
+    @entry = WarehouseEntry.find(params[:id])
+    @movement = @entry.movement
+    if @movement.warehouse_entry.destroy
+      redirect_to warehouse_show_path(params[:entry_codes]), notice: 'Registro eliminado.' if @movement.destroy
+    end
   end
 
   def orders
