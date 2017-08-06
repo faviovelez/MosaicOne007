@@ -1,4 +1,39 @@
 $(function(){
+  if ($('.datatables').length > 0) {
+    $('.datatables').DataTable({
+      "language": {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ registros",
+        "sZeroRecords":    "No se encontraron resultados",
+        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+        "sInfoPostFix":    "",
+        "sSearch":         "Buscar:",
+        "sUrl":            "",
+        "sInfoThousands":  ",",
+        "sLoadingRecords": "Cargando...",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        },
+        "oAria": {
+          "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+          "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+        }
+      },
+      pageLength: 10,
+      responsive: true,
+      dom: 'Bfrtip',
+      buttons: [
+        'copy', 'csv', 'excel', 'pdf'
+      ]
+    });
+  }
+
   _.templateSettings = {
     interpolate: /\{\{\=(.+?)\}\}/g,
     evaluate: /\{\{(.+?)\}\}/g,
@@ -118,13 +153,15 @@ $(function(){
     }
   };
 
-  $('#product1').select2({
-    templateSelection: formatState,
-    multiple: true,
-    maximumSelectionLength: 1
-  })
-  .change(function(){
-    changeAction(this, 2, 1);
-  });
+  if ($('#product1').length > 0) {
+    $('#product1').select2({
+      templateSelection: formatState,
+      multiple: true,
+      maximumSelectionLength: 1
+    })
+    .change(function(){
+      changeAction(this, 2, 1);
+    });
+  }
 
 });

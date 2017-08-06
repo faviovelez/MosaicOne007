@@ -13,13 +13,14 @@
       <tr id="trForProduct<%= movement.product.id %>">
         <td><%= movement.product.unique_code %></td>
         <td><%= movement.product.description %></td>
-        <td><%= image_tag image(movement) %></td>
+        <td><%= image_tag image(movement), alt: movement.product.description %></td>
         <td><%= movement.quantity %></td>
         <td>
-          <%= link_to 'Editar', warehouse_edit_entry_path(movement.warehouse_entry, @codes), class: 'btn btn-success' %>
           <%= link_to 'Eliminar', warehouse_delete_entry_path(movement.warehouse_entry, @codes), class: 'btn btn-danger', method: :delete %>
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
+<%= link_to 'Confirmar', warehouse_confirm_path(@codes), class: 'btn btn-primary', method: 'post' %>
+<br /> <br /> <br /> <br /> <br />

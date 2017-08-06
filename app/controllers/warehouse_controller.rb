@@ -1,6 +1,7 @@
 class WarehouseController < ApplicationController
   # Este controller se utilizará para la funcionalidad de warehouse con varios modelos.
   before_action :authenticate_user!
+  before_action :set_movements, only: [:show, :confirm]
 
   def new_own_entry
     @movement = Movement.new
@@ -32,14 +33,32 @@ class WarehouseController < ApplicationController
         business_unit: current_user.store.business_unit
       )
     end
-    setMovements
+    create_movements
     codes = @collection.map {|movement| movement.id}.join('-')
     redirect_to warehouse_show_path(codes), notice: 'Todos los registros almacenados.'
   end
 
   def show
-    @movements = Movement.where(id: params[:entry_codes].split('-'))
     @codes = params[:entry_codes]
+  end
+
+  def confirm
+    @movements.each do |movement|
+      begin
+        movement.update(confirm: true)
+        movement.product.inventory.set_quantity(
+          movement.quantity
+        )
+      rescue NoMethodError
+        movement.product.inventory = Inventory.create
+        movement.product.inventory.set_quantity(
+          movement.quantity
+        )
+      end
+    end
+
+    redirect_to warehouse_index_path(params[:entry_codes]), 
+      notice: 'Registros confirmados'
   end
 
   def new_supplier_entry
@@ -56,7 +75,6 @@ class WarehouseController < ApplicationController
   def edit
     @entry = WarehouseEntry.find(params[:id])
     @movement = @entry.movement
-    @entry_id = @entry.id
   end
 
   def destroy
@@ -84,7 +102,7 @@ class WarehouseController < ApplicationController
 
   private
 
-  def setMovements
+  def create_movements
     @collection.each do |movement|
       if movement.save
         movement.warehouse_entry = WarehouseEntry.create(
@@ -93,5 +111,9 @@ class WarehouseController < ApplicationController
         )
       end
     end
+  end
+
+  def set_movements
+    @movements = Movement.where(id: params[:entry_codes].split('-'))
   end
 end
