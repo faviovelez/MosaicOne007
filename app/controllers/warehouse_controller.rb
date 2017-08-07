@@ -1,6 +1,7 @@
 class WarehouseController < ApplicationController
   # Este controller se utilizará para la funcionalidad de warehouse con varios modelos.
   before_action :authenticate_user!
+  before_action :set_movements, only: [:show, :confirm]
 
   def new_own_entry
     @movement = Movement.new
@@ -17,6 +18,39 @@ class WarehouseController < ApplicationController
     end
   end
 
+  def save_own_product
+    @collection = []
+    params.select {|p| p.match('trForProduct').present? }.each do |product|
+      attributes = product.second
+      product = Product.find(attributes.first.second).first
+      @collection << Movement.new(
+        product: product,
+        quantity:  attributes[:cantidad],
+        movement_type: 'alta',
+        user: current_user,
+        unique_code: product.unique_code,
+        store: current_user.store,
+        business_unit: current_user.store.business_unit
+      )
+    end
+    create_movements
+    codes = @collection.map {|movement| movement.id}.join('-')
+    redirect_to warehouse_show_path(codes), notice: 'Todos los registros almacenados.'
+  end
+
+  def show
+    @codes = params[:entry_codes]
+  end
+
+  def confirm
+    @movements.each do |movement|
+      movement.update(confirm: true)
+    end
+
+    redirect_to warehouse_index_path,
+      notice: 'Registros confirmados'
+  end
+
   def new_supplier_entry
   end
 
@@ -31,7 +65,14 @@ class WarehouseController < ApplicationController
   def edit
     @entry = WarehouseEntry.find(params[:id])
     @movement = @entry.movement
-    @entry_id = @entry.id
+  end
+
+  def destroy
+    @entry = WarehouseEntry.find(params[:id])
+    @movement = @entry.movement
+    if @movement.warehouse_entry.destroy
+      redirect_to warehouse_show_path(params[:entry_codes]), notice: 'Registro eliminado.' if @movement.destroy
+    end
   end
 
   def orders
@@ -49,5 +90,30 @@ class WarehouseController < ApplicationController
 
   end
 
+  private
 
+  def create_movements
+    @collection.each do |movement|
+      if movement.save
+        movement.warehouse_entry = WarehouseEntry.create(
+          product: movement.product,
+          quantity: movement.quantity
+        )
+        begin
+          movement.product.inventory.set_quantity(
+            movement.quantity
+          )
+        rescue NoMethodError
+          movement.product.inventory = Inventory.create
+          movement.product.inventory.set_quantity(
+            movement.quantity
+          )
+        end
+      end
+    end
+  end
+
+  def set_movements
+    @movements = Movement.where(id: params[:entry_codes].split('-'))
+  end
 end

@@ -1,4 +1,14 @@
-<table>
+<%= content_for :stylesheet do %>
+  <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet" />
+<% end %>
+
+<%= content_for :javascript do %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+  <%= javascript_include_tag 'warehouse' %>
+<% end %>
+
+<table class='datatables'>
   <thead>
     <tr class="table-titles">
       <th class="col-md-1">Folio</th>
@@ -6,6 +16,7 @@
       <th class="col-md-2">Color / Diseño</th>
       <th class="col-md-1">Cantidad</th>
       <th class="col-md-1">Fecha</th>
+      <td class='hidden'></th>
     </tr>
   </thead>
   <tbody>

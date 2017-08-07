@@ -1,69 +1,173 @@
 $(function(){
-  $('#movement_product_id').select2({
-    width: '300',
-    placeholder: "Selectione un cliente",
-    allowClear: true
-  })
-  .unbind('change')
-  .change(function(){
-    $.ajax({
-      url: '/warehouse/get/' + $(this).val(),
-      method: 'get'
-    }).done(function(response) {
-      if (response.product) {
-        var image = response.images.length ?
-          response.images[0].image.small.url :
-          $('#not_image_temp').attr('src');
-        $('.image-temp, .productInfoData').remove();
-        var newLink = $('#link_to_images').attr('href').replace(/\d+/g, response.product.id);
-        $('#link_to_images').attr('href', newLink.replace('root','warehouse-new_own_entry'));
-        $('#link_to_images').append('<img class="image-temp" src="' + image + '">');
-        var codigo = '<p class="productInfoData"><span><strong>Código: </strong>' + response.product.unique_code  + '</span></p>';
-        var description = '<p class="productInfoData"><span><strong>Descripcion: </strong>' + response.product.description  + '</span></p';
-        var input = '<label class="productInfoData" for="numPices">Numero de piezas</label><div class="field">' +
-                      '<input class="productInfoData" id="numPices" type="text" value="" placeholder="Piezas a dar de Alta" />' +
-                    '</div>';
-        $('#productInfo').append(codigo).append(description).append(input);
-        $('#numPices').mask('000', {placeholder: "___"}).css({'text-align': 'center'});
-        input = '<a href="#" id="newProduct" class="btn btn-default productInfoData">Agregar nuevo</a>';
-        $('#productInfo').append(input);
-        $('#newProduct').click(function(){
-          var inc = ($('select').length + 1);
-          var id = 'product_' + inc;
-          var label = '<label for="' + id + '">Selecionar producto</label><br />';
-          var select = '<select id="' + id  + '"></select>';
-          $('#new_movement').append(label).append(select);
-          $('#' + id)
-          .append($('#movement_product_id').html())
-          .select2({
-            width: '300',
-            placeholder: "Selectione un cliente",
-            allowClear: true
-          })
-          .unbind('change')
-          .change(function(){
-            $.ajax({
-              url: '/warehouse/get/' + $(this).val(),
-              method: 'get'
-            }).done(function(response) {
-              var newLink = $('#link_to_images').attr('href').replace(/\d+/g, response.product.id);
-              $('#product' + inc + ', .productInfoData' + inc + ', #numPices' + inc).remove();
-              var image = '<br /><img class="image-temp-'+ inc +'" id="not_image_temp_'+ inc +'" src="'+ $('#not_image_temp').attr('src') +'" alt="Product small">';
-              var link = '<a id="product'+ inc +'" href="'+ newLink  +'">'+ image +'</a>';
-              $('#new_movement').append(link);
-              var codigo = '<p class="productInfoData'+inc+'"><span><strong>Código: </strong>' + response.product.unique_code  + '</span></p>';
-              var description = '<p class="productInfoData'+inc+'"><span><strong>Descripcion: </strong>' + response.product.description  + '</span></p';
-              var input = '<label class="productInfoData'+inc+'" for="numPices'+inc+'">Numero de piezas</label>' + '<input class="productInfoData" id="numPices'+inc+'" type="text" value="" placeholder="Piezas a dar de Alta" />';
-              $('#new_movement').append(codigo).append(description).append(input);
-              $('#numPices' + inc).mask('000', {placeholder: "___"}).css({'text-align': 'center'});
-              $('#new_movement').append('<br />');
-              $('#newProduct').appendTo('#new_movement');
-            });
-          });
-          return false;
-        });
+  if ($('.datatables').length > 0) {
+    $('.datatables').DataTable({
+      "language": {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ registros",
+        "sZeroRecords":    "No se encontraron resultados",
+        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+        "sInfoPostFix":    "",
+        "sSearch":         "Buscar:",
+        "sUrl":            "",
+        "sInfoThousands":  ",",
+        "sLoadingRecords": "Cargando...",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        },
+        "oAria": {
+          "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+          "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+        }
+      },
+      pageLength: 10,
+      responsive: true,
+      dom: 'Bfrtip',
+      buttons: [
+        'copy', 'csv', 'excel', 'pdf'
+      ]
+    });
+  }
+
+  setTimeout(function(){
+    _.templateSettings = {
+      interpolate: /\{\{\=(.+?)\}\}/g,
+      evaluate: /\{\{(.+?)\}\}/g,
+      variable: 'rc'
+    };
+  }, 500);
+
+  var formatState = function(state){
+    var r = /\d+/;
+    var code = state.text.match(r);
+    if (state.text === 'Selecionar un producto') {
+      return state.text;
+    }
+    if (state.id === '') {
+      return state.text;
+    }
+    var element = $('#' + state.element.parentElement.id);
+    if (findInSelect($(element).val(), $(element).attr('id'))) {
+      return '';
+    }
+    return code;
+  };
+
+  var checkNotEmpty = function(){
+    var allFill = true;
+    $.each($('input[id^=numProduct_product]'), function(){
+      if ($(this).val() === ''){
+        allFill = false;
+        $(this).parent().addClass('has-error');
+      } else {
+        $(this).parent().removeClass('has-error').addClass('has-success');
       }
     });
+    return allFill;
+  };
+
+  $('#saveInfo').click(function(){
+    if (checkNotEmpty()){
+      var data = {};
+      $.each($('tr[id^=trForProduct]'), function(){
+        data[$(this).attr('id')] = {
+          id       : $(this).find('select').val(),
+          cantidad : $(this).find('input[id^=numProduct]').val()
+        };
+      });
+      $.ajax({
+        url: '/warehouse/save_own_product',
+        data: data,
+        method: 'post'
+      });
+    }
+    return false;
   });
+
+  var findInSelect = function(findCode, id){
+    var find = false;
+    $.each($('select'), function(){
+      if ($(this).val().toString() === findCode.toString() && $(this).attr('id') !== id){
+        find = true;
+        return true;
+      }
+    });
+    return find;
+  };
+
+  var changeAction = function(element, inc, dec){
+    if ($(element).val() === null) {
+      var tr = $('td[id$=product'+dec+']').parent();
+      var selectId = $(tr).find('select').attr('id');
+      if ($('tbody tr').length > 1) {
+        $('#' + selectId).select2('destroy');
+        $(tr).remove();
+      } else {
+        $(tr).find('td').slice(-4).remove();
+      }
+    } else {
+      if (findInSelect($(element).val(), $(element).attr('id'))) {
+        return false;
+      }
+      $.ajax({
+        url: '/warehouse/get/' + $(element).val(),
+        method: 'get'
+      }).done(function(response) {
+        var template = _.template(
+          $("script.template").html()
+        );
+        var image = response.images.length > 0 ?
+          response.images[0].image.small.url :
+          $('#not_image_temp').attr('src');
+        var link = $('#link_to_images').attr('href').replace(/\d+/g, response.product.id);
+        var id = "product" + dec;
+        $('#trForProduct' + dec).append(
+          template( {
+            description: response.product.description,
+            image:       image,
+            link:        link,
+            id:          id
+          } )
+        );
+        $('#numProduct_'+ id).mask("000", {placeholder: "___"}).css({'text-align': 'center'});
+        $('#addNew' + id).click(function(){
+          var tr = "<tr id='trForProduct"+ inc +"'>" +
+            "<td class='select'>" +
+            "<select id='selectForProduct"+ inc +"'></select>" +
+            "</td>" +
+            "</tr>";
+          $('tbody').prepend(tr);
+          $('#selectForProduct'+ inc).append($('select:last').html());
+          $('#selectForProduct'+ inc).select2({
+            templateSelection: formatState,
+            multiple: true,
+            maximumSelectionLength: 1
+          })
+            .change(function(){
+              var dec = parseInt($(this).attr('id').match(/\d+/)[0]);
+              changeAction(this, dec + 1, dec);
+            });
+          $(this).addClass('hidden');
+          return false;
+        });
+      });
+    }
+  };
+
+  if ($('#product1').length > 0) {
+    $('#product1').select2({
+      templateSelection: formatState,
+      multiple: true,
+      maximumSelectionLength: 1
+    })
+    .change(function(){
+      changeAction(this, 2, 1);
+    });
+  }
 
 });
