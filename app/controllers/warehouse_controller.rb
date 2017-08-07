@@ -44,17 +44,7 @@ class WarehouseController < ApplicationController
 
   def confirm
     @movements.each do |movement|
-      begin
-        movement.update(confirm: true)
-        movement.product.inventory.set_quantity(
-          movement.quantity
-        )
-      rescue NoMethodError
-        movement.product.inventory = Inventory.create
-        movement.product.inventory.set_quantity(
-          movement.quantity
-        )
-      end
+      movement.update(confirm: true)
     end
 
     redirect_to warehouse_index_path(params[:entry_codes]), 
@@ -109,6 +99,16 @@ class WarehouseController < ApplicationController
           product: movement.product,
           quantity: movement.quantity
         )
+        begin
+          movement.product.inventory.set_quantity(
+            movement.quantity
+          )
+        rescue NoMethodError
+          movement.product.inventory = Inventory.create
+          movement.product.inventory.set_quantity(
+            movement.quantity
+          )
+        end
       end
     end
   end
