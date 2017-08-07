@@ -1,0 +1,22 @@
+
+<div class="show-container">
+
+  <h2 class="info-title"> Usuario creado: <%= @user.first_name %> <%= @user.last_name%></h2>
+
+  <p> <strong> Nombre: </strong>
+    <%= @user.first_name %> <%= @user.middle_name %> <%= @user.last_name %>
+  </p>
+
+  <p> <strong> Correo electrónico: </strong>
+    <%= @user.email %>
+  </p>
+
+  <p> <strong> Rol del usuario: </strong>
+    <%= @user.role_id %>
+  </p>
+
+  <p> <strong> Tienda: </strong>
+    <%= @user.store_id %>
+  </p>
+
+</div>
