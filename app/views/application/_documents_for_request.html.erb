@@ -11,7 +11,7 @@
       <%= link_to 'Borrar', document_path(@authorisation.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
     <% end %>
   </div>
-  <% else %>
+  <% elsif @request.authorised_without_doc %>
     <h4>Autorización</h4>
     <p class="individual-font">Autorizado sin documento firmado</p>
 <% end %>
@@ -27,7 +27,7 @@
       <%= link_to 'Borrar', document_path(@payment.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
     <% end %>
   </div>
-  <% else %>
+  <% elsif @request.authorised_without_pay %>
     <h4>Ficha de depósito</h4>
     <p class="individual-font">Autorizado sin ficha de depósito</p>
 <% end %>
@@ -61,3 +61,6 @@
     <% end %>
     </div>
 <% end %>
+<br>
+<br>
+<br>

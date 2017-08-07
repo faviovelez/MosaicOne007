@@ -102,7 +102,6 @@ class RequestsController < ApplicationController
       save_status
       # Esta bifurcación del método es para cambiar el estatus a cancelada.
       if params[:cancelar].present?
-        debugger
         @request.update(status: 'cancelada')
         @request.save
         redirect_to filtered_requests_inactive_view_path, notice: 'La solicitud de cotización fue cancelada.'
@@ -262,13 +261,13 @@ class RequestsController < ApplicationController
   # Guarda el documento y el estatus del campo que dice si se guardó el documento.
   def save_document
     if params[:request][:payment].present?
-      payment = Document.create(document: params[:request][:payment_uploaded], document_type: 'pago', request: @request)
+      payment = Document.create(document: params[:request][:payment], document_type: 'pago', request: @request)
       @request.documents << payment
       @request.update(payment_uploaded: true)
       @request.save
     end
     if params[:request][:authorisation].present?
-      authorisation = Document.create(document: params[:request][:authorisation_signed], document_type: 'pedido', request: @request)
+      authorisation = Document.create(document: params[:request][:authorisation], document_type: 'pedido', request: @request)
       @request.documents << authorisation
       @request.update(authorisation_signed: true)
       @request.save

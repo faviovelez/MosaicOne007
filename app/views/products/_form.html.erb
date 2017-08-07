@@ -144,13 +144,15 @@
       <%= f.select :business_unit, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}, selected: @product.business_unit) %>
     </div>
 
-    <% if @product.images.count > 0 %>
-      <div class="images-container">
-        <h3 class="show-container" id="img-title-prod">Imágenes</h3>
-        <%= render 'images' %>
-      </div>
+    <div class="form-inside-style">
+      <%= f.label :piezas_por_paquete %>
+      <%= f.number_field :pieces_per_package, min: 0, max: 200, class: 'form-inside' %>
+    </div>
 
-      <div class="form-inside-style">
+    <% if @product.images.count > 0 %>
+        <%= render 'images' %>
+
+      <div class="form-inside-style center-field">
         <%= f.label :agregar_más_imágenes %>
         <%= f.file_field :image, multiple: true %><br>
       </div>

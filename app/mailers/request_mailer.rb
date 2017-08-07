@@ -42,6 +42,15 @@ class RequestMailer < ApplicationMailer
       )
   end
 
+  def request_reactivated(request)
+    @request = request
+    identify_manager_and_request(request)
+      mail(
+        to: @manager.email,
+        subject: "La solicitud #{request.id} ha sido reactivada"
+      )
+  end
+
   def identify_manager_and_request(request)
     @request = request
     manager_role_id = Role.find_by_name('manager').id
