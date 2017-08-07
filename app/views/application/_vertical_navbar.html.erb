@@ -337,6 +337,15 @@
                 <%= link_to 'Crear usuario', new_user_path, class: 'text-link'  %>
               </li>
 
+              <% if params[:controller] == 'devise/registrations' && params[:action] == 'new' %>
+                <li class="vertical-link actual-vertical-link">
+              <% else %>
+                <li class="vertical-link">
+              <% end %>
+                  <i class="fa fa-user-plus other-nav-icons" aria-hidden="true"></i>
+                  <%= link_to 'Lista de usuarios', users_path, class: 'text-link'  %>
+                </li>
+
             <% if params[:controller] == 'stores' && params[:action] == 'new' %>
               <li class="vertical-link actual-vertical-link">
             <% else %>

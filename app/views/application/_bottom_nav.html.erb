@@ -49,8 +49,11 @@
         <%= link_to 'Ver solicitud de cotización', request_path(@design_request.request) %>
       <% end %>
 
-      <% if current_user.role.name == 'designer' %>
-        <%= link_to 'Ver las solicitudes de diseño', filtered_requests_assigned_view_path %>
+    <% end %>
+
+    <% if params[:controller] == 'admin_users' && params[:action] == 'show' %>
+      <% if current_user.role.name == 'platform-admin' %>
+        <%= link_to 'Editar usuario', edit_user_path(@user)  %>
       <% end %>
     <% end %>
 
