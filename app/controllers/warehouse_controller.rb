@@ -47,7 +47,7 @@ class WarehouseController < ApplicationController
       movement.update(confirm: true)
     end
 
-    redirect_to warehouse_index_path(params[:entry_codes]), 
+    redirect_to warehouse_index_path,
       notice: 'Registros confirmados'
   end
 
