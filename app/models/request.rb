@@ -51,19 +51,25 @@ class Request < ActiveRecord::Base
   # Valida que si se seleccionó que sí se requiere impresión, todos los campos de este tipo estén llenos.
   validate :impression_fields_complete, if: :impression_selected, on: :create
 
-  after_update :send_mail_to_store_users_cost, if: :status_changed_to_cost_assigned
+  # ****** MAILERS DESACTIVADOS HASTA QUE SE CONFIGURE AMAZON ******
+
+  # Envía un correo elecrónico notificando que se asignó el costo a su solicitud
+  #after_update :send_mail_to_store_users_cost, if: :status_changed_to_cost_assigned
 
   # Envía un correo elecrónico notificando que se asignó el precio de venta a la solicitud
-  after_update :send_mail_to_manager_price, if: :status_changed_to_price_assigned
+  #after_update :send_mail_to_manager_price, if: :status_changed_to_price_assigned
 
   # Envía un correo elecrónico notificando que la tienda autorizó la solicitud
-  after_update :send_mail_to_manager_authorised, if: :status_changed_to_authorised
+  #after_update :send_mail_to_manager_authorised, if: :status_changed_to_authorised
 
   # Envía un correo elecrónico notificando que la tienda canceló la solicitud
-  after_update :send_mail_to_manager_cancelled, if: :status_changed_to_cancelled
+  #after_update :send_mail_to_manager_cancelled, if: :status_changed_to_cancelled
 
   # Envía un correo elecrónico notificando que la tienda reactivó la solicitud
-  after_update :send_mail_to_manager_reactivated, if: :cancelled_request_is_reactivated
+  #after_update :send_mail_to_manager_reactivated, if: :cancelled_request_is_reactivated
+
+  # ****** MAILERS DESACTIVADOS HASTA QUE SE CONFIGURE AMAZON ******
+
 
   # Si la fecha de entrega existe, validar que no sea en el pasado.
   def delivery_date_future
