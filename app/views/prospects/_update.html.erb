@@ -44,6 +44,11 @@
   </div>
 
   <div class="form-inside-style">
+    <%= f.label :correo_electrónico %>
+    <%= f.email_field :email, class: 'form-inside' %>
+  </div>
+
+  <div class="form-inside-style">
     <%= f.label :teléfono_directo %>
     <%= f.text_field :direct_phone, maxlength: 10, class: 'form-inside' %>
   </div>

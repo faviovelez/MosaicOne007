@@ -88,6 +88,6 @@ class ProspectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def prospect_params
-      params.require(:prospect).permit(:store_id, :prospect_type, :contact_first_name, :second_last_name, :contact_middle_name, :contact_last_name, :contact_position, :direct_phone, :extension, :cell_phone, :business_type, :prospect_status, :discount, :legal_or_business_name, :billing_address_id, :delivery_address_id)
+      params.require(:prospect).permit(:store_id, :prospect_type, :contact_first_name, :second_last_name, :contact_middle_name, :contact_last_name, :contact_position, :direct_phone, :extension, :cell_phone, :business_type, :prospect_status, :discount, :legal_or_business_name, :billing_address_id, :delivery_address_id, :email)
     end
 end
