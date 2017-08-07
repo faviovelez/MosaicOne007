@@ -328,7 +328,7 @@
               <%= link_to 'Inicio', root_path, class: 'text-link'  %>
             </li>
 
-            <% if params[:controller] == 'devise/registrations' && params[:action] == 'new' %>
+            <% if params[:controller] == 'admin_users' && params[:action] == 'new' %>
               <li class="vertical-link actual-vertical-link">
             <% else %>
               <li class="vertical-link">
@@ -337,7 +337,7 @@
                 <%= link_to 'Crear usuario', new_user_path, class: 'text-link'  %>
               </li>
 
-              <% if params[:controller] == 'devise/registrations' && params[:action] == 'new' %>
+              <% if params[:controller] == 'admin_users' && params[:action] == 'index' %>
                 <li class="vertical-link actual-vertical-link">
               <% else %>
                 <li class="vertical-link">
