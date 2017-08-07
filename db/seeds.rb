@@ -72,8 +72,8 @@ master_user = Role.find_by_name('platform-admin')
 
 User.create(
   email: "admin@adminmosaictech.com",
-  first_name: "administrador",
-  last_name: "diseños de cartón",
+  first_name: "Administrador",
+  last_name: "Diseños de Cartón",
   password: 123456,
   password_confirmation: 123456,
   role: master_user,

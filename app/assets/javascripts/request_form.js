@@ -305,10 +305,12 @@ $("#request_impression_no").click(function () {
     };
   });
 
-  payment.bind('change', function() {
-    if (payment != '' ){
-      $('.authorised_without_pay').addClass('hidden');
-    };
-  });
+  if (typeof payment !== 'undefined') {
+    payment.bind('change', function() {
+      if (payment != '' ){
+        $('.authorised_without_pay').addClass('hidden');
+      }
+    });
+  }
 
 });

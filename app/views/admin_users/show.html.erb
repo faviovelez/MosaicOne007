@@ -1,22 +1,22 @@
 
 <div class="show-container">
 
-  <h2 class="info-title"> Usuario creado: <%= @user.first_name %> <%= @user.last_name%></h2>
+  <h2 class="info-title"> Detalles del usuario</h2>
 
-  <p> <strong> Nombre: </strong>
+  <p class="individual-font"> <strong> Nombre: </strong>
     <%= @user.first_name %> <%= @user.middle_name %> <%= @user.last_name %>
   </p>
 
-  <p> <strong> Correo electrónico: </strong>
+  <p class="individual-font"> <strong> Correo electrónico: </strong>
     <%= @user.email %>
   </p>
 
-  <p> <strong> Rol del usuario: </strong>
-    <%= @user.role_id %>
+  <p class="individual-font"> <strong> Rol del usuario: </strong>
+    <%= @user.role.name.titleize %>
   </p>
 
-  <p> <strong> Tienda: </strong>
-    <%= @user.store_id %>
+  <p class="individual-font"> <strong> Tienda: </strong>
+    <%= @user.store.store_code %> - <%= @user.store.store_name %>
   </p>
 
 </div>

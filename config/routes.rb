@@ -83,12 +83,15 @@ Rails.application.routes.draw do
   get 'warehouse/new_supplier_entry'
 
   get 'warehouse/edit/:id/', to: 'warehouse#edit', as: 'warehouse_edit_entry'
+
   delete 'warehouse/delete/:id/:entry_codes', to: 'warehouse#destroy', as: 'warehouse_delete_entry'
+
   get 'warehouse/get/:product', to: 'warehouse#get_product', as: 'warehouse_get_product'
 
   get 'warehouse/show/:entry_codes', to: 'warehouse#show', as: 'warehouse_show'
 
   get 'warehouse/index'
+
   post 'warehouse/save_own_product'
 
   get 'warehouse/orders'
