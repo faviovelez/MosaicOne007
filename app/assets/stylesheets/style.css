@@ -524,7 +524,7 @@ select {
 }
 
 .background-img {
-  background-image: url('/assets/slide-2.jpg') center center no-repeat;
+  background-image: url('/assets/slide-2.jpg');
   background-attachment: fixed;
   background-size: 100vw auto
 }
