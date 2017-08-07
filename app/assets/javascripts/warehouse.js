@@ -104,8 +104,12 @@ $(function(){
     if ($(element).val() === null) {
       var tr = $('td[id$=product'+dec+']').parent();
       var selectId = $(tr).find('select').attr('id');
-      $('#' + selectId).select2('destroy');
-      $(tr).remove();
+      if ($('tbody tr').length > 1) {
+        $('#' + selectId).select2('destroy');
+        $(tr).remove();
+      } else {
+        $(tr).find('td').slice(-4).remove();
+      }
     } else {
       if (findInSelect($(element).val(), $(element).attr('id'))) {
         return false;
