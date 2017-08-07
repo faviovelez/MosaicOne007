@@ -28,8 +28,8 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  namespace :admin do
-    resources :users, as: 'admin_users', controller: 'admin_users'
+  scope "/admin" do
+    resources :users, controller: 'admin_users'
   end
 
   resources :delivery_addresses

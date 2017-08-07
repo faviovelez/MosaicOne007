@@ -1,12 +1,8 @@
+<%= render 'user_errors' %>
 
-<%= form_for(@user) do |f| %>
+<%= form_for(@user, as: :user, url: user_path) do |f| %>
 
-<br />
-<br />
-<br />
-<br />
-
-  <h2 class="info-title">Editar Usuario<%= resource_name.to_s.humanize %></h2>
+  <h2 class="info-title">Editar Usuario <%= @user.first_name %> <%= @user.last_name%></h2>
 
   <div class="form-container">
 
@@ -40,25 +36,21 @@
       <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
     </div>
 
-    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-      <div>Esperando confirmación de: <%= resource.unconfirmed_email %></div>
-    <% end %>
-
-    <div class="form-inside-style">
-      <%= f.label :contraseña %> <i>(Déjalo en blanco si no quieres cambiarlo)</i><br />
+    <div class="field form-inside-style">
+      <%= f.label :contraseña %> <i>(Déjala en blanco si no quieres cambiarla)</i>
       <% if @minimum_password_length %>
       <em>(Mínimo <%= @minimum_password_length %> caracteres)</em>
-      <% end %><br />
+      <% end %>
       <%= f.password_field :password, autocomplete: "off", class: 'form-inside' %>
     </div>
 
-    <div class="field">
-      <%= f.label :contraseña_actual %> <i>(Necesitamos tu password para realizar los cambios)</i><br />
+    <div class="field form-inside-style">
+      <%= f.label :contraseña_actual %> <i>(Necesitamos tu password para realizar los cambios)</i>
       <%= f.password_field :current_password, autocomplete: "off", class: 'form-inside' %>
     </div>
 
   <div class="form-inside-style">
-    <%= f.label :confirmación_de_contraseña %><br />
+    <%= f.label :confirmación_de_contraseña %>
     <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-inside' %>
   </div>
 
@@ -70,5 +62,3 @@
 
   </div>
 <% end %>
-
-<%= link_to "Atrás", :back %>

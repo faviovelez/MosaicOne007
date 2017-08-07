@@ -17,25 +17,9 @@ class User < ActiveRecord::Base
   has_many :pending_movements
   has_many :user_sales
   has_many :production_orders
-  @skip = false
 
   validates :first_name, presence: { message: 'Por favor escriba el primer nombre del usuario.'}
 
   validates :last_name, presence: { message: 'Por favor anote los apellidos del usuario.'}
-
-  def skip_notifications!()
-    skip_confirmation_notification!
-    @skip = true
-  end
-
-  def email_changed?
-    return false if @skip
-    super
-  end
-
-  def encrypted_password_changed?
-    return false if @skip
-    super
-  end
 
 end
