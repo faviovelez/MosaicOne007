@@ -34,11 +34,13 @@ $(function(){
     });
   }
 
-  _.templateSettings = {
-    interpolate: /\{\{\=(.+?)\}\}/g,
-    evaluate: /\{\{(.+?)\}\}/g,
-    variable: 'rc'
-  };
+  setTimeout(function(){
+    _.templateSettings = {
+      interpolate: /\{\{\=(.+?)\}\}/g,
+      evaluate: /\{\{(.+?)\}\}/g,
+      variable: 'rc'
+    };
+  }, 500);
 
   var formatState = function(state){
     var r = /\d+/;
