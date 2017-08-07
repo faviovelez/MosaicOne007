@@ -481,7 +481,7 @@ select {
   margin-top: 1.5rem;
   margin-bottom: 2rem;
   font-size: 1.8rem;
-  background-color: #D72638;
+  olor: #D72638;
   color: #fff;
   height: 50px;
   padding: 0 2.5rem;
@@ -526,7 +526,10 @@ select {
 .background-img {
   background-image: url('/assets/slide-2.jpg');
   background-attachment: fixed;
-  background-size: 100vw auto
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-color: #232c37;
 }
 
 .secondary-button {
@@ -723,4 +726,59 @@ h2.reg-title {
   padding: 0 auto;
   display: block;
   text-align: center;
+}
+
+@media only screen and (max-width: 700px) {
+
+  ::-webkit-input-placeholder, input.long-sign-in {
+    width: 60vw;
+    font-size: 2rem;
+  }
+
+  :-moz-placeholder, input.long-sign-in  { /* Firefox 18- */
+    width: 60vw;
+    font-size: 2rem;
+  }
+
+  ::-moz-placeholder, input.long-sign-in  {  /* Firefox 19+ */
+    width: 60vw;
+    font-size: 2rem;
+  }
+
+  :-ms-input-placeholder, input.long-sign-in {
+    width: 60vw;
+    font-size: 2rem;
+  }
+
+  .sign-in-tittle-div {
+    width: 80vw;
+  }
+
+  img.second-logo {
+    height: 10vh;
+    width: auto;
+  }
+
+  .navbar-default .navbar-nav > li > a {
+    color: #232c37;
+  }
+
+  .container-log-in {
+      width: 80vw;
+      margin-left: -5vw;
+    }
+
+    h2.reg-title {
+      width: 80vw;
+      font-size: 4rem;
+  }
+
+  label {
+      font-size: 3rem;
+  }
+
+  a.link {
+      font-size: 2.5rem;
+  }
+
 }
