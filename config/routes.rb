@@ -28,8 +28,8 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  namespace :admin do
-    resources :users, as: 'admin_users', controller: 'admin_users'
+  scope "/admin" do
+    resources :users, controller: 'admin_users'
   end
 
   resources :delivery_addresses
@@ -41,10 +41,6 @@ Rails.application.routes.draw do
   resources :products do
     get 'images', to: 'products#images', as: 'product_images'
     resources :images, controller: 'products'
-  end
-
-  resources :users do
-    resources :requests, controller: 'assigned_requests'
   end
 
   resources :prospects do
