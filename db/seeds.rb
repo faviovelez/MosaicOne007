@@ -78,3 +78,7 @@ User.create(
   password_confirmation: 123456,
   role: master_user,
   store: default_store)
+
+100.times do |n|
+  Supplier.create(name: Faker::Name.name)
+end

@@ -16,7 +16,11 @@
     </tr>
   </tbody>
 </table>
-<a href='#' id='saveInfo' class='btn btn-primary' >Dar de alta</a>
+<% if supplier %>
+  <a href='#' id='saveInfoSupplier' class='btn btn-primary' >Dar de alta</a>
+<% else %>
+  <a href='#' id='saveInfo' class='btn btn-primary' >Dar de alta</a>
+<%end %>
 <br /> <br /><br />
 <br /> <br /><br />
 <div id='productInfo'>
