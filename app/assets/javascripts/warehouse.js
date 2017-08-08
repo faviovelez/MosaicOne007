@@ -34,14 +34,6 @@ $(function(){
     });
   }
 
-  setTimeout(function(){
-    _.templateSettings = {
-      interpolate: /\{\{\=(.+?)\}\}/g,
-      evaluate: /\{\{(.+?)\}\}/g,
-      variable: 'rc'
-    };
-  }, 500);
-
   var formatState = function(state){
     var r = /\d+/;
     var code = state.text.match(r);
@@ -111,6 +103,11 @@ $(function(){
         $(tr).find('td').slice(-4).remove();
       }
     } else {
+      _.templateSettings = {
+        interpolate: /\{\{\=(.+?)\}\}/g,
+        evaluate: /\{\{(.+?)\}\}/g,
+        variable: 'rc'
+      };
       if (findInSelect($(element).val(), $(element).attr('id'))) {
         return false;
       }
@@ -160,14 +157,17 @@ $(function(){
   };
 
   if ($('#product1').length > 0) {
-    $('#product1').select2({
-      templateSelection: formatState,
-      multiple: true,
-      maximumSelectionLength: 1
-    })
-    .change(function(){
-      changeAction(this, 2, 1);
-    });
+    setTimeout(function(){
+      $('#product1').select2({
+        templateSelection: formatState,
+        multiple: true,
+        maximumSelectionLength: 1
+      })
+      .change(function(){
+        changeAction(this, 2, 1);
+      });
+    }, 200);
+
   }
 
 });
