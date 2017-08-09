@@ -19,23 +19,16 @@ class WarehouseController < ApplicationController
   end
 
   def save_own_product
-    @collection = []
-    params.select {|p| p.match('trForProduct').present? }.each do |product|
-      attributes = product.second
-      product = Product.find(attributes.first.second).first
-      @collection << Movement.new(
-        product: product,
-        quantity:  attributes[:cantidad],
-        movement_type: 'alta',
-        user: current_user,
-        unique_code: product.unique_code,
-        store: current_user.store,
-        business_unit: current_user.store.business_unit
-      )
-    end
     create_movements
-    codes = @collection.map {|movement| movement.id}.join('-')
-    redirect_to warehouse_show_path(codes), notice: 'Todos los registros almacenados.'
+    attach_entry
+    redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
+  end
+
+  def save_supplier_product
+    create_movements
+    attach_entry
+    attach_bill_received
+    redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
   end
 
   def show
@@ -92,7 +85,7 @@ class WarehouseController < ApplicationController
 
   private
 
-  def create_movements
+  def attach_entry
     @collection.each do |movement|
       if movement.save
         movement.warehouse_entry = WarehouseEntry.create(
@@ -111,6 +104,28 @@ class WarehouseController < ApplicationController
         end
       end
     end
+  end
+
+  def attach_bill_received
+    binding.pry
+  end
+
+  def create_movements
+    @collection = []
+    params.select {|p| p.match('trForProduct').present? }.each do |product|
+      attributes = product.second
+      product = Product.find(attributes.first.second).first
+      @collection << Movement.new(
+        product: product,
+        quantity:  attributes[:cantidad],
+        movement_type: 'alta',
+        user: current_user,
+        unique_code: product.unique_code,
+        store: current_user.store,
+        business_unit: current_user.store.business_unit
+      )
+    end
+    @codes = @collection.map {|movement| movement.id}.join('-')
   end
 
   def set_movements

@@ -9,6 +9,6 @@
   <%= javascript_include_tag 'warehouse' %>
 <% end %>
 
-<%= render partial: 'own_products', locals: { supplier: 'supplier' } %>
+<%= render partial: 'own_products', locals: { supplier: true } %>
+<%= render partial: 'product_show_template', locals: {supplier: true } %>
 <%= render partial: 'supplier_modal' %>
-<%= render partial: 'product_show_template', locals: {supplier: 'supplier' } %>

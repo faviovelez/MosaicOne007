@@ -63,18 +63,30 @@ $(function(){
     return allFill;
   };
 
+  var createProductData = function(supplier){
+    var data = {};
+    $.each($('tr[id^=trForProduct]'), function(){
+      data[$(this).attr('id')] = {
+        id       : $(this).find('select').val(),
+        cantidad : $(this).find('input[id^=numProduct]').val(),
+        supplierInfo : {
+          folio: $('input#supplier_folio'),
+          date_of_bill: $('input#supplier_date_of_bill'),
+          subtotal:     $('input#supplier_subtotal'),
+          taxes_rate:   $('input#supplier_taxes_rate'),
+          total:        $('input#supplier_total_amount')
+        }
+      };
+    });
+    return data;
+  };
+
+
   $('#saveInfo').click(function(){
     if (checkNotEmpty()){
-      var data = {};
-      $.each($('tr[id^=trForProduct]'), function(){
-        data[$(this).attr('id')] = {
-          id       : $(this).find('select').val(),
-          cantidad : $(this).find('input[id^=numProduct]').val()
-        };
-      });
       $.ajax({
         url: '/warehouse/save_own_product',
-        data: data,
+        data: createProductData(),
         method: 'post'
       });
     }
@@ -166,6 +178,25 @@ $(function(){
       .change(function(){
         changeAction(this, 2, 1);
       });
+
+      if ($('#suppliersList')) {
+
+        $('#suppliersList').select2({
+          width: 500
+        });
+
+        $('#saveInfoSupplier').click(function(){
+          var data = createProductData();
+          if (checkNotEmpty()){
+            $.ajax({
+              url: '/warehouse/save_supplier_product',
+              data: data,
+              method: 'post'
+            });
+          }
+          return false;
+        });
+      }
     }, 200);
 
   }

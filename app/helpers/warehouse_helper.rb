@@ -7,6 +7,12 @@ module WarehouseHelper
     end
   end
 
+  def suppliers_collection
+    Supplier.all.collect do |s|
+      [s.name,  s.id]
+    end
+  end
+
   def image(movement)
     movement.product.images.first.try(
       :image_url) || 'product_small.png'
