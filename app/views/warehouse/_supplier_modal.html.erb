@@ -10,6 +10,7 @@
       <div class="modal-body">
         <%= select_tag :suppliersList, options_for_select(suppliers_collection), include_blank: 'Selecionar un Proveedor' %>
         <%= form_for :supplier do |f| %>
+          <input type="hidden" id="supplierId" />
           <div class="form-group">
             <%= f.label :folio %>
             <%= f.text_field :folio %>
@@ -34,7 +35,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary">Vincular</button>
+        <button type="button" class="btn btn-primary" id="vinculateSupplier">Vincular</button>
       </div>
     </div>
   </div>

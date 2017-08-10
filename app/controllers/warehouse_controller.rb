@@ -5,7 +5,7 @@ class WarehouseController < ApplicationController
 
   def new_own_entry
     @movement = Movement.new
-    role = Role.find_by_name('warehouse-staff')
+    role = Role.find_by_name('warehouse-staff') || Role.find_by_name('warehouse-admin')
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
   end
 
@@ -104,10 +104,15 @@ class WarehouseController < ApplicationController
         end
       end
     end
+    @codes = @collection.map {|movement| movement.id}.join('-')
   end
 
   def attach_bill_received
-    binding.pry
+    @collection.each do |movement|
+      if movement.save
+        binding.pry
+      end
+    end
   end
 
   def create_movements
@@ -125,7 +130,6 @@ class WarehouseController < ApplicationController
         business_unit: current_user.store.business_unit
       )
     end
-    @codes = @collection.map {|movement| movement.id}.join('-')
   end
 
   def set_movements
