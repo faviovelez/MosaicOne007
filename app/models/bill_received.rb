@@ -3,4 +3,10 @@ class BillReceived < ActiveRecord::Base
   belongs_to :supplier
   belongs_to :product
   has_many :payments
+
+  before_create :set_taxes
+
+  def set_taxes
+    self.taxes = self.subtotal * self.taxes_rate
+  end
 end

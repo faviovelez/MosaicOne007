@@ -93,8 +93,9 @@ $(function(){
         id       : $(this).find('select').val(),
         cantidad : $(this).find('input[id^=numProduct]').val()
       };
+      var index = $(this).attr('id').match(/\d+/)[0];
       if (supplier) {
-        data[$(this).attr('id')].supplierInfo = $('#supplierInfo').html();
+        data[$(this).attr('id')].supplierInfo = $('#supplierInfoproduct' + index).html();
       }
     });
     return data;

@@ -108,9 +108,22 @@ class WarehouseController < ApplicationController
   end
 
   def attach_bill_received
-    @collection.each do |movement|
+    params.select {|p| p.match('trForProduct').present? }.each_with_index do |product, index|
+      movement = @collection[index]
+      info = product.second
       if movement.save
-        binding.pry
+        supplier_info = info[:supplierInfo].split(',')
+        supplier = Supplier.find(supplier_info.first)
+        movement.update(supplier: supplier)
+        BillReceived.create(
+          folio: supplier_info.second,
+          date_of_bill: supplier_info.third,
+          subtotal: supplier_info.fourth,
+          taxes_rate: supplier_info.fifth,
+          total_amount: supplier_info[5],
+          supplier: supplier,
+          product: movement.product
+        )
       end
     end
   end
