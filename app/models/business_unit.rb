@@ -7,4 +7,7 @@ class BusinessUnit < ActiveRecord::Base
   has_many :prospects
   has_many :products
   has_many :stores
+  belongs_to :billing_address
+  has_one :inventory_configuration
+  has_many :warehouses
 end

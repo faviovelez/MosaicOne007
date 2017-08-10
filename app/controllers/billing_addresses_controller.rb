@@ -60,6 +60,9 @@ class BillingAddressesController < ApplicationController
   # Este método liga la dirección al owner (Store, Prospect u Order)
   def save_billing_address_to_owner
     @owner.billing_address = @billing
+    if @owner.is_a(Store)
+      current_user.store.business_unit.billing_address = @billing
+    end
     @owner.save
   end
 

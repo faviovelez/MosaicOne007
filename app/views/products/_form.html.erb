@@ -159,6 +159,11 @@
     <% else %>
 
       <div class="form-inside-style">
+        <%= f.label :bodega %>
+        <%= f.select :warehouse, options_for_select(current_user.store.business_unit.warehouses.collect{|w| [w.name, w.id]}) %>
+      </div>
+
+      <div class="form-inside-style">
         <%= f.label :imágenes %>
         <%= f.file_field :image, multiple: true %><br>
       </div>

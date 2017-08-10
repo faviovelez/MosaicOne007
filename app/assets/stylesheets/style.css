@@ -47,6 +47,14 @@ padding: 2rem;
 color: #fff;
 }
 
+.store-subtitle{
+  width: inherit;
+}
+
+.store-container {
+  width: 30vw;
+}
+
 .space {
   display: block;
   height: 15vh;

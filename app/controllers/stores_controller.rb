@@ -21,6 +21,7 @@ class StoresController < ApplicationController
 
   def create
     @store = Store.new(store_params)
+    create_inventory_configuration
     respond_to do |format|
       if @store.save
         format.html { redirect_to @store, notice: 'La tienda fue dada de alta exitosamente.' }
@@ -53,6 +54,10 @@ class StoresController < ApplicationController
       format.html { redirect_to @store, notice: 'La tienda fue eliminada correctamente' }
       format.json { head :no_content }
     end
+  end
+
+  def create_inventory_configuration
+    @inv_config = InventoryConfiguration.create(business_unit: @store.business_unit)
   end
 
 private

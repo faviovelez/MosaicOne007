@@ -1,5 +1,5 @@
 
-<div class="info-container">
+<div class="info-container store-container">
 
   <h3 class="info-title">
     <%= @store.store_code %> -
@@ -16,7 +16,7 @@
     <%= @store.business_unit.name %>
   </p>
 
-  <h4 class="info-subtitle">Datos de contacto</h4>
+  <h4 class="info-subtitle store-subtitle">Datos de contacto</h4>
 
   <p class="info">
     <strong>Correo:</strong>
@@ -46,5 +46,3 @@
   </p>
 
 </div>
-
-<%= link_to 'Regresar', :back, class: 'bottom-link' %>

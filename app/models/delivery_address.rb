@@ -4,6 +4,7 @@ class DeliveryAddress < ActiveRecord::Base
   has_many :stores
   has_many :prospects
   has_one :carrier
+  has_one :warehouse
 
   validates :zipcode, length: { is: 5, message: 'El código postal debe contener 5 caracteres.'}
 
