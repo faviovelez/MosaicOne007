@@ -7,6 +7,6 @@ class BillReceived < ActiveRecord::Base
   before_create :set_taxes
 
   def set_taxes
-    self.taxes = self.subtotal * self.taxes_rate
+    self.taxes = self.subtotal * (self.taxes_rate / 100)
   end
 end

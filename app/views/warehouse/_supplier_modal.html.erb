@@ -8,7 +8,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <%= select_tag :suppliersList, options_for_select(suppliers_collection), include_blank: 'Selecionar un Proveedor' %>
+        <%= select_tag :suppliersList, options_for_select(suppliers_collection) %>
         <%= form_for :supplier, html: { id: 'supplierForm' } do |f| %>
           <input type="hidden" id="supplierId" />
           <div class="form-group">

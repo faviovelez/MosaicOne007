@@ -8,13 +8,6 @@ $(function(){
         validating: 'glyphicon glyphicon-refresh'
       },
       fields: {
-        suppliersList: {
-          validators: {
-            notEmpty: {
-              message: 'Selecionar un proveedor de la lista'
-            }
-          }
-        },
         'supplier[folio]': {
           validators: {
             notEmpty: {
@@ -259,7 +252,11 @@ $(function(){
 
         $('#vinculateSupplier').click(function(){
           $('#supplierForm').data('formValidation').validate();
-          if ( $('#supplierForm').data('formValidation').isValid() ){
+          if ( $('#supplierForm').data('formValidation').isValid() ) {
+            var subtotal = parseFloat($('input#supplier_subtotal').val().replace(/,/,''));
+            var taxesRate = ((100 +  parseFloat($('input#supplier_taxes_rate').val()) ) / 100);
+            var total = subtotal * taxesRate;
+            $('input#supplier_total_amount').val(total);
             var info =  $('#suppliersList').val() +              ',' +
                         $('input#supplier_folio').val() +        ',' +
                         $('input#supplier_date_of_bill').val() + ',' +
@@ -275,7 +272,7 @@ $(function(){
             $('input#supplier_taxes_rate').val('');
             $('input#supplier_total_amount').val('');
 
-            $('#supplierModal').modal('toggle');
+            $('#supplierModal').modal('hide');
           }
 
 
