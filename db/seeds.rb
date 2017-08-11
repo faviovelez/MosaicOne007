@@ -27,20 +27,20 @@ end
 #### CONFIRMAR CON EL CLIENTE CUÁNTOS MÁS TIPOS DE USUARIO SE CREARÁN Y SI ESTÁ DE ACUERDO CON LOS NOMBRES ####
 [
   {name: "platform-admin", translation: "administrador de plataforma", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "director", translation: "director", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "manager", translation: "gerente", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "store", translation: "auxiliar de tienda", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "store-admin", translation: "jefe de tienda", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "product-admin", translation: "jefe de producto", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "product-staff",  translation: "auxiliar de producto", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "warehouse-admin", translation: "jefe de almacén", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "warehouse-staff", translation: "auxiliar de almacén", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "admin-desk", translation: "administrativo", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "designer-admin", translation: "jefe de diseñadores", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "designer", translation: "diseñador", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "driver", translation: "chofer", description: "Crea usuarios de todos los tipos, actualiza formularios" },
-  {name: "viewer", translation: "soporte", description: "Crea usuarios de todos los tipos, actualiza formularios" }
-]
+  {name: "director", translation: "director", description: "Tiene acceso a todos los procesos y funciones de manager, puede crear usuarios manager" },
+  {name: "manager", translation: "gerente", description: "Asigna precio a cotizaciones y puede asignar costo a las entradas de materiales" },
+  {name: "store", translation: "auxiliar de tienda", description: "Crea prospectos, cotizaciones y pedidos, autoriza, cancela o reactiva cotizaciones y pedidos" },
+  {name: "store-admin", translation: "jefe de tienda", description: "Con acceso a todas las secciones, reportes y funcionalidades de tienda y puede crear usuarios store" },
+  {name: "product-admin", translation: "jefe de producto", description: "Crea y modifica productos, asigna costos a entradas de mercancías, crea usuarios product-staff" },
+  {name: "product-staff", translation: "auxiliar de producto", description: "Crea y modifica productos, asigna costos a entradas de mercancías" },
+  {name: "warehouse-admin", translation: "jefe de almacén", description: "Maneja inventario, órdenes de producción, prepara pedidos y crea usuarios wharehouse-staff" },
+  {name: "warehouse-staff", translation: "auxiliar de almacén", description: "Maneja inventario, órdenes de producción, prepara pedidos" },
+  {name: "admin-desk", translation: "administrativo", description: "Crea usuarios tipo drivers, crea envíos y factura, elabora pedidos y cotizaciones" },
+  {name: "designer-admin", translation: "jefe de diseñadores", description: "Da respuesta a las solicitudes de diseño y puede crear usuarios designer" },
+  {name: "designer", translation: "diseñador", description: "Da respuesta a las solicitudes de diseño" },
+  {name: "driver", translation: "chofer", description: "Entrega mercancía" },
+  {name: "viewer", translation: "soporte", description: "Da seguimiento a pedidos y cotizaciones" }
+] ####### Comentar esta línea cuando esté listo ##### y descomentar las 3 líneas siguientes.
 #].each do |hash|
 #  Role.find_or_create_by(hash)
 #end
