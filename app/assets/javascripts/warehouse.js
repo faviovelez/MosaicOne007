@@ -185,7 +185,7 @@ $(function(){
           $("script.template").html()
         );
         var image = response.images.length > 0 ?
-          response.images[0].image.small.url :
+          response.images[0].image.thumb.url :
           $('#not_image_temp').attr('src');
         var link = $('#link_to_images').attr('href').replace(/\d+/g, response.product.id);
         var id = "product" + dec;
@@ -248,6 +248,16 @@ $(function(){
           width: 500
         });
 
+        $('#supplier_taxes_rate').mask("00", {placeholder: "__"}).css({'text-align': 'center'});
+        $('#supplier_subtotal').maskMoney();
+
+        $('#supplier_taxes_rate').keyup(function(){
+          var subtotal = parseFloat($('input#supplier_subtotal').val().replace(/,/,''));
+          var taxesRate = ((100 +  parseFloat($('input#supplier_taxes_rate').val()) ) / 100);
+          var total = subtotal * taxesRate;
+          $('#supplier_total_amount').val(total);
+        });
+
         initValidation();
 
         $('#vinculateSupplier').click(function(){
@@ -256,6 +266,7 @@ $(function(){
             var subtotal = parseFloat($('input#supplier_subtotal').val().replace(/,/,''));
             var taxesRate = ((100 +  parseFloat($('input#supplier_taxes_rate').val()) ) / 100);
             var total = subtotal * taxesRate;
+            var id = $('input#supplierId').val();
             $('input#supplier_total_amount').val(total);
             var info =  $('#suppliersList').val() +              ',' +
                         $('input#supplier_folio').val() +        ',' +
@@ -263,7 +274,10 @@ $(function(){
                         $('input#supplier_subtotal').val() +     ',' +
                         $('input#supplier_taxes_rate').val() +   ',' +
                         $('input#supplier_total_amount').val();
-            $('#supplierInfo' + $('input#supplierId').val()).html(info);
+
+            $('#supplierInfo' + id).html(info);
+            var providerName = $('#suppliersList option[value=' +  $('#suppliersList').val() + ']').html();
+            $('#supplierName' + id).html(providerName);
 
             $('#suppliersList').val('').trigger('change.select2');
             $('input#supplier_folio').val('');

@@ -5,6 +5,7 @@
 
   <% if supplier.present? %>
 
+    <td id='supplierName{{= rc.id}}'></a>
     <td id='add{{= rc.id}}'><a href='#' id='addNew{{= rc.id }}' class='btn btn-primary'>Nuevo</a>
     <a href="#" data-toggle="modal" data-id="{{= rc.id }}" data-target="#supplierModal" id='vincularSupplier{{= rc.id }}' class='btn btn-primary'>Proveedor</a></td>
     <td id='supplierInfo{{= rc.id }}' class='hidden'></td>
