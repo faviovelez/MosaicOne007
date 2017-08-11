@@ -62,7 +62,7 @@ class StoresController < ApplicationController
   end
 
   def create_warehouse
-    @warehouse = Warehouse.create(name: "almacén #{@store.name}", business_unit: @store.business_unit, warehouse_code: "a#{@store.store_code}")
+    @warehouse = Warehouse.create(name: "almacén #{@store.name}", business_unit: @store.business_unit, warehouse_code: "AT#{@store.store_code}")
   end
 
 private

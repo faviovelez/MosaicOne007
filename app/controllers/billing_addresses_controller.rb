@@ -12,6 +12,8 @@ class BillingAddressesController < ApplicationController
   def show
   end
 
+  def edit
+  end
 
   def new
     if @owner.billing_address.nil?

@@ -76,7 +76,7 @@ default_business_unit = BusinessUnit.find_by_name('default compañía')
 default_terceros_business_unit = BusinessUnit.find_by_name('default terceros')
 
 # Se crea un almacén default
-Warehouse.create(code: '000', name: 'almacén default', business_unit: default_business_unit)
+Warehouse.create(warehouse_code: 'AG000', name: 'almacén default', business_unit: default_business_unit)
 
 # Se crea el modelo Store_type para los distintos tipos de tiendas. Al crear una tienda, se puede elegir entre los business_units default o los creados o modificados por los usuarios.
 [
@@ -90,11 +90,11 @@ end
 
 store_type_default = StoreType.find_by_store_type('corporativo')
 
-default_store = Store.create(store_name: 'corporativo', store_code: '000', store_type: store_type_default, business_unit: default_business_unit)
+default_store = Store.find_or_create_by(store_name: 'corporativo', store_code: '000', store_type: store_type_default, business_unit: default_business_unit)
 
 admin = Role.find_by_name('platform-admin')
 
-User.create(
+User.find_or_create_by(
   email: "admin@adminmosaictech.com",
   first_name: "Administrador",
   last_name: "Diseños de Cartón",

@@ -1,0 +1,25 @@
+<%= form_for [@owner, @warehouse] do |f| %>
+
+  <h2 class="info-title">Almacén</h2>
+
+  <div class="form-container">
+
+    <div class="form-inside-style">
+      <%= f.label :código %>
+      <%= f.text_field :warehouse_code, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :nombre %>
+      <%= f.text_field :name, class: 'form-inside' %>
+    </div>
+
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :Guardar, name: 'guardar', class: 'main-button' %>
+      </div>
+    </div>
+
+  </div>
+
+<% end %>

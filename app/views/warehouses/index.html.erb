@@ -1,0 +1,28 @@
+<table>
+  <thead>
+    <tr class="table-titles">
+      <th class="col-md-1">Código</th>
+      <th class="col-md-2">Nombre</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <% @warehouses.each do |warehouse| %>
+      <td><%=warehouse.warehouse_code %></td>
+      <td><%=warehouse.name %></td>
+      <td class="col-md-1">
+        <%= link_to warehouse_path(warehouse) do %>
+          <i class="fa fa-eye link-to-details" aria-hidden="true"></i>
+          <span>Ver</span>
+        <% end %>
+      </td>
+
+      <td class="col-md-1">
+        <%= link_to edit_warehouse_path(warehouse) do %>
+          <i class="fa fa-pencil-square-o link-to-details" aria-hidden="true"></i>
+          <span>Editar</span>
+        <% end %>
+      </td>
+
+    </tr>
+  <% end %>
