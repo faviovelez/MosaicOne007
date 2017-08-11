@@ -3,4 +3,5 @@ class Supplier < ActiveRecord::Base
   has_many :payments
   has_many :movements
   has_many :pending_movements
+  belongs_to :business_unit
 end

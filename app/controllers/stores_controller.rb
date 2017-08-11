@@ -22,6 +22,7 @@ class StoresController < ApplicationController
   def create
     @store = Store.new(store_params)
     create_inventory_configuration
+    create_warehouse
     respond_to do |format|
       if @store.save
         format.html { redirect_to @store, notice: 'La tienda fue dada de alta exitosamente.' }
@@ -58,6 +59,10 @@ class StoresController < ApplicationController
 
   def create_inventory_configuration
     @inv_config = InventoryConfiguration.create(business_unit: @store.business_unit)
+  end
+
+  def create_warehouse
+    @warehouse = Warehouse.create(name: "almacén #{@store.name}", business_unit: @store.business_unit, warehouse_code: "a#{@store.store_code}")
   end
 
 private
