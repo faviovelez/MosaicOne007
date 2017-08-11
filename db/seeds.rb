@@ -101,6 +101,8 @@ User.find_or_create_by(
   password: ENV["admin_user_password"],
   password_confirmation: ENV["admin_user_password"],
   role: admin,
+  password: ENV["admin_user_password"],
+  password_confirmation: ENV["admin_user_password"],
   store: default_store)
 
 100.times do |n|
