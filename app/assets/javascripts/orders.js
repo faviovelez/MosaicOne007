@@ -47,8 +47,10 @@ $(function(){
   $('#saveInfo').click(function(){
     var data = createProductRequestData();
     if (checkNotEmpty()){
+      var re = /\d+/g;
+      var storeId = document.location.href.match(re).pop();
       $.ajax({
-        url: '/orders/save_products',
+        url: '/orders/save_products/'+ storeId,
         data: data,
         method: 'post'
       });
@@ -126,8 +128,10 @@ $(function(){
         $('#urgencyProduct_' + id).click(function(){
           var element = $('#maxDate' + $(this).attr('id').replace('urgency', '')).parent();
           if ($(this).is(':checked')) {
+            $(this).val('alta');
             $(element).removeClass('hidden');
           } else {
+            $(this).val('normal');
             $(element).addClass('hidden');
           }
         });
