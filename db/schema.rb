@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170810191451) do
+ActiveRecord::Schema.define(version: 20170811000745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -441,9 +441,11 @@ ActiveRecord::Schema.define(version: 20170810191451) do
     t.string   "image"
     t.integer  "pieces_per_package",       default: 1
     t.integer  "business_unit_id"
+    t.integer  "warehouse_id"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
+  add_index "products", ["warehouse_id"], name: "index_products_on_warehouse_id", using: :btree
 
   create_table "products_bills", force: :cascade do |t|
     t.integer  "product_id"
@@ -637,9 +639,25 @@ ActiveRecord::Schema.define(version: 20170810191451) do
   create_table "suppliers", force: :cascade do |t|
     t.string   "name"
     t.string   "business_type"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "business_unit_id"
+    t.string   "legal_or_business_name"
+    t.string   "type_of_person"
+    t.string   "contact_first_name"
+    t.string   "contact_middle_name"
+    t.string   "contact_last_name"
+    t.string   "contact_position"
+    t.string   "direct_phone"
+    t.string   "extension"
+    t.string   "cell_phone"
+    t.string   "email"
+    t.string   "supplier_status"
+    t.integer  "delivery_address_id"
   end
+
+  add_index "suppliers", ["business_unit_id"], name: "index_suppliers_on_business_unit_id", using: :btree
+  add_index "suppliers", ["delivery_address_id"], name: "index_suppliers_on_delivery_address_id", using: :btree
 
   create_table "user_requests", force: :cascade do |t|
     t.integer "user_id"
@@ -705,10 +723,13 @@ ActiveRecord::Schema.define(version: 20170810191451) do
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
     t.integer  "business_unit_id"
+    t.integer  "store_id"
+    t.string   "warehouse_code"
   end
 
   add_index "warehouses", ["business_unit_id"], name: "index_warehouses_on_business_unit_id", using: :btree
   add_index "warehouses", ["delivery_address_id"], name: "index_warehouses_on_delivery_address_id", using: :btree
+  add_index "warehouses", ["store_id"], name: "index_warehouses_on_store_id", using: :btree
 
   add_foreign_key "bill_receiveds", "products"
   add_foreign_key "bill_receiveds", "suppliers"
@@ -769,6 +790,7 @@ ActiveRecord::Schema.define(version: 20170810191451) do
   add_foreign_key "production_requests", "production_orders"
   add_foreign_key "production_requests", "products"
   add_foreign_key "products", "business_units"
+  add_foreign_key "products", "warehouses"
   add_foreign_key "products_bills", "bills"
   add_foreign_key "products_bills", "products"
   add_foreign_key "prospect_sales", "prospects"
@@ -787,6 +809,8 @@ ActiveRecord::Schema.define(version: 20170810191451) do
   add_foreign_key "stores", "business_units"
   add_foreign_key "stores", "delivery_addresses"
   add_foreign_key "stores", "store_types"
+  add_foreign_key "suppliers", "business_units"
+  add_foreign_key "suppliers", "delivery_addresses"
   add_foreign_key "user_requests", "requests"
   add_foreign_key "user_requests", "users"
   add_foreign_key "user_sales", "users"
@@ -796,4 +820,5 @@ ActiveRecord::Schema.define(version: 20170810191451) do
   add_foreign_key "warehouse_entries", "products"
   add_foreign_key "warehouses", "business_units"
   add_foreign_key "warehouses", "delivery_addresses"
+  add_foreign_key "warehouses", "stores"
 end
