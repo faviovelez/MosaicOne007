@@ -1,6 +1,6 @@
 class PagesController < ApplicationController
   before_action :authenticate_user!
-  # Probablemente después borre este controller si no es necesario.
+  # Pantalla principal de la aplicación.
   def index
   end
 end

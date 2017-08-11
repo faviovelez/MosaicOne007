@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   end
 
   resources :stores do
-    resources :prospects, :requests, :billing_addresses, :delivery_addresses, :orders
+    resources :prospects, :requests, :billing_addresses, :delivery_addresses, :orders, :warehouses
   end
 
   resources :requests do
@@ -61,6 +61,16 @@ Rails.application.routes.draw do
   resources :billing_addresses
 
   resources :documents
+
+  resources :business_groups
+
+  resources :business_units do
+    resources :warehouses
+  end
+
+  resources :warehouses do
+    resources :delivery_addresses
+  end
 
   get 'requests/confirm/:id', to: 'requests#confirm', as: 'confirm_requests'
 
@@ -93,6 +103,7 @@ Rails.application.routes.draw do
   get 'warehouse/index'
 
   post 'warehouse/save_own_product'
+
   post 'warehouse/save_supplier_product'
 
   get 'warehouse/orders'
