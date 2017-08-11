@@ -90,11 +90,11 @@ end
 
 store_type_default = StoreType.find_by_store_type('corporativo')
 
-default_store = Store.create(store_name: 'corporativo', store_code: '000', store_type: store_type_default, business_unit: default_business_unit)
+default_store = Store.find_or_create_by(store_name: 'corporativo', store_code: '000', store_type: store_type_default, business_unit: default_business_unit)
 
 admin = Role.find_by_name('platform-admin')
 
-User.create(
+User.find_or_create_by(
   email: "admin@adminmosaictech.com",
   first_name: "Administrador",
   last_name: "Diseños de Cartón",
