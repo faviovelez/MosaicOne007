@@ -24,6 +24,27 @@
   Role.find_or_create_by(name: name, description: description)
 end
 
+#### CONFIRMAR CON EL CLIENTE CUÁNTOS MÁS TIPOS DE USUARIO SE CREARÁN Y SI ESTÁ DE ACUERDO CON LOS NOMBRES ####
+[
+  {name: "platform-admin", translation: "administrador de plataforma", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "director", translation: "director", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "manager", translation: "gerente", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "store", translation: "auxiliar de tienda", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "store-admin", translation: "jefe de tienda", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "product-admin", translation: "jefe de producto", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "product-staff",  translation: "auxiliar de producto", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "warehouse-admin", translation: "jefe de almacén", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "warehouse-staff", translation: "auxiliar de almacén", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "admin-desk", translation: "administrativo", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "designer-admin", translation: "jefe de diseñadores", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "designer", translation: "diseñador", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "driver", translation: "chofer", description: "Crea usuarios de todos los tipos, actualiza formularios" },
+  {name: "viewer", translation: "soporte", description: "Crea usuarios de todos los tipos, actualiza formularios" }
+]
+#].each do |hash|
+#  Role.find_or_create_by(hash)
+#end
+
 # Deben existir por lo menos dos Business Groups: Uno para tiendas propias y otro para tiendas externas
 [
   { name: "default compañía" },
@@ -54,6 +75,9 @@ end
 default_business_unit = BusinessUnit.find_by_name('default compañía')
 default_terceros_business_unit = BusinessUnit.find_by_name('default terceros')
 
+# Se crea un almacén default
+Warehouse.create(code: '000', name: 'almacén default', business_unit: default_business_unit)
+
 # Se crea el modelo Store_type para los distintos tipos de tiendas. Al crear una tienda, se puede elegir entre los business_units default o los creados o modificados por los usuarios.
 [
   { store_type: "tienda propia", business_unit_id: default_business_unit },
@@ -68,7 +92,7 @@ store_type_default = StoreType.find_by_store_type('corporativo')
 
 default_store = Store.create(store_name: 'corporativo', store_code: '000', store_type: store_type_default, business_unit: default_business_unit)
 
-master_user = Role.find_by_name('platform-admin')
+admin = Role.find_by_name('platform-admin')
 
 User.create(
   email: "admin@adminmosaictech.com",
@@ -76,5 +100,5 @@ User.create(
   last_name: "Diseños de Cartón",
   password: ENV["admin_user_password"],
   password_confirmation: ENV["admin_user_password"],
-  role: master_user,
+  role: admin,
   store: default_store)

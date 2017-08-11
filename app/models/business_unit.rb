@@ -10,4 +10,5 @@ class BusinessUnit < ActiveRecord::Base
   belongs_to :billing_address
   has_one :inventory_configuration
   has_many :warehouses
+  has_many :suppliers
 end
