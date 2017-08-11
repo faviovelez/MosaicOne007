@@ -75,7 +75,7 @@ $(function(){
         $('#' + selectId).select2('destroy');
         $(tr).remove();
       } else {
-        $(tr).find('td').slice(-4).remove();
+        $(tr).find('td').slice(-11).remove();
       }
     } else {
       _.templateSettings = {
@@ -110,7 +110,19 @@ $(function(){
           } )
         );
 
-        $('#numProduct_'+ id).mask("000", {placeholder: "___"}).css({'text-align': 'center'});
+        $('#packetsProduct_'+ id)
+          .mask("000000", {placeholder: "______"})
+          .css({'text-align': 'center'})
+          .blur(function(){
+            var packets = parseInt($(this).val());
+            var id = $(this).attr('id').replace('packetsProduct','');
+            var pices = parseInt($('#pices' + id).html());
+            $('#orderProduct' + id).val( packets * pices );
+            var pedido = parseInt($('#orderProduct' + id).val());
+            var price = parseInt($('#price' + id).html());
+            debugger
+            $('#totalProduct' + id).val(price * pedido);
+          });
         $('#addNew' + id).click(function(){
           var tr = "<tr id='trForProduct"+ inc +"'>" +
             "<td class='select'>" +
@@ -140,6 +152,7 @@ $(function(){
       $('#product1').select2({
         templateSelection: formatState,
         multiple: true,
+        width: 200,
         maximumSelectionLength: 1
       })
       .change(function(){
