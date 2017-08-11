@@ -9,7 +9,7 @@
       </div>
       <div class="modal-body">
         <%= select_tag :suppliersList, options_for_select(suppliers_collection), include_blank: 'Selecionar un Proveedor' %>
-        <%= form_for :supplier do |f| %>
+        <%= form_for :supplier, html: { id: 'supplierForm' } do |f| %>
           <input type="hidden" id="supplierId" />
           <div class="form-group">
             <%= f.label :folio %>
@@ -29,7 +29,7 @@
           </div>
           <div class="form-group">
             <%= f.label :total_amount %>
-            <%= f.text_field :total_amount %>
+            <%= f.text_field :total_amount, disabled: true %>
           </div>
         <% end %>
       </div>

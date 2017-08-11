@@ -1,23 +1,63 @@
 $(function(){
 
   var initValidation = function(){
-    $('#contact_form').bootstrapValidator({
+    $('#supplierForm').formValidation({
       feedbackIcons: {
         valid: 'glyphicon glyphicon-ok',
         invalid: 'glyphicon glyphicon-remove',
         validating: 'glyphicon glyphicon-refresh'
       },
       fields: {
-        first_name: {
+        suppliersList: {
           validators: {
-            stringLength: {
-              min: 2,
-            },
             notEmpty: {
-              message: 'Please supply your first name'
+              message: 'Selecionar un proveedor de la lista'
             }
           }
         },
+        'supplier[folio]': {
+          validators: {
+            notEmpty: {
+              message: 'Llenar el numero de folio de la factura'
+            }
+          }
+        },
+        'supplier[date_of_bill]': {
+          validators: {
+            callback: {
+              message: 'La fecha no es valida',
+              callback: function (value, validator) {
+                return moment(value, 'YYYY-MM-DD', true).isValid();
+              }
+            }
+          }
+        },
+        'supplier[subtotal]': {
+          validators: {
+            notEmpty: {
+              message: 'Llenar el subtotal indicado en la factura'
+            },
+            callback: {
+              message: 'Solo valores validos 000,000.00',
+              callback: function (value, validator) {
+                return !isNaN(value.replace(/,|\./g,''));
+              }
+            }
+          }
+        },
+        'supplier[taxes_rate]': {
+          validators: {
+            notEmpty: {
+              message: 'Cual es el % de IVA para esta factura'
+            },
+            callback: {
+              message: 'Solo valores validos 000,000.00',
+              callback: function (value, validator) {
+                return !isNaN(value.replace(/,|\./g,''));
+              }
+            }
+          }
+        }
       }
     });
   };
@@ -215,24 +255,29 @@ $(function(){
           width: 500
         });
 
+        initValidation();
+
         $('#vinculateSupplier').click(function(){
+          $('#supplierForm').data('formValidation').validate();
+          if ( $('#supplierForm').data('formValidation').isValid() ){
+            var info =  $('#suppliersList').val() +              ',' +
+                        $('input#supplier_folio').val() +        ',' +
+                        $('input#supplier_date_of_bill').val() + ',' +
+                        $('input#supplier_subtotal').val() +     ',' +
+                        $('input#supplier_taxes_rate').val() +   ',' +
+                        $('input#supplier_total_amount').val();
+            $('#supplierInfo' + $('input#supplierId').val()).html(info);
 
-          var info =  $('#suppliersList').val() +              ',' +
-                      $('input#supplier_folio').val() +        ',' +
-                      $('input#supplier_date_of_bill').val() + ',' +
-                      $('input#supplier_subtotal').val() +     ',' +
-                      $('input#supplier_taxes_rate').val() +   ',' +
-                      $('input#supplier_total_amount').val();
-          $('#supplierInfo' + $('input#supplierId').val()).html(info);
+            $('#suppliersList').val('').trigger('change.select2');
+            $('input#supplier_folio').val('');
+            $('input#supplier_date_of_bill').val('');
+            $('input#supplier_subtotal').val('');
+            $('input#supplier_taxes_rate').val('');
+            $('input#supplier_total_amount').val('');
 
-          $('#suppliersList').val('').trigger('change.select2');
-          $('input#supplier_folio').val('');
-          $('input#supplier_date_of_bill').val('');
-          $('input#supplier_subtotal').val('');
-          $('input#supplier_taxes_rate').val('');
-          $('input#supplier_total_amount').val('');
+            $('#supplierModal').modal('toggle');
+          }
 
-          $('#supplierModal').modal('toggle');
 
         });
 
