@@ -115,9 +115,15 @@ User.find_or_create_by(
   email: "admin@adminmosaictech.com",
   first_name: "Administrador",
   last_name: "Diseños de Cartón",
+<<<<<<< 7d7cb802c2bf6765c44951b9ed3c0752ca77b698
   password: ENV["admin_user_password"],
   password_confirmation: ENV["admin_user_password"],
+=======
+>>>>>>> changes for better mobile display
   role: admin,
+  password: ENV["admin_user_password"],
+  password_confirmation: ENV["admin_user_password"],
+  role: master_user,
   store: default_store)
 
 100.times do |n|
