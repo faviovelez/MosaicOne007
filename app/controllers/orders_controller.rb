@@ -20,6 +20,10 @@ class OrdersController < ApplicationController
     end
   end
 
+  def save_products
+    binding.pry
+  end
+
   def catalog
   end
 
