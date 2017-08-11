@@ -93,7 +93,7 @@ default_business_unit = BusinessUnit.find_by_name('default compañía')
 default_terceros_business_unit = BusinessUnit.find_by_name('default terceros')
 
 # Se crea un almacén default
-Warehouse.create(code: '000', name: 'almacén default', business_unit: default_business_unit)
+Warehouse.create(warehouse_code: 'AG000', name: 'almacén default', business_unit: default_business_unit)
 
 # Se crea el modelo Store_type para los distintos tipos de tiendas. Al crear una tienda, se puede elegir entre los business_units default o los creados o modificados por los usuarios.
 [

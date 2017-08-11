@@ -11,6 +11,9 @@ class DeliveryAddressesController < ApplicationController
   def show
   end
 
+  def edit
+  end
+
   # Solo debe permitir crear una vez la dirección, si detecta que ya tiene, debe mandar a editar.
   def new
     if @owner.delivery_address.nil?
@@ -76,6 +79,8 @@ private
       @owner = Prospect.find(params[:prospect_id])
     elsif params[:order_id]
       @owner = Order.find(params[:order_id])
+    elsif params[:warehouse_id]
+      @owner = Warehouse.find(params[:warehouse_id])
     end
   end
 

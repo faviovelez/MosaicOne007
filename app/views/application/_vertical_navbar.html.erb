@@ -169,6 +169,15 @@
           </li>
         <% end %>
 
+        <% if params[:controller] == 'warehouses' && params[:action] == 'index' %>
+          <li class="vertical-link actual-vertical-link">
+        <% else %>
+          <li class="vertical-link">
+        <% end %>
+          <i class="fa fa-file-text-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Lista de almacenes', warehouses_path, class: 'text-link'  %>
+        </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para store o store-admin %>
 
@@ -362,6 +371,15 @@
           <% end %>
             <i class="fa fa-book other-nav-icons" aria-hidden="true"></i>
             <%= link_to 'Lista de tiendas', stores_path, class: 'text-link'  %>
+          </li>
+
+          <% if params[:controller] == 'warehouses' && params[:action] == 'index' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+            <i class="fa fa-file-text-o other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Lista de almacenes', warehouses_path, class: 'text-link'  %>
           </li>
 
         <% end %>
