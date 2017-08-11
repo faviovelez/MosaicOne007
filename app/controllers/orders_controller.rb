@@ -1,9 +1,23 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
-  # Este controller relacionado a su modelo aún no tiene ningún avance pero es el que agrupará los movements o pending movements como parte de un pedido.
 
   def new
-    #este only ‘store’ o ‘store-admin’
+    role = Role.find_by_name('store') || Role.find_by_name('store-admin')
+    @order = Order.new(user: current_user, store: current_user.store, category: 'de línea')
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
+  end
+
+  def get_product
+    product = Product.find(params[:product])
+    if product.present?
+      render json: {
+                    product: product,
+                    images: product.images,
+                    inventory: product.valid_inventory,
+                   }
+    else
+      render json: {product: false}
+    end
   end
 
   def catalog

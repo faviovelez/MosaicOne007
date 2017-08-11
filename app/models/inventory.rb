@@ -3,7 +3,9 @@ class Inventory < ActiveRecord::Base
   belongs_to :product
 
   def set_quantity(num)
-    self.quantity += num if self.quantity.present?
+    if quantity.present?
+      self.quantity += num if self.quantity.present?
+    end
     self.save
   end
 end

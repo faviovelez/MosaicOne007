@@ -1,0 +1,32 @@
+<table class="table" id="productsList">
+  <thead>
+    <tr>
+      <th>Codigo unico</th>
+      <th>Color</th>
+      <th>Foto</th>
+      <th>Inventario</th>
+      <th>Piezas por paquete</th>
+      <th>Paquetes</th>
+      <th>Pedido</th>
+      <th>Precio unitario</th>
+      <th>Total</th>
+      <th>Urgencia</th>
+      <th>Fecha maxima de entrega</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id='trForProduct1'>
+      <td class='select'>
+        <%= select_tag :product1, options_for_select(products_collection), include_blank: 'Selecionar un producto' %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<a href='#' id='saveInfo' class='btn btn-primary' >Dar de alta</a>
+<br /> <br /><br />
+<br /> <br /><br />
+<div id='productInfo'>
+  <%= link_to product_product_images_path(product_id: 0), id: 'link_to_images' do %>
+    <%= image_tag 'product_small.png', class: 'hidden', id: 'not_image_temp' %>
+  <% end %>
+</div>
