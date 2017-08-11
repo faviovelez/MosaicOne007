@@ -12,4 +12,20 @@ class Product < ActiveRecord::Base
   belongs_to :business_unit
   has_many :production_requests
   has_one :request
+
+  def quantity
+    inventory.quantity || 0
+  end
+
+  def movements_quantity
+    pending_movements.sum(:quantity) || 0
+  end
+
+  def valid_inventory
+    final_inventory = quantity - movements_quantity
+    if final_inventory < 0
+      return 0
+    end
+    final_inventory
+  end
 end

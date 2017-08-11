@@ -151,6 +151,13 @@ es-MX:
       create: Crear %{model}
       submit: Guardar %{model}
       update: Actualizar %{model}
+    label:
+      supplier:
+        folio:        'Folio'
+        date_of_bill: 'Fecha de factura'
+        subtotal:     'Sub total sin IVA'
+        taxes_rate:   'Porcentaje de IVA'
+        total_amount: 'Total'
   number:
     currency:
       format:
