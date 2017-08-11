@@ -102,3 +102,7 @@ User.create(
   password_confirmation: ENV["admin_user_password"],
   role: admin,
   store: default_store)
+
+100.times do |n|
+  Supplier.create(name: Faker::Name.name)
+end

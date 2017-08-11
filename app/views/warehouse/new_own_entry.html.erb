@@ -9,5 +9,5 @@
   <%= javascript_include_tag 'warehouse' %>
 <% end %>
 
-<%= render partial: 'own_products' %>
-<%= render partial: 'product_show_template' %>
+<%= render partial: 'own_products', locals: { supplier: false } %>
+<%= render partial: 'product_show_template', locals: {supplier: false } %>

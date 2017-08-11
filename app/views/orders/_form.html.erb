@@ -2,10 +2,16 @@
   <thead>
     <tr>
       <th>Codigo unico</th>
-      <th>Descripcion</th>
-      <th>Image</th>
-      <th>Cantidad</th>
-      <th>Acciones</th>
+      <th>Color</th>
+      <th>Foto</th>
+      <th>Inventario</th>
+      <th>Piezas por paquete</th>
+      <th>Paquetes</th>
+      <th>Pedido</th>
+      <th>Precio unitario</th>
+      <th>Total</th>
+      <th>Urgencia</th>
+      <th>Fecha maxima de entrega</th>
     </tr>
   </thead>
   <tbody>
@@ -16,11 +22,7 @@
     </tr>
   </tbody>
 </table>
-<% if supplier %>
-  <a href='#' id='saveInfoSupplier' class='btn btn-primary' >Dar de alta</a>
-<% else %>
-  <a href='#' id='saveInfo' class='btn btn-primary' >Dar de alta</a>
-<%end %>
+<a href='#' id='saveInfo' class='btn btn-primary' >Dar de alta</a>
 <br /> <br /><br />
 <br /> <br /><br />
 <div id='productInfo'>

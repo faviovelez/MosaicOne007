@@ -5,7 +5,7 @@ class WarehouseController < ApplicationController
 
   def new_own_entry
     @movement = Movement.new
-    role = Role.find_by_name('warehouse-staff')
+    role = Role.find_by_name('warehouse-staff') || Role.find_by_name('warehouse-admin')
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
   end
 
@@ -19,23 +19,16 @@ class WarehouseController < ApplicationController
   end
 
   def save_own_product
-    @collection = []
-    params.select {|p| p.match('trForProduct').present? }.each do |product|
-      attributes = product.second
-      product = Product.find(attributes.first.second).first
-      @collection << Movement.new(
-        product: product,
-        quantity:  attributes[:cantidad],
-        movement_type: 'alta',
-        user: current_user,
-        unique_code: product.unique_code,
-        store: current_user.store,
-        business_unit: current_user.store.business_unit
-      )
-    end
     create_movements
-    codes = @collection.map {|movement| movement.id}.join('-')
-    redirect_to warehouse_show_path(codes), notice: 'Todos los registros almacenados.'
+    attach_entry
+    redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
+  end
+
+  def save_supplier_product
+    create_movements
+    attach_entry
+    attach_bill_received
+    redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
   end
 
   def show
@@ -92,7 +85,7 @@ class WarehouseController < ApplicationController
 
   private
 
-  def create_movements
+  def attach_entry
     @collection.each do |movement|
       if movement.save
         movement.warehouse_entry = WarehouseEntry.create(
@@ -110,6 +103,45 @@ class WarehouseController < ApplicationController
           )
         end
       end
+    end
+    @codes = @collection.map {|movement| movement.id}.join('-')
+  end
+
+  def attach_bill_received
+    params.select {|p| p.match('trForProduct').present? }.each_with_index do |product, index|
+      movement = @collection[index]
+      info = product.second
+      if movement.save
+        supplier_info = info[:supplierInfo].split(',')
+        supplier = Supplier.find(supplier_info.first)
+        movement.update(supplier: supplier)
+        BillReceived.create(
+          folio: supplier_info.second,
+          date_of_bill: supplier_info.third,
+          subtotal: supplier_info.fourth,
+          taxes_rate: supplier_info.fifth,
+          total_amount: supplier_info[5],
+          supplier: supplier,
+          product: movement.product
+        )
+      end
+    end
+  end
+
+  def create_movements
+    @collection = []
+    params.select {|p| p.match('trForProduct').present? }.each do |product|
+      attributes = product.second
+      product = Product.find(attributes.first.second).first
+      @collection << Movement.new(
+        product: product,
+        quantity:  attributes[:cantidad],
+        movement_type: 'alta',
+        user: current_user,
+        unique_code: product.unique_code,
+        store: current_user.store,
+        business_unit: current_user.store.business_unit
+      )
     end
   end
 

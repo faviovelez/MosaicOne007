@@ -1,0 +1,42 @@
+<div class="modal fade" id="supplierModal" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Vincular proveedor</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= select_tag :suppliersList, options_for_select(suppliers_collection) %>
+        <%= form_for :supplier, html: { id: 'supplierForm' } do |f| %>
+          <input type="hidden" id="supplierId" />
+          <div class="form-group">
+            <%= f.label :folio %>
+            <%= f.text_field :folio %>
+          </div>
+          <div class="form-group">
+            <%= f.label :date_of_bill %>
+            <%= f.date_field :date_of_bill %>
+          </div>
+          <div class="form-group">
+            <%= f.label :subtotal %>
+            <%= f.text_field :subtotal %>
+          </div>
+          <div class="form-group">
+            <%= f.label :taxes_rate %>
+            <%= f.text_field :taxes_rate %>
+          </div>
+          <div class="form-group">
+            <%= f.label :total_amount %>
+            <%= f.text_field :total_amount, disabled: true %>
+          </div>
+        <% end %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="vinculateSupplier">Vincular</button>
+      </div>
+    </div>
+  </div>
+</div>

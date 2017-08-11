@@ -93,11 +93,14 @@ Rails.application.routes.draw do
   get 'warehouse/index'
 
   post 'warehouse/save_own_product'
+  post 'warehouse/save_supplier_product'
 
   get 'warehouse/orders'
 
   get 'warehouse/orders_products/:id', to: 'warehouse#orders_products', as: 'warehouse_order_products'
 
   patch 'warehouse/form_for_movement/:id', to: 'warehouse#form_for_movement', as: 'form_for_movement', controller: 'warehouse'
+
+  get 'orders/get/:product', to: 'orders#get_product', as: 'orders_get_product'
 
 end

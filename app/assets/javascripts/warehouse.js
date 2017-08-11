@@ -1,4 +1,60 @@
 $(function(){
+
+  var initValidation = function(){
+    $('#supplierForm').formValidation({
+      feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+      },
+      fields: {
+        'supplier[folio]': {
+          validators: {
+            notEmpty: {
+              message: 'Llenar el numero de folio de la factura'
+            }
+          }
+        },
+        'supplier[date_of_bill]': {
+          validators: {
+            callback: {
+              message: 'La fecha no es valida',
+              callback: function (value, validator) {
+                return moment(value, 'YYYY-MM-DD', true).isValid();
+              }
+            }
+          }
+        },
+        'supplier[subtotal]': {
+          validators: {
+            notEmpty: {
+              message: 'Llenar el subtotal indicado en la factura'
+            },
+            callback: {
+              message: 'Solo valores validos 000,000.00',
+              callback: function (value, validator) {
+                return !isNaN(value.replace(/,|\./g,''));
+              }
+            }
+          }
+        },
+        'supplier[taxes_rate]': {
+          validators: {
+            notEmpty: {
+              message: 'Cual es el % de IVA para esta factura'
+            },
+            callback: {
+              message: 'Solo valores validos 000,000.00',
+              callback: function (value, validator) {
+                return !isNaN(value.replace(/,|\./g,''));
+              }
+            }
+          }
+        }
+      }
+    });
+  };
+
   if ($('.datatables').length > 0) {
     $('.datatables').DataTable({
       "language": {
@@ -63,15 +119,25 @@ $(function(){
     return allFill;
   };
 
+  var createProductData = function(supplier){
+    var data = {};
+    $.each($('tr[id^=trForProduct]'), function(){
+      data[$(this).attr('id')] = {
+        id       : $(this).find('select').val(),
+        cantidad : $(this).find('input[id^=numProduct]').val()
+      };
+      var index = $(this).attr('id').match(/\d+/)[0];
+      if (supplier) {
+        data[$(this).attr('id')].supplierInfo = $('#supplierInfoproduct' + index).html();
+      }
+    });
+    return data;
+  };
+
+
   $('#saveInfo').click(function(){
+    var data = createProductData(false);
     if (checkNotEmpty()){
-      var data = {};
-      $.each($('tr[id^=trForProduct]'), function(){
-        data[$(this).attr('id')] = {
-          id       : $(this).find('select').val(),
-          cantidad : $(this).find('input[id^=numProduct]').val()
-        };
-      });
       $.ajax({
         url: '/warehouse/save_own_product',
         data: data,
@@ -131,6 +197,15 @@ $(function(){
             id:          id
           } )
         );
+
+        if ($('#suppliersList')) {
+          $(document).on("click", "#vincularSupplier" + id, function () {
+            var productId = $(this).data('id');
+            $(".modal-body #supplierId").val( productId );
+            $('#supplierModal').modal('show');
+          });
+        }
+
         $('#numProduct_'+ id).mask("000", {placeholder: "___"}).css({'text-align': 'center'});
         $('#addNew' + id).click(function(){
           var tr = "<tr id='trForProduct"+ inc +"'>" +
@@ -139,7 +214,7 @@ $(function(){
             "</td>" +
             "</tr>";
           $('tbody').prepend(tr);
-          $('#selectForProduct'+ inc).append($('select:last').html());
+          $('#selectForProduct'+ inc).append($('#trForProduct1 select').html());
           $('#selectForProduct'+ inc).select2({
             templateSelection: formatState,
             multiple: true,
@@ -166,6 +241,55 @@ $(function(){
       .change(function(){
         changeAction(this, 2, 1);
       });
+
+      if ($('#suppliersList')) {
+
+        $('#suppliersList').select2({
+          width: 500
+        });
+
+        initValidation();
+
+        $('#vinculateSupplier').click(function(){
+          $('#supplierForm').data('formValidation').validate();
+          if ( $('#supplierForm').data('formValidation').isValid() ) {
+            var subtotal = parseFloat($('input#supplier_subtotal').val().replace(/,/,''));
+            var taxesRate = ((100 +  parseFloat($('input#supplier_taxes_rate').val()) ) / 100);
+            var total = subtotal * taxesRate;
+            $('input#supplier_total_amount').val(total);
+            var info =  $('#suppliersList').val() +              ',' +
+                        $('input#supplier_folio').val() +        ',' +
+                        $('input#supplier_date_of_bill').val() + ',' +
+                        $('input#supplier_subtotal').val() +     ',' +
+                        $('input#supplier_taxes_rate').val() +   ',' +
+                        $('input#supplier_total_amount').val();
+            $('#supplierInfo' + $('input#supplierId').val()).html(info);
+
+            $('#suppliersList').val('').trigger('change.select2');
+            $('input#supplier_folio').val('');
+            $('input#supplier_date_of_bill').val('');
+            $('input#supplier_subtotal').val('');
+            $('input#supplier_taxes_rate').val('');
+            $('input#supplier_total_amount').val('');
+
+            $('#supplierModal').modal('hide');
+          }
+
+
+        });
+
+        $('#saveInfoSupplier').click(function(){
+          var data = createProductData(true);
+          if (checkNotEmpty()){
+            $.ajax({
+              url: '/warehouse/save_supplier_product',
+              data: data,
+              method: 'post'
+            });
+          }
+          return false;
+        });
+      }
     }, 200);
 
   }
