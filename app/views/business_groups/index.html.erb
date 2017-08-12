@@ -1,0 +1,14 @@
+<table>
+  <thead>
+    <tr class="table-titles">
+      <th class="col-md-3">Nombre</th>
+      <th class="col-md-1">Unidades de negocio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <% @business_groups.each do |business_group| %>
+      <td><%=business_group.name %></td>
+      <td><%=business_group.business_units.count %></td>
+    </tr>
+  <% end %>

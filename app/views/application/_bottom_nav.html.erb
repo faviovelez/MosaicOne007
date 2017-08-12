@@ -57,14 +57,6 @@
       <% end %>
     <% end %>
 
-    <% if params[:controller] == 'warehouses' && params[:action] == 'index' %>
-      <% if current_user.role.name == 'platform-admin' %>
-        <%= link_to 'Crear almacén', new_business_unit_warehouse_path(current_user.store.business_unit) %>
-      <% elsif current_user.role.name == 'store-admin' %>
-        <%= link_to 'Crear almacén', new_store_warehouse_path(current_user.store.business_unit) %>
-      <% end %>
-    <% end %>
-
     <% if current_user.role.name == 'store-admin' || current_user.role.name == 'platform-admin' %>
       <% if params[:controller] == 'warehouses' && params[:action] == 'show' %>
         <% if @warehouse.delivery_address.present?%>
@@ -72,9 +64,10 @@
         <% else %>
           <%= link_to 'Dirección del almacén', new_warehouse_delivery_address_path(@warehouse) %>
         <% end %>
-      <% end %>
-      <% if params[:controller] == 'delivery_addresses' && params[:action] == 'show' %>
+      <% elsif params[:controller] == 'delivery_addresses' && params[:action] == 'show' %>
         <%= link_to 'Modificar dirección', edit_delivery_address_path(@delivery) %>
+      <% elsif params[:controller] == 'billing_addresses' && params[:action] == 'show' %>
+        <%= link_to 'Modificar datos de facturación', edit_billing_address_path(@billing) %>
       <% end %>
     <% end %>
 

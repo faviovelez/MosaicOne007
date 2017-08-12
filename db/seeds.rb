@@ -47,7 +47,7 @@ end
 
 # Deben existir por lo menos dos Business Groups: Uno para tiendas propias y otro para tiendas externas
 [
-  { name: "default compañía" },
+  { name: "default compañía", business_group_type: 'main' },
   { name: "default terceros" }
 ].each do |hash|
   BusinessGroup.find_or_create_by(hash)

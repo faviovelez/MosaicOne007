@@ -3,6 +3,7 @@
     <tr class="table-titles">
       <th class="col-md-1">Código</th>
       <th class="col-md-2">Nombre</th>
+      <th class="col-md-2">Unidad de negocio</th>
     </tr>
   </thead>
   <tbody>
@@ -10,6 +11,7 @@
     <% @warehouses.each do |warehouse| %>
       <td><%=warehouse.warehouse_code %></td>
       <td><%=warehouse.name %></td>
+      <td><%=warehouse.business_unit.name %></td>
       <td class="col-md-1">
         <%= link_to warehouse_path(warehouse) do %>
           <i class="fa fa-eye link-to-details" aria-hidden="true"></i>

@@ -14,6 +14,18 @@
       <%= f.text_field :name, class: 'form-inside' %>
     </div>
 
+    <div class="form-inside-style">
+      <%= f.label :unidad_de_negocio %>
+      <% bu = current_user.store.business_unit.business_group.business_units %>
+      <%= f.select :business_unit_id, options_for_select(bu.collect{|bu| [bu.name, bu.id]})  %>
+    </div>
+
+    <div class="form-inside-style hidden">
+      <%= f.label :corporativo %>
+      <% bg = current_user.store.business_unit.business_group %>
+      <%= f.select :business_group_id, options_for_select([[bg.name, bg.id]])  %>
+    </div>
+
     <div class="button-container">
       <div class="actions">
         <%= f.submit :Guardar, name: 'guardar', class: 'main-button' %>

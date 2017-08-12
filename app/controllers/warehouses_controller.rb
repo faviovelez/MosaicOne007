@@ -4,10 +4,9 @@ class WarehousesController < ApplicationController
   before_action :set_warehouse, only: [:show, :edit, :update, :destroy]
 
   # Warehouse (almacén) debe pertenecer a un owner (que puede ser una tienda o a una Business Unit
-  before_action :identify_owner_type, only: [:new, :create]
 
   def index
-    @warehouses = current_user.store.business_unit.warehouses
+    @warehouses = current_user.store.business_unit.business_group.warehouses
   end
 
   def show
@@ -22,7 +21,6 @@ class WarehousesController < ApplicationController
 
   def create
     @warehouse = Warehouse.new(warehouse_params)
-    save_warehouse_to_owner
     respond_to do |format|
       if @warehouse.save
         format.html { redirect_to @warehouse, notice: 'El almacén fue creado correctamente.' }
@@ -36,7 +34,7 @@ class WarehousesController < ApplicationController
 
   def update
     respond_to do |format|
-      if @biling.update(warehouse_params)
+      if @warehouse.update(warehouse_params)
         format.html { redirect_to @warehouse, notice: 'El almacén fue modificado correctamente.' }
         format.json { render :show, status: :ok, location: @warehouse }
       else
@@ -56,29 +54,14 @@ class WarehousesController < ApplicationController
     end
   end
 
-  # Este método liga el almacén (warehouse) al owner (Store ó BusinessUnit)
-  def save_warehouse_to_owner
-    @owner.warehouse = @warehouse
-    @owner.save
-  end
-
 private
 
   def set_warehouse
     @warehouse = Warehouse.find(params[:id])
   end
 
-  # Este método identifica desde qué owner se agrega la dirección, ya están creados los recursos anidados en routes (Store, Prospect u Order)
-    def identify_owner_type
-    if params[:store_id]
-      @owner = Store.find(params[:store_id])
-    elsif params[:business_unit]
-      @owner = BusinessUnit.find(params[:business_unit_id])
-    end
-  end
-
   def warehouse_params
-      params.require(:warehouse).permit(:name, :delivery_address_id, :business_unit_id, :warehouse_code, :store_id)
+      params.require(:warehouse).permit(:name, :delivery_address_id, :business_unit_id, :business_group_id, :warehouse_code, :store_id)
   end
 
 end

@@ -1,0 +1,9 @@
+<% if @billing.errors.any? %>
+  <ul>
+    <% @billing.errors.messages.values.each do |msg| %>
+      <%msg.each do  |m| %>
+        <li><%= m %></li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>

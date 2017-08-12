@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170811000745) do
+ActiveRecord::Schema.define(version: 20170812202900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,8 +95,9 @@ ActiveRecord::Schema.define(version: 20170811000745) do
 
   create_table "business_groups", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.string   "business_group_type"
   end
 
   create_table "business_unit_sales", force: :cascade do |t|
@@ -725,8 +726,10 @@ ActiveRecord::Schema.define(version: 20170811000745) do
     t.integer  "business_unit_id"
     t.integer  "store_id"
     t.string   "warehouse_code"
+    t.integer  "business_group_id"
   end
 
+  add_index "warehouses", ["business_group_id"], name: "index_warehouses_on_business_group_id", using: :btree
   add_index "warehouses", ["business_unit_id"], name: "index_warehouses_on_business_unit_id", using: :btree
   add_index "warehouses", ["delivery_address_id"], name: "index_warehouses_on_delivery_address_id", using: :btree
   add_index "warehouses", ["store_id"], name: "index_warehouses_on_store_id", using: :btree
@@ -818,6 +821,7 @@ ActiveRecord::Schema.define(version: 20170811000745) do
   add_foreign_key "users", "stores"
   add_foreign_key "warehouse_entries", "movements"
   add_foreign_key "warehouse_entries", "products"
+  add_foreign_key "warehouses", "business_groups"
   add_foreign_key "warehouses", "business_units"
   add_foreign_key "warehouses", "delivery_addresses"
   add_foreign_key "warehouses", "stores"
