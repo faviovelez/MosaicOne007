@@ -1,6 +1,6 @@
-<% if @billing.errors.any? %>
+<% if @delivery.errors.any? %>
   <ul>
-    <% @billing.errors.messages.values.each do |msg| %>
+    <% @delivery.errors.messages.values.each do |msg| %>
       <%msg.each do  |m| %>
         <li><%= m %></li>
       <% end %>

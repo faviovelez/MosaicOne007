@@ -256,10 +256,17 @@
         <%= f.number_field :pieces_per_package, min: 0, max: 200, class: 'form-inside' %>
       </div>
 
-      <div class="form-inside-style">
-        <%= f.label :bodega %>
-        <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.warehouses.collect{|w| [w.name, w.id]}) %>
-      </div>
+      <% if current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff' %>
+        <div class="form-inside-style">
+          <%= f.label :almacén %>
+          <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.business_group.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+        </div>
+      <% else %>
+        <div class="form-inside-style">
+          <%= f.label :almacén %>
+          <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+        </div>
+      <% end %>
 
       <div class="form-inside-style">
         <%= f.label :imágenes %><br>

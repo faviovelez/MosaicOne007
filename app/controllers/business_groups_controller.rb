@@ -6,6 +6,10 @@ class BusinessGroupsController < ApplicationController
   # BusinessGroup (empresa) debe pertenecer a un owner (que puede ser una tienda o a una Business Unit
   before_action :identify_owner_type, only: [:new, :create]
 
+  def index
+    @business_groups = BusinessGroup.all
+  end
+
   def show
   end
 

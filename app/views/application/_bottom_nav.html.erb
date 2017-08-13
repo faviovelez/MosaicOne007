@@ -57,6 +57,18 @@
       <% end %>
     <% end %>
 
+    <% if params[:controller] == 'business_groups' && params[:action] == 'show' %>
+      <% if current_user.role.name == 'platform-admin' %>
+        <%= link_to 'Editar datos del grupo', edit_business_group_path(current_user.store.business_unit.business_group)  %>
+      <% end %>
+    <% end %>
+
+    <% if params[:controller] == 'business_units' && params[:action] == 'show' %>
+      <% if current_user.role.name == 'platform-admin' %>
+        <%= link_to 'Editar datos de empresa', edit_business_unit_path(@business_unit)  %>
+      <% end %>
+    <% end %>
+
     <% if current_user.role.name == 'store-admin' || current_user.role.name == 'platform-admin' %>
       <% if params[:controller] == 'warehouses' && params[:action] == 'show' %>
         <% if @warehouse.delivery_address.present?%>
