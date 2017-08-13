@@ -47,7 +47,7 @@ end
 
 # Deben existir por lo menos dos Business Groups: Uno para tiendas propias y otro para tiendas externas
 [
-  { name: "default compañía" },
+  { name: "default compañía", business_group_type: 'main' },
   { name: "default terceros" }
 ].each do |hash|
   BusinessGroup.find_or_create_by(hash)
@@ -98,9 +98,9 @@ User.find_or_create_by(
   email: "admin@adminmosaictech.com",
   first_name: "Administrador",
   last_name: "Diseños de Cartón",
-  role: admin,
   password: ENV["admin_user_password"],
   password_confirmation: ENV["admin_user_password"],
+  role: admin,
   store: default_store)
 
 100.times do |n|

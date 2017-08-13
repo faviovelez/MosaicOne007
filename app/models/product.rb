@@ -12,6 +12,9 @@ class Product < ActiveRecord::Base
   belongs_to :business_unit
   has_many :production_requests
   has_one :request
+  belongs_to :warehouse
+
+  validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya hay un producto con con este código."}
 
   def quantity
     inventory.quantity || 0

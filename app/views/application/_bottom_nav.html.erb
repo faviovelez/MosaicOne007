@@ -57,11 +57,15 @@
       <% end %>
     <% end %>
 
-    <% if params[:controller] == 'warehouses' && params[:action] == 'index' %>
+    <% if params[:controller] == 'business_groups' && params[:action] == 'show' %>
       <% if current_user.role.name == 'platform-admin' %>
-        <%= link_to 'Crear almacén', new_business_unit_warehouse_path(current_user.store.business_unit) %>
-      <% elsif current_user.role.name == 'store-admin' %>
-        <%= link_to 'Crear almacén', new_store_warehouse_path(current_user.store.business_unit) %>
+        <%= link_to 'Editar datos del grupo', edit_business_group_path(current_user.store.business_unit.business_group)  %>
+      <% end %>
+    <% end %>
+
+    <% if params[:controller] == 'business_units' && params[:action] == 'show' %>
+      <% if current_user.role.name == 'platform-admin' %>
+        <%= link_to 'Editar datos de empresa', edit_business_unit_path(@business_unit)  %>
       <% end %>
     <% end %>
 
@@ -72,9 +76,10 @@
         <% else %>
           <%= link_to 'Dirección del almacén', new_warehouse_delivery_address_path(@warehouse) %>
         <% end %>
-      <% end %>
-      <% if params[:controller] == 'delivery_addresses' && params[:action] == 'show' %>
+      <% elsif params[:controller] == 'delivery_addresses' && params[:action] == 'show' %>
         <%= link_to 'Modificar dirección', edit_delivery_address_path(@delivery) %>
+      <% elsif params[:controller] == 'billing_addresses' && params[:action] == 'show' %>
+        <%= link_to 'Modificar datos de facturación', edit_billing_address_path(@billing) %>
       <% end %>
     <% end %>
 

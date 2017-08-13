@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   end
 
   resources :stores do
-    resources :prospects, :requests, :billing_addresses, :delivery_addresses, :orders, :warehouses
+    resources :prospects, :requests, :delivery_addresses, :orders, :warehouses
   end
 
   resources :requests do
@@ -65,7 +65,7 @@ Rails.application.routes.draw do
   resources :business_groups
 
   resources :business_units do
-    resources :warehouses
+    resources :warehouses, :billing_addresses
   end
 
   resources :warehouses do

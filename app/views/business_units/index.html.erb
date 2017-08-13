@@ -1,0 +1,35 @@
+<table>
+  <thead>
+    <tr class="table-titles">
+      <th class="col-md-3">Nombre</th>
+      <th class="col-md-1">Tiendas</th>
+      <th class="col-md-1">Grupo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <% @business_units.each do |business_unit| %>
+      <td><%=business_unit.name %></td>
+      <td><%=business_unit.stores.count %></td>
+      <td><%=business_unit.business_group.name %></td>
+      <td class="col-md-1">
+        <%= link_to business_unit_path(business_unit) do %>
+          <i class="fa fa-plus-circle link-to-confirm" aria-hidden="true"></i>
+          <span class="link-to-confirm">Detalles</span>
+        <% end %>
+      </td>
+      <td class="col-md-2">
+        <% if business_unit.billing_address.present?%>
+          <%= link_to billing_address_path(business_unit.billing_address) do %>
+            <i class="fa fa-address-book-o link-to-details" aria-hidden="true"></i>
+            <span>Datos de facturación</span>
+          <% end %>
+        <% else %>
+          <%= link_to new_business_unit_billing_address_path(business_unit) do %>
+            <i class="fa fa-address-book-o link-to-details" aria-hidden="true"></i>
+            <span>Datos de facturación</span>
+          <% end %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>

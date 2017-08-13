@@ -5,7 +5,20 @@ class ProductsController < ApplicationController
   # GET /products
   # GET /products.json
   def index
-    @products = Product.all
+    business_units = BusinessGroup.find_by_business_group_type('main').business_units
+    ids = business_units.collect{|bu| bu.id}
+    if current_user.role.name == 'platform-admin'
+      @products = Product.where(business_unit: ids)
+    else
+      main_products = Product.where(business_unit: ids)
+      my_business_units = current_user.store.business_unit.business_group.business_units
+      my_ids = my_business_units.collect{|bu| bu.id}
+      my_products = Product.where(business_unit: my_ids)
+      @products = []
+      @products << main_products
+      @products << my_products
+      @products
+    end
   end
 
   def images
@@ -55,11 +68,12 @@ class ProductsController < ApplicationController
           @request.update(status: 'código asignado', product: @product)
           @order = Order.create(status: 'en espera', user: @finded_user, category: 'especial', prospect: @request.prospect, request: @request, store: @request.store)
           @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date)
-          @inventory = Inventory.create(product: @product)
+          @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
           @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, order: @order)
           format.html { redirect_to @product, notice: 'Se creó un nuevo producto y una petición de baja de productos en espera del inventario.' }
           format.json { render :show, status: :created, location: @product }
         else
+          @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
           format.html { redirect_to @product, notice: 'Se creó un nuevo producto.' }
           format.json { render :show, status: :created, location: @product }
         end
