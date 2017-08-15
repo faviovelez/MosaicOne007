@@ -47,17 +47,75 @@ class OrdersController < ApplicationController
     params.select {|p| p.match('trForProduct').present? }.each do |product|
       attributes = product.second
       product = Product.find(attributes.first.second).first
-      product_request = ProductRequest.create(
+      @product_request = ProductRequest.create(
         product: product,
         quantity: attributes[:order],
         order: @order,
         urgency_level: attributes[:urgency]
       )
-      if product_reques.save
-        if product_request.urgency_level === 'alta'
-          product_request.update(maximum_date: attributes[:maxDate])
+      if @product_request.save
+        if @product_request.urgency_level === 'alta'
+          @product_request.update(maximum_date: attributes[:maxDate])
         end
+        passign_validation
       end
     end
+  end
+
+  def passign_validation
+    order_quantity = @product_request.quantity
+    inventory = @product_request.product.inventory
+    if order_quantity > inventory.fix_quantity
+      @product_request.update(status: 'sin asignar')
+      create_movement(PendingMovement).update(quantity: @product_request.quantity)
+    else
+      @entries = WarehouseEntry.where(
+        product: @product_request.product
+      ).order("entry_number #{order_type}")
+      process_entries
+    end
+  end
+
+  def process_entries
+    order_quantity = @product_request.quantity
+    @entries.each do |entry|
+      if order_quantity >= entry.quantity
+        create_movement(Movement).update_attributes(
+          quantity: entry.quantity,
+          cost: entry.movement.fix_cost * entry.quantity
+        )
+        order_quantity -= Movement.last.quantity
+        entry.destroy
+      else
+        create_movement.(PendingMovement).update_attributes(
+          quantity: entry.quantity,
+          cost: entry.movement.fix_cost * entry.quantity
+        )
+      end
+    end
+  end
+
+  def create_movement(object)
+    product = @product_request.product
+    store = current_user.store
+    movement = object.new(
+      product: product,
+      order: @order,
+      unique_code: product.unique_code,
+      store: store,
+      initial_price: product.price,
+      movement_type: 'venta',
+      user: current_user,
+      business_unit: store.business_unit,
+      product_request_id: @product_request.id,
+      maximum_date: @product_request.maximum_date
+    )
+    movement
+  end
+
+  def order_type
+    CostType.find_by_warehouse_cost_type(
+      'PEPS'
+    ).selected ? 'ASC' : 'DESC'
   end
 end

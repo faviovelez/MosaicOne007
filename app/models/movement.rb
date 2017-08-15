@@ -62,4 +62,7 @@ class Movement < ActiveRecord::Base
 #    q.save
 #  end
 
+  def fix_cost
+    self.cost || 0
+  end
 end

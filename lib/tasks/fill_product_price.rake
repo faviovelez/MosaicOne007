@@ -3,7 +3,10 @@ namespace :product do
 
   task fill_price: :environment do |args|
     Product.all.each do |product|
-      product.update(price: rand(999)) if product.price.nil?
+      product.price = rand(999) if product.price.nil?
+      unless product.save(validate: false)
+        binding.pry
+      end
     end
   end
 end
