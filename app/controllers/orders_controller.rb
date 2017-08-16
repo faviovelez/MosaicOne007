@@ -1,5 +1,6 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_order, only: [:show, :confirm]
 
   def new
     role = Role.find_by_name('store') || Role.find_by_name('store-admin')
@@ -8,6 +9,9 @@ class OrdersController < ApplicationController
                        category: 'de línea'
                       )
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
+  end
+
+  def show
   end
 
   def get_product
@@ -29,6 +33,13 @@ class OrdersController < ApplicationController
                        category: 'de línea'
                       )
     create_product_requests
+    redirect_to orders_show_path(@order), notice: 'Todos los registros almacenados.'
+  end
+
+  def confirm
+    @order.update(confirm: true)
+    redirect_to store_orders_path(@order.store),
+      notice: 'Registros confirmados'
   end
 
   def catalog
@@ -43,7 +54,6 @@ class OrdersController < ApplicationController
   private
 
   def create_product_requests
-    @collection = []
     params.select {|p| p.match('trForProduct').present? }.each do |product|
       attributes = product.second
       product = Product.find(attributes.first.second).first
@@ -117,5 +127,9 @@ class OrdersController < ApplicationController
     CostType.find_by_warehouse_cost_type(
       'PEPS'
     ).selected ? 'ASC' : 'DESC'
+  end
+
+  def set_order
+    @order = Order.find(params[:id])
   end
 end
