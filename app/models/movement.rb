@@ -11,6 +11,22 @@ class Movement < ActiveRecord::Base
   has_one :warehouse_entry
   has_many :delivery_attempts
 
+  before_save :update_summary, if: :is_sales?
+
+  def update_summary
+    if Date.today.day == 16
+      create_new_summary
+    end
+  end
+
+  def create_new_summary
+    binding.pry
+  end
+
+  def is_sales?
+    !!(movement_type == 'venta')
+  end
+
 #  after_save :new_movement, on: :create, if: :pending_quantity_greater_than_zero
 #  after_save :sum_quantity, if: :type_is_alta
 #  after_save :substract_quantity, if: :type_is_baja
