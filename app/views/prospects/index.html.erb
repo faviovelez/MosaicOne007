@@ -1,45 +1,48 @@
-
-<table>
-  <thead>
-    <tr class="table-titles">
-      <th class="col-md-3">Nombre o razón social</th>
-      <th class="col-md-1">Giro o actividad</th>
-      <th class="col-md-1">Tipo de prospecto</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @prospects.each do |prospect| %>
-    <tr>
-      <td> <%= prospect.legal_or_business_name %> </td>
-      <td> <%= prospect.business_type %> </td>
-      <td> <%= prospect.prospect_type %> </td>
-      <td class="col-md-1">
-        <%= link_to prospect do %>
-          <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-          <span>Detalles</span>
-          <% end %>
-      </td>
-      <td class="col-md-1">
-        <%= link_to edit_prospect_path(prospect) do %>
-          <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
-          <span class="link-to-confirm">Modificar</span>
-          <% end %>
-      </td>
-      <td class="col-md-1">
-        <%= link_to new_prospect_request_path(prospect) do %>
-          <i class="fa fa-pencil-square link-to-price" aria-hidden="true"></i>
-          <span class="link-to-price">Cotizar</span>
-          <% end %>
-      </td>
-      <% if prospect.requests.count >= 1 %>
+<% if @prospects.count >= 1 %>
+  <table>
+    <thead>
+      <tr class="table-titles">
+        <th class="col-md-3">Nombre del prospecto</th>
+        <th class="col-md-1">Giro</th>
+        <th class="col-md-1">Tipo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @prospects.each do |prospect| %>
+      <tr>
+        <td> <%= prospect.legal_or_business_name %> </td>
+        <td> <%= prospect.business_type %> </td>
+        <td> <%= prospect.prospect_type %> </td>
         <td class="col-md-1">
-          <%= link_to prospect_requests_path(prospect) do %>
-            <i class="fa fa-book link-to-details" aria-hidden="true"></i>
-            <span>Cotizaciones</span>
+          <%= link_to prospect do %>
+            <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+            <span>Detalles</span>
             <% end %>
         </td>
-      <% end %>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+        <td class="col-md-1">
+          <%= link_to edit_prospect_path(prospect) do %>
+            <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
+            <span class="link-to-confirm">Modificar</span>
+            <% end %>
+        </td>
+        <td class="col-md-1">
+          <%= link_to new_prospect_request_path(prospect) do %>
+            <i class="fa fa-pencil-square link-to-price" aria-hidden="true"></i>
+            <span class="link-to-price">Cotizar</span>
+            <% end %>
+        </td>
+        <% if prospect.requests.count >= 1 %>
+          <td class="col-md-1">
+            <%= link_to prospect_requests_path(prospect) do %>
+              <i class="fa fa-book link-to-details" aria-hidden="true"></i>
+              <span>Cotizaciones</span>
+              <% end %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font">No hay prospectos dados de alta </p>
+<% end %>

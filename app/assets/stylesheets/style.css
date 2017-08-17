@@ -1,5 +1,11 @@
+html{
+ height:100vh;
+ min-height:100vh;
+ }
+
 body {
   overflow-x:hidden;
+  min-height:100vh;
 }
 
 label {
@@ -148,7 +154,8 @@ p.info > strong {
 
 #prospect-container > p,
 #billing-container > p,
-#delivery-container > p {
+#delivery-container > p,
+#supplier-container > p {
   padding: 1rem 3rem;
   font-family: 'Open Sans', sans-serif;
   font-size: 1.8rem;
@@ -270,10 +277,15 @@ p.info > strong {
   font-family: 'Open Sans', sans-serif;
 }
 
+a.individual-font {
+  font-size: 2rem;
+  padding: 1rem;
+}
+
 .impresssion-div {
   display: flex;
   justify-content: center;
-  width: 75vw;
+  max-width: 75vw;
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
 }
@@ -743,28 +755,37 @@ h2.reg-title {
 
 @media only screen and (max-width: 700px) {
 
+  .background-img {
+    background-image: url('/assets/slide-2.jpg');
+    background-attachment: fixed;
+    background-size: auto 100vh;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-color: #232c37;
+  }
+
   ::-webkit-input-placeholder, input.long-sign-in {
-    width: 60vw;
+    width: 55vw;
     font-size: 2rem;
   }
 
   :-moz-placeholder, input.long-sign-in  { /* Firefox 18- */
-    width: 60vw;
+    width: 55vw;
     font-size: 2rem;
   }
 
   ::-moz-placeholder, input.long-sign-in  {  /* Firefox 19+ */
-    width: 60vw;
+    width: 55vw;
     font-size: 2rem;
   }
 
   :-ms-input-placeholder, input.long-sign-in {
-    width: 60vw;
+    width: 55vw;
     font-size: 2rem;
   }
 
   .sign-in-tittle-div {
-    width: 80vw;
+    width: 70vw;
   }
 
   img.second-logo {
@@ -777,21 +798,21 @@ h2.reg-title {
   }
 
   .container-log-in {
-      width: 80vw;
-      margin-left: -5vw;
+      width: 70vw;
+      margin-left: 0;
     }
 
     h2.reg-title {
-      width: 80vw;
-      font-size: 4rem;
+      width: 70vw;
+      font-size: 2.5rem;
   }
 
   label {
-      font-size: 3rem;
+      font-size: 1.5rem;
   }
 
   a.link {
-      font-size: 2.5rem;
+      font-size: 1.5rem;
   }
 
 }

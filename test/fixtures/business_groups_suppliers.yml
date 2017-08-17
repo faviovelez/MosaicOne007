@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business_group_id: 
+  supplier_id: 
+
+two:
+  business_group_id: 
+  supplier_id: 

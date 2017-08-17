@@ -41,7 +41,11 @@
 
     <div class="form-inside-style">
       <%= f.label :línea_de_producto %>
-      <%= f.select :line, options_for_select([['seleccione', ''], ['hogar'], ['alimentos y regalos'], ['oficina'], ['empaque y embalaje'], ['ecológica'],['exhibidores'], ['diseños especiales']], selected: (@product.line || 'seleccione')) %>
+      <% if current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff' %>
+        <%= f.select :line, options_for_select([['seleccione', ''], ['hogar'], ['alimentos y regalos'], ['oficina'], ['empaque y embalaje'], ['ecológica'],['exhibidores'], ['diseños especiales']], selected: (@product.line || 'seleccione')) %>
+      <% else %>
+        <%= f.select :line, options_for_select(["productos de tienda #{current_user.store.store_name}"], selected: (@product.line || 'seleccione')) %>
+      <% end %>
     </div>
 
     <div class="form-inside-style">

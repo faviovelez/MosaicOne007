@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170816001235) do
+ActiveRecord::Schema.define(version: 20170817161922) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,9 +37,13 @@ ActiveRecord::Schema.define(version: 20170816001235) do
     t.boolean  "payment_on_time"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
+    t.integer  "business_unit_id"
+    t.integer  "store_id"
   end
 
+  add_index "bill_receiveds", ["business_unit_id"], name: "index_bill_receiveds_on_business_unit_id", using: :btree
   add_index "bill_receiveds", ["product_id"], name: "index_bill_receiveds_on_product_id", using: :btree
+  add_index "bill_receiveds", ["store_id"], name: "index_bill_receiveds_on_store_id", using: :btree
   add_index "bill_receiveds", ["supplier_id"], name: "index_bill_receiveds_on_supplier_id", using: :btree
 
   create_table "billing_addresses", force: :cascade do |t|
@@ -100,6 +104,16 @@ ActiveRecord::Schema.define(version: 20170816001235) do
     t.string   "business_group_type"
   end
 
+  create_table "business_groups_suppliers", force: :cascade do |t|
+    t.integer  "business_group_id"
+    t.integer  "supplier_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "business_groups_suppliers", ["business_group_id"], name: "index_business_groups_suppliers_on_business_group_id", using: :btree
+  add_index "business_groups_suppliers", ["supplier_id"], name: "index_business_groups_suppliers_on_supplier_id", using: :btree
+
   create_table "business_unit_sales", force: :cascade do |t|
     t.integer  "business_unit_id"
     t.float    "sales_amount"
@@ -138,7 +152,6 @@ ActiveRecord::Schema.define(version: 20170816001235) do
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
     t.string   "description"
-    t.boolean  "selected"
   end
 
   create_table "delivery_addresses", force: :cascade do |t|
@@ -154,6 +167,7 @@ ActiveRecord::Schema.define(version: 20170816001235) do
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
     t.text     "additional_references"
+    t.string   "name"
   end
 
   create_table "delivery_attempts", force: :cascade do |t|
@@ -224,6 +238,26 @@ ActiveRecord::Schema.define(version: 20170816001235) do
   add_index "documents", ["design_request_id"], name: "index_documents_on_design_request_id", using: :btree
   add_index "documents", ["request_id"], name: "index_documents_on_request_id", using: :btree
 
+  create_table "expenses", force: :cascade do |t|
+    t.float    "subtotal"
+    t.float    "taxes_rate"
+    t.float    "total"
+    t.integer  "store_id"
+    t.integer  "business_unit_id"
+    t.integer  "user_id"
+    t.integer  "bill_received_id"
+    t.integer  "month"
+    t.integer  "year"
+    t.date     "expense_date"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "expenses", ["bill_received_id"], name: "index_expenses_on_bill_received_id", using: :btree
+  add_index "expenses", ["business_unit_id"], name: "index_expenses_on_business_unit_id", using: :btree
+  add_index "expenses", ["store_id"], name: "index_expenses_on_store_id", using: :btree
+  add_index "expenses", ["user_id"], name: "index_expenses_on_user_id", using: :btree
+
   create_table "images", force: :cascade do |t|
     t.string   "image"
     t.datetime "created_at", null: false
@@ -251,9 +285,11 @@ ActiveRecord::Schema.define(version: 20170816001235) do
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
     t.integer  "months_in_inventory", default: 3
+    t.integer  "store_id"
   end
 
   add_index "inventory_configurations", ["business_unit_id"], name: "index_inventory_configurations_on_business_unit_id", using: :btree
+  add_index "inventory_configurations", ["store_id"], name: "index_inventory_configurations_on_store_id", using: :btree
 
   create_table "movements", force: :cascade do |t|
     t.integer  "product_id"
@@ -492,9 +528,11 @@ ActiveRecord::Schema.define(version: 20170816001235) do
     t.string   "second_last_name"
     t.integer  "business_unit_id"
     t.string   "email"
+    t.integer  "business_group_id"
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
+  add_index "prospects", ["business_group_id"], name: "index_prospects_on_business_group_id", using: :btree
   add_index "prospects", ["business_unit_id"], name: "index_prospects_on_business_unit_id", using: :btree
   add_index "prospects", ["delivery_address_id"], name: "index_prospects_on_delivery_address_id", using: :btree
   add_index "prospects", ["store_id"], name: "index_prospects_on_store_id", using: :btree
@@ -619,32 +657,34 @@ ActiveRecord::Schema.define(version: 20170816001235) do
   add_index "store_types", ["business_unit_id"], name: "index_store_types_on_business_unit_id", using: :btree
 
   create_table "stores", force: :cascade do |t|
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
     t.string   "store_code"
     t.string   "store_name"
     t.float    "discount"
     t.integer  "delivery_address_id"
-    t.integer  "billing_address_id"
     t.integer  "business_unit_id"
     t.integer  "store_type_id"
     t.integer  "phone"
     t.integer  "cellphone"
     t.string   "email"
+    t.integer  "cost_type_id"
+    t.date     "cost_type_selected_since"
+    t.integer  "months_in_inventory",      default: 3
+    t.float    "reorder_point",            default: 50.0
+    t.float    "critical_point",           default: 25.0
   end
 
-  add_index "stores", ["billing_address_id"], name: "index_stores_on_billing_address_id", using: :btree
   add_index "stores", ["business_unit_id"], name: "index_stores_on_business_unit_id", using: :btree
+  add_index "stores", ["cost_type_id"], name: "index_stores_on_cost_type_id", using: :btree
   add_index "stores", ["delivery_address_id"], name: "index_stores_on_delivery_address_id", using: :btree
   add_index "stores", ["store_type_id"], name: "index_stores_on_store_type_id", using: :btree
 
   create_table "suppliers", force: :cascade do |t|
     t.string   "name"
     t.string   "business_type"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.integer  "business_unit_id"
-    t.string   "legal_or_business_name"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
     t.string   "type_of_person"
     t.string   "contact_first_name"
     t.string   "contact_middle_name"
@@ -656,10 +696,13 @@ ActiveRecord::Schema.define(version: 20170816001235) do
     t.string   "email"
     t.string   "supplier_status"
     t.integer  "delivery_address_id"
+    t.date     "last_purchase_bill_date"
+    t.string   "last_purhcase_folio"
+    t.integer  "store_id"
   end
 
-  add_index "suppliers", ["business_unit_id"], name: "index_suppliers_on_business_unit_id", using: :btree
   add_index "suppliers", ["delivery_address_id"], name: "index_suppliers_on_delivery_address_id", using: :btree
+  add_index "suppliers", ["store_id"], name: "index_suppliers_on_store_id", using: :btree
 
   create_table "user_requests", force: :cascade do |t|
     t.integer "user_id"
@@ -735,12 +778,16 @@ ActiveRecord::Schema.define(version: 20170816001235) do
   add_index "warehouses", ["delivery_address_id"], name: "index_warehouses_on_delivery_address_id", using: :btree
   add_index "warehouses", ["store_id"], name: "index_warehouses_on_store_id", using: :btree
 
+  add_foreign_key "bill_receiveds", "business_units"
   add_foreign_key "bill_receiveds", "products"
+  add_foreign_key "bill_receiveds", "stores"
   add_foreign_key "bill_receiveds", "suppliers"
   add_foreign_key "bills", "orders"
   add_foreign_key "bills", "prospects"
   add_foreign_key "bills", "stores"
   add_foreign_key "business_group_sales", "business_groups"
+  add_foreign_key "business_groups_suppliers", "business_groups"
+  add_foreign_key "business_groups_suppliers", "suppliers"
   add_foreign_key "business_unit_sales", "business_units"
   add_foreign_key "business_units", "billing_addresses"
   add_foreign_key "business_units", "business_groups"
@@ -755,9 +802,14 @@ ActiveRecord::Schema.define(version: 20170816001235) do
   add_foreign_key "design_requests", "requests"
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"
+  add_foreign_key "expenses", "bill_receiveds"
+  add_foreign_key "expenses", "business_units"
+  add_foreign_key "expenses", "stores"
+  add_foreign_key "expenses", "users"
   add_foreign_key "images", "products"
   add_foreign_key "inventories", "products"
   add_foreign_key "inventory_configurations", "business_units"
+  add_foreign_key "inventory_configurations", "stores"
   add_foreign_key "movements", "bills"
   add_foreign_key "movements", "business_units"
   add_foreign_key "movements", "delivery_packages"
@@ -799,6 +851,7 @@ ActiveRecord::Schema.define(version: 20170816001235) do
   add_foreign_key "products_bills", "products"
   add_foreign_key "prospect_sales", "prospects"
   add_foreign_key "prospects", "billing_addresses"
+  add_foreign_key "prospects", "business_groups"
   add_foreign_key "prospects", "business_units"
   add_foreign_key "prospects", "delivery_addresses"
   add_foreign_key "prospects", "stores"
@@ -809,12 +862,12 @@ ActiveRecord::Schema.define(version: 20170816001235) do
   add_foreign_key "requests", "stores"
   add_foreign_key "store_sales", "stores"
   add_foreign_key "store_types", "business_units"
-  add_foreign_key "stores", "billing_addresses"
   add_foreign_key "stores", "business_units"
+  add_foreign_key "stores", "cost_types"
   add_foreign_key "stores", "delivery_addresses"
   add_foreign_key "stores", "store_types"
-  add_foreign_key "suppliers", "business_units"
   add_foreign_key "suppliers", "delivery_addresses"
+  add_foreign_key "suppliers", "stores"
   add_foreign_key "user_requests", "requests"
   add_foreign_key "user_requests", "users"
   add_foreign_key "user_sales", "users"

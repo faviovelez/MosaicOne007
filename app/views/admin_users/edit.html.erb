@@ -28,12 +28,20 @@
 
     <div class="form-inside-style">
       <%= f.label :rol_de_usuario %>
-      <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
+      <% if current_user.role.name == 'platform-admin' %>
+        <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
+      <% elsif current_user.role.name == 'store-admin' %>
+        <%= f.select :role_id, options_for_select(Role.where(name: current_user.role.name).collect{|r| [r.name, r.id]}) %>
+      <% end %>
     </div>
 
     <div class="form-inside-style">
       <%= f.label :tienda %>
-      <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
+      <% if current_user.role.name == 'platform-admin' %>
+        <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
+      <% elsif current_user.role.name == 'store-admin' %>
+        <%= f.select :role_id, options_for_select(Store.where(store_name: current_user.store.store_name).collect{|s| [s.store_name, s.id]}) %>
+      <% end %>
     </div>
 
     <div class="field form-inside-style">

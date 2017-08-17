@@ -7,7 +7,7 @@ class ProductsController < ApplicationController
   def index
     business_units = BusinessGroup.find_by_business_group_type('main').business_units
     ids = business_units.collect{|bu| bu.id}
-    if current_user.role.name == 'platform-admin'
+    if current_user.role.name == 'product-admin'
       @products = Product.where(business_unit: ids)
     else
       main_products = Product.where(business_unit: ids)
@@ -15,8 +15,14 @@ class ProductsController < ApplicationController
       my_ids = my_business_units.collect{|bu| bu.id}
       my_products = Product.where(business_unit: my_ids)
       @products = []
-      @products << main_products
-      @products << my_products
+      main_products.each do |product|
+        @products << product
+      end
+      unless my_products.count == 0
+        my_products.each do |product|
+          @products << product
+        end
+      end
       @products
     end
   end
@@ -144,6 +150,5 @@ class ProductsController < ApplicationController
     def product_params
       params.require(:product).permit(:former_code, :unique_code, :description, :product_type, :exterior_material_color, :interior_material_color, :impression, :exterior_color_or_design, :main_material, :resistance_main_material, :inner_length, :inner_width, :inner_height, :outer_length, :outer_width, :outer_height, :design_type, :number_of_pieces, :accesories_kit, :price, :bag_length, :bag_width, :bag_height, :exhibitor_height, :tray_quantity, :tray_length, :tray_width, :tray_divisions, :classification, :line, :image, :pieces_per_package, :business_unit_id, :warehouse)
     end
-
 
 end

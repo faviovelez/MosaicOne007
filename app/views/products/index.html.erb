@@ -1,3 +1,4 @@
+<% if @products.count >= 1 %>
   <table>
     <thead>
       <tr class="table-titles">
@@ -31,7 +32,8 @@
           </td>
         </tr>
     <% end %>
-
     </tbody>
-
   </table>
+<% else %>
+  <p class="individual-font">No hay productos dados de alta </p>
+<% end %>

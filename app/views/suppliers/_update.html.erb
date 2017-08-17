@@ -1,0 +1,78 @@
+<%= render 'supplier_errors' %>
+<%= form_for(@supplier) do |f| %>
+
+  <h2 class="info-title">Editar de Proveedor  <%= @supplier.legal_or_business_name %></h2>
+
+  <div class="form-container">
+
+    <div class="form-inside-style">
+      <%= f.label :nombre_completo %>
+      <%= f.text_field :name, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :giro_comercial %>
+      <%= f.text_field :type_of_person, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :tipo_de_persona %>
+      <%= f.select :business_type, options_for_select(['persona física', 'persona moral'], selected: @supplier.business_type) %>
+    </div>
+
+    <h3>Datos de contacto</h3>
+
+    <div class="form-inside-style">
+      <%= f.label :puesto_del_contacto %>
+      <%= f.text_field :contact_position, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :primer_nombre %>
+      <%= f.text_field :contact_first_name, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :segundo_nombre %>
+      <%= f.text_field :contact_middle_name, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :apellidos %>
+      <%= f.text_field :contact_last_name, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :correo_electrónico %>
+      <%= f.text_field :email, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :teléfono_directo %>
+      <%= f.text_field :direct_phone, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :extension %>
+      <%= f.text_field :extension, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :celular %>
+      <%= f.text_field :cell_phone, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style hidden">
+      <%= f.label :store_id %>
+      <%= f.text_field :store_id, value: current_user.store.id, class: 'form-inside' %>
+    </div>
+
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :guardar, class: 'main-button capitalize' %>
+      </div>
+    </div>
+  </div>
+
+
+<% end %>
