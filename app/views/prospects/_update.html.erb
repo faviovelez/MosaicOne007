@@ -8,17 +8,17 @@
   <div class="form-container">
 
     <div class="form-inside-style">
-      <%= f.label :nombre_completo %>
+      <%= f.label :nombre %>
       <%= f.text_field :legal_or_business_name, class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">
-      <%= f.label :giro_comercial %>
-      <%= f.text_field :type_of_person, class: 'form-inside' %>
+      <%= f.label :giro %>
+      <%= f.text_field :prospect_type, class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">
-      <%= f.label :tipo_de_persona %>
+      <%= f.label :tipo %>
       <%= f.select :business_type, options_for_select(['persona física', 'persona moral'], selected: @prospect.business_type) %>
     </div>
 
@@ -64,24 +64,19 @@
       <%= f.text_field :cell_phone, class: 'form-inside' %>
     </div>
 
-    <div class="form-inside-style">
-      <%= f.label :delivery_address_id %>
-      <%= f.text_field :delivery_address_id %>
+    <div class="form-inside-style hidden">
+      <%= f.label :empresa %>
+      <%= f.text_field :business_unit_id, value: current_user.store.business_unit.id, class: 'form-inside' %>
     </div>
 
-    <div class="form-inside-style">
-      <%= f.label :business_unit_id %>
-      <%= f.text_field :business_unit_id, value: current_user.store.business_unit.id %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :store_id %>
-      <%= f.text_field :store_id, value: current_user.store.id %>
+    <div class="form-inside-style hidden">
+      <%= f.label :grupo_de_negocios %>
+      <%= f.text_field :business_group_id, value: current_user.store.business_unit.business_group.id, class: 'form-inside' %>
     </div>
 
     <div class="button-container">
       <div class="actions">
-        <%= f.submit :Crear, class: 'main-button' %>
+        <%= f.submit :Guardar, class: 'main-button' %>
       </div>
     </div>
 

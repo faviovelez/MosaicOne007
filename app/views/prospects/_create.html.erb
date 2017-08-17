@@ -69,8 +69,13 @@
     </div>
 
     <div class="form-inside-style hidden">
-      <%= f.label :business_unit %>
-      <%= f.text_field :business_unit_id, value: current_user.store.business_unit, class: 'form-inside' %>
+      <%= f.label :empresa %>
+      <%= f.text_field :business_unit_id, value: current_user.store.business_unit.id, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style hidden">
+      <%= f.label :grupo_de_negocios %>
+      <%= f.text_field :business_group_id, value: current_user.store.business_unit.business_group.id, class: 'form-inside' %>
     </div>
 
     <div class="button-container">

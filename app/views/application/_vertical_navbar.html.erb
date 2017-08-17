@@ -252,14 +252,32 @@
           <%= link_to 'Crear producto especial', filtered_requests_product_view_path, class: 'text-link' %>
             </li>
 
-            <% if params[:controller] == 'movements' && params[:action] == 'index'  %>
-              <li class="vertical-link actual-vertical-link">
-            <% else %>
-              <li class="vertical-link">
-            <% end %>
-            <i class="fa fa-money other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Costos de producción', warehouse_index_path, class: 'text-link' %>
-              </li>
+          <% if (params[:controller] == 'suppliers' && params[:action] == 'new')  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-address-book-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Alta de proveedor', new_business_group_supplier_path(current_user.store.business_unit.business_group), class: 'text-link' %>
+            </li>
+
+          <% if (params[:controller] == 'suppliers' && params[:action] == 'index')  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-address-card other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Lista de proveedores', business_group_suppliers_path(current_user.store.business_unit.business_group), class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'movements' && params[:action] == 'index'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-money other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Costos de producción', warehouse_index_path, class: 'text-link' %>
+            </li>
 
         <% end %>
         <%-# Aquí termina el área que muestra los links para product-staff o product-admin %>
@@ -336,6 +354,24 @@
               <%= link_to 'Lista de usuarios', users_path, class: 'text-link'  %>
             </li>
 
+            <% if params[:controller] == 'warehouses' && params[:action] == 'new' %>
+              <li class="vertical-link actual-vertical-link">
+            <% else %>
+              <li class="vertical-link">
+            <% end %>
+              <i class="fa fa-archive other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Crear almacén', new_business_unit_warehouse_path(current_user.store.business_unit), class: 'text-link'  %>
+            </li>
+
+            <% if params[:controller] == 'warehouses' && params[:action] == 'index' %>
+              <li class="vertical-link actual-vertical-link">
+            <% else %>
+              <li class="vertical-link">
+            <% end %>
+              <i class="fa fa-file-text-o other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Lista de almacenes', warehouses_path, class: 'text-link'  %>
+            </li>
+
           <% if params[:controller] == 'stores' && params[:action] == 'new' %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
@@ -345,7 +381,7 @@
               <%= link_to 'Crear tienda', new_store_path, class: 'text-link'  %>
             </li>
 
-          <% if params[:controller] == 'stores' && params[:action] == 'index' %>
+          <% if (params[:controller] == 'stores' && params[:action] == 'index') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
@@ -354,25 +390,16 @@
             <%= link_to 'Lista de tiendas', stores_path, class: 'text-link'  %>
           </li>
 
-          <% if params[:controller] == 'warehouses' && params[:action] == 'new' %>
+          <% if (params[:controller] == 'business_units' && params[:action] == 'new') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
           <% end %>
-            <i class="fa fa-archive other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Crear almacén', new_business_unit_warehouse_path(current_user.store.business_unit), class: 'text-link'  %>
+            <i class="fa fa-cog other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Crear empresa', new_business_unit_path, class: 'text-link'  %>
           </li>
 
-          <% if params[:controller] == 'warehouses' && params[:action] == 'index' %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-            <i class="fa fa-file-text-o other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Lista de almacenes', warehouses_path, class: 'text-link'  %>
-          </li>
-
-          <% if params[:controller] == 'business_units' %>
+          <% if (params[:controller] == 'business_units' && params[:action] == 'index') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
@@ -381,7 +408,16 @@
             <%= link_to 'Lista de empresas', business_units_path, class: 'text-link'  %>
           </li>
 
-          <% if params[:controller] == 'business_groups' %>
+          <% if (params[:controller] == 'business_groups' && params[:action] == 'new') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+            <i class="fa fa-cogs other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Crear grupo de negocio', new_business_group_path, class: 'text-link'  %>
+          </li>
+
+          <% if (params[:controller] == 'business_groups' && params[:action] == 'index') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">

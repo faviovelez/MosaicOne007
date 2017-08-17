@@ -6,15 +6,14 @@
   </h2>
 
   <p>
-    <strong>Tipo: </strong>
+    <strong>Giro: </strong>
     <%= @supplier.business_type %>
   </p>
 
   <p>
-    <strong>Giro: </strong>
+    <strong>Tipo: </strong>
     <%= @supplier.type_of_person %>
   </p>
-
 
   <h3>Datos de contacto</h3>
 
@@ -58,38 +57,38 @@
     <%= @supplier.cell_phone %>
   </p>
 
-  <% if @supplier.delivery_address.present?%>
     <p>
-      <strong>Estatus: </strong>
-      <%= @supplier.supplier_status %>
+      <% if @supplier.delivery_address.present?%>
+        <strong>Estatus: </strong>
+        <%= @supplier.supplier_status %>
+      <% end %>
     </p>
-  <% end %>
 
-  <% if @supplier.last_purchase_bill_date.present?%>
     <p>
-      <strong>Fecha de última compra: </strong>
-      <%= @supplier.last_purchase_bill_date %>
+      <% if @supplier.last_purchase_bill_date.present?%>
+        <strong>Fecha de última compra: </strong>
+        <%= @supplier.last_purchase_bill_date %>
+      <% end %>
     </p>
-  <% end %>
 
-  <% if @supplier.last_purhcase_folio.present?%>
     <p>
-      <strong>Folio de última compra: </strong>
-      <%= @supplier.last_purhcase_folio %>
+      <% if @supplier.last_purhcase_folio.present?%>
+          <strong>Folio de última compra: </strong>
+          <%= @supplier.last_purhcase_folio %>
+        <% end %>
     </p>
-  <% end %>
+
   <p>
-
     <strong>Tienda: </strong>
     <%= @supplier.store.store_code %> - <%= @supplier.store.store_name %>
   </p>
 
-  <% if @supplier.delivery_address.present?%>
     <p>
-      <%= link_to 'Ver dirección', supplier_delivery_address_path(supplier_id: @supplier, id: @supplier.delivery_address), class: 'individual-font' %>
-  <% else %>
-    <%= link_to 'Crear dirección', new_supplier_delivery_address_path(@supplier), class: 'individual-font' %>
+      <% if @supplier.delivery_address.present?%>
+        <%= link_to 'Ver dirección', supplier_delivery_address_path(supplier_id: @supplier, id: @supplier.delivery_address), class: 'individual-font' %>
+      <% else %>
+        <%= link_to 'Crear dirección', new_supplier_delivery_address_path(@supplier), class: 'individual-font' %>
+      <% end %>
     </p>
-  <% end %>
 
 </div>

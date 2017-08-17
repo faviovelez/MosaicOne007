@@ -148,7 +148,41 @@ class ProductsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def product_params
-      params.require(:product).permit(:former_code, :unique_code, :description, :product_type, :exterior_material_color, :interior_material_color, :impression, :exterior_color_or_design, :main_material, :resistance_main_material, :inner_length, :inner_width, :inner_height, :outer_length, :outer_width, :outer_height, :design_type, :number_of_pieces, :accesories_kit, :price, :bag_length, :bag_width, :bag_height, :exhibitor_height, :tray_quantity, :tray_length, :tray_width, :tray_divisions, :classification, :line, :image, :pieces_per_package, :business_unit_id, :warehouse)
+      params.require(:product).permit(:former_code,
+      :unique_code,
+      :description,
+      :product_type,
+      :exterior_material_color,
+      :interior_material_color,
+      :impression,
+      :exterior_color_or_design,
+      :main_material,
+      :resistance_main_material,
+      :inner_length,
+      :inner_width,
+      :inner_height,
+      :outer_length,
+      :outer_width,
+      :outer_height,
+      :design_type,
+      :number_of_pieces,
+      :accesories_kit,
+      :price,
+      :bag_length,
+      :bag_width,
+      :bag_height,
+      :exhibitor_height,
+      :tray_quantity,
+      :tray_length,
+      :tray_width,
+      :tray_divisions,
+      :classification,
+      :line,
+      :image,
+      :pieces_per_package,
+      :business_unit_id,
+      :warehouse_id,
+      :cost)
     end
 
 end

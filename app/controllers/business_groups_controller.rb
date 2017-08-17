@@ -3,9 +3,6 @@ class BusinessGroupsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_business_group, only: [:show, :edit, :update, :destroy]
 
-  # BusinessGroup (empresa) debe pertenecer a un owner (que puede ser una tienda o a una Business Unit
-  before_action :identify_owner_type, only: [:new, :create]
-
   def index
     @business_groups = BusinessGroup.all
   end
@@ -60,7 +57,6 @@ private
   def set_business_group
     @business_group = BusinessGroup.find(params[:id])
   end
-
 
   def business_group_params
       params.require(:business_group).permit(:name)
