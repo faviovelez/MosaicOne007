@@ -1,23 +1,29 @@
-<table>
-  <thead>
-    <tr class="table-titles">
-      <th class="col-md-3">Nombre</th>
-      <th class="col-md-2">Tienda</th>
-      <th class="col-md-2">Rol</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-    <% @users.each do |user| %>
-      <td><%=user.first_name %> <%=user.middle_name %> <%=user.last_name %></td>
-      <td> <%=user.store.store_code %> - <%=user.store.store_name %></td>
-      <td><%=user.role.name %></td>
-      <td class="col-md-1">
-        <%= link_to user_path(user) do %>
-          <i class="fa fa-user link-to-details" aria-hidden="true"></i>
-          <span>Ver usuario</span>
-        <% end %>
-      </td>
 
-    </tr>
-  <% end %>
+<% if @users.count >= 1 %>
+  <table>
+    <thead>
+      <tr class="table-titles">
+        <th class="col-md-3">Nombre</th>
+        <th class="col-md-2">Tienda</th>
+        <th class="col-md-2">Rol</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <% @users.each do |user| %>
+          <td><%=user.first_name %> <%=user.middle_name %> <%=user.last_name %></td>
+          <td> <%=user.store.store_code %> - <%=user.store.store_name %></td>
+          <td><%=user.role.name %></td>
+          <td class="col-md-1">
+            <%= link_to user_path(user) do %>
+              <i class="fa fa-user link-to-details" aria-hidden="true"></i>
+              <span>Ver usuario</span>
+            <% end %>
+          </td>
+      </tr>
+        <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font">Aún no hay usuarios registrados</p>
+<% end %>

@@ -7,13 +7,18 @@
   <div class="form-container">
 
     <div class="form-inside-style">
-      <%= f.label :nombre_del_prospecto %>
+      <%= f.label :nombre %>
       <%= f.text_field :legal_or_business_name, class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">
-      <%= f.label :giro_comercial %>
+      <%= f.label :giro %>
       <%= f.text_field :prospect_type, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :tipo %>
+      <%= f.select :business_type, options_for_select(['persona física', 'persona moral'], selected: @prospect.business_type) %>
     </div>
 
     <h3>Datos de contacto</h3>
@@ -61,6 +66,11 @@
     <div class="form-inside-style">
       <%= f.label :celular %>
       <%= f.text_field :cell_phone, maxlength: 10, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style hidden">
+      <%= f.label :business_unit %>
+      <%= f.text_field :business_unit_id, value: current_user.store.business_unit, class: 'form-inside' %>
     </div>
 
     <div class="button-container">

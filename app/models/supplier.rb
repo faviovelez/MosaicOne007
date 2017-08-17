@@ -3,5 +3,8 @@ class Supplier < ActiveRecord::Base
   has_many :payments
   has_many :movements
   has_many :pending_movements
-  belongs_to :business_unit
+  has_many :business_groups, through: :business_groups_suppliers
+  has_many :business_groups_suppliers
+  belongs_to :delivery_address
+  belongs_to :store
 end
