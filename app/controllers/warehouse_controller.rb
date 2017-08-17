@@ -88,6 +88,7 @@ class WarehouseController < ApplicationController
   def attach_entry
     @collection.each do |movement|
       if movement.save
+        process_pendings(movement.product, movement)
         movement.warehouse_entry = WarehouseEntry.create(
           product: movement.product,
           quantity: movement.quantity
@@ -126,6 +127,25 @@ class WarehouseController < ApplicationController
         )
       end
     end
+  end
+
+  def process_pendings(product, movement)
+    PendingMovement.where(product: product).each do |pending_movement|
+      if movement.quantity >= pending_movement.quantity
+        Movement.create(filter_movement(pending_movement.as_json))
+        ProductRequest.find(
+          pending_movement.product_request_id
+        ).update(status: 'asignado')
+        pending_movement.destroy
+      end
+    end
+  end
+
+  def filter_movement(movement)
+    %w(id created_at updated_at).each do |deleted|
+      movement.delete(deleted)
+    end
+    movement
   end
 
   def create_movements
