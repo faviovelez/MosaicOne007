@@ -155,7 +155,8 @@ p.info > strong {
 #prospect-container > p,
 #billing-container > p,
 #delivery-container > p,
-#supplier-container > p {
+#supplier-container > p,
+#products-container > p {
   padding: 1rem 3rem;
   font-family: 'Open Sans', sans-serif;
   font-size: 1.8rem;

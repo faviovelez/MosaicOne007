@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170817161922) do
+ActiveRecord::Schema.define(version: 20170817173051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -479,6 +479,7 @@ ActiveRecord::Schema.define(version: 20170817161922) do
     t.integer  "pieces_per_package",       default: 1
     t.integer  "business_unit_id"
     t.integer  "warehouse_id"
+    t.float    "cost"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree

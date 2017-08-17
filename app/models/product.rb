@@ -14,6 +14,8 @@ class Product < ActiveRecord::Base
   has_one :request
   belongs_to :warehouse
 
+  validates :unique_code, presence: { message: "Debe anotar un código de producto."}
+
   validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya hay un producto con con este código."}
 
   def quantity

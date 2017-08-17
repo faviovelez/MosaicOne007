@@ -12,12 +12,12 @@
 
     <div class="form-inside-style">
       <%= f.label :giro_comercial %>
-      <%= f.text_field :type_of_person, class: 'form-inside' %>
+      <%= f.select :business_type, options_for_select(['persona física', 'persona moral'], selected: @supplier.business_type) %>
     </div>
 
     <div class="form-inside-style">
       <%= f.label :tipo_de_persona %>
-      <%= f.select :business_type, options_for_select(['persona física', 'persona moral'], selected: @supplier.business_type) %>
+      <%= f.text_field :type_of_person, class: 'form-inside' %>
     </div>
 
     <h3>Datos de contacto</h3>
@@ -49,17 +49,17 @@
 
     <div class="form-inside-style">
       <%= f.label :teléfono_directo %>
-      <%= f.text_field :direct_phone, class: 'form-inside' %>
+      <%= f.text_field :direct_phone, maxlength: 10, class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">
-      <%= f.label :extension %>
-      <%= f.text_field :extension, class: 'form-inside' %>
+      <%= f.label :extensión %>
+      <%= f.text_field :extension, maxlength: 10, class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">
       <%= f.label :celular %>
-      <%= f.text_field :cell_phone, class: 'form-inside' %>
+      <%= f.text_field :cell_phone, maxlength: 10, class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style hidden">
