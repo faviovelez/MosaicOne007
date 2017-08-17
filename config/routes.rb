@@ -43,6 +43,14 @@ Rails.application.routes.draw do
     resources :images, controller: 'products'
   end
 
+  resources :suppliers do
+    resources :delivery_addresses
+  end
+
+  resources :business_groups do
+    resources :suppliers, :prospects
+  end
+
   resources :prospects do
     resources :billing_addresses, :delivery_addresses, :requests
   end
@@ -61,8 +69,6 @@ Rails.application.routes.draw do
   resources :billing_addresses
 
   resources :documents
-
-  resources :business_groups
 
   resources :business_units do
     resources :warehouses, :billing_addresses
@@ -113,5 +119,9 @@ Rails.application.routes.draw do
   patch 'warehouse/form_for_movement/:id', to: 'warehouse#form_for_movement', as: 'form_for_movement', controller: 'warehouse'
 
   get 'orders/get/:product', to: 'orders#get_product', as: 'orders_get_product'
+
+  get 'stores/show_settings/:id', to: 'stores#show_settings', as: 'store_inventory_settings'
+
+  get 'stores/inventory_settings/:id', to: 'stores#inventory_settings', as: 'edit_store_inventory_settings'
 
 end

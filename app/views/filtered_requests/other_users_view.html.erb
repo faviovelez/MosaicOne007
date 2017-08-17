@@ -1,4 +1,4 @@
-
+<% if @assigned_to_others.count >= 1 %>
     <table>
       <thead>
         <tr class="table-titles">
@@ -53,3 +53,6 @@
       <% end %>
     </tbody>
   </table>
+<% else %>
+  <p class="individual-font">No hay solicitudes activas</p>
+<% end %>

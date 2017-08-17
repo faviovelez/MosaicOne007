@@ -1,0 +1,95 @@
+<div class="show-container" id="supplier-container">
+
+  <h2 class="info-title">
+    Proveedor
+    <%= @supplier.name %>
+  </h2>
+
+  <p>
+    <strong>Tipo: </strong>
+    <%= @supplier.business_type %>
+  </p>
+
+  <p>
+    <strong>Giro: </strong>
+    <%= @supplier.type_of_person %>
+  </p>
+
+
+  <h3>Datos de contacto</h3>
+
+  <p>
+    <strong>Puesto: </strong>
+    <%= @supplier.contact_position %>
+  </p>
+
+  <p>
+    <strong>Primer nombre: </strong>
+    <%= @supplier.contact_first_name %>
+  </p>
+
+  <p>
+    <strong>Segundo nombre: </strong>
+    <%= @supplier.contact_middle_name %>
+  </p>
+
+  <p>
+    <strong>Apellidos: </strong>
+    <%= @supplier.contact_last_name %>
+  </p>
+
+  <p>
+    <strong>Correo electrónico: </strong>
+    <%= @supplier.email %>
+  </p>
+
+  <p>
+    <strong>Teléfono directo: </strong>
+    <%= @supplier.direct_phone %>
+  </p>
+
+  <p>
+    <strong>Extensión: </strong>
+    <%= @supplier.extension %>
+  </p>
+
+  <p>
+    <strong>Celular: </strong>
+    <%= @supplier.cell_phone %>
+  </p>
+
+  <% if @supplier.delivery_address.present?%>
+    <p>
+      <strong>Estatus: </strong>
+      <%= @supplier.supplier_status %>
+    </p>
+  <% end %>
+
+  <% if @supplier.last_purchase_bill_date.present?%>
+    <p>
+      <strong>Fecha de última compra: </strong>
+      <%= @supplier.last_purchase_bill_date %>
+    </p>
+  <% end %>
+
+  <% if @supplier.last_purhcase_folio.present?%>
+    <p>
+      <strong>Folio de última compra: </strong>
+      <%= @supplier.last_purhcase_folio %>
+    </p>
+  <% end %>
+  <p>
+
+    <strong>Tienda: </strong>
+    <%= @supplier.store.store_code %> - <%= @supplier.store.store_name %>
+  </p>
+
+  <% if @supplier.delivery_address.present?%>
+    <p>
+      <%= link_to 'Ver dirección', supplier_delivery_address_path(supplier_id: @supplier, id: @supplier.delivery_address), class: 'individual-font' %>
+  <% else %>
+    <%= link_to 'Crear dirección', new_supplier_delivery_address_path(@supplier), class: 'individual-font' %>
+    </p>
+  <% end %>
+
+</div>

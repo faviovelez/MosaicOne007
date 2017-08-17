@@ -55,11 +55,13 @@ end
 
 # Se establece por default la configuración de tipo de costeo a PEPS en la tabla CostType
 [
-  { warehouse_cost_type: "PEPS", description: "Primeras entradas, primeras salidas", selected: true },
-  { warehouse_cost_type: "UEPS", description: "Últimas entradas, primeras salidas", selected: false }
+  { warehouse_cost_type: "PEPS", description: "Primeras entradas, primeras salidas"},
+  { warehouse_cost_type: "UEPS", description: "Últimas entradas, primeras salidas"}
 ].each do |hash|
   CostType.find_or_create_by(hash)
 end
+
+default_cost_type = CostType.find_by_warehouse_cost_type('PEPS')
 
 # Cada tienda debe pertenecer a un Business Unit y cada Business Unit debe pertenecer a un Business Group, se crean defaults para funcionalidad inicial que deben ser modificadas (y/o agregadas nuevas)
 default_business_group = BusinessGroup.find_by_name('default compañía')
@@ -76,7 +78,7 @@ default_business_unit = BusinessUnit.find_by_name('default compañía')
 default_terceros_business_unit = BusinessUnit.find_by_name('default terceros')
 
 # Se crea un almacén default
-Warehouse.create(warehouse_code: 'AG000', name: 'almacén default', business_unit: default_business_unit)
+Warehouse.create(warehouse_code: 'AG000', name: 'almacén default', business_unit: default_business_unit, cost_type: default_cost_type)
 
 # Se crea el modelo Store_type para los distintos tipos de tiendas. Al crear una tienda, se puede elegir entre los business_units default o los creados o modificados por los usuarios.
 [
@@ -90,7 +92,7 @@ end
 
 store_type_default = StoreType.find_by_store_type('corporativo')
 
-default_store = Store.find_or_create_by(store_name: 'corporativo', store_code: '000', store_type: store_type_default, business_unit: default_business_unit)
+default_store = Store.find_or_create_by(store_name: 'corporativo', store_code: '000', store_type: store_type_default, business_unit: default_business_unit, )
 
 admin = Role.find_by_name('platform-admin')
 

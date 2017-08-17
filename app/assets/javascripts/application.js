@@ -22,6 +22,13 @@
   //source: '/search_suggestions'
 
 $(document).ready(function() {
+
+  setTimeout(function() {
+    $('#mydropdown').click(function(event){
+      event.preventDefault();
+    });
+  }, 3000);
+
   $('.carousel').carousel({
     interval: false
   });
