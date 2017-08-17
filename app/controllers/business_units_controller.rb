@@ -3,9 +3,6 @@ class BusinessUnitsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_business_unit, only: [:show, :edit, :update, :destroy]
 
-  # BusinessUnit (empresa) debe pertenecer a un Corporativo (BusinessGroup)
-  before_action :identify_owner_type, only: [:new, :create]
-
   def index
     if current_user.role.name == 'platform-admin'
       @business_units = BusinessUnit.all
@@ -26,7 +23,6 @@ class BusinessUnitsController < ApplicationController
 
   def create
     @business_unit = BusinessUnit.new(business_unit_params)
-    save_business_unit_to_owner
     respond_to do |format|
       if @business_unit.save
         format.html { redirect_to @business_unit, notice: 'La empresa fue creada correctamente.' }
@@ -60,25 +56,10 @@ class BusinessUnitsController < ApplicationController
     end
   end
 
-  # Este método liga la empresa (BusinessUnit) a un BusinessGroup
-  def save_business_unit_to_owner
-    @owner.business_unit = @business_unit
-    @owner.save
-  end
-
 private
 
   def set_business_unit
     @business_unit = BusinessUnit.find(params[:id])
-  end
-
-  def business_unit_for_store
-    @business_unit = current_user.store.business_unit
-  end
-
-  # Este método identifica el Corporativo (BusinessGroup)
-  def identify_owner_type
-    @owner = BusinessGroup.find(params[:business_group_id])
   end
 
   def business_unit_params

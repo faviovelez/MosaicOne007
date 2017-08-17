@@ -27,4 +27,21 @@
   <p><strong>Teléfono celular:</strong>
     <%= @prospect.cell_phone %>
   </p>
+
+  <p>
+    <% if @prospect.billing_address.present? %>
+      <%= link_to 'Datos de facturación', prospect_billing_address_path(prospect_id: @prospect, id: @prospect.billing_address) %>
+    <% else %>
+      <%= link_to 'Datos de facturación', new_prospect_billing_address_path(@prospect) %>
+    <% end %>
+  </p>
+
+  <p>
+    <% if @prospect.delivery_address.present? %>
+      <%= link_to 'Dirección de entrega', prospect_delivery_address_path(prospect_id: @prospect, id: @prospect.delivery_address) %>
+    <% else %>
+      <%= link_to 'Dirección de entrega', new_prospect_delivery_address_path(@prospect) %>
+    <% end %>
+  </p>
+
 </div>
