@@ -27,7 +27,7 @@ $(document).ready(function() {
     $('#mydropdown').click(function(event){
       event.preventDefault();
     });
-  }, 3000);
+  }, 1000);
 
   $('.carousel').carousel({
     interval: false

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170818215552) do
+ActiveRecord::Schema.define(version: 20170818230502) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -530,6 +530,7 @@ ActiveRecord::Schema.define(version: 20170818215552) do
     t.integer  "business_unit_id"
     t.string   "email"
     t.integer  "business_group_id"
+    t.string   "store_code"
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
@@ -666,16 +667,25 @@ ActiveRecord::Schema.define(version: 20170818215552) do
     t.integer  "delivery_address_id"
     t.integer  "business_unit_id"
     t.integer  "store_type_id"
-    t.integer  "phone"
-    t.integer  "cellphone"
     t.string   "email"
     t.integer  "cost_type_id"
     t.date     "cost_type_selected_since"
     t.integer  "months_in_inventory",      default: 3
     t.float    "reorder_point",            default: 50.0
     t.float    "critical_point",           default: 25.0
+    t.string   "contact_first_name"
+    t.string   "contact_middle_name"
+    t.string   "contact_last_name"
+    t.string   "direct_phone"
+    t.string   "extension"
+    t.string   "type_of_person"
+    t.string   "prospect_status"
+    t.string   "second_last_name"
+    t.integer  "business_group_id"
+    t.string   "cell_phone"
   end
 
+  add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree
   add_index "stores", ["business_unit_id"], name: "index_stores_on_business_unit_id", using: :btree
   add_index "stores", ["cost_type_id"], name: "index_stores_on_cost_type_id", using: :btree
   add_index "stores", ["delivery_address_id"], name: "index_stores_on_delivery_address_id", using: :btree
@@ -863,6 +873,7 @@ ActiveRecord::Schema.define(version: 20170818215552) do
   add_foreign_key "requests", "stores"
   add_foreign_key "store_sales", "stores"
   add_foreign_key "store_types", "business_units"
+  add_foreign_key "stores", "business_groups"
   add_foreign_key "stores", "business_units"
   add_foreign_key "stores", "cost_types"
   add_foreign_key "stores", "delivery_addresses"
