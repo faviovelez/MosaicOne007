@@ -10,6 +10,7 @@ class Prospect < ActiveRecord::Base
   has_many :pending_movements
   has_many :prospect_sales
   belongs_to :business_unit
+  belongs_to :business_group
 
   validates :legal_or_business_name, presence: { message: 'Debe especificar el nombre del prospecto.'}
 

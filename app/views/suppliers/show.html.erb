@@ -1,0 +1,94 @@
+<div class="show-container" id="supplier-container">
+
+  <h2 class="info-title">
+    Proveedor
+    <%= @supplier.name %>
+  </h2>
+
+  <p>
+    <strong>Giro: </strong>
+    <%= @supplier.business_type %>
+  </p>
+
+  <p>
+    <strong>Tipo: </strong>
+    <%= @supplier.type_of_person %>
+  </p>
+
+  <h3>Datos de contacto</h3>
+
+  <p>
+    <strong>Puesto: </strong>
+    <%= @supplier.contact_position %>
+  </p>
+
+  <p>
+    <strong>Primer nombre: </strong>
+    <%= @supplier.contact_first_name %>
+  </p>
+
+  <p>
+    <strong>Segundo nombre: </strong>
+    <%= @supplier.contact_middle_name %>
+  </p>
+
+  <p>
+    <strong>Apellidos: </strong>
+    <%= @supplier.contact_last_name %>
+  </p>
+
+  <p>
+    <strong>Correo electrónico: </strong>
+    <%= @supplier.email %>
+  </p>
+
+  <p>
+    <strong>Teléfono directo: </strong>
+    <%= @supplier.direct_phone %>
+  </p>
+
+  <p>
+    <strong>Extensión: </strong>
+    <%= @supplier.extension %>
+  </p>
+
+  <p>
+    <strong>Celular: </strong>
+    <%= @supplier.cell_phone %>
+  </p>
+
+    <p>
+      <% if @supplier.delivery_address.present?%>
+        <strong>Estatus: </strong>
+        <%= @supplier.supplier_status %>
+      <% end %>
+    </p>
+
+    <p>
+      <% if @supplier.last_purchase_bill_date.present?%>
+        <strong>Fecha de última compra: </strong>
+        <%= @supplier.last_purchase_bill_date %>
+      <% end %>
+    </p>
+
+    <p>
+      <% if @supplier.last_purhcase_folio.present?%>
+          <strong>Folio de última compra: </strong>
+          <%= @supplier.last_purhcase_folio %>
+        <% end %>
+    </p>
+
+  <p>
+    <strong>Tienda: </strong>
+    <%= @supplier.store.store_code %> - <%= @supplier.store.store_name %>
+  </p>
+
+    <p>
+      <% if @supplier.delivery_address.present?%>
+        <%= link_to 'Ver dirección', supplier_delivery_address_path(supplier_id: @supplier, id: @supplier.delivery_address), class: 'individual-font' %>
+      <% else %>
+        <%= link_to 'Crear dirección', new_supplier_delivery_address_path(@supplier), class: 'individual-font' %>
+      <% end %>
+    </p>
+
+</div>

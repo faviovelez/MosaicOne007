@@ -1,10 +1,12 @@
-<div class="show-container">
+<div class="show-container" id="products-container">
 
   <h2 class="info-title">Detalles del Producto</h2>
 
-  <p> <strong>Código anterior: </strong>
-    <%= @product.former_code %>
-  </p>
+  <% if @product.former_code.present? %>
+    <p> <strong>Código anterior: </strong>
+      <%= @product.former_code %>
+    </p>
+  <% end %>
 
   <p> <strong>Código único: </strong>
     <%= @product.unique_code %>
@@ -112,6 +114,11 @@
       <%= @product.business_unit.name %>
     <% end %>
   </p>
+
+  <p> <strong>Almacén: </strong>
+    <%= @product.warehouse.name %>
+  </p>
+
 
   <%= render 'images' %>
 </div>

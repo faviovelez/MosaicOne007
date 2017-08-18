@@ -7,11 +7,12 @@ class Store < ActiveRecord::Base
   has_many :movements
   has_many :pending_movements
   belongs_to :delivery_address
-  belongs_to :billing_address
   has_many :store_sales
   belongs_to :business_unit
   belongs_to :store_type
   has_many :warehouses
+  belongs_to :cost_type
+  has_many :suppliers
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 
