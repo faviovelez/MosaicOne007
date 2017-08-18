@@ -9,7 +9,7 @@ class ProspectsController < ApplicationController
 
   # Crea la vista de todos los prospectos que le pertenecen a una tienda, ya que una tienda puede tener varios usuarios, no queremos ligar solamente el prospecto al usuario, también a la tienda.
   def index
-    store_prospects
+    business_group_prospects
   end
 
   # GET /prospects/1
@@ -66,9 +66,8 @@ class ProspectsController < ApplicationController
     end
   end
 
-  def store_prospects(user = current_user)
-    @store = current_user.store
-    @prospects = @store.prospects
+  def business_group_prospects(bg = current_user.store.business_unit.business_group)
+    @prospects = bg.prospects
   end
 
   def save_store_prospect(user = current_user)
@@ -88,6 +87,24 @@ class ProspectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def prospect_params
-      params.require(:prospect).permit(:store_id, :prospect_type, :contact_first_name, :second_last_name, :contact_middle_name, :contact_last_name, :contact_position, :direct_phone, :extension, :cell_phone, :business_type, :prospect_status, :discount, :legal_or_business_name, :billing_address_id, :delivery_address_id, :email)
+      params.require(:prospect).permit(:store_id,
+      :prospect_type,
+      :contact_first_name,
+      :second_last_name,
+      :contact_middle_name,
+      :contact_last_name,
+      :contact_position,
+      :direct_phone,
+      :extension,
+      :cell_phone,
+      :business_type,
+      :prospect_status,
+      :discount,
+      :legal_or_business_name,
+      :billing_address_id,
+      :delivery_address_id,
+      :email,
+      :business_unit_id,
+      :business_group_id)
     end
 end

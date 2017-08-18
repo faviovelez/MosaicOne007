@@ -8,4 +8,8 @@ class Inventory < ActiveRecord::Base
     end
     self.save
   end
+
+  def fix_quantity
+    self.quantity || 0
+  end
 end

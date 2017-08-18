@@ -18,7 +18,7 @@ $(function(){
 
   var checkNotEmpty = function(){
     var allFill = true;
-    $.each($('input[id^=numProduct_product]'), function(){
+    $.each($('input[id^=packetsProduct_product]'), function(){
       if ($(this).val() === ''){
         allFill = false;
         $(this).parent().addClass('has-error');
@@ -34,21 +34,23 @@ $(function(){
     $.each($('tr[id^=trForProduct]'), function(){
       data[$(this).attr('id')] = {
         id       : $(this).find('select').val(),
-        cantidad : $(this).find('input[id^=numProduct]').val()
+        packets  : $(this).find('input[id^=packetsProduct]').val(),
+        order    : $(this).find('input[id^=orderProduct]').val(),
+        total    : $(this).find('input[id^=totalProduct]').val(),
+        urgency  : $(this).find('input[id^=urgencyProduct]').val(),
+        maxDate  : $(this).find('input[id^=maxDateProduct]').val()
       };
-      var index = $(this).attr('id').match(/\d+/)[0];
-      if (supplier) {
-        data[$(this).attr('id')].supplierInfo = $('#supplierInfoproduct' + index).html();
-      }
     });
     return data;
   };
 
   $('#saveInfo').click(function(){
-    var data = createProductData();
+    var data = createProductRequestData();
     if (checkNotEmpty()){
+      var re = /\d+/g;
+      var storeId = document.location.href.match(re).pop();
       $.ajax({
-        url: '/orders/save_products',
+        url: '/orders/save_products/'+ storeId,
         data: data,
         method: 'post'
       });
@@ -75,7 +77,7 @@ $(function(){
         $('#' + selectId).select2('destroy');
         $(tr).remove();
       } else {
-        $(tr).find('td').slice(-4).remove();
+        $(tr).find('td').slice(-11).remove();
       }
     } else {
       _.templateSettings = {
@@ -94,7 +96,7 @@ $(function(){
           $("script.template").html()
         );
         var image = response.images.length > 0 ?
-          response.images[0].image.small.url :
+          response.images[0].image.thumb.url :
           $('#not_image_temp').attr('src');
         var link = $('#link_to_images').attr('href').replace(/\d+/g, response.product.id);
         var id = "product" + dec;
@@ -110,7 +112,30 @@ $(function(){
           } )
         );
 
-        $('#numProduct_'+ id).mask("000", {placeholder: "___"}).css({'text-align': 'center'});
+        $('#packetsProduct_'+ id)
+          .mask("000000", {placeholder: "______"})
+          .css({'text-align': 'center'})
+          .blur(function(){
+            var packets = parseInt($(this).val());
+            var id = $(this).attr('id').replace('packetsProduct','');
+            var pices = parseInt($('#pices' + id).html());
+            $('#orderProduct' + id).val( packets * pices );
+            var pedido = parseInt($('#orderProduct' + id).val());
+            var price = parseInt($('#price' + id).html());
+            $('#totalProduct' + id).val(price * pedido);
+          });
+
+        $('#urgencyProduct_' + id).click(function(){
+          var element = $('#maxDate' + $(this).attr('id').replace('urgency', '')).parent();
+          if ($(this).is(':checked')) {
+            $(this).val('alta');
+            $(element).removeClass('hidden');
+          } else {
+            $(this).val('normal');
+            $(element).addClass('hidden');
+          }
+        });
+
         $('#addNew' + id).click(function(){
           var tr = "<tr id='trForProduct"+ inc +"'>" +
             "<td class='select'>" +
@@ -140,6 +165,7 @@ $(function(){
       $('#product1').select2({
         templateSelection: formatState,
         multiple: true,
+        width: 200,
         maximumSelectionLength: 1
       })
       .change(function(){

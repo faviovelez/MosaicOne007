@@ -1,0 +1,28 @@
+<table class="table" id="productsList">
+  <thead>
+    <tr>
+      <th>Codigo unico</th>
+      <th>Color</th>
+      <th>Image</th>
+      <th>Pedido</th>
+      <th>Total</th>
+      <th>Urgencia</th>
+      <th>Entregar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @order.product_requests.each do |product_request| %>
+      <tr id="trForProduct<%= product_request.product.id %>">
+        <td><%= product_request.product.unique_code %></td>
+        <td><%= product_request.product.exterior_color_or_design %></td>
+        <td><%= image_tag image(product_request), alt: product_request.product.description %></td>
+        <td><%= product_request.quantity %></td>
+        <td><%= (sum_prices * product_request.quantity) %></td>
+        <td><%= product_request.urgency_level %></td>
+        <td><%= l product_request.maximum_date %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= link_to 'Confirmar', orders_confirm_path(@order), class: 'btn btn-primary', method: 'post' %>
+<br /> <br /> <br /> <br /> <br />

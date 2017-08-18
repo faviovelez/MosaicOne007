@@ -6,6 +6,39 @@ body {
   overflow-x:hidden;
 }
 
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+  color: #fff;
+  background-color: #36c6d3;
+}
+
+a.drop-text-link:hover {
+}
+
+#right-logo {
+  font-size: 2.5rem;
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+  color: #36c6d3;
+  text-decoration: none;
+  background-color: #1F2630;
+}
+
+.dropdown-menu {
+  background-color: #232c37;
+  box-shadow: 0 8px 6px -6px black;
+}
+
+.dropdown-menu .divider {
+  background-color: #13181E;
+}
+
+.dropdown-menu > li > a {
+  color: #b4bcc8;
+}
+
 .bottom-nav {
   position: fixed;
   height: 5vh;

@@ -1,0 +1,69 @@
+<% if @suppliers.count >= 1 %>
+  <table>
+    <thead>
+      <tr class="table-titles">
+        <th class="col-md-2">Nombre del proveedor</th>
+        <th class="col-md-2">Contacto</th>
+        <th class="col-md-1">Correo</th>
+        <th class="col-md-1">Teléfono</th>
+        <th class="col-md-1">Celular</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @suppliers.each do |supplier| %>
+        <tr>
+          <td><%= supplier.name %></td>
+          <td>
+            <% if supplier.contact_first_name.present? || supplier.contact_last_name.present? %>
+              <%= supplier.contact_first_name %> <%= supplier.contact_last_name %>
+            <% else %>
+              -
+            <% end %>
+          </td>
+          <td>
+            <% if supplier.email.present?%>
+              <%= supplier.email %>
+            <% else %>
+              -
+            <% end %>
+          </td>
+          <td>
+            <% if supplier.direct_phone.present?%>
+              <%= supplier.direct_phone %> Ext: <%= supplier.extension %>
+            <% else %>
+              -
+            <% end %>
+          </td>
+          <td>
+            <% if supplier.cell_phone.present?%>
+              <%= supplier.cell_phone %>
+            <% else %>
+              -
+            <% end %>
+          </td>
+          <td>
+            <%= link_to  supplier do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <span class="link-to-details">Ver</span>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to edit_supplier_path(supplier) do %>
+              <i class="fa fa-plus-square link-to-confirm" aria-hidden="true"></i>
+              <span class="link-to-confirm">Modificar</span>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to supplier, method: :delete, data: { confirm: '¿Está seguro que desea eliminar este Proveedor?' } do %>
+              <i class="fa fa-plus-square link-to-price" aria-hidden="true"></i>
+              <span class="link-to-price">Eliminar</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font">No hay proveedores dados de alta </p>
+<% end %>

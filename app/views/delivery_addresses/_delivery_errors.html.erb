@@ -1,0 +1,9 @@
+<% if @delivery.errors.any? %>
+  <ul>
+    <% @delivery.errors.messages.values.each do |msg| %>
+      <%msg.each do  |m| %>
+        <li><%= m %></li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>

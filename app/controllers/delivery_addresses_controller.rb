@@ -81,6 +81,9 @@ private
       @owner = Order.find(params[:order_id])
     elsif params[:warehouse_id]
       @owner = Warehouse.find(params[:warehouse_id])
+    elsif params[:supplier_id]
+      @owner = Supplier.find(params[:supplier_id])
+
     end
   end
 

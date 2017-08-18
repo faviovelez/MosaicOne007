@@ -1,0 +1,20 @@
+<div class="show-container" id="prospect-container">
+
+  <h2 class="info-title">Configuración de Inventario de <%= @store.store_code %> - <%= @store.store_name %> </h2>
+
+    <p><strong> Tipo de costeo: </strong>
+      <%= @store.cost_type.warehouse_cost_type %>
+
+    <p><strong> Meses de inventario deseados: </strong>
+      <%= @store.months_in_inventory %>
+    </p>
+
+    <p><strong> Punto de reorden: </strong>
+      <%= number_to_percentage(@store.reorder_point) %>
+    </p>
+
+    <p><strong> Punto crítico: </strong>
+      <%= number_to_percentage(@store.critical_point) %>
+    </div>
+
+  </div>

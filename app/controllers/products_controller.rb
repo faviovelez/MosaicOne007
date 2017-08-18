@@ -5,7 +5,26 @@ class ProductsController < ApplicationController
   # GET /products
   # GET /products.json
   def index
-    @products = Product.all
+    business_units = BusinessGroup.find_by_business_group_type('main').business_units
+    ids = business_units.collect{|bu| bu.id}
+    if current_user.role.name == 'product-admin'
+      @products = Product.where(business_unit: ids)
+    else
+      main_products = Product.where(business_unit: ids)
+      my_business_units = current_user.store.business_unit.business_group.business_units
+      my_ids = my_business_units.collect{|bu| bu.id}
+      my_products = Product.where(business_unit: my_ids)
+      @products = []
+      main_products.each do |product|
+        @products << product
+      end
+      unless my_products.count == 0
+        my_products.each do |product|
+          @products << product
+        end
+      end
+      @products
+    end
   end
 
   def images
@@ -55,11 +74,12 @@ class ProductsController < ApplicationController
           @request.update(status: 'código asignado', product: @product)
           @order = Order.create(status: 'en espera', user: @finded_user, category: 'especial', prospect: @request.prospect, request: @request, store: @request.store)
           @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date)
-          @inventory = Inventory.create(product: @product)
+          @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
           @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, order: @order)
           format.html { redirect_to @product, notice: 'Se creó un nuevo producto y una petición de baja de productos en espera del inventario.' }
           format.json { render :show, status: :created, location: @product }
         else
+          @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
           format.html { redirect_to @product, notice: 'Se creó un nuevo producto.' }
           format.json { render :show, status: :created, location: @product }
         end
@@ -128,8 +148,41 @@ class ProductsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def product_params
-      params.require(:product).permit(:former_code, :unique_code, :description, :product_type, :exterior_material_color, :interior_material_color, :impression, :exterior_color_or_design, :main_material, :resistance_main_material, :inner_length, :inner_width, :inner_height, :outer_length, :outer_width, :outer_height, :design_type, :number_of_pieces, :accesories_kit, :price, :bag_length, :bag_width, :bag_height, :exhibitor_height, :tray_quantity, :tray_length, :tray_width, :tray_divisions, :classification, :line, :image, :pieces_per_package, :business_unit_id, :warehouse)
+      params.require(:product).permit(:former_code,
+      :unique_code,
+      :description,
+      :product_type,
+      :exterior_material_color,
+      :interior_material_color,
+      :impression,
+      :exterior_color_or_design,
+      :main_material,
+      :resistance_main_material,
+      :inner_length,
+      :inner_width,
+      :inner_height,
+      :outer_length,
+      :outer_width,
+      :outer_height,
+      :design_type,
+      :number_of_pieces,
+      :accesories_kit,
+      :price,
+      :bag_length,
+      :bag_width,
+      :bag_height,
+      :exhibitor_height,
+      :tray_quantity,
+      :tray_length,
+      :tray_width,
+      :tray_divisions,
+      :classification,
+      :line,
+      :image,
+      :pieces_per_package,
+      :business_unit_id,
+      :warehouse_id,
+      :cost)
     end
-
 
 end

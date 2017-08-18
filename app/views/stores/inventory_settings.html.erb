@@ -1,0 +1,34 @@
+<%= form_for(@store) do |f| %>
+
+  <h2 class="info-title">Editar Configuración de Inventario de <%= @store.store_code %> - <%= @store.store_name %> </h2>
+
+  <div class="form-container">
+
+    <div class="form-inside-style">
+      <%= f.label :tipo_de_costeo %>
+      <%= f.select :cost_type, options_for_select(CostType.all.collect{|ct| [ct.warehouse_cost_type, ct.id]}, selected: current_user.store.cost_type) %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :meses_de_inventario_deseados %>
+      <%= f.text_field :months_in_inventory, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label 'punto de reorden (%)' %>
+      <%= f.text_field :reorder_point, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label 'punto crítico (%)' %>
+      <%= f.text_field :critical_point, class: 'form-inside' %>
+    </div>
+
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :Guardar, name: 'guardar', class: 'main-button' %>
+      </div>
+    </div>
+
+  </div>
+<% end %>

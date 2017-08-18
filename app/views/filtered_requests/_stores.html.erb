@@ -8,69 +8,73 @@
   <% @object = @requests %>
 <% end %>
 
-<table>
-  <thead>
-    <tr class="table-titles">
-      <th class="folio col-md-1">Folio</th>
-      <th class="quantity col-md-1">Cantidad</th>
-      <th class="product col-md-1">Producto</th>
-      <th class="prospect col-md-3">Prospecto</th>
-      <th class="date-created col-md-1">Solicitada</th>
-      <th class="delivery-date col-md-1">Entregar</th>
-      <th class="status col-md-2">Estatus</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @object.each do |request| %>
-      <tr>
-        <td class="folio"> <%= request.id %></td>
-        <td class="quantity"><%= request.quantity %></td>
-        <td class="product">
-          <% if request.product_type == 'otro'%>
-            <%= request.name_type %>
-          <% elsif request.product_type != 'otro'%>
-            <%= request.product_type %>
-          <% end %>
-        </td>
-        <% if request.prospect.present? %>
-          <td class="prospect"><%= request.prospect.legal_or_business_name %></td>
-        <% end %>
-        <% @days = (Date.today - request.created_at.to_date).to_i %>
-        <% if @days < 1 %>
-          <td class="date-created"> hoy </td>
-        <% elsif @days == 1 %>
-          <td class="date-created"> 1 día </td>
-        <% else @days > 1 %>
-          <td class="date-created"> <%= @days %> días </td>
-        <% end %>
-        <% if request.delivery_date.present? %>
-          <td class="delivery-date"> <%= I18n.l request.delivery_date, format: :short %></td>
-        <% else %>
-        <td class="delivery-date"> - </td>
-          <% end %>
-        <td class="status"> <%= request.status %></td>
-        <td>
-          <%= link_to request do %>
-            <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-          <% end %>
-        </td>
-        <% if request.status == 'costo asignado'  %>
-        <td>
-          <%= link_to requests_price_path(request) do %>
-            <i class="fa fa-calculator link-to-price" aria-hidden="true"></i>
-            <span class="link-to-price"> Precio </span>
-          <% end %>
-        </td>
-        <% elsif request.status == 'precio asignado'  %>
-          <td>
-            <%= link_to confirm_requests_path(request) do %>
-             <i class="fa fa-check-circle link-to-confirm" aria-hidden="true"></i>
-             <span class="link-to-confirm"> Confirmar </span>
-          </td>
-            <% end %>
-        <% end %>
+<% if @object.count >= 1 %>
+  <table>
+    <thead>
+      <tr class="table-titles">
+        <th class="folio col-md-1">Folio</th>
+        <th class="quantity col-md-1">Cantidad</th>
+        <th class="product col-md-1">Producto</th>
+        <th class="prospect col-md-3">Prospecto</th>
+        <th class="date-created col-md-1">Solicitada</th>
+        <th class="delivery-date col-md-1">Entregar</th>
+        <th class="status col-md-2">Estatus</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% @object.each do |request| %>
+        <tr>
+          <td class="folio"> <%= request.id %></td>
+          <td class="quantity"><%= request.quantity %></td>
+          <td class="product">
+            <% if request.product_type == 'otro'%>
+              <%= request.name_type %>
+            <% elsif request.product_type != 'otro'%>
+              <%= request.product_type %>
+            <% end %>
+          </td>
+          <% if request.prospect.present? %>
+            <td class="prospect"><%= request.prospect.legal_or_business_name %></td>
+          <% end %>
+          <% @days = (Date.today - request.created_at.to_date).to_i %>
+          <% if @days < 1 %>
+            <td class="date-created"> hoy </td>
+          <% elsif @days == 1 %>
+            <td class="date-created"> 1 día </td>
+          <% else @days > 1 %>
+            <td class="date-created"> <%= @days %> días </td>
+          <% end %>
+          <% if request.delivery_date.present? %>
+            <td class="delivery-date"> <%= I18n.l request.delivery_date, format: :short %></td>
+          <% else %>
+          <td class="delivery-date"> - </td>
+            <% end %>
+          <td class="status"> <%= request.status %></td>
+          <td>
+            <%= link_to request do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+            <% end %>
+          </td>
+          <% if request.status == 'costo asignado'  %>
+          <td>
+            <%= link_to requests_price_path(request) do %>
+              <i class="fa fa-calculator link-to-price" aria-hidden="true"></i>
+              <span class="link-to-price"> Precio </span>
+            <% end %>
+          </td>
+          <% elsif request.status == 'precio asignado'  %>
+            <td>
+              <%= link_to confirm_requests_path(request) do %>
+               <i class="fa fa-check-circle link-to-confirm" aria-hidden="true"></i>
+               <span class="link-to-confirm"> Confirmar </span>
+             <% end %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font">No hay solicitudes activas</p>
+<% end %>

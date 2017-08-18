@@ -5,6 +5,7 @@
       <th class="col-md-2">Nombre</th>
       <th class="col-md-2">Tipo de tienda</th>
       <th class="col-md-2">Unidad de negocio</th>
+      <th class="col-md-2">Usuarios</th>
     </tr>
   </thead>
   <tbody>
@@ -14,7 +15,7 @@
       <td><%=store.store_name %></td>
       <td><%=store.store_type.store_type %></td>
       <td><%=store.business_unit.name %></td>
-
+      <td><%=store.users.count %></td>
       <td class="col-md-1">
         <%= link_to store_path(store) do %>
           <i class="fa fa-eye link-to-details" aria-hidden="true"></i>

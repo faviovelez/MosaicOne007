@@ -11,6 +11,108 @@ class Movement < ActiveRecord::Base
   has_one :warehouse_entry
   has_many :delivery_attempts
 
+  before_save :create_update_summary, if: :is_sales?
+
+  def create_update_summary
+    if dont_exist_record_month
+      create_new_summary
+    else
+      update_summary
+    end
+  end
+
+  def dont_exist_record_month
+    !!(ProspectSale.where(month: Date.today.month).first.nil?)
+  end
+
+  def update_summary
+    update_reports_data(
+      ProspectSale.find_by_month(Date.today.month)
+    ).update(
+      prospect_id: store.id,
+    )
+    update_reports_data(
+      ProductSale.find_by_month(Date.today.month)
+    )
+    .update(
+      product_id: product.id,
+    )
+    update_reports_data(
+      BusinessUnitSale.find_by_month(Date.today.month)
+    ).update(
+      business_unit_id: business_unit.id
+    )
+    update_reports_data(
+      BusinessGroupSale.find_by_month(Date.today.month)
+    ).update(
+      business_group_id: business_unit.business_group_id,
+    )
+  end
+
+  def create_new_summary
+    create_reports_data(
+      ProspectSale
+    ).update(
+      prospect_id: store.id
+    )
+    create_reports_data(
+      ProductSale)
+    .update(
+      product_id: product.id,
+    )
+    create_reports_data(
+      BusinessUnitSale
+    ).update(
+      business_unit_id: business_unit.id
+    )
+    create_reports_data(
+      BusinessGroupSale
+    ).update(
+      business_group_id: business_unit.business_group_id,
+    )
+  end
+
+  def update_reports_data(object)
+    sales_amount = quantity * fix_final_price
+    sales_quantity = quantity
+    cost = fix_cost * quantity
+    month = Date.today.month
+    year  = Date.today.year
+    object.update_attributes(
+      sales_amount: sales_amount,
+      sales_quantity: sales_quantity,
+      cost: cost,
+      month: month,
+      year: year
+    )
+    object
+  end
+
+  def create_reports_data(type)
+    sales_amount = quantity * fix_final_price
+    sales_quantity = quantity
+    cost = fix_cost * quantity
+    month = Date.today.month
+    year  = Date.today.year
+    type.create(
+      sales_amount: sales_amount,
+      sales_quantity: sales_quantity,
+      cost: cost,
+      month: month,
+      year: year
+    )
+  end
+
+  def business_unit
+     BusinessUnit.find(
+       self.store.business_unit_id
+     )
+  end
+
+  def is_sales?
+    !!(movement_type == 'venta')
+  end
+
 #  after_save :new_movement, on: :create, if: :pending_quantity_greater_than_zero
 #  after_save :sum_quantity, if: :type_is_alta
 #  after_save :substract_quantity, if: :type_is_baja
@@ -62,4 +164,11 @@ class Movement < ActiveRecord::Base
 #    q.save
 #  end
 
+  def fix_cost
+    self.cost || 0
+  end
+
+  def fix_final_price
+    self.cost || 0
+  end
 end

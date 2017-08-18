@@ -1,3 +1,4 @@
+<% if @unassigned.count >= 1 %>
   <table>
     <thead>
       <tr class="table-titles">
@@ -8,26 +9,29 @@
       </tr>
     </thead>
     <tbody>
-    <% @unassigned.each do |request| %>
-      <tr>
-        <td> <%= request.request.store.store_code %> - <%= request.request.store.store_name %>
-        <td> <%= request.design_type %></td>
-        <% @days = (Date.today - request.created_at.to_date).to_i %>
-        <% if @days < 1 %>
-          <td> hoy </td>
-        <% elsif @days == 1 %>
-          <td> 1 día </td>
-        <% else @days > 1 %>
-          <td> <%= @days %> días </td>
-        <% end %>
-        <td> <%= request.status %></td>
-        <td class="col-md-1">
-          <%= link_to design_request_path(request) do %>
-            <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-            <span>Detalles</span>
+      <% @unassigned.each do |request| %>
+        <tr>
+          <td> <%= request.request.store.store_code %> - <%= request.request.store.store_name %>
+          <td> <%= request.design_type %></td>
+          <% @days = (Date.today - request.created_at.to_date).to_i %>
+          <% if @days < 1 %>
+            <td> hoy </td>
+          <% elsif @days == 1 %>
+            <td> 1 día </td>
+          <% else @days > 1 %>
+            <td> <%= @days %> días </td>
           <% end %>
-        </td>
-      </tr>
-    <% end %>
+          <td> <%= request.status %></td>
+          <td class="col-md-1">
+            <%= link_to design_request_path(request) do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <span>Ver</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
     </tbody>
   </table>
+  <% else %>
+    <p class="individual-font">No hay solicitudes activas</p>
+  <% end %>

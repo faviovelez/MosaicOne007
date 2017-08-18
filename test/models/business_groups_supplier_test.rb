@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class InventoryConfigurationTest < ActiveSupport::TestCase
+class BusinessGroupsSupplierTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

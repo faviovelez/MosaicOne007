@@ -1,0 +1,38 @@
+<% if @orders.count >= 1 %>
+  <table>
+    <thead>
+      <tr class="table-titles">
+        <th class="col-md-3">Pedido</th>
+        <th class="col-md-1">Tipo</th>
+        <th class="col-md-1">Productos</th>
+        <th class="col-md-1">Piezas</th>
+        <th class="col-md-1">Estatus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+        <tr>
+          <td> <%= order.id %> </td>
+          <td> <%= order.product_category %> </td>
+          <td> <%= order.product_requests.count %> </td>
+          <td> <%= sum_quantity(order) %> </td>
+          <td> <%= order.status %> </td>
+          <td class="col-md-1">
+            <%= link_to '#' do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <span>Ver</span>
+            <% end %>
+          </td>
+          <td class="col-md-1">
+            <%= link_to '#' do %>
+              <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
+              <span class="link-to-confirm">Modificar</span>
+            <% end %>
+          </td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font">No tienes pedidos entregados todavía.</p>
+<% end %>

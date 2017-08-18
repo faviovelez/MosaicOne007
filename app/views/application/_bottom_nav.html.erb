@@ -24,13 +24,34 @@
           <%= link_to 'Cancelar', '#myModal', 'data-toggle' => 'modal' %>
         <% end %>
 
-        <% if (@request.status == 'costo asignado' && params[:action] != 'price')  %>
+        <% if (@request.status == 'costo asignado' && params[:action] != 'price') %>
           <%= link_to 'Asignar precio', requests_price_path(@request) %>
         <% elsif @request.status == 'precio asignado' && (params[:action] != 'confirm' || params[:action] != 'confirm_view') %>
           <%= link_to 'Confirmar pedido', confirm_requests_path(@request) %>
         <% end %>
+
+      <% elsif params[:controller] == 'prospects' && params[:action] == 'show' %>
+        <%= link_to 'Modificar prospecto', edit_prospect_path(@prospect) %>
       <% end %>
 
+      <% if (params[:controller] == 'products' && params[:action] != 'new') %>
+        <%= link_to 'Crear nuevo producto', new_product_path, class: 'bottom-link' %>
+      <% end %>
+
+      <% if (params[:controller] == 'products' && params[:action] == 'show') %>
+        <%= link_to 'Modificar producto', edit_product_path(@product), class: 'bottom-link' %>
+      <% end %>
+
+    <% end %>
+
+    <% if (current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff')%>
+      <% if (params[:controller] == 'products' && params[:action] != 'new') %>
+        <%= link_to 'Crear nuevo producto', new_product_path, class: 'bottom-link' %>
+      <% end %>
+
+      <% if (params[:controller] == 'products' && params[:action] == 'show') %>
+        <%= link_to 'Modificar producto', edit_product_path(@product), class: 'bottom-link' %>
+      <% end %>
     <% end %>
 
     <% if params[:controller] == 'design_requests' %>
@@ -57,24 +78,32 @@
       <% end %>
     <% end %>
 
-    <% if params[:controller] == 'warehouses' && params[:action] == 'index' %>
+    <% if params[:controller] == 'business_groups' && params[:action] == 'show' %>
       <% if current_user.role.name == 'platform-admin' %>
-        <%= link_to 'Crear almacén', new_business_unit_warehouse_path(current_user.store.business_unit) %>
-      <% elsif current_user.role.name == 'store-admin' %>
-        <%= link_to 'Crear almacén', new_store_warehouse_path(current_user.store.business_unit) %>
+        <%= link_to 'Editar datos del grupo', edit_business_group_path(current_user.store.business_unit.business_group)  %>
+      <% end %>
+    <% end %>
+
+    <% if params[:controller] == 'business_units' && params[:action] == 'show' %>
+      <% if current_user.role.name == 'platform-admin' %>
+        <%= link_to 'Editar datos de empresa', edit_business_unit_path(@business_unit)  %>
       <% end %>
     <% end %>
 
     <% if current_user.role.name == 'store-admin' || current_user.role.name == 'platform-admin' %>
-      <% if params[:controller] == 'warehouses' && params[:action] == 'show' %>
+
+      <% if params[:controller] == 'stores' && params[:action] == 'show_settings' %>
+        <%= link_to 'Modificar configuración', edit_store_inventory_settings_path(current_user.store) %>
+      <% elsif params[:controller] == 'warehouses' && params[:action] == 'show' %>
         <% if @warehouse.delivery_address.present?%>
           <%= link_to 'Dirección del almacén', delivery_address_path(@warehouse.delivery_address) %>
         <% else %>
           <%= link_to 'Dirección del almacén', new_warehouse_delivery_address_path(@warehouse) %>
         <% end %>
-      <% end %>
-      <% if params[:controller] == 'delivery_addresses' && params[:action] == 'show' %>
+      <% elsif params[:controller] == 'delivery_addresses' && params[:action] == 'show' %>
         <%= link_to 'Modificar dirección', edit_delivery_address_path(@delivery) %>
+      <% elsif params[:controller] == 'billing_addresses' && params[:action] == 'show' %>
+        <%= link_to 'Modificar datos de facturación', edit_billing_address_path(@billing) %>
       <% end %>
     <% end %>
 

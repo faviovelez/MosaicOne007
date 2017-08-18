@@ -39,7 +39,7 @@ class BillingAddressesController < ApplicationController
 
   def update
     respond_to do |format|
-      if @biling.update(billing_params)
+      if @billing.update(billing_params)
         format.html { redirect_to @billing, notice: 'Los datos de facturación fueron modificados exitosamente.' }
         format.json { render :show, status: :ok, location: @billing }
       else
@@ -62,7 +62,7 @@ class BillingAddressesController < ApplicationController
   # Este método liga la dirección al owner (Store, Prospect u Order)
   def save_billing_address_to_owner
     @owner.billing_address = @billing
-    if @owner.is_a(Store)
+    if @owner.is_a?(Store)
       current_user.store.business_unit.billing_address = @billing
     end
     @owner.save
@@ -82,6 +82,8 @@ private
       @owner = Prospect.find(params[:prospect_id])
     elsif params[:order_id]
       @owner = Order.find(params[:order_id])
+    elsif params[:business_unit_id]
+      @owner = BusinessUnit.find(params[:business_unit_id])
     end
   end
 
