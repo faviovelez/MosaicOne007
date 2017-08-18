@@ -30,6 +30,7 @@ class StoresController < ApplicationController
     @store = Store.new(store_params)
     create_warehouse
     assign_cost_type
+    create_prospect_from_store
     respond_to do |format|
       if @store.save
         format.html { redirect_to @store, notice: 'La tienda fue dada de alta exitosamente.' }
@@ -42,6 +43,7 @@ class StoresController < ApplicationController
   end
 
   def update
+    update_prospect_from_store
     respond_to do |format|
       if @store.update(store_params)
         format.html { redirect_to @store, notice: 'La tienda fue modificado exitosamente.' }
@@ -73,6 +75,43 @@ class StoresController < ApplicationController
     @store.cost_type << cost_type
   end
 
+  def create_prospect_from_store
+    @prospect = Prospect.create(
+                                legal_or_business_name: @store.store_name,
+                                contact_first_name: @store.contact_first_name,
+                                contact_middle_name: @store.contact_middle_name,
+                                contact_last_name: @store.contact_last_name,
+                                second_last_name: @store.second_last_name,
+                                direct_phone: @store.direct_phone,
+                                extension: @store.extension,
+                                cell_phone: @store.cell_phone,
+                                email: @store.email,
+                                billing_address: @store.billing_address,
+                                delivery_address: @store.delivery_address,
+                                store_code: @store.store_code,
+                                business_group: BusinessGroup.find_by_business_group_type('main')
+                              )
+  end
+
+  def update_prospect_from_store
+    @prospect = Prospect.find_by_store_code(@store.store_code)
+    @prospect.update(
+                      legal_or_business_name: @store.store_name,
+                      contact_first_name: @store.contact_first_name,
+                      contact_middle_name: @store.contact_middle_name,
+                      contact_last_name: @store.contact_last_name,
+                      second_last_name: @store.second_last_name,
+                      direct_phone: @store.direct_phone,
+                      extension: @store.extension,
+                      cell_phone: @store.cell_phone,
+                      email: @store.email,
+                      billing_address: @store.billing_address,
+                      delivery_address: @store.delivery_address,
+                      store_code: @store.store_code,
+                      business_group: BusinessGroup.find_by_business_group_type('main')
+                      )
+  end
+
 private
 
   def set_store
@@ -96,7 +135,17 @@ private
     :cost_type_selected_since,
     :months_in_inventory,
     :reorder_point,
-    :critical_point)
+    :critical_point,
+    :contact_first_name,
+    :contact_middle_name,
+    :direct_phone,
+    :extension,
+    :cell_phone,
+    :email,
+    :type_of_person,
+    :prospect_status,
+    :second_last_name,
+    :business_group_id)
   end
 
   def allow_only_platform_admin_role(role = current_user.role.name)
