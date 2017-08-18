@@ -166,7 +166,12 @@ $(function(){
         $('#' + selectId).select2('destroy');
         $(tr).remove();
       } else {
-        $(tr).find('td').slice(-4).remove();
+        if ($('#suppliersList')) {
+          $(tr).find('td').slice(-5).remove();
+        }
+        else {
+          $(tr).find('td').slice(-4).remove();
+        }
       }
     } else {
       _.templateSettings = {

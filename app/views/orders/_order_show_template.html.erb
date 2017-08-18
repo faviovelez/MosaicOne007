@@ -2,12 +2,12 @@
   <td id='color_{{= rc.id }}'>{{= rc.color }}</td>
   <td id='image_{{= rc.id}}'><a href="{{= rc.link }}" ><img src="{{= rc.image }}" alt="{{= rc.description }}" /></a></td>
   <td id='inventory_{{= rc.id }}'>{{= rc.inventory }}</td>
-  <td id='pices_{{= rc.pices}}'>{{= rc.pices }} </td>
+  <td id='pices_{{= rc.id}}'>{{= rc.pices }} </td>
   <td id='packets_{{= rc.id}}'><div class="form-group"><input type='text' class="form-control" id='packetsProduct_{{= rc.id }}' required="true" /></div></td>
-  <td id='order_{{= rc.id}}'><div class="form-group"><input type='text' class="form-control" id='orderProduct_{{= rc.id }}' required="true" /></div></td>
-  <td id='price_{{= rc.pices}}'>{{= rc.price }} </td>
-  <td id='total_{{= rc.id}}'><div class="form-group"><input type='text' class="form-control" id='totalProduct_{{= rc.id }}' required="true" /></div></td>
+  <td id='order_{{= rc.id}}'><div class="form-group"><input type='text' disabled class="form-control" id='orderProduct_{{= rc.id }}' required="true" /></div></td>
+  <td id='price_{{= rc.id}}'>{{= rc.price }} </td>
+  <td id='total_{{= rc.id}}'><div class="form-group"><input type='text' disabled class="form-control" id='totalProduct_{{= rc.id }}' required="true" /></div></td>
   <td id='urgency_{{= rc.id}}'><div class="form-group"><input type='checkbox' class="form-control" value='alta' id='urgencyProduct_{{= rc.id }}' required="true" /></div></td>
-  <td id='maxDate_{{= rc.id}}'><div class="form-group"><input type='date' class="form-control" id='maxDateProduct_{{= rc.id }}' required="true" /></div></td>
+  <td id='maxDate_{{= rc.id}}'><div class="form-group hidden"><input type='date' class="form-control" id='maxDateProduct_{{= rc.id }}' required="true" /></div></td>
   <td id='add{{= rc.id}}'><a href='#' id='addNew{{= rc.id }}' class='btn btn-primary'>Agregar Nuevo</a></td>
 </script>

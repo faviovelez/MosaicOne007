@@ -338,6 +338,7 @@ ActiveRecord::Schema.define(version: 20170817173051) do
     t.integer  "billing_address_id"
     t.integer  "carrier_id"
     t.integer  "store_id"
+    t.boolean  "confirm"
   end
 
   add_index "orders", ["billing_address_id"], name: "index_orders_on_billing_address_id", using: :btree
