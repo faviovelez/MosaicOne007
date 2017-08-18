@@ -14,7 +14,7 @@ class Movement < ActiveRecord::Base
   before_save :create_update_summary, if: :is_sales?
 
   def create_update_summary
-    if Date.today.day == 17 && dont_exist_record_month
+    if dont_exist_record_month
       create_new_summary
     else
       update_summary
