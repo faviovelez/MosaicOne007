@@ -13,7 +13,7 @@
       <% @orders.each do |order| %>
         <tr>
           <td> <%= order.id %> </td>
-          <td> <%= order.category %> </td>
+          <td> <%= order.product_category %> </td>
           <td> <%= order.product_requests.count %> </td>
           <td> <%= sum_quantity(order) %> </td>
           <td> <%= order.status %> </td>
@@ -30,9 +30,9 @@
             <% end %>
           </td>
         </tr>
-      <% end %>
+    <% end %>
     </tbody>
   </table>
 <% else %>
-  <p class="individual-font">No tienes pedidos en espera.</p>
+  <p class="individual-font">No tienes pedidos entregados todavía.</p>
 <% end %>

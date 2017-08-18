@@ -126,6 +126,8 @@ Rails.application.routes.draw do
 
   post 'orders/confirm/:id', to: 'orders#confirm', as: 'orders_confirm'
 
+  get 'orders/history'
+
   get 'stores/show_settings/:id', to: 'stores#show_settings', as: 'store_inventory_settings'
 
   get 'stores/inventory_settings/:id', to: 'stores#inventory_settings', as: 'edit_store_inventory_settings'
