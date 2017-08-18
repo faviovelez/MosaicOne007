@@ -2,13 +2,12 @@ class OrdersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_order, only: [:show, :confirm]
 
-  def new
-    role = Role.find_by_name('store') || Role.find_by_name('store-admin')
+  def new(role = current_user.role.name)
     @order = Order.new(user: current_user,
                        store: current_user.store,
                        category: 'de línea'
                       )
-    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'store' || role == 'store-admin')
   end
 
   def show
@@ -42,13 +41,12 @@ class OrdersController < ApplicationController
       notice: 'Registros confirmados'
   end
 
-  def catalog
-  end
-
-  def special
-  end
-
   def index
+    @orders = current_user.store.orders.where.not(status: ['entregada', 'cancelada', 'expirada'])
+  end
+
+  def history
+    @orders = current_user.store.orders.where(status:'entregada')
   end
 
   private
@@ -124,9 +122,7 @@ class OrdersController < ApplicationController
   end
 
   def order_type
-    CostType.find_by_warehouse_cost_type(
-      'PEPS'
-    ).selected ? 'ASC' : 'DESC'
+    current_user.store.cost_type.warehouse_cost_type == 'PEPS' ? 'ASC' : 'DESC'
   end
 
   def set_order

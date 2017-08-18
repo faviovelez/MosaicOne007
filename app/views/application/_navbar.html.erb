@@ -74,7 +74,7 @@
               <% end %>
               </ul>
             </li>
-            <% if current_user.role.name == 'store-admin' || current_user.role.name == 'admin-desk'%>
+            <% if (current_user.role.name == 'store-admin' || current_user.role.name == 'admin-desk') %>
               <li>
                 <%= link_to 'Configuración', store_inventory_settings_path(current_user.store) %>
               </li>

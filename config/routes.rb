@@ -119,10 +119,14 @@ Rails.application.routes.draw do
   patch 'warehouse/form_for_movement/:id', to: 'warehouse#form_for_movement', as: 'form_for_movement', controller: 'warehouse'
 
   get 'orders/get/:product', to: 'orders#get_product', as: 'orders_get_product'
+
   post 'orders/save_products/:store', to: 'orders#save_products', as: 'orders_save_product'
+
   get 'orders/show/:id', to: 'orders#show', as: 'orders_show'
 
   post 'orders/confirm/:id', to: 'orders#confirm', as: 'orders_confirm'
+
+  get 'orders/history'
 
   get 'stores/show_settings/:id', to: 'stores#show_settings', as: 'store_inventory_settings'
 
