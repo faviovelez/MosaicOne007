@@ -5,24 +5,24 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-{
-  "platform-admin":   "Crea usuarios de todos los tipos, actualiza formularios",
-  "director":         "Tiene acceso a todos los procesos y funciones de manager, puede crear usuarios manager",
-  "manager":          "Asigna precio a cotizaciones y puede asignar costo a las entradas de materiales",
-  "store":            "Crea prospectos, cotizaciones y pedidos, autoriza, cancela o reactiva cotizaciones y pedidos",
-  "store-admin":      "Con acceso a todas las secciones, reportes y funcionalidades de tienda y puede crear usuarios store",
-  "product-admin":    "Crea y modifica productos, asigna costos a entradas de mercancías, crea usuarios product-staff",
-  "product-staff":    "Crea y modifica productos, asigna costos a entradas de mercancías",
-  "warehouse-admin":  "Maneja inventario, órdenes de producción, prepara pedidos y crea usuarios wharehouse-staff",
-  "warehouse-staff":  "Maneja inventario, órdenes de producción, prepara pedidos",
-  "admin-desk":       "Crea usuarios tipo drivers, crea envíos y factura, elabora pedidos y cotizaciones",
-  "designer-admin":   "Da respuesta a las solicitudes de diseño y puede crear usuarios designer",
-  "designer":         "Da respuesta a las solicitudes de diseño",
-  "driver":           "Entrega mercancía",
-  "viewer":           "Da seguimiento a pedidos y cotizaciones"
-}.each do |name, description|
-  Role.find_or_create_by(name: name, description: description)
-end
+# {
+#  "platform-admin":   "Crea usuarios de todos los tipos, actualiza formularios",
+#  "director":         "Tiene acceso a todos los procesos y funciones de manager, puede crear usuarios manager",
+#  "store":            "Crea prospectos, cotizaciones y pedidos, autoriza, cancela o reactiva cotizaciones y pedidos",
+#  "manager":          "Asigna precio a cotizaciones y puede asignar costo a las entradas de materiales",
+#  "store-admin":      "Con acceso a todas las secciones, reportes y funcionalidades de tienda y puede crear usuarios store",
+#  "product-admin":    "Crea y modifica productos, asigna costos a entradas de mercancías, crea usuarios product-staff",
+#  "product-staff":    "Crea y modifica productos, asigna costos a entradas de mercancías",
+#  "warehouse-admin":  "Maneja inventario, órdenes de producción, prepara pedidos y crea usuarios wharehouse-staff",
+#  "warehouse-staff":  "Maneja inventario, órdenes de producción, prepara pedidos",
+#  "admin-desk":       "Crea usuarios tipo drivers, crea envíos y factura, elabora pedidos y cotizaciones",
+#  "designer-admin":   "Da respuesta a las solicitudes de diseño y puede crear usuarios designer",
+#  "designer":         "Da respuesta a las solicitudes de diseño",
+#  "driver":           "Entrega mercancía",
+#  "viewer":           "Da seguimiento a pedidos y cotizaciones"
+#}.each do |name, description|
+#  Role.find_or_create_by(name: name, description: description)
+#end
 
 #### CONFIRMAR CON EL CLIENTE CUÁNTOS MÁS TIPOS DE USUARIO SE CREARÁN Y SI ESTÁ DE ACUERDO CON LOS NOMBRES ####
 [
@@ -40,10 +40,11 @@ end
   {name: "designer", translation: "diseñador", description: "Da respuesta a las solicitudes de diseño" },
   {name: "driver", translation: "chofer", description: "Entrega mercancía" },
   {name: "viewer", translation: "soporte", description: "Da seguimiento a pedidos y cotizaciones" }
-] ####### Comentar esta línea cuando esté listo ##### y descomentar las 3 líneas siguientes.
-#].each do |hash|
-#  Role.find_or_create_by(hash)
-#end
+
+####### Comentar esta línea cuando esté listo ##### y descomentar las 3 líneas siguientes.
+].each do |hash|
+  Role.find_or_create_by(hash)
+end
 
 # Deben existir por lo menos dos Business Groups: Uno para tiendas propias y otro para tiendas externas
 [
@@ -78,7 +79,7 @@ default_business_unit = BusinessUnit.find_by_name('default compañía')
 default_terceros_business_unit = BusinessUnit.find_by_name('default terceros')
 
 # Se crea un almacén default
-Warehouse.create(warehouse_code: 'AG000', name: 'almacén default', business_unit: default_business_unit, cost_type: default_cost_type)
+Warehouse.create(warehouse_code: 'AG000', name: 'almacén default', business_unit: default_business_unit)
 
 # Se crea el modelo Store_type para los distintos tipos de tiendas. Al crear una tienda, se puede elegir entre los business_units default o los creados o modificados por los usuarios.
 [
@@ -105,6 +106,6 @@ User.find_or_create_by(
   role: admin,
   store: default_store)
 
-100.times do |n|
-  Supplier.create(name: Faker::Name.name)
-end
+# 100.times do |n|
+#  Supplier.create(name: Faker::Name.name)
+# end
