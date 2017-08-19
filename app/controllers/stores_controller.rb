@@ -66,7 +66,13 @@ class StoresController < ApplicationController
   end
 
   def create_warehouse
-    @warehouse = Warehouse.create(name: "almacén #{@store.store_name}", business_unit: @store.business_unit, warehouse_code: "AT#{@store.store_code}")
+    @warehouse = Warehouse.create(
+                                  name: "almacén #{@store.store_name}",
+                                  store: @store,
+                                  business_unit: @store.business_unit,
+                                  business_group: @store.business_group,
+                                  warehouse_code: "AT#{@store.store_code}"
+                                  )
   end
 
   def assign_cost_type
@@ -160,7 +166,7 @@ private
   end
 
   def allow_store_admin_or_platform_admin_role(role = current_user.role.name)
-    if role != 'platform-admin'
+    unless (role == 'platform-admin' || role == 'store-admin')
       redirect_to root_path
     end
   end
