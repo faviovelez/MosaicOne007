@@ -62,7 +62,7 @@ class FilteredRequestsController < ApplicationController
 # Método de managers, director y designers: muestra solicitudes o solicitudes de diseño asignadas al usuario logueado
   def filter_requests_assigned_to_user(user = current_user, role = current_user.role.name)
     if role == 'manager' || role == 'director'
-      @assigned = user.requests.where.not(:status => ['autorizada','creada','expirada','cancelada']).order(:created_at).order(:store_code)
+      @assigned = user.requests.where.not(:status => ['creada','expirada','cancelada']).order(:created_at).order(:store_code)
     elsif role == 'designer'
       @assigned = user.design_requests.where.not(:status => ['concluida','expirada','cancelada']).order(:created_at)
     end
@@ -71,14 +71,14 @@ class FilteredRequestsController < ApplicationController
 
 # Método para director exclusivo para el Dr. Luis, para ver las solicitudes asignadas a otros gerentes
   def filter_requests_assigned_to_others(user = current_user)
-    @assigned_to_others = Request.where.not(:status => ['autorizada','creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").where.not('users.id' => (user)).order(:created_at).order(:store_code)
+    @assigned_to_others = Request.where.not(:status => ['creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").where.not('users.id' => (user)).order(:created_at).order(:store_code)
     @assigned_to_others
   end
 
 # Método para managers y designers: muestra las solicitudes o solicitudes de diseño sin asignar
   def filter_unassigned_requests(role = current_user.role.name)
     if role == 'manager' || role == 'director'
-      requests = Request.where.not(:status => ['autorizada','creada','expirada','cancelada'])
+      requests = Request.where.not(:status => ['creada','expirada','cancelada'])
       assigned = requests.joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director")
     elsif role == 'designer'
       requests = DesignRequest.where.not(:status => ['concluida','expirada','cancelada'])
@@ -91,7 +91,7 @@ class FilteredRequestsController < ApplicationController
 
 # Este método sirve para que usuarios con roles distintos a Manager o Designer puedan ver el estatus
   def filter_supporters_view
-    @supporters = Request.where.not(:status => ['autorizada','creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").order(:created_at).order(:store_code)
+    @supporters = Request.where.not(:status => ['creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").order(:created_at).order(:store_code)
     @supporters
   end
 

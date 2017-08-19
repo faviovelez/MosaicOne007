@@ -29,9 +29,9 @@
     <div class="form-inside-style">
       <%= f.label :rol_de_usuario %>
       <% if current_user.role.name == 'platform-admin' %>
-        <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
+        <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.translation, r.id]}) %>
       <% elsif current_user.role.name == 'store-admin' %>
-        <%= f.select :role_id, options_for_select(Role.where(name: current_user.role.name).collect{|r| [r.name, r.id]}) %>
+        <%= f.select :role_id, options_for_select(Role.where(name: current_user.role.name).collect{|r| [r.translation, r.id]}) %>
       <% end %>
     </div>
 
@@ -45,7 +45,7 @@
     </div>
 
     <div class="field form-inside-style">
-      <%= f.label :contraseña %> <i>(Déjala en blanco si no quieres cambiarla)</i>
+      <%= f.label :nueva_contraseña %> <i>(Déjala en blanco si no quieres cambiarla)</i>
       <% if @minimum_password_length %>
       <em>(Mínimo <%= @minimum_password_length %> caracteres)</em>
       <% end %>

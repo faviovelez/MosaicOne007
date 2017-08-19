@@ -25,10 +25,15 @@
               <% end %>
           </td>
           <td class="col-md-1">
-            <%= link_to edit_product_path(product) do %>
-              <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
-              <span class="link-to-confirm">Modificar</span>
+            <% role = current_user.role.name %>
+            <% user_bg = current_user.store.business_unit.business_group %>
+            <% product_bg = product.business_unit.business_group %>
+            <% if ((role == 'product-admin' || role == 'product-staff' || role == 'store-admin') && user_bg == product_bg) %>
+              <%= link_to edit_product_path(product) do %>
+                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
+                <span class="link-to-confirm">Modificar</span>
               <% end %>
+            <% end %>
           </td>
         </tr>
     <% end %>
