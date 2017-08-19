@@ -30,9 +30,9 @@ class StoresController < ApplicationController
     @store = Store.new(store_params)
     create_warehouse
     assign_cost_type
-    create_prospect_from_store
     respond_to do |format|
       if @store.save
+        create_prospect_from_store
         format.html { redirect_to @store, notice: 'La tienda fue dada de alta exitosamente.' }
         format.json { render :show, status: :created, location: @store }
       else
@@ -43,9 +43,9 @@ class StoresController < ApplicationController
   end
 
   def update
-    update_prospect_from_store
     respond_to do |format|
       if @store.update(store_params)
+        update_prospect_from_store
         format.html { redirect_to @store, notice: 'La tienda fue modificado exitosamente.' }
         format.json { render :show, status: :ok, location: @store }
       else
@@ -72,12 +72,14 @@ class StoresController < ApplicationController
   def assign_cost_type
     cost_type = CostType.find_by_warehouse_cost_type('PEPS')
     @store.cost_type_selected_since = Date.today
-    @store.cost_type << cost_type
+    @store.update(cost_type: cost_type)
   end
 
   def create_prospect_from_store
     @prospect = Prospect.create(
                                 legal_or_business_name: @store.store_name,
+                                business_type: @store.type_of_person,
+                                prospect_type: 'comercialización de productos',
                                 contact_first_name: @store.contact_first_name,
                                 contact_middle_name: @store.contact_middle_name,
                                 contact_last_name: @store.contact_last_name,
@@ -86,17 +88,18 @@ class StoresController < ApplicationController
                                 extension: @store.extension,
                                 cell_phone: @store.cell_phone,
                                 email: @store.email,
-                                billing_address: @store.billing_address,
-                                delivery_address: @store.delivery_address,
                                 store_code: @store.store_code,
+                                business_unit: BusinessUnit.find(1),
                                 business_group: BusinessGroup.find_by_business_group_type('main')
-                              )
+                                )
   end
 
   def update_prospect_from_store
     @prospect = Prospect.find_by_store_code(@store.store_code)
     @prospect.update(
                       legal_or_business_name: @store.store_name,
+                      business_type: @store.type_of_person,
+                      prospect_type: 'comercialización de productos',
                       contact_first_name: @store.contact_first_name,
                       contact_middle_name: @store.contact_middle_name,
                       contact_last_name: @store.contact_last_name,
@@ -105,9 +108,8 @@ class StoresController < ApplicationController
                       extension: @store.extension,
                       cell_phone: @store.cell_phone,
                       email: @store.email,
-                      billing_address: @store.billing_address,
-                      delivery_address: @store.delivery_address,
                       store_code: @store.store_code,
+                      business_unit: BusinessUnit.find(1),
                       business_group: BusinessGroup.find_by_business_group_type('main')
                       )
   end
@@ -123,29 +125,32 @@ private
   end
 
   def store_params
-    params.require(:store).permit(:store_type_id,
-    :store_code,
-    :store_name,
-    :group,
-    :discount,
-    :business_unit_id,
-    :delivery_address,
-    :billing_address,
-    :cost_type_id,
-    :cost_type_selected_since,
-    :months_in_inventory,
-    :reorder_point,
-    :critical_point,
-    :contact_first_name,
-    :contact_middle_name,
-    :direct_phone,
-    :extension,
-    :cell_phone,
-    :email,
-    :type_of_person,
-    :prospect_status,
-    :second_last_name,
-    :business_group_id)
+    params.require(:store).permit(
+                                  :store_type_id,
+                                  :store_code,
+                                  :store_name,
+                                  :group,
+                                  :discount,
+                                  :business_unit_id,
+                                  :delivery_address_id,
+                                  :billing_address_id,
+                                  :cost_type_id,
+                                  :cost_type_selected_since,
+                                  :months_in_inventory,
+                                  :reorder_point,
+                                  :critical_point,
+                                  :contact_first_name,
+                                  :contact_middle_name,
+                                  :contact_last_name,
+                                  :second_last_name,
+                                  :direct_phone,
+                                  :extension,
+                                  :cell_phone,
+                                  :email,
+                                  :type_of_person,
+                                  :prospect_status,
+                                  :business_group_id
+                                  )
   end
 
   def allow_only_platform_admin_role(role = current_user.role.name)
@@ -155,7 +160,7 @@ private
   end
 
   def allow_store_admin_or_platform_admin_role(role = current_user.role.name)
-    if role != 'store-admin' || role != 'platform-admin'
+    if role != 'platform-admin'
       redirect_to root_path
     end
   end

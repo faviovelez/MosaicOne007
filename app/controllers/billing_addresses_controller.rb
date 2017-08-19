@@ -25,9 +25,9 @@ class BillingAddressesController < ApplicationController
 
   def create
     @billing = BillingAddress.new(billing_params)
-    save_billing_address_to_owner
     respond_to do |format|
       if @billing.save
+        save_billing_address_to_owner
         format.html { redirect_to @billing, notice: 'Los datos de facturación fueron dados de alta exitosamente.' }
         format.json { render :show, status: :created, location: @billing }
       else
@@ -63,6 +63,15 @@ class BillingAddressesController < ApplicationController
   def save_billing_address_to_owner
     @owner.billing_address = @billing
     if @owner.is_a?(Store)
+      current_user.store.billing_address = @billing
+      current_user.store.business_unit.billing_address = @billing
+    elsif @owner.is_a?(BusinessUnit)
+      store = current_user.store
+      store.update(billing_address: @owner.billing_address)
+      store.save
+      prospect = Prospect.find_by_store_code(store.store_code)
+      prospect.update(billing_address: @owner.billing_address)
+      prospect.save
       current_user.store.business_unit.billing_address = @billing
     end
     @owner.save

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170818230502) do
+ActiveRecord::Schema.define(version: 20170819173433) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -683,8 +683,10 @@ ActiveRecord::Schema.define(version: 20170818230502) do
     t.string   "second_last_name"
     t.integer  "business_group_id"
     t.string   "cell_phone"
+    t.integer  "billing_address_id"
   end
 
+  add_index "stores", ["billing_address_id"], name: "index_stores_on_billing_address_id", using: :btree
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree
   add_index "stores", ["business_unit_id"], name: "index_stores_on_business_unit_id", using: :btree
   add_index "stores", ["cost_type_id"], name: "index_stores_on_cost_type_id", using: :btree
@@ -873,6 +875,7 @@ ActiveRecord::Schema.define(version: 20170818230502) do
   add_foreign_key "requests", "stores"
   add_foreign_key "store_sales", "stores"
   add_foreign_key "store_types", "business_units"
+  add_foreign_key "stores", "billing_addresses"
   add_foreign_key "stores", "business_groups"
   add_foreign_key "stores", "business_units"
   add_foreign_key "stores", "cost_types"

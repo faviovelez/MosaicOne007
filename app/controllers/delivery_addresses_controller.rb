@@ -62,8 +62,17 @@ class DeliveryAddressesController < ApplicationController
 
   # Método para asignar dirección de entrega al owner (Store, Prospect u Order)
   def save_delivery_address_to_owner
-    @owner.delivery_address = @delivery
+    @owner.update(delivery_address: @delivery)
     @owner.save
+    save_delivery_address_to_prospect
+  end
+
+  def save_delivery_address_to_prospect
+    if @owner.is_a?(Store)
+      prospect = Prospect.find_by_store_code(@owner.store_code)
+      prospect.update!(delivery_address: @owner.delivery_address)
+      prospect.save
+    end
   end
 
 private
