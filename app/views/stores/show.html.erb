@@ -16,26 +16,43 @@
     <%= @store.business_unit.name %>
   </p>
 
+  <p class="info">
+    <strong>Tipo: </strong>
+    <%= @store.type_of_person %>
+  </p>
+
+
   <h4 class="info-subtitle store-subtitle">Datos de contacto</h4>
 
   <p class="info">
-    <strong>Correo:</strong>
+    <strong>Nombre del contacto:</strong>
+    <%= @store.contact_first_name %> <%= @store.contact_middle_name %> <%= @store.contact_last_name %> <%= @store.second_last_name %>
+  </p>
+
+  <p class="info">
+    <strong>Correo: </strong>
     <%=@store.email %>
   </p>
 
   <p class="info">
-    <strong>Teleléfono fijo:</strong>
-    <%=@store.phone %>
+    <strong>Teleléfono fijo: </strong>
+    <%=@store.direct_phone %>
   </p>
 
+    <p class="info">
+      <strong>Extensión: </strong>
+      <%=@store.direct_phone %>
+    </p>
+
+
   <p class="info">
-    <strong>Celular:</strong>
-    <%=@store.cellphone %>
+    <strong>Celular: </strong>
+    <%=@store.cell_phone %>
   </p>
 
   <p>
-    <% if @store.billing_address.present? %>
-      <%= link_to 'Datos de facturación', billing_address_path(id: @store.billing_address) %>
+    <% if @store.business_unit.billing_address.present? %>
+      <%= link_to 'Datos de facturación', billing_address_path(id: @store.business_unit.billing_address) %>
     <% end %>
     <% if @store.delivery_address.present? %>
       <%= link_to 'Dirección de entrega principal', delivery_address_path(id: @store.delivery_address) %>

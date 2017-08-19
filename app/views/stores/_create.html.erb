@@ -17,7 +17,7 @@
 
     <div class="form-inside-style">
       <%= f.label :tipo %>
-      <%= f.select :type_of_person, options_for_select(['persona física', 'persona moral'], selected: @prospect.business_type) %>
+      <%= f.select :type_of_person, options_for_select(['persona física', 'persona moral'], selected: @store.type_of_person) %>
     </div>
 
     <div class="form-inside-style">
@@ -26,11 +26,6 @@
     </div>
 
     <h3>Datos de contacto</h3>
-
-    <div class="form-inside-style long-form">
-      <%= f.label :puesto_del_contacto %>
-      <%= f.text_field :contact_position, class: 'form-inside' %>
-    </div>
 
     <div class="form-inside-style">
       <%= f.label :primer_nombre %>
@@ -75,6 +70,11 @@
     <div class="form-inside-style">
       <%= f.label :empresa %>
       <%= f.select :business_unit_id, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}) %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :grupo_de_negocios %>
+      <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}) %>
     </div>
 
     <div class="button-container">
