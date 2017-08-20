@@ -10,6 +10,7 @@ class Store < ActiveRecord::Base
   belongs_to :billing_address
   has_many :store_sales
   belongs_to :business_unit
+  belongs_to :business_group
   belongs_to :store_type
   has_many :warehouses
   belongs_to :cost_type

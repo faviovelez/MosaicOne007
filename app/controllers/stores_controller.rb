@@ -28,10 +28,10 @@ class StoresController < ApplicationController
 
   def create
     @store = Store.new(store_params)
-    create_warehouse
     assign_cost_type
     respond_to do |format|
       if @store.save
+        create_warehouse
         create_prospect_from_store
         format.html { redirect_to @store, notice: 'La tienda fue dada de alta exitosamente.' }
         format.json { render :show, status: :created, location: @store }

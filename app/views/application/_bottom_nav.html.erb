@@ -79,13 +79,19 @@
 
     <% if params[:controller] == 'business_groups' && params[:action] == 'show' %>
       <% if current_user.role.name == 'platform-admin' %>
-        <%= link_to 'Editar datos del grupo', edit_business_group_path(current_user.store.business_unit.business_group)  %>
+        <%= link_to 'Editar datos del grupo', edit_business_group_path(@business_group)  %>
       <% end %>
     <% end %>
 
     <% if params[:controller] == 'business_units' && params[:action] == 'show' %>
       <% if current_user.role.name == 'platform-admin' %>
         <%= link_to 'Editar datos de empresa', edit_business_unit_path(@business_unit)  %>
+      <% end %>
+    <% end %>
+
+    <% if current_user.role.name == 'platform-admin' %>
+      <% if params[:controller] == 'stores' && params[:action] == 'show' %>
+        <%= link_to 'Modificar tienda', edit_store_path(@store) %>
       <% end %>
     <% end %>
 

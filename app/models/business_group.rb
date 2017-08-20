@@ -5,4 +5,5 @@ class BusinessGroup < ActiveRecord::Base
   has_many :suppliers, through: :business_groups_suppliers
   has_many :business_groups_suppliers
   has_many :prospects
+  has_many :stores
 end

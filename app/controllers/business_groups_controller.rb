@@ -21,7 +21,7 @@ class BusinessGroupsController < ApplicationController
     @business_group = BusinessGroup.new(business_group_params)
     respond_to do |format|
       if @business_group.save
-        format.html { redirect_to @business_group, notice: 'El corporativo fue creado correctamente.' }
+        format.html { redirect_to @business_group, notice: 'El grupo de negocios fue creado correctamente.' }
         format.json { render :show, status: :created, location: @business_group }
       else
         format.html { render :new }
@@ -33,7 +33,7 @@ class BusinessGroupsController < ApplicationController
   def update
     respond_to do |format|
       if @business_group.update(business_group_params)
-        format.html { redirect_to @business_group, notice: 'El corporativo fue modificado correctamente.' }
+        format.html { redirect_to @business_group, notice: 'El grupo de negocios fue modificado correctamente.' }
         format.json { render :show, status: :ok, location: @business_group }
       else
         format.html { render :edit }
@@ -47,7 +47,7 @@ class BusinessGroupsController < ApplicationController
   def destroy
     @business_group.destroy
     respond_to do |format|
-      format.html { redirect_to @owner, notice: 'El corporativo fue eliminado correctamente' }
+      format.html { redirect_to @owner, notice: 'El grupo de negocios fue eliminado correctamente' }
       format.json { head :no_content }
     end
   end
