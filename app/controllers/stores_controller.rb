@@ -82,42 +82,44 @@ class StoresController < ApplicationController
   end
 
   def create_prospect_from_store
-    @prospect = Prospect.create(
-                                legal_or_business_name: @store.store_name,
-                                business_type: @store.type_of_person,
-                                prospect_type: 'comercialización de productos',
-                                contact_first_name: @store.contact_first_name,
-                                contact_middle_name: @store.contact_middle_name,
-                                contact_last_name: @store.contact_last_name,
-                                second_last_name: @store.second_last_name,
-                                direct_phone: @store.direct_phone,
-                                extension: @store.extension,
-                                cell_phone: @store.cell_phone,
-                                email: @store.email,
-                                store_code: @store.store_code,
-                                business_unit: BusinessUnit.find(1),
-                                business_group: BusinessGroup.find_by_business_group_type('main')
-                                )
+      @prospect = Prospect.create(
+                                  legal_or_business_name: @store.store_name,
+                                  business_type: @store.type_of_person,
+                                  prospect_type: 'comercialización de productos',
+                                  contact_first_name: @store.contact_first_name,
+                                  contact_middle_name: @store.contact_middle_name,
+                                  contact_last_name: @store.contact_last_name,
+                                  second_last_name: @store.second_last_name,
+                                  direct_phone: @store.direct_phone,
+                                  extension: @store.extension,
+                                  cell_phone: @store.cell_phone,
+                                  email: @store.email,
+                                  store_code: @store.store_code,
+                                  business_unit: BusinessUnit.find(1),
+                                  business_group: BusinessGroup.find_by_business_group_type('main')
+                                  )
   end
 
   def update_prospect_from_store
-    @prospect = Prospect.find_by_store_code(@store.store_code)
-    @prospect.update(
-                      legal_or_business_name: @store.store_name,
-                      business_type: @store.type_of_person,
-                      prospect_type: 'comercialización de productos',
-                      contact_first_name: @store.contact_first_name,
-                      contact_middle_name: @store.contact_middle_name,
-                      contact_last_name: @store.contact_last_name,
-                      second_last_name: @store.second_last_name,
-                      direct_phone: @store.direct_phone,
-                      extension: @store.extension,
-                      cell_phone: @store.cell_phone,
-                      email: @store.email,
-                      store_code: @store.store_code,
-                      business_unit: BusinessUnit.find(1),
-                      business_group: BusinessGroup.find_by_business_group_type('main')
-                      )
+    if @store.id != 1
+      @prospect = Prospect.find_by_store_code(@store.store_code)
+      @prospect.update(
+                        legal_or_business_name: @store.store_name,
+                        business_type: @store.type_of_person,
+                        prospect_type: 'comercialización de productos',
+                        contact_first_name: @store.contact_first_name,
+                        contact_middle_name: @store.contact_middle_name,
+                        contact_last_name: @store.contact_last_name,
+                        second_last_name: @store.second_last_name,
+                        direct_phone: @store.direct_phone,
+                        extension: @store.extension,
+                        cell_phone: @store.cell_phone,
+                        email: @store.email,
+                        store_code: @store.store_code,
+                        business_unit: BusinessUnit.find(1),
+                        business_group: BusinessGroup.find_by_business_group_type('main')
+                        )
+    end
   end
 
 private

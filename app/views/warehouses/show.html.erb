@@ -6,8 +6,16 @@
     <%= @warehouse.warehouse_code %>
   </p>
 
-  <p> <strong>Código: </strong>
+  <p> <strong>Nombre: </strong>
     <%= @warehouse.name %>
+  </p>
+
+  <p> <strong>Empresa: </strong>
+    <%= @warehouse.business_unit.name %>
+  </p>
+
+  <p> <strong>Grupo de negocio: </strong>
+    <%= @warehouse.business_group.name%>
   </p>
 
   </div>
