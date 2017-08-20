@@ -34,7 +34,7 @@
 
     <div class="form-inside-style">
       <%= f.label :rol_de_usuario %>
-      <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.name, r.id]}) %>
+      <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.translation, r.id]}) %>
     </div>
 
     <div class="form-inside-style">
