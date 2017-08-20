@@ -30,6 +30,7 @@
         <% end %>
 
       <% elsif params[:controller] == 'prospects' && params[:action] == 'show' %>
+        <%= link_to 'Crear cotización', new_prospect_request_path(@prospect) %>
         <%= link_to 'Modificar prospecto', edit_prospect_path(@prospect) %>
       <% end %>
 
