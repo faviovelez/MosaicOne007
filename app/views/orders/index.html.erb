@@ -15,18 +15,12 @@
           <td> <%= order.id %> </td>
           <td> <%= order.category %> </td>
           <td> <%= order.product_requests.count %> </td>
-          <td> <%= sum_quantity(order) %> </td>
+          <td> <%= number_with_delimiter(sum_quantity(order)) %> </td>
           <td> <%= order.status %> </td>
           <td class="col-md-1">
-            <%= link_to '#' do %>
+            <%= link_to orders_show_for_store_path(order) do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
               <span>Ver</span>
-            <% end %>
-          </td>
-          <td class="col-md-1">
-            <%= link_to '#' do %>
-              <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
-              <span class="link-to-confirm">Modificar</span>
             <% end %>
           </td>
         </tr>

@@ -14,7 +14,7 @@
         <td> <%= request.order.id %> </td>
         <td> <%= request.product.unique_code %> </td>
         <td> <%= request.product.exterior_color_or_design %> </td>
-        <td> <%= request.quantity / request.product.pieces_per_package %> </td>
+        <td> <%= number_with_delimiter(request.quantity / request.product.pieces_per_package) %> </td>
         <td> <%= I18n.l request.created_at.to_date, format: :short %> </td>
       </tr>
     <% end %>

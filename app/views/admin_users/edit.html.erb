@@ -29,18 +29,18 @@
     <div class="form-inside-style">
       <%= f.label :rol_de_usuario %>
       <% if current_user.role.name == 'platform-admin' %>
-        <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.translation, r.id]}) %>
+        <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.translation, r.id]}, selected: @user.role_id) %>
       <% elsif current_user.role.name == 'store-admin' %>
-        <%= f.select :role_id, options_for_select(Role.where(name: current_user.role.name).collect{|r| [r.translation, r.id]}) %>
+        <%= f.select :role_id, options_for_select(Role.where(name: current_user.role.name).collect{|r| [r.translation, r.id]}, selected: @user.role_id) %>
       <% end %>
     </div>
 
     <div class="form-inside-style">
       <%= f.label :tienda %>
       <% if current_user.role.name == 'platform-admin' %>
-        <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
+        <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}, selected: @user.store_id) %>
       <% elsif current_user.role.name == 'store-admin' %>
-        <%= f.select :role_id, options_for_select(Store.where(store_name: current_user.store.store_name).collect{|s| [s.store_name, s.id]}) %>
+        <%= f.select :role_id, options_for_select(Store.where(store_name: current_user.store.store_name).collect{|s| [s.store_name, s.id]}, selected: @user.store_id) %>
       <% end %>
     </div>
 

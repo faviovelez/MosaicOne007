@@ -11,6 +11,11 @@
     </div>
 
     <div class="form-inside-style">
+      <%= f.label :código_de_la_tienda %>
+      <%= f.text_field :store_code, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
       <%= f.label :tipo %>
       <%= f.select :type_of_person, options_for_select(['persona física', 'persona moral'], selected: @store.type_of_person) %>
     </div>
@@ -64,12 +69,12 @@
 
     <div class="form-inside-style">
       <%= f.label :empresa %>
-      <%= f.select :business_unit_id, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}) %>
+      <%= f.select :business_unit_id, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}, selected: @store.business_unit_id) %>
     </div>
 
     <div class="form-inside-style">
       <%= f.label :grupo_de_negocios %>
-      <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}) %>
+      <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}, selected: @store.business_group_id) %>
     </div>
 
     <div class="button-container">

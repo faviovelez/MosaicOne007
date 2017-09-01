@@ -3,7 +3,7 @@
   <div class="design form-container">
     <div class="field form-inside-style">
       <%= f.label :tipo_de_solicitud %>
-      <%= f.select :design_type, options_for_select([['seleccione','seleccione'], ['elaborar o modificar diseño', 'diseño'], ['dummy físico', 'dummy'],['printcard','printcard']]) %>
+      <%= f.select :design_type, options_for_select([['seleccione','seleccione'], ['elaborar o modificar diseño', 'diseño'], ['dummy físico', 'dummy'],['printcard','printcard']], selected: @design_request.design_type) %>
     </div>
 
     <div class="field form-inside-style">

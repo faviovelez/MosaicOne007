@@ -5,4 +5,6 @@ class Bill < ActiveRecord::Base
   belongs_to :order
   has_many :movements
   has_many :pending_movements
+  mount_uploader :pdf, BillUploader
+  mount_uploader :xml, BillUploader
 end

@@ -72,7 +72,9 @@ class ProductsController < ApplicationController
       if @product.save
         if @request
           @request.update(status: 'código asignado', product: @product)
-          @order = Order.create(status: 'en espera', user: @finded_user, category: 'especial', prospect: @request.prospect, request: @request, store: @request.store)
+          @order = Order.create(status: 'en espera', category: 'especial', prospect: @request.prospect, request: @request, store: @request.store)
+          @order.users  << @finded_user
+          @order.save
           @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date)
           @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
           @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, order: @order)
@@ -94,9 +96,12 @@ class ProductsController < ApplicationController
   # PATCH/PUT /products/1.json
   # Este método también lo puede usar solamente 'product-admin'. Tanto en create como en update falta agregar que pueda subir imágenes (un modelo diferente de documents).
   def update
+    @inventory = Inventory.find_by_unique_code(@product.unique_code)
     save_image
     respond_to do |format|
       if @product.update(product_params)
+        @inventory.unique_code = @product.unique_code
+        @inventory.save
         format.html { redirect_to @product, notice: 'El producto se ha modificado exitosamente.' }
         format.json { render :show, status: :ok, location: @product }
       else

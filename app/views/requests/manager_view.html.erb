@@ -2,8 +2,10 @@
 
 <%= render 'manager_view' %>
 
-<%= render 'documents_for_request' %>
+<br /><br />
 
+<%= render 'documents_for_request' %>
+<br />
 <% if ((current_user.role.name == 'manager' || current_user.role.name == 'director') && (@request.main_material == 'sugerir material' || @request.resistance_main_material == 'Sugerir resistencia')) %>
   <% if (@request.status != 'en producción' || @request.status != 'autorizada') %>
     <%= link_to 'modificar', edit_request_path(@request) %>

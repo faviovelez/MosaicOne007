@@ -9,6 +9,14 @@ class WarehouseController < ApplicationController
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
   end
 
+  def orders
+    @orders = Order.where.not(status: ['enviado', 'entregado'])
+  end
+
+  def prepare_order
+    @order = Order.find(params[:id])
+  end
+
   def get_product
     product = Product.find(params[:product])
     if product.present?
@@ -81,6 +89,31 @@ class WarehouseController < ApplicationController
       redirect_to root_path, alert: 'No se pudo guardar el movimiento.'
     end
 
+  end
+
+  def assign_warehouse_admin
+    @order = Order.find(params[:id])
+    user = User.find(params[:order][:user_ids])
+    name = user.first_name + " " + user.last_name
+    @order.users << user
+    if @order.save
+      redirect_to warehouse_orders_path, notice: "Se asignó el pedido a #{name}."
+    else
+      redirect_to warehouse_prepare_order_path, alert: 'No se pudo asignar el pedido.'
+    end
+  end
+
+  def assign_warehouse_staff(user = current_user)
+    @order = Order.find(params[:id])
+    if params[:asignar]
+      @order.users << current_user
+    end
+    name = user.first_name + " " + user.last_name
+    if @order.save
+      redirect_to warehouse_orders_path, notice: "Se asignó el pedido a #{name}."
+    else
+      redirect_to warehouse_prepare_order_path, alert: 'No se pudo asignar el pedido.'
+    end
   end
 
   private

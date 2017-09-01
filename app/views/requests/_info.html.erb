@@ -9,7 +9,7 @@
   </p>
 
   <p><strong>Cantidad: </strong>
-    <%= @request.quantity  %>
+    <%= number_with_delimiter(@request.quantity)  %>
   </p>
 
   <% if @request.product_type != 'exhibidor' %>
@@ -220,7 +220,7 @@
     </p>
   <% end %>
 
-  <% unless @request.impression.blank? %>
+  <% unless @request.impression == 'no' %>
     <h3>Tipo de impresión de los productos</h3>
     <p><strong> Impresión en: </strong>
       <%= @request.impression_where %>, a

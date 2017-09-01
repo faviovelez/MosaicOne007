@@ -1,10 +1,10 @@
 <table class="table" id="productsList">
   <thead>
     <tr>
-      <th>Codigo unico</th>
+      <th>Código</th>
       <th>Color</th>
-      <th>Image</th>
-      <th>Pedido</th>
+      <th>Imagen</th>
+      <th>Cantidad</th>
       <th>Total</th>
       <th>Urgencia</th>
       <th>Entregar</th>
@@ -16,8 +16,8 @@
         <td><%= product_request.product.unique_code %></td>
         <td><%= product_request.product.exterior_color_or_design %></td>
         <td><%= image_tag image(product_request), alt: product_request.product.description %></td>
-        <td><%= product_request.quantity %></td>
-        <td><%= (sum_prices * product_request.quantity) %></td>
+        <td><%= number_with_delimiter(product_request.quantity) %></td>
+        <td><%= number_to_currency(sum_prices * product_request.quantity) %></td>
         <td><%= product_request.urgency_level %></td>
         <td><%= l product_request.maximum_date %></td>
       </tr>

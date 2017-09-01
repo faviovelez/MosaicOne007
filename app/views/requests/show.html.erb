@@ -4,6 +4,7 @@
 
 <%= render 'modal' %>
 
+<br />
 <% if current_user.role.name == 'product-admin'%>
   <%= render 'product_admin_form' %>
 <% end %>

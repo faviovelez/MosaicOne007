@@ -17,4 +17,15 @@ module WarehouseHelper
     movement.product.images.first.try(
       :image_url, :thumb) || 'product_thumb.png'
   end
+
+  def warehouse_name(order)
+    user = order.users.joins(:role).where('roles.name' => ['warehouse-staff', 'warehouse-admin']).first
+    if user == nil
+      name = 'sin asignar'
+    else
+      name = user.first_name + " " + user.last_name
+    end
+    name
+  end
+
 end

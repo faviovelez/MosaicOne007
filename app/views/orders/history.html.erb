@@ -15,7 +15,7 @@
           <td> <%= order.id %> </td>
           <td> <%= order.product_category %> </td>
           <td> <%= order.product_requests.count %> </td>
-          <td> <%= sum_quantity(order) %> </td>
+          <td> <%= number_with_delimiter(sum_quantity(order)) %> </td>
           <td> <%= order.status %> </td>
           <td class="col-md-1">
             <%= link_to '#' do %>

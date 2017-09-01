@@ -1,8 +1,8 @@
 class RequestsController < ApplicationController
 # Este controller solo debe manejar la creación y modificación de requests individuales por la tienda o managers, no los filtros para las bandejas de trabajo.
   before_action :authenticate_user!
-  before_action :set_request, only: [:show, :edit, :update, :destroy, :check_assigned, :manager, :manager_view, :confirm, :confirm_view, :price, :delete_authorisation_or_payment, :sensitive_fields_changed_after_price_set]
-  before_action :get_documents, only: [:edit, :show, :confirm, :confirm_view, :manager, :manager_view]
+  before_action :set_request, only: [:show, :edit, :update, :destroy, :check_assigned, :manager, :manager_view, :manager_after, :confirm, :confirm_view, :price, :delete_authorisation_or_payment, :sensitive_fields_changed_after_price_set]
+  before_action :get_documents, only: [:edit, :show, :confirm, :confirm_view, :manager, :manager_view, :manager_after]
 
   # GET /requests
   # GET /requests.json
@@ -24,6 +24,10 @@ class RequestsController < ApplicationController
 
   # Esta acción es solo para managers y es la pantalla donde se le asigna el precio o se emiten comentarios de que la Request está incompleta.
   def manager_view
+  end
+
+  # Esta acción es para después que el manager ha enviado dudas.
+  def manager_after
   end
 
   # Esta acción es para los usuarios 'store' para confirmar que sí están de acuerdo con la Request y la autorizan.
@@ -122,6 +126,8 @@ class RequestsController < ApplicationController
       if @request.update(request_params) && params[:asignar]
         assign_to_manager
         redirect_to manager_view_requests_path(@request), notice: "La solicitud fue asignada a #{current_user.first_name} #{current_user.last_name}"
+      elsif @request.update(request_params) && params[:enviar_dudas]
+        redirect_to manager_after_path(@request), notice: "Los comentarios fueron enviados a la tienda."
       elsif @request.update(request_params)
         redirect_to manager_view_requests_path(@request), notice: "Los campos fueron actualizados correctamente."
       else
@@ -492,8 +498,6 @@ class RequestsController < ApplicationController
        :paper_type_rigid,
        :exterior_material_color,
        :interior_material_color,
-       :store_code,
-       :store_name,
        :user_id,
        :status,
        :require_design,

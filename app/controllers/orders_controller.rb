@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_order, only: [:show, :confirm]
+  before_action :set_order, only: [:show, :show_for_store, :confirm]
 
   def new(role = current_user.role.name)
     @order = Order.new(user: current_user,
@@ -11,6 +11,9 @@ class OrdersController < ApplicationController
   end
 
   def show
+  end
+
+  def show_for_store
   end
 
   def get_product
@@ -27,10 +30,11 @@ class OrdersController < ApplicationController
   end
 
   def save_products
-    @order = Order.create(user: current_user,
-                       store: current_user.store,
-                       category: 'de línea'
-                      )
+    @order = Order.create(store: current_user.store,
+                          category: 'de línea'
+                          )
+    @order.users << current_user
+    @order.save
     create_product_requests
     redirect_to orders_show_path(@order), notice: 'Todos los registros almacenados.'
   end
@@ -48,6 +52,7 @@ class OrdersController < ApplicationController
   def history
     @orders = current_user.store.orders.where(status:'entregada')
   end
+
 
   private
 

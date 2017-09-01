@@ -95,6 +95,9 @@
     </div>
 
       <% if @request.what_measures == '1' || @request.what_measures == '3' %>
+
+        <h4>Externas</h4>
+
         <div id="outer" class="outer">
       <% else %>
         <div id="outer" class="outer hidden" >
@@ -120,6 +123,9 @@
     </div>
 
     <% if @request.what_measures == '2' || @request.what_measures == '3' %>
+
+      <h4>Internas</h4>
+
       <div id="inner" class="inner">
     <% else %>
       <div id="inner" class="inner hidden">
@@ -145,6 +151,9 @@
       </div>
 
     <% if @request.product_type == 'bolsa'%>
+
+      <h4>Medidas de la bolsa</h4>
+
       <div class="bolsa">
     <% else %>
       <div class="bolsa hidden">
@@ -170,6 +179,9 @@
     </div>
 
     <% if @request.product_type == 'exhibidor'%>
+
+      <h4>Medidas del exhibidor</h4>
+
       <div class="exhibidor">
     <% else %>
       <div class="exhibidor hidden">

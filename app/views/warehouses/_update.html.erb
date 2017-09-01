@@ -17,13 +17,13 @@
     <div class="form-inside-style">
       <%= f.label :empresa %>
       <% bu = current_user.store.business_unit.business_group.business_units %>
-      <%= f.select :business_unit_id, options_for_select(bu.collect{|bu| [bu.name, bu.id]})  %>
+      <%= f.select :business_unit_id, options_for_select(bu.collect{|bu| [bu.name, bu.id]}, selected: @warehouse.business_unit_id)  %>
     </div>
 
     <div class="form-inside-style hidden">
       <%= f.label :grupo_de_negocio %>
       <% bg = current_user.store.business_unit.business_group %>
-      <%= f.select :business_group_id, options_for_select([[bg.name, bg.id]])  %>
+      <%= f.select :business_group_id, options_for_select([[bg.name, bg.id]], selected: @warehouse.business_group_id) %>
     </div>
 
     <div class="button-container">

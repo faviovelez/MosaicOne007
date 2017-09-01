@@ -1,0 +1,56 @@
+<table class="table">
+  <thead>
+    <tr class="table-titles">
+      <th>Código</th>
+      <th>Color</th>
+      <th>Imagen</th>
+      <th>Cantidad</th>
+      <th>Urgencia</th>
+      <th>Entregar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @order.product_requests.each do |product_request| %>
+      <tr>
+        <td><%= product_request.product.unique_code %></td>
+        <td><%= product_request.product.exterior_color_or_design %></td>
+        <td><%= image_tag image(product_request), alt: product_request.product.description %></td>
+        <td><%= number_with_delimiter(product_request.quantity) %></td>
+        <td><%= product_request.urgency_level %></td>
+        <% if product_request.maximum_date.present? %>
+          <td><%= l product_request.maximum_date %></td>
+        <% else %>
+          <td> - </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br /> <br />
+
+<% if @order.users.count <= 1 %>
+
+  <% if current_user.role.name == 'warehouse-staff' %>
+
+    <%= form_for(@order, url: assign_warehouse_staff_path(@order)) do |f| %>
+      <div class="hidden">
+        <%= f.text_field :status, value: @order.status %>
+      </div>
+      <%= f.submit :asignar, name: 'asignar', class: 'main-button capitalize' %>
+    <% end %>
+
+  <% elsif current_user.role.name == 'warehouse-admin' %>
+    <%= form_for(@order, url: assign_warehouse_admin_path(@order)) do |f| %>
+      <%= f.select :user_ids, options_for_select(User.joins(:role).where('roles.name' => ['warehouse-staff', 'warehouse-admin']).collect{|u| [u.first_name+" "+u.last_name, u.id]})  %>
+      <%= f.submit :guardar, name: 'guardar', class: 'main-button-small capitalize' %>
+    <% end %>
+  <% end %>
+
+<% else %>
+  <p>
+    Este pedido está siendo atendido por <%= warehouse_name(@order) %>
+  </p>
+
+<% end %>
+
+<br /> <br />

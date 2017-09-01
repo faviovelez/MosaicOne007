@@ -78,6 +78,10 @@ Rails.application.routes.draw do
     resources :delivery_addresses
   end
 
+  resources :bills
+
+  get 'bills/get_pdf/:id', to: 'bills#get_pdf'
+
   get 'requests/confirm/:id', to: 'requests#confirm', as: 'confirm_requests'
 
   get 'requests/confirm_view/:id', to: 'requests#confirm_view', as: 'confirm_view_requests'
@@ -87,6 +91,8 @@ Rails.application.routes.draw do
   get 'requests/manager/:id', to: 'requests#manager', as: 'manager_requests'
 
   get 'requests/manager_view/:id', to: 'requests#manager_view', as: 'manager_view_requests'
+
+  get 'requests/manager_after/:id', to: 'requests#manager_after', as: 'manager_after'
 
   get 'design_requests/designer/:id', to: 'design_requests#designer_view', as: 'designer_view_requests'
 
@@ -114,15 +120,25 @@ Rails.application.routes.draw do
 
   get 'warehouse/orders'
 
+  patch 'warehouse/assign_warehouse_staff/:id', to: 'warehouse#assign_warehouse_staff', as: 'assign_warehouse_staff', controller: 'orders'
+
   get 'warehouse/orders_products/:id', to: 'warehouse#orders_products', as: 'warehouse_order_products'
 
   patch 'warehouse/form_for_movement/:id', to: 'warehouse#form_for_movement', as: 'form_for_movement', controller: 'warehouse'
+
+  patch 'warehouse/assign_warehouse_admin/:id', to: 'warehouse#assign_warehouse_admin', as: 'assign_warehouse_admin', controller: 'orders'
+
+  get 'warehouse/pending_orders'
+
+  get 'warehouse/prepare_order/:id', to: 'warehouse#prepare_order', as: 'warehouse_prepare_order'
 
   get 'orders/get/:product', to: 'orders#get_product', as: 'orders_get_product'
 
   post 'orders/save_products/:store', to: 'orders#save_products', as: 'orders_save_product'
 
   get 'orders/show/:id', to: 'orders#show', as: 'orders_show'
+
+  get 'orders/show_for_store/:id', to: 'orders#show_for_store', as: 'orders_show_for_store'
 
   post 'orders/confirm/:id', to: 'orders#confirm', as: 'orders_confirm'
 

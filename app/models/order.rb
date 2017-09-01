@@ -1,6 +1,7 @@
 class Order < ActiveRecord::Base
   # Agrupa todos los movements y 'product_requests' (son para producto de línea, no confundir con 'requests' que son cotizaciones de productos especiales) en un solo pedido 'Order'.
-  belongs_to :user
+  has_many :users, through: :orders_users
+  has_many :orders_users
   belongs_to :delivery_address
   belongs_to :request
   has_many :movements

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170819173433) do
+ActiveRecord::Schema.define(version: 20170901170112) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,6 +77,8 @@ ActiveRecord::Schema.define(version: 20170819173433) do
     t.integer  "store_id"
     t.float    "amount"
     t.integer  "quantity"
+    t.string   "pdf"
+    t.string   "xml"
   end
 
   add_index "bills", ["order_id"], name: "index_bills_on_order_id", using: :btree
@@ -328,7 +330,6 @@ ActiveRecord::Schema.define(version: 20170819173433) do
 
   create_table "orders", force: :cascade do |t|
     t.string   "status"
-    t.integer  "user_id"
     t.integer  "delivery_address_id"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
@@ -347,7 +348,16 @@ ActiveRecord::Schema.define(version: 20170819173433) do
   add_index "orders", ["prospect_id"], name: "index_orders_on_prospect_id", using: :btree
   add_index "orders", ["request_id"], name: "index_orders_on_request_id", using: :btree
   add_index "orders", ["store_id"], name: "index_orders_on_store_id", using: :btree
-  add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree
+
+  create_table "orders_users", force: :cascade do |t|
+    t.integer  "order_id"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "orders_users", ["order_id"], name: "index_orders_users_on_order_id", using: :btree
+  add_index "orders_users", ["user_id"], name: "index_orders_users_on_user_id", using: :btree
 
   create_table "payments", force: :cascade do |t|
     t.date     "payment_date"
@@ -403,10 +413,14 @@ ActiveRecord::Schema.define(version: 20170819173433) do
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
     t.integer  "delivery_package_id"
+    t.integer  "movement_id"
+    t.integer  "pending_movement_id"
   end
 
   add_index "product_requests", ["delivery_package_id"], name: "index_product_requests_on_delivery_package_id", using: :btree
+  add_index "product_requests", ["movement_id"], name: "index_product_requests_on_movement_id", using: :btree
   add_index "product_requests", ["order_id"], name: "index_product_requests_on_order_id", using: :btree
+  add_index "product_requests", ["pending_movement_id"], name: "index_product_requests_on_pending_movement_id", using: :btree
   add_index "product_requests", ["product_id"], name: "index_product_requests_on_product_id", using: :btree
 
   create_table "product_sales", force: :cascade do |t|
@@ -599,8 +613,6 @@ ActiveRecord::Schema.define(version: 20170819173433) do
     t.boolean  "require_design"
     t.string   "exterior_material_color"
     t.string   "interior_material_color"
-    t.string   "store_code"
-    t.string   "store_name"
     t.string   "status"
     t.float    "exhibitor_height"
     t.integer  "tray_quantity"
@@ -839,7 +851,8 @@ ActiveRecord::Schema.define(version: 20170819173433) do
   add_foreign_key "orders", "prospects"
   add_foreign_key "orders", "requests"
   add_foreign_key "orders", "stores"
-  add_foreign_key "orders", "users"
+  add_foreign_key "orders_users", "orders"
+  add_foreign_key "orders_users", "users"
   add_foreign_key "payments", "bill_receiveds"
   add_foreign_key "payments", "suppliers"
   add_foreign_key "pending_movements", "bills"
@@ -852,7 +865,9 @@ ActiveRecord::Schema.define(version: 20170819173433) do
   add_foreign_key "pending_movements", "suppliers"
   add_foreign_key "pending_movements", "users"
   add_foreign_key "product_requests", "delivery_packages"
+  add_foreign_key "product_requests", "movements"
   add_foreign_key "product_requests", "orders"
+  add_foreign_key "product_requests", "pending_movements"
   add_foreign_key "product_requests", "products"
   add_foreign_key "product_sales", "products"
   add_foreign_key "production_orders", "users"

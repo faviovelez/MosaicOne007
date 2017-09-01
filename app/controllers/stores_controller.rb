@@ -43,6 +43,9 @@ class StoresController < ApplicationController
   end
 
   def update
+    unless @store.id == 1
+      @prospect = Prospect.find_by_store_code(@store.store_code)
+    end
     respond_to do |format|
       if @store.update(store_params)
         update_prospect_from_store
@@ -102,7 +105,6 @@ class StoresController < ApplicationController
 
   def update_prospect_from_store
     if @store.id != 1
-      @prospect = Prospect.find_by_store_code(@store.store_code)
       @prospect.update(
                         legal_or_business_name: @store.store_name,
                         business_type: @store.type_of_person,

@@ -14,7 +14,7 @@
         <td><%= movement.product.unique_code %></td>
         <td><%= movement.product.description %></td>
         <td><%= image_tag image(movement), alt: movement.product.description %></td>
-        <td><%= movement.quantity %></td>
+        <td><%= number_with_delimiter(movement.quantity) %></td>
         <td>
           <%= link_to 'Eliminar', warehouse_delete_entry_path(movement.warehouse_entry, @codes), class: 'btn btn-danger', method: :delete %>
         </td>

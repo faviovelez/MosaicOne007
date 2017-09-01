@@ -26,7 +26,7 @@
       <% @object.each do |request| %>
         <tr>
           <td class="folio"> <%= request.id %></td>
-          <td class="quantity"><%= request.quantity %></td>
+          <td class="quantity"><%= number_with_delimiter(request.quantity) %></td>
           <td class="product">
             <% if request.product_type == 'otro'%>
               <%= request.name_type %>
@@ -70,11 +70,18 @@
                <span class="link-to-confirm"> Confirmar </span>
              <% end %>
             </td>
+          <% elsif request.status == 'devuelta'  %>
+            <td>
+              <%= link_to edit_request_path(request) do %>
+               <i class="fa fa-pencil link-to-confirm" aria-hidden="true"></i>
+               <span class="link-to-confirm"> Modificar </span>
+             <% end %>
+            </td>
           <% end %>
         </tr>
       <% end %>
     </tbody>
   </table>
 <% else %>
-  <p class="individual-font">No hay solicitudes activas</p>
+  <p class="individual-font">No hay solicitudes en esta bandeja</p>
 <% end %>
