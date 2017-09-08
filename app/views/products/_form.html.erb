@@ -209,6 +209,16 @@
       <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.business_group.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
     </div>
 
+    <div class="form-inside-style">
+      <%= f.label :anaquel %>
+      <%= f.text_field :rack, value: @product.rack, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :nivel %>
+      <%= f.text_field :level, value: @product.level, class: 'form-inside' %>
+    </div>
+
     <% if @product.images.count > 0 %>
         <%= render 'images' %>
 
@@ -223,7 +233,6 @@
         <%= f.file_field :image, multiple: true %><br>
       </div>
     <% end %>
-
 
     <div class="button-container">
       <div class="actions">

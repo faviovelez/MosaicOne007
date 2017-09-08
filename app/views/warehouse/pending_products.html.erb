@@ -5,19 +5,17 @@
       <th>Color</th>
       <th>Imagen</th>
       <th>Cantidad</th>
-      <th class="hidden">Total</th> <%#OCULTA HASTA LIGAR CON MOVEMENT%>
       <th>Urgencia</th>
       <th>Entregar</th>
     </tr>
   </thead>
   <tbody>
-    <% @order.product_requests.each do |product_request| %>
+    <% @order.product_requests.where(status: 'sin asignar').each do |product_request| %>
       <tr>
         <td><%= product_request.product.unique_code %></td>
         <td><%= product_request.product.exterior_color_or_design %></td>
         <td><%= image_tag image(product_request), alt: product_request.product.description %></td>
         <td><%= number_with_delimiter(product_request.quantity) %></td>
-        <td class="hidden"><%= number_to_currency(product_request.quantity) %></td> <%#OCULTA HASTA LIGAR CON MOVEMENT%>
         <td><%= product_request.urgency_level %></td>
         <% if product_request.maximum_date.present? %>
           <td><%= l product_request.maximum_date %></td>
@@ -28,5 +26,4 @@
     <% end %>
   </tbody>
 </table>
-<br /> <br /> <br />
-<%= render 'modal_delivery_address' %>
+<br /> <br />

@@ -28,4 +28,19 @@ module WarehouseHelper
     name
   end
 
+# CONFIRMAR SI VOY A USAR ESTE MÉTODO (ES PARA USARLO EN LA PREPARACIÓN DE ALMACÉN PARA ACCEDER A AGREGAR PAQUETES AL DELIVERY)
+  def find_user(order)
+    @finded_user = nil
+    users = order.users
+    warehouse_users = User.joins(:role).where("roles.name = ? OR roles.name = ?", "warehouse-staff", "warehouse-admin")
+    users.each do |user|
+      store_users.each do |w_user|
+        if user == w_user
+          @finded_user = user
+        end
+      end
+    end
+    @finded_user
+  end
+
 end

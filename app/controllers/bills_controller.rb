@@ -11,7 +11,6 @@ class BillsController < ApplicationController
   # GET /bills/1
   # GET /bills/1.json
   def show
-    qrcode
   end
 
   def qrcode

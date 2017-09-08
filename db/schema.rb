@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170901170112) do
+ActiveRecord::Schema.define(version: 20170907204154) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,15 +74,21 @@ ActiveRecord::Schema.define(version: 20170901170112) do
     t.string   "type_of_bill"
     t.integer  "prospect_id"
     t.string   "classification"
-    t.integer  "store_id"
     t.float    "amount"
     t.integer  "quantity"
     t.string   "pdf"
     t.string   "xml"
+    t.integer  "issuing_company_id"
+    t.integer  "receiving_company_id"
+    t.integer  "business_unit_id"
+    t.integer  "store_id"
   end
 
+  add_index "bills", ["business_unit_id"], name: "index_bills_on_business_unit_id", using: :btree
+  add_index "bills", ["issuing_company_id"], name: "index_bills_on_issuing_company_id", using: :btree
   add_index "bills", ["order_id"], name: "index_bills_on_order_id", using: :btree
   add_index "bills", ["prospect_id"], name: "index_bills_on_prospect_id", using: :btree
+  add_index "bills", ["receiving_company_id"], name: "index_bills_on_receiving_company_id", using: :btree
   add_index "bills", ["store_id"], name: "index_bills_on_store_id", using: :btree
 
   create_table "business_group_sales", force: :cascade do |t|
@@ -340,6 +346,7 @@ ActiveRecord::Schema.define(version: 20170901170112) do
     t.integer  "carrier_id"
     t.integer  "store_id"
     t.boolean  "confirm"
+    t.text     "delivery_notes"
   end
 
   add_index "orders", ["billing_address_id"], name: "index_orders_on_billing_address_id", using: :btree
@@ -495,6 +502,8 @@ ActiveRecord::Schema.define(version: 20170901170112) do
     t.integer  "business_unit_id"
     t.integer  "warehouse_id"
     t.float    "cost"
+    t.string   "rack"
+    t.string   "level"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
@@ -807,6 +816,7 @@ ActiveRecord::Schema.define(version: 20170901170112) do
   add_foreign_key "bill_receiveds", "products"
   add_foreign_key "bill_receiveds", "stores"
   add_foreign_key "bill_receiveds", "suppliers"
+  add_foreign_key "bills", "business_units"
   add_foreign_key "bills", "orders"
   add_foreign_key "bills", "prospects"
   add_foreign_key "bills", "stores"

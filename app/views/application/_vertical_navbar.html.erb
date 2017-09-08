@@ -312,7 +312,7 @@
           <%= link_to 'Alta productos de terceros', warehouse_new_supplier_entry_path, class: 'text-link' %>
             </li>
 
-            <% if params[:controller] == 'warehouse' && (params[:action] == 'orders' || params[:action] == 'orders_products')  %>
+            <% if params[:controller] == 'warehouse' && (params[:action] == 'orders' || params[:action] == 'prepare_order')  %>
               <li class="vertical-link actual-vertical-link">
             <% else %>
               <li class="vertical-link">
@@ -320,6 +320,25 @@
             <i class="fa fa-cubes other-nav-icons" aria-hidden="true"></i>
             <%= link_to 'Pedidos con disponibilidad', warehouse_orders_path, class: 'text-link' %>
               </li>
+
+            <% if params[:controller] == 'warehouse' && (params[:action] == 'pending_orders' || params[:action] == 'pending_products')  %>
+              <li class="vertical-link actual-vertical-link">
+            <% else %>
+              <li class="vertical-link">
+            <% end %>
+            <i class="fa fa-calendar-times-o other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Pedidos sin disponibilidad', warehouse_pending_orders_path, class: 'text-link' %>
+              </li>
+
+            <% if params[:controller] == 'warehouse' && (params[:action] == 'waiting_orders' || params[:action] == 'waiting_products')  %>
+              <li class="vertical-link actual-vertical-link">
+            <% else %>
+              <li class="vertical-link">
+            <% end %>
+            <i class="fa fa-hand-paper-o other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Pedidos en espera', warehouse_waiting_orders_path, class: 'text-link' %>
+              </li>
+
 
         <% end %>
         <%-# Aquí termina el área que muestra los links para warehouse-staff o warehouse-admin %>

@@ -1,29 +1,33 @@
-<%# Probablemente borre esta view %>
-
-<table>
-  <thead>
-    <tr class="table-titles">
-      <th class="col-md-1">Folio</th>
-      <th class="col-md-1">Productos</th>
-      <th class="col-md-1">Piezas</th>
-      <th class="col-md-1">Fecha</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @orders.each do |order| %>
-      <tr>
-        <td> <%= order.id %> </td>
-        <% @requests = order.product_requests.where('product_requests.status' => 'asignado') %>
-        <td> <%= @requests.count %> productos</td>
-        <td> <%= number_with_delimiter(sum_quantity(@requests)) %> piezas</td>
-        <td> <%= I18n.l order.created_at.to_date, format: :short %> </td>
-        <td class="col-md-1">
-          <%= link_to warehouse_order_products_path(order) do %>
-            <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-            <span>Ver</span>
-          <% end %>
-        </td>
+<% if @orders.count >= 1 %>
+  <table>
+    <thead>
+      <tr class="table-titles">
+        <th class="col-md-1">Pedido</th>
+        <th class="col-md-3">Tienda</th>
+        <th class="col-md-1">Tipo</th>
+        <th class="col-md-1">Productos</th>
+        <th class="col-md-1">Piezas</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+        <tr>
+          <td> <%= order.id %> </td>
+          <td> <%= order.store.store_code %> - <%= order.store.store_name %> </td>
+          <td> <%= order.category %> </td>
+          <% @requests = order.product_requests.where('product_requests.status' => 'sin asignar') %>
+          <td> <%= @requests.count %> </td>
+          <td> <%= number_with_delimiter(sum_quantity(order)) %> </td>
+          <td class="col-md-1">
+            <%= link_to warehouse_pending_products_path(order) do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <span>Ver</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font">No hay pedidos en espera.</p>
+<% end %>

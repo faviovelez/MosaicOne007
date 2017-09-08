@@ -72,7 +72,7 @@ class ProductsController < ApplicationController
       if @product.save
         if @request
           @request.update(status: 'código asignado', product: @product)
-          @order = Order.create(status: 'en espera', category: 'especial', prospect: @request.prospect, request: @request, store: @request.store)
+          @order = Order.create(status: 'en espera', category: 'especial', prospect: @request.prospect, request: @request, store: @request.store, delivery_address: current_user.store.delivery_address)
           @order.users  << @finded_user
           @order.save
           @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date)
@@ -187,7 +187,9 @@ class ProductsController < ApplicationController
       :pieces_per_package,
       :business_unit_id,
       :warehouse_id,
-      :cost)
+      :cost,
+      :rack,
+      :level)
     end
 
 end

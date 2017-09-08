@@ -9,4 +9,5 @@ class BusinessUnit < ActiveRecord::Base
   has_many :stores
   belongs_to :billing_address
   has_many :warehouses
+  has_many :bills
 end

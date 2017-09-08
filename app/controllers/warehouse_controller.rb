@@ -2,6 +2,7 @@ class WarehouseController < ApplicationController
   # Este controller se utilizará para la funcionalidad de warehouse con varios modelos.
   before_action :authenticate_user!
   before_action :set_movements, only: [:show, :confirm]
+  before_action :set_order, only: [:prepare_order, :waiting_products, :pending_products]
 
   def new_own_entry
     @movement = Movement.new
@@ -10,11 +11,34 @@ class WarehouseController < ApplicationController
   end
 
   def orders
-    @orders = Order.where.not(status: ['enviado', 'entregado'])
+    @orders = Order.where.not(status: ['enviado', 'entregado', 'sin asignar', 'en espera']).order(:created_at)
+  end
+
+  def pending_orders
+    result =  ProductRequest.where(status: 'sin asignar')
+    a = []
+    result.each do |pr|
+      a << pr.order.id unless a.include?(pr.order.id)
+    end
+    @orders = Order.where(id: a).order(:created_at)
+  end
+
+  def waiting_orders
+    result =  ProductRequest.where(status: 'en espera')
+    a = []
+    result.each do |pr|
+      a << pr.order.id unless a.include?(pr.order.id)
+    end
+    @orders = Order.where(id: a).order(:created_at)
   end
 
   def prepare_order
-    @order = Order.find(params[:id])
+  end
+
+  def waiting_products
+  end
+
+  def pending_products
   end
 
   def get_product
@@ -76,10 +100,6 @@ class WarehouseController < ApplicationController
     end
   end
 
-  def orders
-    @orders = Order.where(status: 'en espera')
-  end
-
   def form_for_movement
     @movement = Movement.find(params[:id])
     @movement.cost = params[:movement][:cost]
@@ -97,6 +117,7 @@ class WarehouseController < ApplicationController
     name = user.first_name + " " + user.last_name
     @order.users << user
     if @order.save
+      change_status
       redirect_to warehouse_orders_path, notice: "Se asignó el pedido a #{name}."
     else
       redirect_to warehouse_prepare_order_path, alert: 'No se pudo asignar el pedido.'
@@ -110,13 +131,23 @@ class WarehouseController < ApplicationController
     end
     name = user.first_name + " " + user.last_name
     if @order.save
+      change_status
       redirect_to warehouse_orders_path, notice: "Se asignó el pedido a #{name}."
     else
       redirect_to warehouse_prepare_order_path, alert: 'No se pudo asignar el pedido.'
     end
   end
 
+  def change_status
+    @order.status = 'preparando'
+    @order.save
+  end
+
   private
+
+  def set_order
+    @order = Order.find(params[:id])
+  end
 
   def attach_entry
     @collection.each do |movement|

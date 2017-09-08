@@ -32,6 +32,9 @@
       <% elsif params[:controller] == 'prospects' && params[:action] == 'show' %>
         <%= link_to 'Crear cotización', new_prospect_request_path(@prospect) %>
         <%= link_to 'Modificar prospecto', edit_prospect_path(@prospect) %>
+
+      <% elsif params[:controller] == 'orders' && params[:action] == 'show_for_store' %>
+        <%= link_to 'Cambiar dirección de entrega', '#myModal', 'data-toggle' => 'modal' %>
       <% end %>
 
       <% if (params[:controller] == 'products' && params[:action] != 'new') %>

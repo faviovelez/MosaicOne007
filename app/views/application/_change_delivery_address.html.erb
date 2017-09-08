@@ -1,0 +1,24 @@
+<%= form_for(@order, url: change_delivery_address_path(@order)) do |f| %>
+  <% if (@order.delivery_address == nil && @order.delivery_notes != nil)  %>
+    <% value = 'otra dirección' %>
+  <% end %>
+
+  <div class="form-inside-style">
+    <%= f.label :dirección_de_entrega %>
+    <%= f.select :delivery_address, options_for_select(delivery_options(@order), selected: value), class: 'delivery_order' %>
+  </div>
+
+  <% if @order.delivery_address == nil %>
+    <div class="form-inside-style" id="delivery_notes_div">
+  <% else %>
+    <div class="hidden form-inside-style" id="delivery_notes_div">
+  <% end %>
+
+    <%= f.text_area :delivery_notes, placeholder: 'Dirección o lugar de entrega', class: 'form-inside delivery-address-form' %><br /><br /><br />
+  </div>
+
+  <div class="actions">
+    <%= f.submit :guardar, name: 'guardar', class: 'main-button capitalize' %>
+  </div>
+
+<% end %>

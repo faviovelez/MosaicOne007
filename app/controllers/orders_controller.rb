@@ -1,12 +1,12 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_order, only: [:show, :show_for_store, :confirm]
+  before_action :set_order, only: [:show, :show_for_store, :confirm, :change_delivery_address]
 
   def new(role = current_user.role.name)
-    @order = Order.new(user: current_user,
-                       store: current_user.store,
+    @order = Order.new(store: current_user.store,
                        category: 'de línea'
                       )
+    @order.users << current_user
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'store' || role == 'store-admin')
   end
 
@@ -31,7 +31,8 @@ class OrdersController < ApplicationController
 
   def save_products
     @order = Order.create(store: current_user.store,
-                          category: 'de línea'
+                          category: 'de línea',
+                          delivery_address: current_user.store.delivery_address
                           )
     @order.users << current_user
     @order.save
@@ -43,6 +44,27 @@ class OrdersController < ApplicationController
     @order.update(confirm: true)
     redirect_to store_orders_path(@order.store),
       notice: 'Registros confirmados'
+  end
+
+  def change_delivery_address
+    delivery = params[:order][:delivery_address]
+    address = DeliveryAddress.find(delivery) unless (delivery == 'otra dirección' || delivery == 'seleccione' || delivery == '')
+    notes = params[:order][:delivery_notes] unless address.present?
+    if (address == nil && notes.blank?)
+      redirect_to show_for_store, notice: 'Por favor ingrese una dirección o elija otra y anote la dirección completa en el campo correspondiente.'
+    else
+      if address.nil?
+        @order.delivery_address = nil
+      else
+        @order.delivery_address = address
+      end
+      @order.delivery_notes = notes unless notes.nil?
+      if @order.save
+        redirect_to store_orders_path(current_user.store), notice: 'La dirección se actualizó correctamente.'
+      else
+        redirect_to show_for_store, notice: 'Hubo un error, por favor ingrese una dirección o elija otra y anote la dirección completa en el campo correspondiente.'
+      end
+    end
   end
 
   def index

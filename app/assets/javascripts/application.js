@@ -32,4 +32,13 @@ $(document).ready(function() {
   $('.carousel').carousel({
     interval: false
   });
+
+  $('#order_delivery_address').bind('change', function() {
+    var delivery = $('#order_delivery_address').val();
+    if (delivery == 'otra dirección') {
+      $("#delivery_notes_div").removeClass('hidden');
+    } else {
+      $("#delivery_notes_div").addClass('hidden');
+    };
+  });
 });

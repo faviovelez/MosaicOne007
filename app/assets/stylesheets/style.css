@@ -53,6 +53,11 @@ padding: 2rem;
 color: #fff;
 }
 
+.delivery-address-form {
+  width: 35vw;
+  height: 50vh;
+}
+
 .store-subtitle{
   width: inherit;
 }

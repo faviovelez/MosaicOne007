@@ -12,7 +12,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @order.product_requests.where(status: 'asignado').each do |product_request| %>
+    <% @order.product_requests.where(status: 'en espera').each do |product_request| %>
       <tr>
         <td><%= product_request.product.unique_code %></td>
         <td><%= product_request.product.exterior_color_or_design %></td>
@@ -34,31 +34,4 @@
     <% end %>
   </tbody>
 </table>
-<br /> <br />
-
-<% if @order.users.count <= 1 %>
-
-  <% if current_user.role.name == 'warehouse-staff' %>
-
-    <%= form_for(@order, url: assign_warehouse_staff_path(@order)) do |f| %>
-      <div class="hidden">
-        <%= f.text_field :status, value: @order.status %>
-      </div>
-      <%= f.submit :asignar, name: 'asignar', class: 'main-button capitalize' %>
-    <% end %>
-
-  <% elsif current_user.role.name == 'warehouse-admin' %>
-    <%= form_for(@order, url: assign_warehouse_admin_path(@order)) do |f| %>
-      <%= f.select :user_ids, options_for_select(User.joins(:role).where('roles.name' => ['warehouse-staff', 'warehouse-admin']).collect{|u| [u.first_name+" "+u.last_name, u.id]})  %>
-      <%= f.submit :guardar, name: 'guardar', class: 'main-button-small capitalize' %>
-    <% end %>
-  <% end %>
-
-<% else %>
-  <p>
-    Este pedido está siendo atendido por <%= warehouse_name(@order) %>
-  </p>
-
-<% end %>
-
 <br /> <br />

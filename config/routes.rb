@@ -120,6 +120,14 @@ Rails.application.routes.draw do
 
   get 'warehouse/orders'
 
+  get 'warehouse/unassigned_orders'
+
+  get 'warehouse/waiting_orders'
+
+  patch 'orders/change_delivery_address/:id', to: 'orders#change_delivery_address', as: 'change_delivery_address'
+
+  get 'warehouse/pending_products/:id', to: 'warehouse#pending_products', as: 'warehouse_pending_products'
+
   patch 'warehouse/assign_warehouse_staff/:id', to: 'warehouse#assign_warehouse_staff', as: 'assign_warehouse_staff', controller: 'orders'
 
   get 'warehouse/orders_products/:id', to: 'warehouse#orders_products', as: 'warehouse_order_products'
