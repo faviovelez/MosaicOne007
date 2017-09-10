@@ -19,7 +19,7 @@
         <td><%= number_with_delimiter(product_request.quantity) %></td>
         <td><%= number_to_currency(sum_prices * product_request.quantity) %></td>
         <td><%= product_request.urgency_level %></td>
-        <td><%= l product_request.maximum_date %></td>
+        <td><%= get_maximum_date(product_request.maximum_date) %></td>
       </tr>
     <% end %>
   </tbody>

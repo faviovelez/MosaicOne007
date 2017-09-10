@@ -74,9 +74,9 @@ class Movement < ActiveRecord::Base
   end
 
   def update_reports_data(object)
-    sales_amount = quantity * fix_final_price
-    sales_quantity = quantity
-    cost = fix_cost * quantity
+    sales_amount = fix_quantity * fix_final_price
+    sales_quantity = fix_quantity
+    cost = fix_cost * fix_quantity
     month = Date.today.month
     year  = Date.today.year
     object.update_attributes(
@@ -90,9 +90,9 @@ class Movement < ActiveRecord::Base
   end
 
   def create_reports_data(type)
-    sales_amount = quantity * fix_final_price
-    sales_quantity = quantity
-    cost = fix_cost * quantity
+    sales_amount = fix_quantity * fix_final_price
+    sales_quantity = fix_quantity
+    cost = fix_cost * fix_quantity
     month = Date.today.month
     year  = Date.today.year
     type.create(
@@ -167,6 +167,14 @@ class Movement < ActiveRecord::Base
 
   def fix_cost
     self.cost || 0
+  end
+
+  def fix_quantity
+    self.quantity || 0
+  end
+
+  def fix_initial_price
+    initial_price || 0
   end
 
   def fix_final_price

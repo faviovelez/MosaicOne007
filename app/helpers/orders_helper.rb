@@ -2,8 +2,13 @@ module OrdersHelper
 
   def sum_prices
     @order.all_movements.map(
-      &:initial_price
+      &:fix_initial_price
     ).inject(&:+)
+  end
+
+  def get_maximum_date(date)
+    return '' if date.nil?
+    l date
   end
 
   def sum_quantity(order)

@@ -10,4 +10,8 @@ class WarehouseEntry < ActiveRecord::Base
     self.entry_number = WarehouseEntry.where(
       product_id: self.product.id).count
   end
+
+  def fix_quantity
+    self.quantity || 0
+  end
 end

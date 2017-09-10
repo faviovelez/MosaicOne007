@@ -115,17 +115,17 @@ class OrdersController < ApplicationController
   def process_entries
     order_quantity = @product_request.quantity
     @entries.each do |entry|
-      if order_quantity >= entry.quantity
+      if order_quantity >= entry.fix_quantity
         create_movement(Movement).update_attributes(
-          quantity: entry.quantity,
-          cost: entry.movement.fix_cost * entry.quantity
+          quantity: entry.fix_quantity,
+          cost: entry.movement.fix_cost * entry.fix_quantity
         )
-        order_quantity -= Movement.last.quantity
+        order_quantity -= Movement.last.fix_quantity
         entry.destroy
       else
-        create_movement.(PendingMovement).update_attributes(
+        create_movement(PendingMovement).update_attributes(
           quantity: entry.quantity,
-          cost: entry.movement.fix_cost * entry.quantity
+          cost: entry.movement.fix_cost * entry.fix_quantity
         )
       end
     end
