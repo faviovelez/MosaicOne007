@@ -82,6 +82,7 @@ class OrdersController < ApplicationController
     params.select {|p| p.match('trForProduct').present? }.each do |product|
       attributes = product.second
       product = Product.find(attributes.first.second).first
+		binding.pry
       @product_request = ProductRequest.create(
         product: product,
         quantity: attributes[:order],
