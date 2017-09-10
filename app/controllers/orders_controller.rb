@@ -122,7 +122,6 @@ class OrdersController < ApplicationController
         pending_order -= Movement.last.fix_quantity
         #entry.destroy
       else
-        binding.pry
         create_movement(Movement).update_attributes(
           quantity: pending_order,
           cost: entry.movement.fix_cost * pending_order
