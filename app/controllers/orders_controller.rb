@@ -82,7 +82,6 @@ class OrdersController < ApplicationController
     params.select {|p| p.match('trForProduct').present? }.each do |product|
       attributes = product.second
       product = Product.find(attributes.first.second).first
-		binding.pry
       @product_request = ProductRequest.create(
         product: product,
         quantity: attributes[:order],
@@ -113,20 +112,22 @@ class OrdersController < ApplicationController
   end
 
   def process_entries
-    order_quantity = @product_request.quantity
+    pending_order = @product_request.quantity
     @entries.each do |entry|
-      if order_quantity >= entry.fix_quantity
+      if pending_order >= entry.fix_quantity
         create_movement(Movement).update_attributes(
           quantity: entry.fix_quantity,
           cost: entry.movement.fix_cost * entry.fix_quantity
         )
-        order_quantity -= Movement.last.fix_quantity
-        entry.destroy
+        pending_order -= Movement.last.fix_quantity
+        #entry.destroy
       else
-        create_movement(PendingMovement).update_attributes(
-          quantity: entry.quantity,
-          cost: entry.movement.fix_cost * entry.fix_quantity
+        binding.pry
+        create_movement(Movement).update_attributes(
+          quantity: pending_order,
+          cost: entry.movement.fix_cost * pending_order
         )
+        entry.update(quantity: (entry.fix_quantity - pending_order) )
       end
     end
   end
@@ -134,7 +135,7 @@ class OrdersController < ApplicationController
   def create_movement(object)
     product = @product_request.product
     store = current_user.store
-    movement = object.new(
+    movement = object.create(
       product: product,
       order: @order,
       unique_code: product.unique_code,
