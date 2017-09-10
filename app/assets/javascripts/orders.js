@@ -29,6 +29,13 @@ $(function(){
     return allFill;
   };
 
+  var checkUrgencyLevel = function(element){
+    if ($(element).is(':checked')) {
+      return 'alta';
+    }
+    return 'normal';
+  };
+
   var createProductRequestData = function(){
     var data = {};
     $.each($('tr[id^=trForProduct]'), function(){
@@ -37,7 +44,7 @@ $(function(){
         packets  : $(this).find('input[id^=packetsProduct]').val(),
         order    : $(this).find('input[id^=orderProduct]').val(),
         total    : $(this).find('input[id^=totalProduct]').val(),
-        urgency  : $(this).find('input[id^=urgencyProduct]').val(),
+        urgency  : checkUrgencyLevel($(this).find('input[id^=urgencyProduct]')),
         maxDate  : $(this).find('input[id^=maxDateProduct]').val()
       };
     });
@@ -128,10 +135,8 @@ $(function(){
         $('#urgencyProduct_' + id).click(function(){
           var element = $('#maxDate' + $(this).attr('id').replace('urgency', '')).parent();
           if ($(this).is(':checked')) {
-            $(this).val('alta');
             $(element).removeClass('hidden');
           } else {
-            $(this).val('normal');
             $(element).addClass('hidden');
           }
         });
