@@ -20,7 +20,6 @@ class Movement < ActiveRecord::Base
     product_inventory.update(
       quantity: product_inventory.quantity - self.quantity
     )
-    binding.pry
   end
 
   def create_update_summary
