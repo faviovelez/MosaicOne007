@@ -104,6 +104,7 @@ class OrdersController < ApplicationController
       @product_request.update(status: 'sin asignar')
       create_movement(PendingMovement).update(quantity: @product_request.quantity)
     else
+      @product_request.update(status: 'asignado')
       @entries = WarehouseEntry.where(
         product: @product_request.product
       ).order("entry_number #{order_type}")
@@ -119,6 +120,7 @@ class OrdersController < ApplicationController
           quantity: entry.fix_quantity,
           cost: entry.movement.fix_cost * entry.fix_quantity
         )
+        Movement.last.update_inventory
         pending_order -= Movement.last.fix_quantity
         #entry.destroy
       else

@@ -14,6 +14,15 @@ class Movement < ActiveRecord::Base
 
   before_save :create_update_summary, if: :is_sales?
 
+  def update_inventory
+    product = self.product
+    product_inventory = product.inventory
+    product_inventory.update(
+      quantity: product_inventory.quantity - self.quantity
+    )
+    binding.pry
+  end
+
   def create_update_summary
     if dont_exist_record_month
       create_new_summary
