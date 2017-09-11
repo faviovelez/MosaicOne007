@@ -5,7 +5,7 @@
   <td id='pices_{{= rc.id}}'>{{= rc.pices }} </td>
   <td id='packets_{{= rc.id}}'><div class="form-group"><input type='text' class="form-control" id='packetsProduct_{{= rc.id }}' required="true" /></div></td>
   <td id='order_{{= rc.id}}'><div class="form-group"><input type='text' disabled class="form-control" id='orderProduct_{{= rc.id }}' required="true" /></div></td>
-  <td id='price_{{= rc.id}}'>{{= rc.price }} </td>
+  <td id='price_{{= rc.id}}' data-price='{{= rc.price }}' >{{= rc.price.toFixed(2) }} </td>
   <td id='total_{{= rc.id}}'><div class="form-group"><input type='text' disabled class="form-control" id='totalProduct_{{= rc.id }}' required="true" /></div></td>
   <td id='urgency_{{= rc.id}}'><div class="form-group"><input type='checkbox' class="form-control" value='alta' id='urgencyProduct_{{= rc.id }}' required="true" /></div></td>
   <td id='maxDate_{{= rc.id}}'><div class="form-group hidden"><input type='date' class="form-control" id='maxDateProduct_{{= rc.id }}' required="true" /></div></td>
