@@ -128,8 +128,8 @@ $(function(){
             var pices = parseInt($('#pices' + id).html());
             $('#orderProduct' + id).val( packets * pices );
             var pedido = parseInt($('#orderProduct' + id).val());
-            var price = parseInt($('#price' + id).html());
-            $('#totalProduct' + id).val(price * pedido);
+            var price = $('#price' + id).data().price;
+            $('#totalProduct' + id).val((price * pedido).toFixed(2));
           });
 
         $('#urgencyProduct_' + id).click(function(){
