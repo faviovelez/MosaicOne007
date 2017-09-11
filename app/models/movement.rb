@@ -10,7 +10,7 @@ class Movement < ActiveRecord::Base
   belongs_to :bill
   has_one :warehouse_entry
   has_many :delivery_attempts
-  has_many :product_requests
+  belongs_to :product_request
 
   before_save :create_update_summary, if: :is_sales?
 

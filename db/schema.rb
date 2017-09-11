@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170907204154) do
+ActiveRecord::Schema.define(version: 20170911011402) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -420,14 +420,10 @@ ActiveRecord::Schema.define(version: 20170907204154) do
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
     t.integer  "delivery_package_id"
-    t.integer  "movement_id"
-    t.integer  "pending_movement_id"
   end
 
   add_index "product_requests", ["delivery_package_id"], name: "index_product_requests_on_delivery_package_id", using: :btree
-  add_index "product_requests", ["movement_id"], name: "index_product_requests_on_movement_id", using: :btree
   add_index "product_requests", ["order_id"], name: "index_product_requests_on_order_id", using: :btree
-  add_index "product_requests", ["pending_movement_id"], name: "index_product_requests_on_pending_movement_id", using: :btree
   add_index "product_requests", ["product_id"], name: "index_product_requests_on_product_id", using: :btree
 
   create_table "product_sales", force: :cascade do |t|
@@ -875,9 +871,7 @@ ActiveRecord::Schema.define(version: 20170907204154) do
   add_foreign_key "pending_movements", "suppliers"
   add_foreign_key "pending_movements", "users"
   add_foreign_key "product_requests", "delivery_packages"
-  add_foreign_key "product_requests", "movements"
   add_foreign_key "product_requests", "orders"
-  add_foreign_key "product_requests", "pending_movements"
   add_foreign_key "product_requests", "products"
   add_foreign_key "product_sales", "products"
   add_foreign_key "production_orders", "users"

@@ -3,6 +3,6 @@ class ProductRequest < ActiveRecord::Base
   belongs_to :product
   belongs_to :order
   belongs_to :delivery_package
-  belongs_to :movement
-  belongs_to :pending_movement
+  has_one :movement
+  has_one :pending_movement
 end

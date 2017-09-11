@@ -8,7 +8,7 @@ class PendingMovement < ActiveRecord::Base
   belongs_to :business_unit
   belongs_to :prospect
   belongs_to :bill
-  has_many :product_requests
+  belongs_to :product_request
 
   def fix_initial_price
     self.initial_price || 0
