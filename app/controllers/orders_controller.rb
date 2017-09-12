@@ -107,7 +107,7 @@ class OrdersController < ApplicationController
       @product_request.update(status: 'asignado')
       @entries = WarehouseEntry.where(
         product: @product_request.product
-      ).order("entry_number #{order_type}")
+      ).order("created_at #{order_type}")
       process_entries
     end
   end
