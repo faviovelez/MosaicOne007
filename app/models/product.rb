@@ -18,6 +18,13 @@ class Product < ActiveRecord::Base
 
   validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya hay un producto con con este código."}
 
+  def update_inventory_quantity(quantity)
+    actual_quantity = self.inventory.quantity
+    self.inventory.update(
+      quantity: actual_quantity - quantity
+    )
+  end
+
   def quantity
     inventory.try(:quantity) || 0
   end
