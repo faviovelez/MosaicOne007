@@ -133,6 +133,7 @@ class OrdersController < ApplicationController
           cost: entry.movement.fix_cost * pending_order
         )
         entry.update(quantity: (entry.fix_quantity - pending_order) )
+        break
       end
     end
     true
