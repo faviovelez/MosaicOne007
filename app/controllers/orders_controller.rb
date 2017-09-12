@@ -107,8 +107,13 @@ class OrdersController < ApplicationController
       @product_request.update(status: 'asignado')
       @entries = WarehouseEntry.where(
         product: @product_request.product
-      ).order("entry_number #{order_type}")
-      process_entries
+      ).order("created_at #{order_type}")
+      #TODO logic to set error
+      if process_entries
+        @product_request.product.update_inventory_quantity(
+          @product_request.quantity
+        )
+      end
     end
   end
 
@@ -120,17 +125,20 @@ class OrdersController < ApplicationController
           quantity: entry.fix_quantity,
           cost: entry.movement.fix_cost * entry.fix_quantity
         )
-        Movement.last.update_inventory
         pending_order -= Movement.last.fix_quantity
-        #entry.destroy
+        entry.destroy
       else
         create_movement(Movement).update_attributes(
           quantity: pending_order,
           cost: entry.movement.fix_cost * pending_order
         )
         entry.update(quantity: (entry.fix_quantity - pending_order) )
+        break
       end
     end
+    true
+  rescue
+    return false
   end
 
   def create_movement(object)

@@ -211,7 +211,7 @@ $(function(){
           });
         }
 
-        $('#numProduct_'+ id).mask("000", {placeholder: "___"}).css({'text-align': 'center'});
+        $('#numProduct_'+ id).mask("000000000000000", {placeholder: "_______________"}).css({'text-align': 'center'});
         $('#addNew' + id).click(function(){
           var tr = "<tr id='trForProduct"+ inc +"'>" +
             "<td class='select'>" +
