@@ -195,13 +195,13 @@ class WarehouseController < ApplicationController
 
   def process_pendings(product, movement)
     PendingMovement.where(product: product).each do |pending_movement|
-      temp_quantity = movement.quantity
-      if temp_quantity >= pending_movement.quantity
+      if movement.quantity >= pending_movement.quantity
         Movement.create(filter_movement(pending_movement.as_json))
         ProductRequest.find(
           pending_movement.product_request_id
         ).update(status: 'asignado')
-        temp_quantity -= Movement.last.quantity
+        movement.quantity -= Movement.last.quantity
+        movement.save
         pending_movement.destroy
       end
     end
