@@ -194,17 +194,21 @@ class WarehouseController < ApplicationController
   end
 
   def process_pendings(product, movement)
+    @entries = WarehouseEntry.where(
+      product: product
+    ).order("created_at #{order_type}")
     PendingMovement.where(product: product).each do |pending_movement|
-      temp_quantity = movement.quantity
-      if temp_quantity >= pending_movement.quantity
-        Movement.create(filter_movement(pending_movement.as_json))
-        ProductRequest.find(
+      if movement.quantity >= pending_movement.quantity
+        @product_request = ProductRequest.find(
           pending_movement.product_request_id
-        ).update(status: 'asignado')
-        temp_quantity -= Movement.last.quantity
+        )
+        process_product_request
+        movement.quantity -= Movement.last.quantity
+        movement.save
         pending_movement.destroy
       end
     end
+  rescue ActiveRecord::RecordNotFound
   end
 
   def filter_movement(movement)

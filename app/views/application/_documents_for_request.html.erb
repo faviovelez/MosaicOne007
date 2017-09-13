@@ -1,4 +1,7 @@
-<h3>Archivos adjuntos</h3>
+
+<% if (@request.authorisation_signed || @request.payment_uploaded || @request.specification_document) %>
+  <h3>Archivos adjuntos</h3>
+<% end %>
 
 <% if @request.authorisation_signed %>
   <h4>Autorización</h4>

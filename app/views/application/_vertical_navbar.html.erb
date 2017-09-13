@@ -93,6 +93,15 @@
               <%= link_to 'Pedidos en espera', store_orders_path(current_user.store), class: 'text-link'  %>
             </li>
 
+          <% if params[:controller] == 'orders' && params[:action] == 'history' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-book other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Historial de pedidos', orders_history_path(current_user.store), class: 'text-link'  %>
+            </li>
+
           <% if params[:action] == 'current_view' %>
             <%-# Aplica formato si está seleccionada %>
             <li class="vertical-link actual-vertical-link">

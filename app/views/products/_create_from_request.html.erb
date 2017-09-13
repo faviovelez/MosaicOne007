@@ -263,7 +263,7 @@
     <div class="otros">
 
       <div class="form-inside-style">
-        <%= f.label :empresao %>
+        <%= f.label :empresa %>
         <%= f.select :business_unit, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}) %>
       </div>
 

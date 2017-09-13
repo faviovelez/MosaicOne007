@@ -1,16 +1,18 @@
 <% if @assigned.count >= 1 %>
     <table>
       <thead>
-        <tr>
-          <th>tienda</th>
-          <th>tipo de solicitud</th>
-          <th>creada hace</th>
-          <th>estatus</th>
+        <tr class="table-titles">
+          <th class="col-md-1">Folio</th>
+          <th class="col-md-3">Tienda</th>
+          <th class="col-md-2">Tipo de solicitud</th>
+          <th class="col-md-2">Creada hace</th>
+          <th class="col-md-2">Estatus</th>
         </tr>
       </thead>
       <tbody>
         <% @assigned.each do |request| %>
           <tr>
+            <td> <%= request.id %> </td>
             <td> <%= request.request.store.store_code %> - <%= request.request.store.store_name %> </td>
             <td> <%= request.design_type %></td>
             <% @days = (Date.today - request.created_at.to_date).to_i %>
@@ -22,7 +24,14 @@
               <td> <%= @days %> días </td>
             <% end %>
             <td> <%= request.status %></td>
-            <td> <%= link_to 'detalles', design_request_path(request) %> </td>
+            <td class="col-md-1">
+              <% unless (request.status == 'diseño elaborado' || request.status == 'aceptada') %>
+                <%= link_to edit_design_request_path(request) do %>
+                  <i class="fa fa-paint-brush link-to-price" aria-hidden="true"></i>
+                  <span class="link-to-price">Editar</span>
+                <% end %>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>

@@ -4,7 +4,8 @@ class OrdersController < ApplicationController
 
   def new(role = current_user.role.name)
     @order = Order.new(store: current_user.store,
-                       category: 'de línea'
+                       category: 'de línea',
+                       status: 'en espera'
                       )
     @order.users << current_user
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'store' || role == 'store-admin')
@@ -32,7 +33,8 @@ class OrdersController < ApplicationController
   def save_products
     @order = Order.create(store: current_user.store,
                           category: 'de línea',
-                          delivery_address: current_user.store.delivery_address
+                          delivery_address: current_user.store.delivery_address,
+                          status: 'en espera'
                           )
     @order.users << current_user
     @order.save
@@ -68,13 +70,12 @@ class OrdersController < ApplicationController
   end
 
   def index
-    @orders = current_user.store.orders.where.not(status: ['entregada', 'cancelada', 'expirada'])
+    @orders = current_user.store.orders.where.not(status: ['entregada', 'cancelada', 'expirada']).order(:created_at)
   end
 
   def history
-    @orders = current_user.store.orders.where(status:'entregada')
+    @orders = current_user.store.orders.where(status:'entregada').order(:created_at)
   end
-
 
   private
 
@@ -104,63 +105,8 @@ class OrdersController < ApplicationController
       @product_request.update(status: 'sin asignar')
       create_movement(PendingMovement).update(quantity: @product_request.quantity)
     else
-      @product_request.update(status: 'asignado')
-      @entries = WarehouseEntry.where(
-        product: @product_request.product
-      ).order("created_at #{order_type}")
-      #TODO logic to set error
-      if process_entries
-        @product_request.product.update_inventory_quantity(
-          @product_request.quantity
-        )
-      end
+      process_product_request
     end
-  end
-
-  def process_entries
-    pending_order = @product_request.quantity
-    @entries.each do |entry|
-      if pending_order >= entry.fix_quantity
-        create_movement(Movement).update_attributes(
-          quantity: entry.fix_quantity,
-          cost: entry.movement.fix_cost * entry.fix_quantity
-        )
-        pending_order -= Movement.last.fix_quantity
-        entry.destroy
-      else
-        create_movement(Movement).update_attributes(
-          quantity: pending_order,
-          cost: entry.movement.fix_cost * pending_order
-        )
-        entry.update(quantity: (entry.fix_quantity - pending_order) )
-        break
-      end
-    end
-    true
-  rescue
-    return false
-  end
-
-  def create_movement(object)
-    product = @product_request.product
-    store = current_user.store
-    movement = object.create(
-      product: product,
-      order: @order,
-      unique_code: product.unique_code,
-      store: store,
-      initial_price: product.price,
-      movement_type: 'venta',
-      user: current_user,
-      business_unit: store.business_unit,
-      product_request_id: @product_request.id,
-      maximum_date: @product_request.maximum_date
-    )
-    movement
-  end
-
-  def order_type
-    current_user.store.cost_type.warehouse_cost_type == 'PEPS' ? 'ASC' : 'DESC'
   end
 
   def set_order
