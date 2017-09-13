@@ -70,13 +70,12 @@ class OrdersController < ApplicationController
   end
 
   def index
-    @orders = current_user.store.orders.where.not(status: ['entregada', 'cancelada', 'expirada'])
+    @orders = current_user.store.orders.where.not(status: ['entregada', 'cancelada', 'expirada']).order(:created_at)
   end
 
   def history
-    @orders = current_user.store.orders.where(status:'entregada')
+    @orders = current_user.store.orders.where(status:'entregada').order(:created_at)
   end
-
 
   private
 

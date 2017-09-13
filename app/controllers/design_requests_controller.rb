@@ -46,6 +46,7 @@ class DesignRequestsController < ApplicationController
     assign_to_current_user
     respond_to do |format|
       if @design_request.update(design_params)
+        format.html {redirect_to filtered_requests_assigned_view_path, notice: "La solicitud de diseño fue atendida" }
         # Esta parte asigna la solicitud (agrega un usuario con role: 'designer') a la solicitud de diseño y lo redirige a la página para trabajar la solicitud de diseño.
         if current_user.role.name == 'designer' && params[:asignar_solicitud]
           format.html {redirect_to edit_design_request_path(@design_request), notice: "La solicitud fue asignada a #{current_user.first_name} #{current_user.last_name}" }
