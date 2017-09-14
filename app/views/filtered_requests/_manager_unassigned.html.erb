@@ -6,6 +6,7 @@
         <th class="col-md-2">Tienda</th>
         <th class="quantity col-md-1">Cantidad</th>
         <th class="product col-md-1">Producto</th>
+        <th class="product col-md-1">Material</th>
         <th class="date col-md-1">Solicitada</th>
         <th class="delivery-date col-md-1">Entregar</th>
         <th class="status col-md-2">Estatus</th>
@@ -24,6 +25,7 @@
               <%= request.product_type %>
             <% end %>
           </td>
+          <td> <%= request.main_material %> </td>
           <% @days = (Date.today - request.created_at.to_date).to_i %>
           <% if @days < 1 %>
             <td> hoy </td>

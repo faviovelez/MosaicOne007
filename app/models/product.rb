@@ -16,6 +16,8 @@ class Product < ActiveRecord::Base
 
   validates :unique_code, presence: { message: "Debe anotar un código de producto."}
 
+  validates :price, presence: { message: "Es necesario el precio del producto."}
+
   validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya hay un producto con con este código."}
 
   def update_inventory_quantity(quantity)

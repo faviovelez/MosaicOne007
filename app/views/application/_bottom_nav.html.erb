@@ -1,6 +1,6 @@
 <% if current_user %>
   <div class="bottom-nav">
-    <% if params[:controller] == 'requests' && params[:action] != 'new' %>
+    <% if params[:controller] == 'requests' && params[:action] == 'show' %>
       <% if current_user.role.name == 'store' || current_user.role.name == 'store-admin' || ((current_user.role.name == 'manager' || current_user.role.name == 'director') && (@request.main_material == 'sugerir material' || @request.resistance_main_material == 'Sugerir resistencia' )) %>
         <% if (@request.status != 'en producción' && @request.status != 'autorizada' && @request.status != 'cancelada' && params[:action] != 'edit') %>
           <%= link_to 'Modificar', edit_request_path(@request) %>
@@ -9,7 +9,7 @@
     <% end %>
 
     <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
-      <% if params[:controller] == 'requests' && params[:action] != 'new' %>
+      <% if params[:controller] == 'requests' && params[:action] == 'show' %>
 
         <%= link_to 'Ver prospecto', prospect_path(@request.prospect), class: 'custom-link-bottom' %>
 

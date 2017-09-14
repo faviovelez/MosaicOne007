@@ -9,7 +9,7 @@ class ProspectsController < ApplicationController
 
   # Crea la vista de todos los prospectos que le pertenecen a una tienda, ya que una tienda puede tener varios usuarios, no queremos ligar solamente el prospecto al usuario, también a la tienda.
   def index
-    business_group_prospects
+    store_prospects
   end
 
   # GET /prospects/1
@@ -68,6 +68,10 @@ class ProspectsController < ApplicationController
 
   def business_group_prospects(bg = current_user.store.business_unit.business_group)
     @prospects = bg.prospects
+  end
+
+  def store_prospects
+    @prospects = current_user.store.prospects
   end
 
   def save_store_prospect(user = current_user)
