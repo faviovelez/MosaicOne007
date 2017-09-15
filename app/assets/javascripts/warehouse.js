@@ -268,7 +268,6 @@ $(function(){
             width: 300
           });
 
-          $('#supplier_taxes_rate').mask("00", {placeholder: "__"}).css({'text-align': 'center'});
           $('#supplier_total_amount').maskMoney();
 
           var calculateSubtotal = function(){
@@ -278,6 +277,7 @@ $(function(){
               taxesRate = parseFloat($('input#supplier_taxes_rate').val());
             }
             $('#supplier_subtotal').val(total - taxesRate);
+            $('#supplier_subtotal').maskMoney();
           };
 
           $('#checkPercent').change(function(){
