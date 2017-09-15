@@ -152,6 +152,7 @@ $(function(){
           $('#selectForProduct'+ inc).select2({
             templateSelection: formatState,
             multiple: true,
+            width: 200,
             maximumSelectionLength: 1
           })
             .change(function(){
@@ -176,6 +177,7 @@ $(function(){
       .change(function(){
         changeAction(this, 2, 1);
       });
+      $(".se-pre-con").fadeOut("slow");
     }, 200);
   }
 

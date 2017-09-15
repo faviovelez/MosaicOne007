@@ -23,8 +23,11 @@
   <body class="background-img">
 <% else %>
   <body>
+    <div class="se-pre-con"></div>
+    <script>
+      var waitLoader = false;
+    </script>
 <% end %>
-
   <%= render 'navbar' %>
 
   <% if notice %>
