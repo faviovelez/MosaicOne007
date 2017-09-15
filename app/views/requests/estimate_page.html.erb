@@ -1,0 +1,70 @@
+<%= image_tag 'logo-disenos-decarton.png', class: 'authorisation-img'%>
+
+<p class="date"> <%= l Date.today %> </p>
+
+<strong>
+  <p> <%= @request.prospect.legal_or_business_name %> </p>
+  <p>
+    Atención:
+    <%=@request.prospect.contact_first_name %>
+    <%=@request.prospect.contact_middle_name %>
+    <%=@request.prospect.contact_last_name %>
+    <%=@request.prospect.second_last_name %>
+  </p>
+</strong>
+
+<p>Por medio de la presente le envió la cotización solicitada, con la siguiente descripción: </p>
+
+<table>
+  <thead>
+    <tr>
+      <th> Cantidad </th>
+      <th> Descripción </th>
+      <th> Precio Unitario </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> <%= number_with_delimiter(@request.quantity) %> </td>
+      <td> <%= description(@request) %> </td>
+      <th> <%= number_to_currency(@request.sales_price) %> </th>
+    </tr>
+  </tbody>
+</table>
+
+
+<p>
+  <strong>CONDICIONES: </strong>
+</p>
+
+<ul>
+  <li> Precio unitario.</li>
+  <li> Estos precios son más 16% de IVA.</li>
+  <li> En caso de variar medidas, materiales, cantidad ó impresión el precio también cambiará.</li>
+  <li> El tiempo de entrega es de 18 a 20 días hábiles una vez autorizado el diseño y depositado el 50% de anticipo.</li>
+  <li> En caso de requerirlo el flete corre a cargo del cliente.</li>
+  <li> Por ajustes de maquina todo pedido especial puede variar 10% de mas o de menos en cantidad.</li>
+  <li> Esta cotización tiene una vigencia de 30 días.</li>
+</ul>
+
+<p> Sin más por el momento quedo a sus órdenes para cualquier duda al respecto. </p>
+
+<p>
+  <strong>ATENTAMENTE:</strong>
+</p>
+
+<p>
+  <strong>
+    <%= current_user.first_name %>
+    <%= current_user.middle_name %>
+    <%= current_user.last_name %>
+  </strong>
+</p>
+
+<strong>
+  <p> Diseños de Cartón Sucursal <%= @request.store.store_name.capitalize %> </p>
+  <p> Tel. <%= number_to_phone(@request.store.direct_phone, area_code: true) %></p>
+  <p> <%= @request.store.email %> </p>
+  <p> www.disenosdecarton.com.mx </p>
+</strong>
+<br /><br /><br />

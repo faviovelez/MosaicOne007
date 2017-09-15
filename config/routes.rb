@@ -80,7 +80,15 @@ Rails.application.routes.draw do
 
   resources :bills
 
-  get 'bills/get_pdf/:id', to: 'bills#get_pdf'
+  get 'bills/bill_doc/:id', to: 'bills#bill_doc'
+
+  get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc'
+
+  get 'requests/authorisation_page/:id', to: 'requests#authorisation_page'
+
+  get 'requests/estimate_doc/:id', to: 'requests#estimate_doc'
+
+  get 'requests/estimate_page/:id', to: 'requests#estimate_page'
 
   get 'requests/confirm/:id', to: 'requests#confirm', as: 'confirm_requests'
 

@@ -1,0 +1,143 @@
+
+  <div class="first-wrapper">
+    <%= image_tag 'logo-disenos-decarton.png', class: 'authorisation-img'%>
+
+    <div class="text-wrapper">
+      <p class="date">
+        <strong> Fecha: </strong>
+        <%= l Date.today %>
+      </p>
+
+      <p>
+        <strong> Nombre: </strong>
+        <%= @request.prospect.legal_or_business_name %>
+      </p>
+
+      <p>
+        <strong>
+          Atención:
+        </strong>
+        <%=@request.prospect.contact_first_name %>
+        <%=@request.prospect.contact_middle_name %>
+        <%=@request.prospect.contact_last_name %>
+        <%=@request.prospect.second_last_name %>
+      </p>
+
+      <p>
+        <strong>
+          Teléfono:
+        </strong>
+        <%= number_to_phone(@request.prospect.direct_phone, area_code: true) %>
+      </p>
+    </div>
+
+  </div>
+
+  <div class="wrapper">
+
+    <div class="icon-sidebar">
+      <%= image_tag 'icon-linea-hogar.jpg', class: 'icon-img'%>
+      <%= image_tag 'icon-alimentos-regalos.jpg', class: 'icon-img'%>
+      <%= image_tag 'icon-linea-ecologica.jpg', class: 'icon-img'%>
+      <%= image_tag 'icon-linea-oficina.jpg', class: 'icon-img'%>
+      <%= image_tag 'icon-empaque-embalaje.jpg', class: 'icon-img'%>
+      <%= image_tag 'icon-linea-exhibidores.jpg', class: 'icon-img'%>
+      <%= image_tag 'icon-dis-esp.jpg', class: 'icon-img'%>
+    </div>
+
+    <div class="authorisation-table">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-md-1"> Cantidad </th>
+            <th class="col-md-2"> Descripción </th>
+            <th class="col-md-1"> Precio Unitario </th>
+            <th class="col-md-1"> Total sin IVA </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td> <%= number_with_delimiter(@request.quantity) %> </td>
+            <td> <%= description(@request) %> </td>
+            <td> <%= number_to_currency(@request.sales_price) %> </td>
+            <td> <%= number_to_currency(product_total(@request)) %> </td>
+          </tr>
+          <tr>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <strong>
+                Anticipo:
+              </strong>
+            </td>
+            <td> Subtotal: </td>
+            <td> <%= number_to_currency(product_total(@request)) %> </td>
+          </tr>
+          <tr>
+            <tr>
+              <td></td>
+            </tr>
+            <tr>
+            <td></td>
+            <td class="left">Recibí la cantidad de: $_________________ pesos por concepto del presente pedido.</td>
+            <td> IVA: </td>
+            <td> <%= number_to_currency(calculate_tax(@request)) %> </td>
+          </tr>
+          <tr>
+            <td></td>
+          </tr>
+          <tr>
+          <tr>
+            <td></td>
+            <td class="left">
+              Nombre y firma __________________________
+            </td>
+            <td>
+              <strong>
+                Total Neto:
+              </strong>
+            </td>
+            <td>
+              <strong>
+                <%= number_to_currency(sum_total(@request)) %>
+              </strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="signature">
+
+        <p class="left">
+          <strong>Saldo pendiente: </strong>
+          <%= number_to_currency(sum_total(@request))%><br /><br /><br /><br /><br />
+        </p>
+
+        <p class="left">
+          Firma del cliente __________________________ <br />
+          Acepto las condiciones establecidas en este pedido.
+        </p>
+      </div>
+      <p>
+        Fabricamos la caja que su producto necesita: <strong>Caple, Corrugado y Micro Corrugado </strong>
+      </p>
+
+    </div>
+  </div>
+
+  <br /><br />
+  <p>
+    Nota: Por ajustes de máquina, la cantidad de este pedido especial puede variar aproximadamente 10% (hacia arriba o hacia abajo).
+  </p>
+
+  <strong>
+    <p> Diseños de Cartón Sucursal <%= @request.store.store_name.capitalize %> </p>
+    <p> <%= address(@request) %> </p>
+    <p> Tel. <%= number_to_phone(@request.store.direct_phone, area_code: true) %> </p>
+    <p> <%= @request.store.email %> </p>
+    <p> www.disenosdecarton.com.mx </p>
+  </strong>
+  <br /><br /><br />
+</div>

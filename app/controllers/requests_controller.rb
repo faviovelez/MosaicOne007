@@ -1,15 +1,80 @@
 class RequestsController < ApplicationController
 # Este controller solo debe manejar la creación y modificación de requests individuales por la tienda o managers, no los filtros para las bandejas de trabajo.
   before_action :authenticate_user!
-  before_action :set_request, only: [:show, :edit, :update, :destroy, :check_assigned, :manager, :manager_view, :manager_after, :confirm, :confirm_view, :price, :delete_authorisation_or_payment, :sensitive_fields_changed_after_price_set]
-  before_action :get_documents, only: [:edit, :show, :confirm, :confirm_view, :manager, :manager_view, :manager_after]
+  layout 'authorisation', only: [:authorisation_doc, :authorisation_page]
+  layout 'estimate', only: [:estimate_doc, :estimate_page]
+
+  before_action :set_request, only: [
+                                      :show,
+                                      :edit,
+                                      :update,
+                                      :destroy,
+                                      :check_assigned,
+                                      :manager,
+                                      :manager_view,
+                                      :manager_after,
+                                      :confirm,
+                                      :confirm_view,
+                                      :price,
+                                      :delete_authorisation_or_payment,
+                                      :sensitive_fields_changed_after_price_set,
+                                      :estimate_doc,
+                                      :estimate_page,
+                                      :authorisation_doc,
+                                      :authorisation_page
+                                    ]
+
+  before_action :get_documents, only: [
+                                        :edit,
+                                        :show,
+                                        :confirm,
+                                        :confirm_view,
+                                        :manager,
+                                        :manager_view,
+                                        :manager_after
+                                      ]
+
 
   # GET /requests
   # GET /requests.json
   # Un Request siempre debe estar ligado a un Prospect cuando se crea.
   def index
     @prospect = Prospect.find(params[:prospect_id])
-    @requests = @prospect.requests
+    @requests = @prospect.requests.order(:created_at)
+  end
+
+  def estimate_page
+  end
+
+  def authorisation_page
+  end
+
+  def estimate_doc
+    filename = "cotización-#{@request.store.store_name}-#{@request.id}"
+    respond_to do |format|
+      format.html
+      format.pdf {
+        render template: 'requests/estimate_doc',
+        pdf: filename,
+        page_size: 'Letter',
+        layout: 'estimate.html',
+        show_as_html: params[:debug].present?
+      }
+    end
+  end
+
+  def authorisation_doc
+    filename = "pedido-#{@request.store.store_name}-#{@request.id}"
+    respond_to do |format|
+      format.html
+      format.pdf {
+        render template: 'requests/authorisation_doc',
+        pdf: filename,
+        page_size: 'Letter',
+        layout: 'authorisation.html',
+        show_as_html: params[:debug].present?
+      }
+    end
   end
 
   # GET /requests/1

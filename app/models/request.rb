@@ -73,7 +73,7 @@ class Request < ActiveRecord::Base
 
   # Si la fecha de entrega existe, validar que no sea en el pasado.
   def delivery_date_future
-    if delivery_date.present? && delivery_date < Date.today
+    if delivery_date.present? && delivery_date < created_at.to_date
       errors[:base] << "La fecha no puede estar en el pasado."
     end
   end

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Factura</title>
+    <meta charset='utf-8' />
+    <%= stylesheet_link_tag  "authorisation" %>
+    <%= stylesheet_link_tag  "bootstrap" %>
+    <%= javascript_include_tag "number_pages" %>
+  </head>
+  <body onload='number_pages'>
+    <div id="content">
+      <%= yield %>
+    </div>
+  </body>
+</html>

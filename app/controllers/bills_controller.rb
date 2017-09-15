@@ -1,5 +1,5 @@
 class BillsController < ApplicationController
-  before_action :set_bill, only: [:show, :edit, :bill, :get_pdf, :update, :destroy]
+  before_action :set_bill, only: [:show, :edit, :bill, :bill_doc, :update, :destroy]
   require 'rqrcode'
 
   # GET /bills
@@ -23,7 +23,7 @@ class BillsController < ApplicationController
     @qr = RQRCode::QRCode.new( (site + '&id=' + id + '&re=' + emisor + '&rr=' + '&rr=' + total + '&fe=' + sello),  :size => 12, :level => :h )
   end
 
-  def get_pdf
+  def bill_doc
     qrcode
     filename = "fact-#{@bill.id}"
     respond_to do |format|

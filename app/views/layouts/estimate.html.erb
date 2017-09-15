@@ -3,15 +3,11 @@
   <head>
     <title>Factura</title>
     <meta charset='utf-8' />
+    <%= wicked_pdf_stylesheet_link_tag "authorisation" %>
     <%= wicked_pdf_stylesheet_link_tag "bootstrap" %>
-    <%= wicked_pdf_stylesheet_link_tag "bill" %>
-    <%= wicked_pdf_stylesheet_link_tag "qr" %>
     <%= wicked_pdf_javascript_include_tag "number_pages" %>
   </head>
   <body onload='number_pages'>
-    <div id="header">
-      <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'img-bill' %>
-    </div>
     <div id="content">
       <%= yield %>
     </div>
