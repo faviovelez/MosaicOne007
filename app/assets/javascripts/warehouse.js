@@ -272,11 +272,14 @@ $(function(){
 
           var calculateSubtotal = function(){
             var total = parseFloat($('input#supplier_total_amount').val().replace(/,/,''));
-            var taxesRate = total /  (1 + parseFloat($('input#supplier_taxes_rate').val()) / 100);
+            var taxesRate = ((100 +  parseFloat($('input#supplier_taxes_rate').val()) ) / 100);
+            console.log(taxesRate);
             if (!$('#checkPercent').is(':checked')){
               taxesRate = parseFloat($('input#supplier_taxes_rate').val());
+              $('#supplier_subtotal').val((total - taxesRate).toFixed(2));
+            } else {
+              $('#supplier_subtotal').val((total / taxesRate).toFixed(2));
             }
-            $('#supplier_subtotal').val(total - taxesRate);
             $('#supplier_subtotal').maskMoney();
           };
 
