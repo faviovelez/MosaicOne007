@@ -159,7 +159,7 @@ $(function(){
 
     var findInSelect = function(findCode, id){
       var find = false;
-      $.each($('select'), function(){
+      $.each($('select.isSelect2'), function(){
         if ($(this).val().toString() === findCode.toString() && $(this).attr('id') !== id){
           find = true;
           return true;
@@ -230,11 +230,13 @@ $(function(){
               "</tr>";
             $('tbody').prepend(tr);
             $('#selectForProduct'+ inc).append($('#trForProduct1 select').html());
-            $('#selectForProduct'+ inc).select2({
-              templateSelection: formatState,
-              multiple: true,
-              maximumSelectionLength: 1
-            })
+            $('#selectForProduct'+ inc)
+              .addClass('isSelect2')
+              .select2({
+                templateSelection: formatState,
+                multiple: true,
+                maximumSelectionLength: 1
+              })
               .change(function(){
                 var dec = parseInt($(this).attr('id').match(/\d+/)[0]);
                 changeAction(this, dec + 1, dec);
@@ -248,7 +250,9 @@ $(function(){
 
     if ($('#product1').length > 0) {
       setTimeout(function(){
-        $('#product1').select2({
+        $('#product1')
+          .addClass('isSelect2')
+          .select2({
           templateSelection: formatState,
           multiple: true,
           maximumSelectionLength: 1,
