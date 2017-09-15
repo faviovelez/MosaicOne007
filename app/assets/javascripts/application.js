@@ -23,6 +23,10 @@
 
 $(document).ready(function() {
 
+  if (!waitLoader) {
+    $(".se-pre-con").fadeOut("slow");
+  }
+
   setTimeout(function() {
     $('#mydropdown').click(function(event){
       event.preventDefault();

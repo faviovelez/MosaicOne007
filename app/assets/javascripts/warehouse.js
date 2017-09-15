@@ -241,7 +241,8 @@ $(function(){
       $('#product1').select2({
         templateSelection: formatState,
         multiple: true,
-        maximumSelectionLength: 1
+        maximumSelectionLength: 1,
+        width: 300
       })
       .change(function(){
         changeAction(this, 2, 1);
@@ -250,11 +251,10 @@ $(function(){
       if ($('#suppliersList')) {
 
         $('#suppliersList').select2({
-          width: 500
+          width: 300
         });
 
         $('#supplier_taxes_rate').mask("00", {placeholder: "__"}).css({'text-align': 'center'});
-        $('#supplier_subtotal').maskMoney();
 
         $('#supplier_taxes_rate').keyup(function(){
           var subtotal = parseFloat($('input#supplier_subtotal').val().replace(/,/,''));
@@ -309,6 +309,7 @@ $(function(){
           return false;
         });
       }
+      $(".se-pre-con").fadeOut("slow");
     }, 200);
 
   }
