@@ -272,7 +272,7 @@ $(function(){
 
           var calculateSubtotal = function(){
             var total = parseFloat($('input#supplier_total_amount').val().replace(/,/,''));
-            var taxesRate = total * parseFloat($('input#supplier_taxes_rate').val()) / 100;
+            var taxesRate = total /  (1 + parseFloat($('input#supplier_taxes_rate').val()) / 100);
             if (!$('#checkPercent').is(':checked')){
               taxesRate = parseFloat($('input#supplier_taxes_rate').val());
             }
