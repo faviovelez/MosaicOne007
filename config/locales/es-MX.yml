@@ -156,7 +156,7 @@ es-MX:
         folio:        'Folio'
         date_of_bill: 'Fecha de factura'
         subtotal:     'Sub total sin IVA'
-        taxes_rate:   'Porcentaje de IVA'
+        taxes_rate:   'IVA'
         total_amount: 'Total'
   number:
     currency:

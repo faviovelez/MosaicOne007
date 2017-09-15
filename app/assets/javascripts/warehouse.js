@@ -269,12 +269,23 @@ $(function(){
           });
 
           $('#supplier_taxes_rate').mask("00", {placeholder: "__"}).css({'text-align': 'center'});
+          $('#supplier_total_amount').maskMoney();
+
+          var calculateSubtotal = function(){
+            var total = parseFloat($('input#supplier_total_amount').val().replace(/,/,''));
+            var taxesRate = total * parseFloat($('input#supplier_taxes_rate').val()) / 100;
+            if (!$('#checkPercent').is(':checked')){
+              taxesRate = parseFloat($('input#supplier_taxes_rate').val());
+            }
+            $('#supplier_subtotal').val(total - taxesRate);
+          };
+
+          $('#checkPercent').change(function(){
+            calculateSubtotal();
+          });
 
           $('#supplier_taxes_rate').keyup(function(){
-            var subtotal = parseFloat($('input#supplier_subtotal').val().replace(/,/,''));
-            var taxesRate = ((100 +  parseFloat($('input#supplier_taxes_rate').val()) ) / 100);
-            var total = subtotal * taxesRate;
-            $('#supplier_total_amount').val(total);
+            calculateSubtotal();
           });
 
           initValidation();

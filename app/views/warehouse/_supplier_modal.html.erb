@@ -20,16 +20,17 @@
             <%= f.date_field :date_of_bill %>
           </div>
           <div class="form-group">
-            <%= f.label :subtotal %>
-            <%= f.text_field :subtotal %>
+            <%= f.label :total_amount %>
+            <%= f.text_field :total_amount %>
           </div>
           <div class="form-group">
             <%= f.label :taxes_rate %>
             <%= f.text_field :taxes_rate %>
+            <label><input type="checkbox" id='checkPercent'> %</label>
           </div>
           <div class="form-group">
-            <%= f.label :total_amount %>
-            <%= f.text_field :total_amount, disabled: true %>
+            <%= f.label :subtotal %>
+            <%= f.text_field :subtotal, disabled: true %>
           </div>
         <% end %>
       </div>
