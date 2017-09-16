@@ -13,6 +13,9 @@ class Product < ActiveRecord::Base
   has_many :production_requests, dependent: :destroy
   has_one :request, dependent: :destroy
   belongs_to :warehouse
+  belongs_to :unit
+  belongs_to :sat_key
+  belongs_to :sat_unit_key
 
   validates :unique_code, presence: { message: "Debe anotar un código de producto."}
 

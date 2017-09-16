@@ -11,4 +11,16 @@ class Bill < ActiveRecord::Base
   belongs_to :receiving_company, class_name: 'BillingAddress'
   mount_uploader :pdf, BillUploader
   mount_uploader :xml, BillUploader
+  belongs_to :expedition_zip
+  belongs_to :payment_conditions
+  belongs_to :payment_method
+  belongs_to :payment_form
+  belongs_to :tax_regime
+  belongs_to :cfdi_use
+  belongs_to :tax
+  belongs_to :pac
+  belongs_to :relation_type
+  belongs_to :type_of_bill
+  belongs_to :parent, class_name: "Bill", foreign_key: 'parent_id'
+  has_many :child_bills, class_name: "Bill", foreign_key: 'child_bills_id'
 end

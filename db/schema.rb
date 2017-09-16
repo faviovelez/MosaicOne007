@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170916190999) do
+ActiveRecord::Schema.define(version: 20170916193901) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -192,6 +192,12 @@ ActiveRecord::Schema.define(version: 20170916190999) do
     t.datetime "updated_at",  null: false
   end
 
+  create_table "classifications", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "cost_types", force: :cascade do |t|
     t.string   "warehouse_cost_type"
     t.datetime "created_at",          null: false
@@ -309,6 +315,15 @@ ActiveRecord::Schema.define(version: 20170916190999) do
   add_index "expenses", ["store_id"], name: "index_expenses_on_store_id", using: :btree
   add_index "expenses", ["user_id"], name: "index_expenses_on_user_id", using: :btree
 
+  create_table "exterior_colors", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "material_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "exterior_colors", ["material_id"], name: "index_exterior_colors_on_material_id", using: :btree
+
   create_table "images", force: :cascade do |t|
     t.string   "image"
     t.datetime "created_at", null: false
@@ -317,6 +332,15 @@ ActiveRecord::Schema.define(version: 20170916190999) do
   end
 
   add_index "images", ["product_id"], name: "index_images_on_product_id", using: :btree
+
+  create_table "interior_colors", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "material_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "interior_colors", ["material_id"], name: "index_interior_colors_on_material_id", using: :btree
 
   create_table "inventories", force: :cascade do |t|
     t.integer  "product_id"
@@ -341,6 +365,12 @@ ActiveRecord::Schema.define(version: 20170916190999) do
 
   add_index "inventory_configurations", ["business_unit_id"], name: "index_inventory_configurations_on_business_unit_id", using: :btree
   add_index "inventory_configurations", ["store_id"], name: "index_inventory_configurations_on_store_id", using: :btree
+
+  create_table "materials", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "movements", force: :cascade do |t|
     t.integer  "product_id"
@@ -507,6 +537,12 @@ ActiveRecord::Schema.define(version: 20170916190999) do
   end
 
   add_index "product_sales", ["product_id"], name: "index_product_sales_on_product_id", using: :btree
+
+  create_table "product_types", force: :cascade do |t|
+    t.string   "product_type"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
 
   create_table "production_orders", force: :cascade do |t|
     t.integer  "user_id"
@@ -725,6 +761,15 @@ ActiveRecord::Schema.define(version: 20170916190999) do
   add_index "requests", ["product_id"], name: "index_requests_on_product_id", using: :btree
   add_index "requests", ["prospect_id"], name: "index_requests_on_prospect_id", using: :btree
   add_index "requests", ["store_id"], name: "index_requests_on_store_id", using: :btree
+
+  create_table "resistances", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "material_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "resistances", ["material_id"], name: "index_resistances_on_material_id", using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string   "name"
@@ -973,7 +1018,9 @@ ActiveRecord::Schema.define(version: 20170916190999) do
   add_foreign_key "expenses", "business_units"
   add_foreign_key "expenses", "stores"
   add_foreign_key "expenses", "users"
+  add_foreign_key "exterior_colors", "materials"
   add_foreign_key "images", "products"
+  add_foreign_key "interior_colors", "materials"
   add_foreign_key "inventories", "products"
   add_foreign_key "inventory_configurations", "business_units"
   add_foreign_key "inventory_configurations", "stores"
@@ -1031,6 +1078,7 @@ ActiveRecord::Schema.define(version: 20170916190999) do
   add_foreign_key "requests", "products"
   add_foreign_key "requests", "prospects"
   add_foreign_key "requests", "stores"
+  add_foreign_key "resistances", "materials"
   add_foreign_key "store_sales", "stores"
   add_foreign_key "store_types", "business_units"
   add_foreign_key "stores", "billing_addresses"
