@@ -1,3 +1,6 @@
+
+<h2 class="center"> Formato de Pedido </h2>
+
   <div class="first-wrapper">
     <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'authorisation-img'%>
 
@@ -34,27 +37,20 @@
 
   <div class="wrapper">
 
-    <div class="icon-sidebar">
-      <%= wicked_pdf_image_tag 'icon-linea-hogar.jpg', class: 'icon-img'%>
-      <%= wicked_pdf_image_tag 'icon-alimentos-regalos.jpg', class: 'icon-img'%>
-      <%= wicked_pdf_image_tag 'icon-linea-ecologica.jpg', class: 'icon-img'%>
-      <%= wicked_pdf_image_tag 'icon-linea-oficina.jpg', class: 'icon-img'%>
-      <%= wicked_pdf_image_tag 'icon-empaque-embalaje.jpg', class: 'icon-img'%>
-      <%= wicked_pdf_image_tag 'icon-linea-exhibidores.jpg', class: 'icon-img'%>
-      <%= wicked_pdf_image_tag 'icon-dis-esp.jpg', class: 'icon-img'%>
-    </div>
-
     <div class="authorisation-table">
       <table>
         <thead>
           <tr>
-            <th class="col-md-1"> Cantidad </th>
+            <th class="col-md-half"> Cantidad </th>
             <th class="col-md-2"> Descripción </th>
             <th class="col-md-1"> Precio Unitario </th>
             <th class="col-md-1"> Total sin IVA </th>
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td><br></td>
+          </tr>
           <tr>
             <td> <%= number_with_delimiter(@request.quantity) %> </td>
             <td> <%= description(@request) %> </td>
@@ -68,7 +64,9 @@
             <td></td>
             <td>
               <strong>
+                <br /><br />
                 Anticipo:
+                <br /><br />
               </strong>
             </td>
             <td> Subtotal: </td>
@@ -80,7 +78,7 @@
             </tr>
             <tr>
             <td></td>
-            <td class="left">Recibí la cantidad de: $_________________ pesos por concepto del presente pedido.</td>
+            <td class="left">Recibí la cantidad de: $_________________   pesos por concepto del presente pedido.</td>
             <td> IVA: </td>
             <td> <%= number_to_currency(calculate_tax(@request)) %> </td>
           </tr>
@@ -91,15 +89,19 @@
           <tr>
             <td></td>
             <td class="left">
+              <br /><br />
+
               Nombre y firma __________________________
             </td>
             <td>
               <strong>
+                <br /><br />
                 Total Neto:
               </strong>
             </td>
             <td>
               <strong>
+                <br /><br />
                 <%= number_to_currency(sum_total(@request)) %>
               </strong>
             </td>
@@ -109,34 +111,48 @@
 
       <div class="signature">
 
-        <p class="left">
+        <p class="indent">
+          <br /><br />
           <strong>Saldo pendiente: </strong>
-          <%= number_to_currency(sum_total(@request))%><br /><br /><br /><br /><br />
+          <%= number_to_currency(sum_total(@request))%><br /><br /><br />
         </p>
 
-        <p class="left">
-          Firma del cliente __________________________ <br />
-          Acepto las condiciones establecidas en este pedido.
-        </p>
       </div>
-      <p>
-        Fabricamos la caja que su producto necesita: <strong>Caple, Corrugado y Micro Corrugado </strong>
+
+      <p class="indent">
+        Por ajustes de máquina, la cantidad de este pedido especial puede variar aproximadamente 10% (hacia arriba o hacia abajo).<br /><br />
       </p>
 
     </div>
+
+    <p class="center">
+      Autorizo el pedido con las características descritas en el presente documento.<br /><br /><br />
+      __________________________<br />
+      Firma del cliente
+    </p>
+
+    <div class="icon-sidebar">
+      <%= wicked_pdf_image_tag 'icon-linea-hogar.jpg', class: 'icon-img'%>
+      <%= wicked_pdf_image_tag 'icon-alimentos-regalos.jpg', class: 'icon-img'%>
+      <%= wicked_pdf_image_tag 'icon-linea-ecologica.jpg', class: 'icon-img'%>
+      <%= wicked_pdf_image_tag 'icon-linea-oficina.jpg', class: 'icon-img'%>
+      <%= wicked_pdf_image_tag 'icon-empaque-embalaje.jpg', class: 'icon-img'%>
+      <%= wicked_pdf_image_tag 'icon-linea-exhibidores.jpg', class: 'icon-img'%>
+      <%= wicked_pdf_image_tag 'icon-dis-esp.jpg', class: 'icon-img'%>
+    </div>
+
   </div>
 
   <br /><br />
-  <p>
-    Nota: Por ajustes de máquina, la cantidad de este pedido especial puede variar aproximadamente 10% (hacia arriba o hacia abajo).
-  </p>
 
+<div class="center bottom">
   <strong>
-    <p> Diseños de Cartón Sucursal <%= @request.store.store_name.capitalize %> </p>
+    <p> Fabricamos la caja que su producto necesita: Caple, Corrugado y Micro Corrugado </p>
+    <p> Diseños de Cartón, más que cajas... soluciones. <p>
+  </strong>
+    <p> Sucursal <%= @request.store.store_name.capitalize %> </p>
     <p> <%= address(@request) %> </p>
     <p> Tel. <%= number_to_phone(@request.store.direct_phone, area_code: true) %> </p>
     <p> <%= @request.store.email %> </p>
     <p> www.disenosdecarton.com.mx </p>
-  </strong>
-  <br /><br /><br />
 </div>

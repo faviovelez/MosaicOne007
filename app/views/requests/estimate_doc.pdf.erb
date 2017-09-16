@@ -1,6 +1,8 @@
-<%= image_tag 'logo-disenos-decarton.png', class: 'authorisation-img'%>
+<%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'estimate-img'%>
 
+<br /><br />
 <p class="date"> <%= l Date.today %> </p>
+<br /><br />
 
 <strong>
   <p> <%= @request.prospect.legal_or_business_name %> </p>
@@ -13,58 +15,73 @@
   </p>
 </strong>
 
+<br /><br />
+
 <p>Por medio de la presente le envió la cotización solicitada, con la siguiente descripción: </p>
+
+<br /><br />
 
 <table>
   <thead>
     <tr>
-      <th> Cantidad </th>
-      <th> Descripción </th>
-      <th> Precio Unitario </th>
+      <th class="col-md-half"> Cantidad </th>
+      <th class="col-md-2"> Descripción </th>
+      <th class="col-md-1"> Precio Unitario </th>
     </tr>
   </thead>
   <tbody>
     <tr>
+      <td>
+        <br />
+      </td>
+    </tr>
+    <tr>
       <td> <%= number_with_delimiter(@request.quantity) %> </td>
-      <td> <%= description(@request) %> </td>
-      <th> <%= number_to_currency(@request.sales_price) %> </th>
+      <td class="description"> <%= description(@request) %> </td>
+      <td> <%= number_to_currency(@request.sales_price) %> </td>
     </tr>
   </tbody>
 </table>
 
+<br /><br />
 
 <p>
   <strong>CONDICIONES: </strong>
 </p>
 
+
 <ul>
-  <li> Precio unitario.</li>
-  <li> Estos precios son más 16% de IVA.</li>
-  <li> En caso de variar medidas, materiales, cantidad ó impresión el precio también cambiará.</li>
-  <li> El tiempo de entrega es de 18 a 20 días hábiles una vez autorizado el diseño y depositado el 50% de anticipo.</li>
-  <li> En caso de requerirlo el flete corre a cargo del cliente.</li>
-  <li> Por ajustes de maquina todo pedido especial puede variar 10% de mas o de menos en cantidad.</li>
   <li> Esta cotización tiene una vigencia de 30 días.</li>
+  <li> Los precios descritos en esta cotización no incluyen IVA.</li>
+  <li> En caso de requerirse, el flete corre a cargo del cliente.</li>
+  <li> Por ajustes de maquina todo pedido especial puede variar 10% de mas o de menos en cantidad.</li>
+  <li> Cualquier cambio en materiales, cantidad, medidas ó impresión el modificará el precio cotizado.</li>
+  <li> Tiempo de entrega: 18 a 20 días hábiles a partir de la autorización y depósito del 50% de anticipo.</li>
 </ul>
 
+<br /><br />
 <p> Sin más por el momento quedo a sus órdenes para cualquier duda al respecto. </p>
 
-<p>
+<br /><br /><br />
+
+<p class="center">
   <strong>ATENTAMENTE:</strong>
 </p>
 
-<p>
+<p class="center">
   <strong>
-    <%= current_user.first_name %>
-    <%= current_user.middle_name %>
-    <%= current_user.last_name %>
+    <%= username(@request) %>
   </strong>
 </p>
 
-<strong>
-  <p> Diseños de Cartón Sucursal <%= @request.store.store_name.capitalize %> </p>
-  <p> Tel. <%= number_to_phone(@request.store.direct_phone, area_code: true) %></p>
-  <p> <%= @request.store.email %> </p>
-  <p> www.disenosdecarton.com.mx </p>
-</strong>
-<br /><br /><br />
+<br /><br />
+<div class="center bottom">
+  <strong>
+    <p> Diseños de Cartón, más que cajas... soluciones. <p>
+  </strong>
+    <p> Sucursal <%= @request.store.store_name.capitalize %> </p>
+    <p> <%= address(@request) %> </p>
+    <p> Tel. <%= number_to_phone(@request.store.direct_phone, area_code: true) %> </p>
+    <p> <%= @request.store.email %> </p>
+    <p> www.disenosdecarton.com.mx </p>
+</div>

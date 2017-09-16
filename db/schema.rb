@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170914173139) do
+ActiveRecord::Schema.define(version: 20170916190999) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,14 +82,45 @@ ActiveRecord::Schema.define(version: 20170914173139) do
     t.integer  "receiving_company_id"
     t.integer  "business_unit_id"
     t.integer  "store_id"
+    t.string   "sequence"
+    t.string   "folio"
+    t.integer  "expedition_zip_id"
+    t.integer  "payment_condition_id"
+    t.integer  "payment_method_id"
+    t.integer  "payment_form_id"
+    t.integer  "tax_regime_id"
+    t.integer  "cfdi_use_id"
+    t.integer  "tax_id"
+    t.integer  "pac_id"
+    t.string   "fiscal_folio"
+    t.string   "digital_stamp"
+    t.string   "sat_stamp"
+    t.string   "original_chain"
+    t.integer  "relation_type_id"
+    t.integer  "child_bills_id"
+    t.integer  "parent_id"
+    t.string   "references_field"
+    t.integer  "type_of_bill_id"
   end
 
   add_index "bills", ["business_unit_id"], name: "index_bills_on_business_unit_id", using: :btree
+  add_index "bills", ["cfdi_use_id"], name: "index_bills_on_cfdi_use_id", using: :btree
+  add_index "bills", ["child_bills_id"], name: "index_bills_on_child_bills_id", using: :btree
+  add_index "bills", ["expedition_zip_id"], name: "index_bills_on_expedition_zip_id", using: :btree
   add_index "bills", ["issuing_company_id"], name: "index_bills_on_issuing_company_id", using: :btree
   add_index "bills", ["order_id"], name: "index_bills_on_order_id", using: :btree
+  add_index "bills", ["pac_id"], name: "index_bills_on_pac_id", using: :btree
+  add_index "bills", ["parent_id"], name: "index_bills_on_parent_id", using: :btree
+  add_index "bills", ["payment_condition_id"], name: "index_bills_on_payment_condition_id", using: :btree
+  add_index "bills", ["payment_form_id"], name: "index_bills_on_payment_form_id", using: :btree
+  add_index "bills", ["payment_method_id"], name: "index_bills_on_payment_method_id", using: :btree
   add_index "bills", ["prospect_id"], name: "index_bills_on_prospect_id", using: :btree
   add_index "bills", ["receiving_company_id"], name: "index_bills_on_receiving_company_id", using: :btree
+  add_index "bills", ["relation_type_id"], name: "index_bills_on_relation_type_id", using: :btree
   add_index "bills", ["store_id"], name: "index_bills_on_store_id", using: :btree
+  add_index "bills", ["tax_id"], name: "index_bills_on_tax_id", using: :btree
+  add_index "bills", ["tax_regime_id"], name: "index_bills_on_tax_regime_id", using: :btree
+  add_index "bills", ["type_of_bill_id"], name: "index_bills_on_type_of_bill_id", using: :btree
 
   create_table "business_group_sales", force: :cascade do |t|
     t.integer  "business_group_id"
@@ -154,6 +185,12 @@ ActiveRecord::Schema.define(version: 20170914173139) do
   end
 
   add_index "carriers", ["delivery_address_id"], name: "index_carriers_on_delivery_address_id", using: :btree
+
+  create_table "cfdi_uses", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "cost_types", force: :cascade do |t|
     t.string   "warehouse_cost_type"
@@ -245,6 +282,12 @@ ActiveRecord::Schema.define(version: 20170914173139) do
 
   add_index "documents", ["design_request_id"], name: "index_documents_on_design_request_id", using: :btree
   add_index "documents", ["request_id"], name: "index_documents_on_request_id", using: :btree
+
+  create_table "expedition_zips", force: :cascade do |t|
+    t.integer  "zip"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "expenses", force: :cascade do |t|
     t.float    "subtotal"
@@ -365,6 +408,31 @@ ActiveRecord::Schema.define(version: 20170914173139) do
 
   add_index "orders_users", ["order_id"], name: "index_orders_users_on_order_id", using: :btree
   add_index "orders_users", ["user_id"], name: "index_orders_users_on_user_id", using: :btree
+
+  create_table "pacs", force: :cascade do |t|
+    t.string   "name"
+    t.string   "certificate"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "payment_conditions", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "payment_forms", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "payment_methods", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "payments", force: :cascade do |t|
     t.date     "payment_date"
@@ -501,9 +569,15 @@ ActiveRecord::Schema.define(version: 20170914173139) do
     t.float    "cost"
     t.string   "rack"
     t.string   "level"
+    t.integer  "unit_id"
+    t.integer  "sat_key_id"
+    t.integer  "sat_unit_key_id"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
+  add_index "products", ["sat_key_id"], name: "index_products_on_sat_key_id", using: :btree
+  add_index "products", ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id", using: :btree
+  add_index "products", ["unit_id"], name: "index_products_on_unit_id", using: :btree
   add_index "products", ["warehouse_id"], name: "index_products_on_warehouse_id", using: :btree
 
   create_table "products_bills", force: :cascade do |t|
@@ -558,6 +632,12 @@ ActiveRecord::Schema.define(version: 20170914173139) do
   add_index "prospects", ["business_unit_id"], name: "index_prospects_on_business_unit_id", using: :btree
   add_index "prospects", ["delivery_address_id"], name: "index_prospects_on_delivery_address_id", using: :btree
   add_index "prospects", ["store_id"], name: "index_prospects_on_store_id", using: :btree
+
+  create_table "relation_types", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "request_users", force: :cascade do |t|
     t.integer  "request_id"
@@ -654,6 +734,27 @@ ActiveRecord::Schema.define(version: 20170914173139) do
     t.string   "translation"
   end
 
+  create_table "sak_keys", force: :cascade do |t|
+    t.string   "sat_key"
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "sat_keys", force: :cascade do |t|
+    t.string   "sat_key"
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "sat_unit_keys", force: :cascade do |t|
+    t.string   "unit"
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "store_sales", force: :cascade do |t|
     t.integer  "store_id"
     t.string   "month"
@@ -734,6 +835,31 @@ ActiveRecord::Schema.define(version: 20170914173139) do
   add_index "suppliers", ["delivery_address_id"], name: "index_suppliers_on_delivery_address_id", using: :btree
   add_index "suppliers", ["store_id"], name: "index_suppliers_on_store_id", using: :btree
 
+  create_table "tax_regimes", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "taxes", force: :cascade do |t|
+    t.string   "description"
+    t.float    "value"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "type_of_bills", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "units", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "user_requests", force: :cascade do |t|
     t.integer "user_id"
     t.integer "request_id"
@@ -813,9 +939,19 @@ ActiveRecord::Schema.define(version: 20170914173139) do
   add_foreign_key "bill_receiveds", "stores"
   add_foreign_key "bill_receiveds", "suppliers"
   add_foreign_key "bills", "business_units"
+  add_foreign_key "bills", "cfdi_uses"
+  add_foreign_key "bills", "expedition_zips"
   add_foreign_key "bills", "orders"
+  add_foreign_key "bills", "pacs"
+  add_foreign_key "bills", "payment_conditions"
+  add_foreign_key "bills", "payment_forms"
+  add_foreign_key "bills", "payment_methods"
   add_foreign_key "bills", "prospects"
+  add_foreign_key "bills", "relation_types"
   add_foreign_key "bills", "stores"
+  add_foreign_key "bills", "tax_regimes"
+  add_foreign_key "bills", "taxes"
+  add_foreign_key "bills", "type_of_bills"
   add_foreign_key "business_group_sales", "business_groups"
   add_foreign_key "business_groups_suppliers", "business_groups"
   add_foreign_key "business_groups_suppliers", "suppliers"
@@ -878,6 +1014,9 @@ ActiveRecord::Schema.define(version: 20170914173139) do
   add_foreign_key "production_requests", "production_orders"
   add_foreign_key "production_requests", "products"
   add_foreign_key "products", "business_units"
+  add_foreign_key "products", "sat_keys"
+  add_foreign_key "products", "sat_unit_keys"
+  add_foreign_key "products", "units"
   add_foreign_key "products", "warehouses"
   add_foreign_key "products_bills", "bills"
   add_foreign_key "products_bills", "products"

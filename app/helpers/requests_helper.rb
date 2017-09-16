@@ -68,4 +68,10 @@ module RequestsHelper
     @address
   end
 
+  def username(request)
+    roles = ['store', 'store-admin']
+    user = request.users.joins(:role).where('roles.name' => roles).first
+    user_name = user.first_name.capitalize + ' ' + user.middle_name.capitalize + ' ' + user.last_name.capitalize
+  end
+
 end

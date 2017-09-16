@@ -1,5 +1,8 @@
 <%= image_tag 'logo-disenos-decarton.png', class: 'authorisation-img'%>
 
+
+
+<br /><br />
 <p class="date"> <%= l Date.today %> </p>
 
 <strong>
@@ -18,16 +21,16 @@
 <table>
   <thead>
     <tr>
-      <th> Cantidad </th>
-      <th> Descripción </th>
-      <th> Precio Unitario </th>
+      <th class="col-md-half"> Cantidad </th>
+      <th class="col-md-2"> Descripción </th>
+      <th class="col-md-1"> Precio Unitario </th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td> <%= number_with_delimiter(@request.quantity) %> </td>
       <td> <%= description(@request) %> </td>
-      <th> <%= number_to_currency(@request.sales_price) %> </th>
+      <td> <%= number_to_currency(@request.sales_price) %> </td>
     </tr>
   </tbody>
 </table>
