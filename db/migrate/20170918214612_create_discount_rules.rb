@@ -2,8 +2,8 @@ class CreateDiscountRules < ActiveRecord::Migration
   def change
     create_table :discount_rules do |t|
       t.float :percentage
-      t.array :product_list, default: []
-      t.array :prospect_list, default: []
+      t.text :product_list, array: true, default: []
+      t.text :prospect_list, array: true, default: []
       t.references :product, index: true, foreign_key: true
       t.date :initial_date
       t.date :final_date

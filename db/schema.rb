@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170916212114) do
+ActiveRecord::Schema.define(version: 20170918214612) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -290,6 +290,30 @@ ActiveRecord::Schema.define(version: 20170916212114) do
   end
 
   add_index "design_requests", ["request_id"], name: "index_design_requests_on_request_id", using: :btree
+
+  create_table "discount_rules", force: :cascade do |t|
+    t.float    "percentage"
+    t.text     "product_list",     default: [],              array: true
+    t.text     "prospect_list",    default: [],              array: true
+    t.integer  "product_id"
+    t.date     "initial_date"
+    t.date     "final_date"
+    t.integer  "business_unit_id"
+    t.integer  "store_id"
+    t.integer  "user_id"
+    t.string   "rule"
+    t.float    "minimum_amount"
+    t.integer  "minimum_quantity"
+    t.string   "exclusions"
+    t.boolean  "active"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "discount_rules", ["business_unit_id"], name: "index_discount_rules_on_business_unit_id", using: :btree
+  add_index "discount_rules", ["product_id"], name: "index_discount_rules_on_product_id", using: :btree
+  add_index "discount_rules", ["store_id"], name: "index_discount_rules_on_store_id", using: :btree
+  add_index "discount_rules", ["user_id"], name: "index_discount_rules_on_user_id", using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.integer  "request_id"
@@ -1038,6 +1062,10 @@ ActiveRecord::Schema.define(version: 20170916212114) do
   add_foreign_key "design_request_users", "design_requests"
   add_foreign_key "design_request_users", "users"
   add_foreign_key "design_requests", "requests"
+  add_foreign_key "discount_rules", "business_units"
+  add_foreign_key "discount_rules", "products"
+  add_foreign_key "discount_rules", "stores"
+  add_foreign_key "discount_rules", "users"
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"
   add_foreign_key "expenses", "bill_receiveds"
