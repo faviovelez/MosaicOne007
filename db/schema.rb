@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170916193901) do
+ActiveRecord::Schema.define(version: 20170916212114) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,12 +101,20 @@ ActiveRecord::Schema.define(version: 20170916193901) do
     t.integer  "parent_id"
     t.string   "references_field"
     t.integer  "type_of_bill_id"
+    t.string   "certificate"
+    t.integer  "currency_id"
+    t.integer  "fiscal_residency_id"
+    t.string   "id_trib_reg_num"
+    t.string   "confirmation_key"
+    t.float    "exchange_rate"
   end
 
   add_index "bills", ["business_unit_id"], name: "index_bills_on_business_unit_id", using: :btree
   add_index "bills", ["cfdi_use_id"], name: "index_bills_on_cfdi_use_id", using: :btree
   add_index "bills", ["child_bills_id"], name: "index_bills_on_child_bills_id", using: :btree
+  add_index "bills", ["currency_id"], name: "index_bills_on_currency_id", using: :btree
   add_index "bills", ["expedition_zip_id"], name: "index_bills_on_expedition_zip_id", using: :btree
+  add_index "bills", ["fiscal_residency_id"], name: "index_bills_on_fiscal_residency_id", using: :btree
   add_index "bills", ["issuing_company_id"], name: "index_bills_on_issuing_company_id", using: :btree
   add_index "bills", ["order_id"], name: "index_bills_on_order_id", using: :btree
   add_index "bills", ["pac_id"], name: "index_bills_on_pac_id", using: :btree
@@ -203,6 +211,12 @@ ActiveRecord::Schema.define(version: 20170916193901) do
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
     t.string   "description"
+  end
+
+  create_table "currencies", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "delivery_addresses", force: :cascade do |t|
@@ -324,6 +338,11 @@ ActiveRecord::Schema.define(version: 20170916193901) do
 
   add_index "exterior_colors", ["material_id"], name: "index_exterior_colors_on_material_id", using: :btree
 
+  create_table "fiscal_residencies", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "images", force: :cascade do |t|
     t.string   "image"
     t.datetime "created_at", null: false
@@ -406,6 +425,11 @@ ActiveRecord::Schema.define(version: 20170916193901) do
   add_index "movements", ["store_id"], name: "index_movements_on_store_id", using: :btree
   add_index "movements", ["supplier_id"], name: "index_movements_on_supplier_id", using: :btree
   add_index "movements", ["user_id"], name: "index_movements_on_user_id", using: :btree
+
+  create_table "num_reg_id_tribs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "orders", force: :cascade do |t|
     t.string   "status"
@@ -985,7 +1009,9 @@ ActiveRecord::Schema.define(version: 20170916193901) do
   add_foreign_key "bill_receiveds", "suppliers"
   add_foreign_key "bills", "business_units"
   add_foreign_key "bills", "cfdi_uses"
+  add_foreign_key "bills", "currencies"
   add_foreign_key "bills", "expedition_zips"
+  add_foreign_key "bills", "fiscal_residencies"
   add_foreign_key "bills", "orders"
   add_foreign_key "bills", "pacs"
   add_foreign_key "bills", "payment_conditions"

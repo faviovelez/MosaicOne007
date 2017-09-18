@@ -35,6 +35,10 @@
   text-align: left;
 }
 
+.table-head-row {
+  border: 1px solid black;
+}
+
 .wrapper {
   margin-top: 30px;
   display: flex;
@@ -43,6 +47,16 @@
 .authorisation-table {
   margin-top: 50px;
   margin-left: 5px;
+}
+
+.data {
+  padding: 2rem 0rem;
+}
+
+.col-md-half,
+.col-md-one,
+.col-md-two {
+  padding: 0.5rem 0rem;
 }
 
 .icon-sidebar {
@@ -65,17 +79,60 @@
   text-align: center;
   margin-left: 10px;
   margin-right: 30px;
+  border-collapse: collapse;
 }
 
-h2 {
+.center-title {
   color: #296DB2;
 }
 
-th {
+.padding {
+  padding-left: 1rem;
+}
+
+.divider,
+.first-row,
+.first-row-data {
+  border: 1px solid black;
+}
+
+.column-subtotal {
+  border-left:  1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.right {
+  text-align: right;
+  margin-right: 4rem;
+}
+
+.last-row {
+  border-bottom: 1px solid black;
+}
+
+.column-left {
+  border-left:  1px solid black;
+  border-right:  1px solid black;
+}
+
+.column-right {
+  border-left:  1px solid black;
+  border-right:  1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.col-md-half,
+.col-md-one,
+.col-md-two {
   text-align: center;
 }
 
-tr, th, p {
+.table-row,
+.col-md-half,
+.col-md-one,
+.col-md-two,
+.doc-p,
+.data {
   font-size: 1.8rem;
 }
 
@@ -88,11 +145,11 @@ tr, th, p {
   text-align: center;
 }
 
-.col-md-2 {
+.col-md-two {
   width: 35%;
 }
 
-.col-md-1 {
+.col-md-one {
   width: 15%;
 }
 

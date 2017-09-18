@@ -139,8 +139,6 @@ private
                                   :store_type_id,
                                   :store_code,
                                   :store_name,
-                                  :group,
-                                  :discount,
                                   :business_unit_id,
                                   :delivery_address_id,
                                   :billing_address_id,

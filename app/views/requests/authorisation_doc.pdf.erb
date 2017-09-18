@@ -1,21 +1,21 @@
 
-<h2 class="center"> Formato de Pedido </h2>
+<h2 class="center center-title"> Formato de Pedido </h2>
 
   <div class="first-wrapper">
     <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'authorisation-img'%>
 
     <div class="text-wrapper">
-      <p class="date">
+      <p class="date-doc doc-p">
         <strong> Fecha: </strong>
         <%= l Date.today %>
       </p>
 
-      <p>
+      <p class="doc-p">
         <strong> Nombre: </strong>
         <%= @request.prospect.legal_or_business_name %>
       </p>
 
-      <p>
+      <p class="doc-p">
         <strong>
           Atención:
         </strong>
@@ -25,7 +25,7 @@
         <%=@request.prospect.second_last_name %>
       </p>
 
-      <p>
+      <p class="doc-p">
         <strong>
           Teléfono:
         </strong>
@@ -40,68 +40,48 @@
     <div class="authorisation-table">
       <table>
         <thead>
-          <tr>
-            <th class="col-md-half"> Cantidad </th>
-            <th class="col-md-2"> Descripción </th>
-            <th class="col-md-1"> Precio Unitario </th>
-            <th class="col-md-1"> Total sin IVA </th>
+          <tr class="table-row table-head-row">
+            <th class="col-md-half divider"> Cantidad </th>
+            <th class="col-md-two divider"> Descripción </th>
+            <th class="col-md-one divider"> Precio Unitario </th>
+            <th class="col-md-one divider"> Total sin IVA </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><br></td>
+          <tr class="first-row">
+            <td class="data first-row-data"> <%= number_with_delimiter(@request.quantity) %> </td>
+            <td class="data description-table first-row-data"> <%= description(@request) %> </td>
+            <td class="data first-row-data"> <%= number_to_currency(@request.sales_price) %> </td>
+            <td class="data first-row-data"> <%= number_to_currency(product_total(@request)) %> </td>
           </tr>
           <tr>
-            <td> <%= number_with_delimiter(@request.quantity) %> </td>
-            <td> <%= description(@request) %> </td>
-            <td> <%= number_to_currency(@request.sales_price) %> </td>
-            <td> <%= number_to_currency(product_total(@request)) %> </td>
-          </tr>
-          <tr>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>
+            <td class="column-left"></td>
+            <td class="data">
               <strong>
-                <br /><br />
                 Anticipo:
-                <br /><br />
               </strong>
             </td>
-            <td> Subtotal: </td>
-            <td> <%= number_to_currency(product_total(@request)) %> </td>
+            <td class="data column-subtotal"> Subtotal: </td>
+            <td class="data column-right"> <%= number_to_currency(product_total(@request)) %> </td>
           </tr>
           <tr>
-            <tr>
-              <td></td>
-            </tr>
-            <tr>
-            <td></td>
-            <td class="left">Recibí la cantidad de: $_________________   pesos por concepto del presente pedido.</td>
-            <td> IVA: </td>
-            <td> <%= number_to_currency(calculate_tax(@request)) %> </td>
+            <td class="column-left"></td>
+            <td class="left data padding">Recibí la cantidad de: $_________________   pesos por concepto del presente pedido.</td>
+            <td class="data column-subtotal"> IVA: </td>
+            <td class="data column-right"> <%= number_to_currency(calculate_tax(@request)) %> </td>
           </tr>
-          <tr>
-            <td></td>
-          </tr>
-          <tr>
-          <tr>
-            <td></td>
-            <td class="left">
-              <br /><br />
-
+          <tr class="last-row">
+            <td class="column-left"></td>
+            <td class="left data padding">
               Nombre y firma __________________________
             </td>
-            <td>
+            <td class="data column-subtotal">
               <strong>
-                <br /><br />
                 Total Neto:
               </strong>
             </td>
-            <td>
+            <td class="data column-right">
               <strong>
-                <br /><br />
                 <%= number_to_currency(sum_total(@request)) %>
               </strong>
             </td>
@@ -111,21 +91,21 @@
 
       <div class="signature">
 
-        <p class="indent">
+        <p class="right doc-p">
           <br /><br />
           <strong>Saldo pendiente: </strong>
-          <%= number_to_currency(sum_total(@request))%><br /><br /><br />
+          <%= number_to_currency(sum_total(@request))%><br /><br />
         </p>
 
       </div>
 
-      <p class="indent">
+      <p class="indent doc-p">
         Por ajustes de máquina, la cantidad de este pedido especial puede variar aproximadamente 10% (hacia arriba o hacia abajo).<br /><br />
       </p>
 
     </div>
 
-    <p class="center">
+    <p class="center doc-p">
       Autorizo el pedido con las características descritas en el presente documento.<br /><br /><br />
       __________________________<br />
       Firma del cliente

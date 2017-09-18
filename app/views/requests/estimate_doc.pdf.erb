@@ -1,12 +1,12 @@
 <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'estimate-img'%>
 
 <br /><br />
-<p class="date"> <%= l Date.today %> </p>
+<p class="date-doc"> <%= l Date.today %> </p>
 <br /><br />
 
 <strong>
-  <p> <%= @request.prospect.legal_or_business_name %> </p>
-  <p>
+  <p class="doc-p"> <%= @request.prospect.legal_or_business_name %> </p>
+  <p class="doc-p">
     Atención:
     <%=@request.prospect.contact_first_name %>
     <%=@request.prospect.contact_middle_name %>
@@ -17,28 +17,27 @@
 
 <br /><br />
 
-<p>Por medio de la presente le envió la cotización solicitada, con la siguiente descripción: </p>
+<p class="doc-p">Por medio de la presente le envió la cotización solicitada, con la siguiente descripción: </p>
 
 <br /><br />
 
-<table>
+<table class="estimate-table">
   <thead>
-    <tr>
-      <th class="col-md-half"> Cantidad </th>
-      <th class="col-md-2"> Descripción </th>
-      <th class="col-md-1"> Precio Unitario </th>
+    <tr class="table-row table-head-row">
+      <th class="col-md-half divider"> Cantidad </th>
+      <th class="col-md-two divider"> Descripción </th>
+      <th class="col-md-one divider"> Precio Unitario </th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>
-        <br />
+    <tr class="estimate-data">
+      <td class="data">
+        <%= number_with_delimiter(@request.quantity) %>
       </td>
-    </tr>
-    <tr>
-      <td> <%= number_with_delimiter(@request.quantity) %> </td>
-      <td class="description"> <%= description(@request) %> </td>
-      <td> <%= number_to_currency(@request.sales_price) %> </td>
+      <td class="description-table data">
+        <%= description(@request) %>
+      <td class="data">
+        <%= number_to_currency(@request.sales_price) %>
     </tr>
   </tbody>
 </table>
@@ -51,24 +50,24 @@
 
 
 <ul>
-  <li> Esta cotización tiene una vigencia de 30 días.</li>
-  <li> Los precios descritos en esta cotización no incluyen IVA.</li>
-  <li> En caso de requerirse, el flete corre a cargo del cliente.</li>
-  <li> Por ajustes de maquina todo pedido especial puede variar 10% de mas o de menos en cantidad.</li>
-  <li> Cualquier cambio en materiales, cantidad, medidas ó impresión el modificará el precio cotizado.</li>
-  <li> Tiempo de entrega: 18 a 20 días hábiles a partir de la autorización y depósito del 50% de anticipo.</li>
+  <li class="doc-li"> Esta cotización tiene una vigencia de 30 días.</li>
+  <li class="doc-li"> Los precios descritos en esta cotización no incluyen IVA.</li>
+  <li class="doc-li"> En caso de requerirse, el flete corre a cargo del cliente.</li>
+  <li class="doc-li"> Por ajustes de maquina todo pedido especial puede variar 10% de mas o de menos en cantidad.</li>
+  <li class="doc-li"> Cualquier cambio en materiales, cantidad, medidas ó impresión el modificará el precio cotizado.</li>
+  <li class="doc-li"> Tiempo de entrega: 18 a 20 días hábiles a partir de la autorización y depósito del 50% de anticipo.</li>
 </ul>
 
 <br /><br />
-<p> Sin más por el momento quedo a sus órdenes para cualquier duda al respecto. </p>
+<p class="doc-p"> Sin más por el momento quedo a sus órdenes para cualquier duda al respecto. </p>
 
 <br /><br /><br />
 
-<p class="center">
+<p class="center doc-p">
   <strong>ATENTAMENTE:</strong>
 </p>
 
-<p class="center">
+<p class="center doc-p">
   <strong>
     <%= username(@request) %>
   </strong>

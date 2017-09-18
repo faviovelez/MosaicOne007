@@ -1,0 +1,84 @@
+.estimate-img {
+  height: 150px;
+  margin-left: 270px;
+}
+
+.date-doc {
+  text-align: right;
+  margin-right: 30px;
+  font-size: 1.8rem;
+}
+
+.col-md-half,
+.col-md-one,
+.col-md-two,
+.estimate-data > td {
+  text-align: center;
+}
+
+.col-md-half,
+.col-md-one,
+.col-md-two {
+  padding: 0.5rem 0rem;
+}
+
+
+.table-head-row {
+  border: 1px solid black;
+}
+
+.data {
+  padding: 2rem 0rem;
+}
+
+.table-row,
+.col-md-half,
+.col-md-one,
+.col-md-two,
+ .doc-p,
+ .data {
+  font-size: 1.8rem;
+}
+
+.estimate-table {
+  margin-left: 20px;
+  border-collapse: collapse;
+}
+
+.divider,
+.data {
+  border: 1px solid black;
+}
+
+.col-md-two {
+  width: 30%;
+}
+
+.description-table {
+  text-align: left;
+}
+
+.col-md-one {
+  width: 15%;
+}
+
+.col-md-half {
+  width: 8%;
+}
+
+.doc-li {
+  font-size: 1.8rem;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.center,
+.center > strong > p {
+  text-align: center;
+}
+
+.bottom > strong > p,
+.bottom > p {
+  font-size: 1.4rem;
+  line-height: 0.7;
+}

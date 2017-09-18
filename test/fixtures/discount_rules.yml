@@ -1,0 +1,33 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  percentage: 1.5
+  product_list: 
+  prospect_list: 
+  givaway_id: 
+  initial_date: 2017-09-18
+  final_date: 2017-09-18
+  business_unit_id: 
+  store_id: 
+  user_id: 
+  rule: MyString
+  minimum_amount: 1.5
+  minimum_quantity: 1
+  exclusions: MyString
+  active: false
+
+two:
+  percentage: 1.5
+  product_list: 
+  prospect_list: 
+  givaway_id: 
+  initial_date: 2017-09-18
+  final_date: 2017-09-18
+  business_unit_id: 
+  store_id: 
+  user_id: 
+  rule: MyString
+  minimum_amount: 1.5
+  minimum_quantity: 1
+  exclusions: MyString
+  active: false
