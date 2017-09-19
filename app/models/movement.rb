@@ -184,4 +184,51 @@ class Movement < ActiveRecord::Base
   def fix_final_price
     self.cost || 0
   end
+
+  def get_product
+    self.product_request.product
+  end
+
+  def split
+    movement = remove_attributes(self.attributes)
+    movement = Movement.new(movement)
+    binding.pry
+  end
+
+  def remove_attributes(attributes)
+    %w(id created_at updated_at).each do |attr|
+      attributes.delete(attr)
+    end
+    attributes
+  end
+
+  def process_extras(order_type, total_quantity)
+    WarehouseEntry.where(
+      product: self.get_product
+    ).order(
+      "created_at #{order_type}"
+    ).each do |entry|
+      if total_quantity >= entry.fix_quantity
+        split
+      end
+    end
+  end
+
+  class << self
+
+    def initialize_with(object, user ,type)
+      product = object.product
+      store   = user.store
+      create(
+        product: product,
+        unique_code: product.unique_code,
+        store: store,
+        initial_price: product.price,
+        movement_type: type,
+        user: user,
+        business_unit: store.business_unit,
+      )
+    end
+
+  end
 end

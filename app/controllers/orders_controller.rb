@@ -101,12 +101,43 @@ class OrdersController < ApplicationController
   def passign_validation
     order_quantity = @product_request.quantity
     inventory = @product_request.product.inventory
+    @product_request.update(order: @order)
     if order_quantity > inventory.fix_quantity
       @product_request.update(status: 'sin asignar')
       create_movement(PendingMovement).update(quantity: @product_request.quantity)
     else
-      process_product_request
+      Movement.initialize_with(
+        @product_request,
+        current_user,
+        'venta'
+      )
+      @product_request.update(
+        status: 'asignado',
+        movement: Movement.last
+      )
+      @product_request.movement.process_extras(
+        order_type,
+        @product_request.quantity
+      )
     end
+  end
+
+  def create_movement(object)
+    product = @product_request.product
+    store = current_user.store
+    movement = object.create(
+      product: product,
+      order: @order,
+      unique_code: product.unique_code,
+      store: store,
+      initial_price: product.price,
+      movement_type: 'venta',
+      user: current_user,
+      business_unit: store.business_unit,
+      product_request_id: @product_request.id,
+      maximum_date: @product_request.maximum_date
+    )
+    movement
   end
 
   def set_order
