@@ -189,10 +189,14 @@ class Movement < ActiveRecord::Base
     self.product_request.product
   end
 
-  def split
+  def split(quantity, cost)
     movement = remove_attributes(self.attributes)
-    movement = Movement.new(movement)
-    binding.pry
+    movement = Movement.create(movement)
+    movement.update_attributes(
+      quantity: quantity,
+      cost:     cost
+    )
+    movement
   end
 
   def remove_attributes(attributes)
@@ -202,16 +206,32 @@ class Movement < ActiveRecord::Base
     attributes
   end
 
-  def process_extras(order_type, total_quantity)
+  def process_extras(order_type, total_quantity, order)
+    self.update(order: order)
     WarehouseEntry.where(
       product: self.get_product
     ).order(
       "created_at #{order_type}"
     ).each do |entry|
+      split(
+        entry.fix_quantity,
+        entry.movement.fix_cost * entry.fix_quantity
+      )
       if total_quantity >= entry.fix_quantity
-        split
+        pending_order -= Movement.last.fix_quantity
+        entry.destroy
+      else
+        entry.update(
+          quantity: (entry.fix_quantity - pending_order)
+        )
+        break
       end
     end
+    get_product.update_inventory_quantity(
+      @product_request.quantity
+    )
+  rescue
+    return false
   end
 
   class << self

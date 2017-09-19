@@ -115,10 +115,12 @@ class OrdersController < ApplicationController
         status: 'asignado',
         movement: Movement.last
       )
-      @product_request.movement.process_extras(
+      if (@product_request.movement.process_extras(
         order_type,
-        @product_request.quantity
-      )
+        @product_request.quantity,
+        @order
+      ))
+      end
     end
   end
 
