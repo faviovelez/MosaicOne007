@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170918214612) do
+ActiveRecord::Schema.define(version: 20170921182535) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -268,6 +268,12 @@ ActiveRecord::Schema.define(version: 20170918214612) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "design_likes", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "design_request_users", force: :cascade do |t|
     t.integer "design_request_id"
     t.integer "user_id"
@@ -298,8 +304,6 @@ ActiveRecord::Schema.define(version: 20170918214612) do
     t.integer  "product_id"
     t.date     "initial_date"
     t.date     "final_date"
-    t.integer  "business_unit_id"
-    t.integer  "store_id"
     t.integer  "user_id"
     t.string   "rule"
     t.float    "minimum_amount"
@@ -308,6 +312,8 @@ ActiveRecord::Schema.define(version: 20170918214612) do
     t.boolean  "active"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
+    t.integer  "business_unit_id"
+    t.integer  "store_id"
   end
 
   add_index "discount_rules", ["business_unit_id"], name: "index_discount_rules_on_business_unit_id", using: :btree
@@ -362,6 +368,12 @@ ActiveRecord::Schema.define(version: 20170918214612) do
 
   add_index "exterior_colors", ["material_id"], name: "index_exterior_colors_on_material_id", using: :btree
 
+  create_table "finishings", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "fiscal_residencies", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -414,6 +426,16 @@ ActiveRecord::Schema.define(version: 20170918214612) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "materials_resistances", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "resistance_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "materials_resistances", ["material_id"], name: "index_materials_resistances_on_material_id", using: :btree
+  add_index "materials_resistances", ["resistance_id"], name: "index_materials_resistances_on_resistance_id", using: :btree
 
   create_table "movements", force: :cascade do |t|
     t.integer  "product_id"
@@ -812,12 +834,9 @@ ActiveRecord::Schema.define(version: 20170918214612) do
 
   create_table "resistances", force: :cascade do |t|
     t.string   "name"
-    t.integer  "material_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
-
-  add_index "resistances", ["material_id"], name: "index_resistances_on_material_id", using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string   "name"
@@ -1078,6 +1097,8 @@ ActiveRecord::Schema.define(version: 20170918214612) do
   add_foreign_key "inventories", "products"
   add_foreign_key "inventory_configurations", "business_units"
   add_foreign_key "inventory_configurations", "stores"
+  add_foreign_key "materials_resistances", "materials"
+  add_foreign_key "materials_resistances", "resistances"
   add_foreign_key "movements", "bills"
   add_foreign_key "movements", "business_units"
   add_foreign_key "movements", "delivery_packages"
@@ -1132,7 +1153,6 @@ ActiveRecord::Schema.define(version: 20170918214612) do
   add_foreign_key "requests", "products"
   add_foreign_key "requests", "prospects"
   add_foreign_key "requests", "stores"
-  add_foreign_key "resistances", "materials"
   add_foreign_key "store_sales", "stores"
   add_foreign_key "store_types", "business_units"
   add_foreign_key "stores", "billing_addresses"

@@ -1,0 +1,53 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Discount Rules</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Percentage</th>
+      <th>Product list</th>
+      <th>Prospect list</th>
+      <th>Product</th>
+      <th>Initial date</th>
+      <th>Final date</th>
+      <th>User</th>
+      <th>Rule</th>
+      <th>Minimum amount</th>
+      <th>Minimum quantity</th>
+      <th>Exclusions</th>
+      <th>Active</th>
+      <th>Business unit</th>
+      <th>Store</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @discount_rules.each do |discount_rule| %>
+      <tr>
+        <td><%= discount_rule.percentage %></td>
+        <td><%= discount_rule.product_list %></td>
+        <td><%= discount_rule.prospect_list %></td>
+        <td><%= discount_rule.product %></td>
+        <td><%= discount_rule.initial_date %></td>
+        <td><%= discount_rule.final_date %></td>
+        <td><%= discount_rule.user %></td>
+        <td><%= discount_rule.rule %></td>
+        <td><%= discount_rule.minimum_amount %></td>
+        <td><%= discount_rule.minimum_quantity %></td>
+        <td><%= discount_rule.exclusions %></td>
+        <td><%= discount_rule.active %></td>
+        <td><%= discount_rule.business_unit %></td>
+        <td><%= discount_rule.store %></td>
+        <td><%= link_to 'Show', discount_rule %></td>
+        <td><%= link_to 'Edit', edit_discount_rule_path(discount_rule) %></td>
+        <td><%= link_to 'Destroy', discount_rule, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Discount rule', new_discount_rule_path %>

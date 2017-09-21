@@ -1,245 +1,207 @@
-<% if @product.errors.any? %>
-  <ul>
-    <% @product.errors.messages.values.each do |msg| %>
-      <%msg.each do  |m| %>
-        <li><%= m %></li>
+<body class="<%= params[:controller] %> <%= params[:action] %>">
+
+  <% if @product.errors.any? %>
+    <ul>
+      <% @product.errors.messages.values.each do |msg| %>
+        <%msg.each do  |m| %>
+          <li><%= m %></li>
+        <% end %>
       <% end %>
-    <% end %>
-  </ul>
-<% end %>
-
-<%= form_for(@product) do |f| %>
-
-  <% if params[:action] == 'new' %>
-    <h2 class="info-title">Crear Producto</h2>
-  <% elsif params[:action] == 'edit' %>
-  <h2 class="info-title">Modificar Producto</h2>
-
+    </ul>
   <% end %>
 
-  <div class="form-container">
+  <%= form_for(@product) do |f| %>
 
-    <div class="form-inside-style">
-      <%= f.label :código_anterior %>
-      <%= f.text_field :former_code, value: @product.former_code, class: 'form-inside'  %>
-    </div>
+    <% if params[:action] == 'new' %>
+      <h2 class="info-title">Crear Producto</h2>
+    <% elsif params[:action] == 'edit' %>
+    <h2 class="info-title">Modificar Producto</h2>
 
-    <div class="form-inside-style">
-      <%= f.label :código_único %>
-      <%= f.text_field :unique_code, value: @product.unique_code, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :descripción %>
-      <%= f.text_field :description, value: @product.description, class: 'form-inside', size: 65 %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :tipo_de_producto %>
-      <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: (@product.product_type || 'seleccione')) %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :línea_de_producto %>
-      <% if current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff' %>
-        <%= f.select :line, options_for_select([['seleccione', ''], ['hogar'], ['alimentos y regalos'], ['oficina'], ['empaque y embalaje'], ['ecológica'],['exhibidores'], ['diseños especiales']], selected: (@product.line || 'seleccione')) %>
-      <% else %>
-        <%= f.select :line, options_for_select(["productos de tienda #{current_user.store.store_name}"], selected: (@product.line || 'seleccione')) %>
-      <% end %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :clasificación %>
-      <% if current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin' %>
-        <%= f.select :classification, options_for_select(['de línea'], selected: (@product.classification || 'de línea')) %>
-      <% else %>
-        <%= f.select :classification, options_for_select(['de tienda'], selected: (@product.classification || 'de tienda')) %>
-      <% end %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :color_exterior_del_cartón %>
-      <%= f.select :exterior_material_color, options_for_select([['kraft'], ['bond']], selected: @product.exterior_material_color) %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :color_interior_del_cartón %>
-      <%= f.select :interior_material_color, options_for_select([['kraft'], ['bond']], selected: @product.interior_material_color) %>
-    </div>
-
-    <h3>Color e Impresión</h3>
-
-    <div class="impresssion-div">
-      <div class="form-inside-style">
-        <%= f.label :lleva_impresión? %>
-        <%= f.check_box :impression, {multiple: true, checked: @product.impression}, true, false %>
-      </div>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :color_o_diseño %>
-      <%= f.text_field :exterior_color_or_design, value: @product.exterior_color_or_design, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :material %>
-      <%= f.select :main_material, options_for_select([['seleccione', ''],
-      ['caple', class: "resistance main caja"],
-      ['sulfatada', class: "resistance main caja"],
-      ['multicapa', class: "resistance main caja"],
-      ['reverso blanco', class: "resistance main caja"],
-      ['reverso gris', class: "resistance main caja"],
-      ['liner', class: "resistance main caja"],
-      ['single face', class: "resistance main caja"],
-      ['microcorrugado', class: "resistance main caja"],
-      ['corrugado', class: "resistance main caja"],
-      ['rígido', class: "resistance main caja"],
-      ['papel kraft', class: "resistance main bolsa"],
-      ['papel bond', class: "resistance main bolsa"],
-      ['sugerir material']], selected: @product.main_material) %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :resistencia %>
-      <%= f.select :resistance_main_material, options_for_select([["seleccione" ,""],
-      ['Buscar resistencia', 'buscar'],
-      ["12 PTS", class: "main plegadizo"],
-      ["14 PTS", class: 'main plegadizo'],
-      ["16 PTS", class: 'main plegadizo'],
-      ["18 PTS", class: 'main plegadizo'],
-      ["20 PTS", class: 'main plegadizo'],
-      ["22 PTS", class: 'main plegadizo'],
-      ["24 PTS", class: 'main plegadizo'],
-      ["170 grs", class: 'main liner'],
-      ["180 grs", class: 'main liner'],
-      ["275 grs", class: 'main liner'],
-      ["300 grs", class: 'main liner'],
-      ["SG - 20 ECT", class: 'main corrugado'],
-      ["7kg - 23 ECT", class: 'main corrugado'],
-      ["9kg - 26 ECT", class: 'main corrugado'],
-      ["11kg - 29 ECT", class: 'main corrugado'],
-      ["12kg - 32 ECT", class: 'main corrugado'],
-      ["14kg - 40 ECT", class: 'main corrugado'],
-      ["16kg - 44 ECT", class: 'main corrugado'],
-      ["18kg - 51 ECT", class: 'main corrugado'],
-      ["No aplica", class: 'main otros'],
-      ["12kg - 36 ECT", class: 'main doble_corrugado'],
-      ["14kg - 42 ECT", class: 'main doble_corrugado'],
-      ["19kg - 48 ECT", class: 'main doble_corrugado'],
-      ["225kg - 51 ECT", class: 'main doble_corrugado'],
-      ["28kg - 61 ECT", class: 'main doble_corrugado'],
-      ["35kg - 71 ECT", class: 'main doble_corrugado'],
-      ["42kg - 82 ECT", class: 'main doble_corrugado'],
-      ["Sugerir resistencia"]], selected: @product.resistance_main_material) %>
-    </div>
-
-    <h4>Medidas Internas</h4>
-
-    <div class="form-inside-style">
-      <%= f.label :largo %>
-      <%= f.text_field :inner_length, value: @product.inner_length, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :ancho %>
-      <%= f.text_field :inner_width, value: @product.inner_width, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :alto %>
-      <%= f.text_field :inner_height, value: @product.inner_height, class: 'form-inside' %>
-    </div>
-
-    <h4>Medidas Externas</h4>
-
-    <div class="form-inside-style">
-      <%= f.label :largo %>
-      <%= f.text_field :outer_length, value: @product.outer_length, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :ancho %>
-      <%= f.text_field :outer_width, value: @product.outer_width, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :alto %>
-      <%= f.text_field :outer_height, value: @product.outer_height, class: 'form-inside' %>
-    </div>
-
-    <h4>Diseño e Información Adicional</h4>
-
-    <div class="form-inside-style">
-      <%= f.label :tipo_de_armado %>
-      <%= f.select :design_type, options_for_select([['Seleccione', ''], ['Muñeca'], ['Regalo'], ['Regalo con ventana'], ['Lonchera'], ['Caja regular CR'], ['Maletín'], ['Cierre automático'], ['Medicina o perfume'], [' Pizza'], ['Sugerir armado']], selected: @product.design_type) %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :Piezas %>
-      <%= f.number_field :number_of_pieces, value: @product.number_of_pieces, min: 0, max: 20, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :kit_de_accesorios %>
-      <%= f.text_field :accesories_kit, value: @product.accesories_kit, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :precio_de_venta %>
-      <%= f.text_field :price, value: @product.price, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :costo %>
-      <%= f.text_field :cost, value: @product.cost, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :empresa %>
-      <%= f.select :business_unit_id, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}, selected: @product.business_unit) %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :piezas_por_paquete %>
-      <%= f.number_field :pieces_per_package, min: 0, max: 200, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :almacén %>
-      <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.business_group.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :anaquel %>
-      <%= f.text_field :rack, value: @product.rack, class: 'form-inside' %>
-    </div>
-
-    <div class="form-inside-style">
-      <%= f.label :nivel %>
-      <%= f.text_field :level, value: @product.level, class: 'form-inside' %>
-    </div>
-
-    <% if @product.images.count > 0 %>
-        <%= render 'images' %>
-
-      <div class="form-inside-style center-field">
-        <%= f.label :agregar_más_imágenes %>
-        <%= f.file_field :image, multiple: true %><br>
-      </div>
-    <% else %>
-
-      <div class="form-inside-style">
-        <%= f.label :imágenes %>
-        <%= f.file_field :image, multiple: true %><br>
-      </div>
     <% end %>
 
-    <div class="button-container">
-      <div class="actions">
-        <%= f.submit :Confirmar, class: 'main-button' %>
+    <div class="form-container">
+
+      <div class="form-inside-style">
+        <%= f.label :código_anterior %>
+        <%= f.text_field :former_code, value: @product.former_code, class: 'form-inside'  %>
       </div>
+
+      <div class="form-inside-style">
+        <%= f.label :código_único %>
+        <%= f.text_field :unique_code, value: @product.unique_code, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :descripción %>
+        <%= f.text_field :description, value: @product.description, class: 'form-inside', size: 65 %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :tipo_de_producto %>
+        <%= f.select :product_type, options_for_select(product_type_options, selected: (@product.product_type || 'seleccione')) %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :línea_de_producto %>
+        <% if current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff' %>
+          <%= f.select :line, options_for_select(product_line_options, selected: (@product.line || 'seleccione')) %>
+        <% else %>
+          <%= f.select :line, options_for_select(["productos de tienda #{current_user.store.store_name}"], selected: (@product.line || 'seleccione')) %>
+        <% end %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :clasificación %>
+        <% if current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin' %>
+          <%= f.select :classification, options_for_select(['de línea'], selected: (@product.classification || 'de línea')) %>
+        <% else %>
+          <%= f.select :classification, options_for_select(['de tienda'], selected: (@product.classification || 'de tienda')) %>
+        <% end %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :color_exterior_del_cartón %>
+        <%= f.select :exterior_material_color, options_for_select(exterior_color_options, selected: @product.exterior_material_color) %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :color_interior_del_cartón %>
+        <%= f.select :interior_material_color, options_for_select(interior_color_options, selected: @product.interior_material_color) %>
+      </div>
+
+      <h3>Color e Impresión</h3>
+
+      <div class="impresssion-div">
+        <div class="form-inside-style">
+          <%= f.label :lleva_impresión? %>
+          <%= f.check_box :impression, {multiple: true, checked: @product.impression}, true, false %>
+        </div>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :color_o_diseño %>
+        <%= f.text_field :exterior_color_or_design, value: @product.exterior_color_or_design, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :material %>
+        <%= f.select :main_material, options_for_select(main_material_options, selected: @product.main_material) %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :resistencia %>
+        <%= f.select :resistance_main_material, options_for_select(main_resistance_options, selected: @product.resistance_main_material) %>
+      </div>
+
+      <h4>Medidas Internas</h4>
+
+      <div class="form-inside-style">
+        <%= f.label :largo %>
+        <%= f.text_field :inner_length, value: @product.inner_length, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :ancho %>
+        <%= f.text_field :inner_width, value: @product.inner_width, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :alto %>
+        <%= f.text_field :inner_height, value: @product.inner_height, class: 'form-inside' %>
+      </div>
+
+      <h4>Medidas Externas</h4>
+
+      <div class="form-inside-style">
+        <%= f.label :largo %>
+        <%= f.text_field :outer_length, value: @product.outer_length, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :ancho %>
+        <%= f.text_field :outer_width, value: @product.outer_width, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :alto %>
+        <%= f.text_field :outer_height, value: @product.outer_height, class: 'form-inside' %>
+      </div>
+
+      <h4>Diseño e Información Adicional</h4>
+
+      <div class="form-inside-style">
+        <%= f.label :tipo_de_armado %>
+        <%= f.select :design_type, options_for_select(design_options, selected: @product.design_type) %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :Piezas %>
+        <%= f.number_field :number_of_pieces, value: @product.number_of_pieces, min: 0, max: 20, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :kit_de_accesorios %>
+        <%= f.text_field :accesories_kit, value: @product.accesories_kit, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :precio_de_venta %>
+        <%= f.text_field :price, value: @product.price, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :costo %>
+        <%= f.text_field :cost, value: @product.cost, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :empresa %>
+        <%= f.select :business_unit_id, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}, selected: @product.business_unit) %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :piezas_por_paquete %>
+        <%= f.number_field :pieces_per_package, min: 0, max: 200, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :almacén %>
+        <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.business_group.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :anaquel %>
+        <%= f.text_field :rack, value: @product.rack, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :nivel %>
+        <%= f.text_field :level, value: @product.level, class: 'form-inside' %>
+      </div>
+
+      <% if @product.images.count > 0 %>
+          <%= render 'images' %>
+
+        <div class="form-inside-style center-field">
+          <%= f.label :agregar_más_imágenes %>
+          <%= f.file_field :image, multiple: true %><br>
+        </div>
+      <% else %>
+
+        <div class="form-inside-style">
+          <%= f.label :imágenes %>
+          <%= f.file_field :image, multiple: true %><br>
+        </div>
+      <% end %>
+
+      <div class="button-container">
+        <div class="actions">
+          <%= f.submit :Confirmar, class: 'main-button' %>
+        </div>
+      </div>
+
     </div>
 
-  </div>
-
-<% end %>
+  <% end %>
+  
+</body>

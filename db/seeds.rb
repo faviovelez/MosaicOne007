@@ -98,15 +98,160 @@ Warehouse.create(warehouse_code: 'AG000', name: 'almacén default', business_uni
 admin = Role.find_by_name('platform-admin')
 
 User.create(
-                        email: "admin@adminmosaictech.com",
-                        first_name: "Administrador",
-                        last_name: "Diseños de Cartón",
-                        password: ENV["admin_user_password"],
-                        password_confirmation: ENV["admin_user_password"],
-                        role: admin,
-                        store: default_store
-                        )
+             email: "admin@adminmosaictech.com",
+             first_name: "Administrador",
+             last_name: "Diseños de Cartón",
+             password: ENV["admin_user_password"],
+             password_confirmation: ENV["admin_user_password"],
+             role: admin,
+             store: default_store
+             )
 
 # 100.times do |n|
 #  Supplier.create(name: Faker::Name.name)
 # end
+[
+  { product_type: 'caja' },
+  { product_type: 'bolsa' },
+  { product_type: 'exhibidor' }
+
+].each do |hash|
+  ProductType.find_or_create_by(hash)
+end
+
+[
+  { name: 'caple' },
+  { name: 'sulfatada' },
+  { name: 'multicapa' },
+  { name: 'reverso blanco' },
+  { name: 'reverso gris' },
+  { name: 'liner' },
+  { name: 'single face' },
+  { name: 'microcorrugado' },
+  { name: 'corrugado' },
+  { name: 'doble corrugado' },
+  { name: 'rígido' },
+  { name: 'papel kraft' },
+  { name: 'papel bond' },
+  { name: 'papel arroz' },
+  { name: 'celofán' },
+  { name: 'acetato' }
+
+].each do |hash|
+  Material.find_or_create_by(hash)
+end
+
+plegadizo = Material.where(name: ['reverso gris', 'reverso blanco', 'caple', 'multicapa', 'sulfatada'])
+liner = Material.where(name: 'liner')
+corrugado = Material.where(name: 'corrugado')
+doble_corrugado = Material.where(name: 'doble corrugado')
+
+[
+  { name: '12 pts' },
+  { name: '14 pts' },
+  { name: '16 pts' },
+  { name: '18 pts' },
+  { name: '20 pts' },
+  { name: '22 pts' },
+  { name: '24 pts' },
+  { name: '170 grs' },
+  { name: '180 grs' },
+  { name: '275 grs' },
+  { name: '300 grs' },
+  { name: 'SG - 20 ECT' },
+  { name: '7kg - 23 ECT' },
+  { name: '9kg - 26 ECT' },
+  { name: '11kg - 29 ECT' },
+  { name: '12kg - 32 ECT' },
+  { name: '14kg - 40 ECT' },
+  { name: '16kg - 44 ECT' },
+  { name: '18kg - 51 ECT' },
+  { name: '12kg - 36 ECT DC' },
+  { name: '14kg - 42 ECT DC' },
+  { name: '19kg - 48 ECT DC' },
+  { name: '25kg - 51 ECT DC' },
+  { name: '28kg - 61 ECT DC' },
+  { name: '35kg - 71 ECT DC' },
+  { name: '42kg - 82 ECT DC' }
+
+].each do |hash|
+  Resistance.find_or_create_by(hash)
+end
+
+r_plegadizo = Resistance.where("name LIKE ?", "%pts%")
+r_liner = Resistance.where("name LIKE ?", "%grs%")
+r_corrugado = Resistance.where("name LIKE ? AND name NOT LIKE ?", "%ECT%", "%DC%")
+r_d_corrugado = Resistance.where("name LIKE ? AND name LIKE ?", "%ECT%", "%DC%")
+
+plegadizo.each do |material|
+  r_plegadizo.each do |resistance|
+    material.resistances << resistance
+  end
+end
+
+liner.each do |material|
+  r_liner.each do |resistance|
+    material.resistances << resistance
+  end
+end
+
+corrugado.each do |material|
+  r_corrugado.each do |resistance|
+    material.resistances << resistance
+  end
+end
+
+doble_corrugado.each do |material|
+  r_d_corrugado.each do |resistance|
+    material.resistances << resistance
+  end
+end
+
+[
+  { name: 'hogar' },
+  { name: 'oficina'},
+  { name: 'alimentos y regalos' },
+  { name: 'empaque y embalaje' },
+  { name: 'ecológica' },
+  { name: 'exhibidores' },
+  { name: 'diseños especiales' }
+
+].each do |hash|
+  Classification.find_or_create_by(hash)
+end
+
+[
+  { name: 'kraft' },
+  { name: 'bond' }
+
+].each do |hash|
+  InteriorColor.find_or_create_by(hash)
+  ExteriorColor.find_or_create_by(hash)
+end
+
+[
+  { name: 'Muñeca'},
+  { name: 'Regalo'},
+  { name: 'Regalo con ventana'},
+  { name: 'Lonchera'},
+  { name: 'Caja regular CR'},
+  { name: 'Maletín'},
+  { name: 'Cierre automático'},
+  { name: 'Medicina o perfume'},
+  { name: 'Pizza'}
+
+].each do |hash|
+  DesignLike.find_or_create_by(hash)
+end
+
+[
+  {name: 'Barniz a registro' },
+  {name: 'Barniz de máquina' },
+  {name: 'Barniz UV' },
+  {name: 'Plastificado mate' },
+  {name: 'Plastificado brillante' },
+  {name: 'Hot stamping' }
+
+].each do |hash|
+  Finishing.find_or_create_by(hash)
+end

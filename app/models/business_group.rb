@@ -1,4 +1,5 @@
 class BusinessGroup < ActiveRecord::Base
+# Agrupa las razones sociales (Business Units) que pertenecen al mismo dueño o grupo
   has_many :business_units
   has_many :business_group_sales
   has_many :warehouses

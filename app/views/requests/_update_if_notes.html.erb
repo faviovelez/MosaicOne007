@@ -12,7 +12,7 @@
       <div class="impresssion-div">
         <div class="field form-inside-style">
           <%= f.label :¿qué_desea_cotizar?, id: 'label-form-que-desea' %>
-          <%= f.select :product_type, options_for_select([['seleccione', ''], ['caja', class: 'box-other'], ['bolsa'], ['exhibidor'], ['otro', class: 'box-other']], selected: @request.product_type) %>
+          <%= f.select :product_type, options_for_select(product_type_options, selected: @request.product_type) %>
         </div>
         <div class="field form-inside-style otro hidden">
           <%= f.label :¿cuál?, class: 'capitalize' %>
@@ -221,172 +221,46 @@
 
       <div class="field form-inside-style">
         <%= f.label :material_principal %>
-        <%= f.select :main_material, options_for_select([['seleccione', ''],
-        ['caple', class: "resistance main caja"],
-        ['sulfatada', class: "resistance main caja"],
-        ['multicapa', class: "resistance main caja"],
-        ['reverso blanco', class: "resistance main caja"],
-        ['reverso gris', class: "resistance main caja"],
-        ['liner', class: "resistance main caja"],
-        ['single face', class: "resistance main caja"],
-        ['microcorrugado', class: "resistance main caja"],
-        ['corrugado', class: "resistance main caja"],
-        ['rígido', class: "resistance main caja"],
-        ['papel kraft', class: "resistance main bolsa"],
-        ['papel bond', class: "resistance main bolsa"],
-        ['sugerir material']], selected: @request.main_material) %>
+        <%= f.select :main_material, options_for_select(main_material_options, selected: @request.main_material) %>
       </div>
 
       <div class="field form-inside-style main">
         <%= f.label :resistencia_del_material %>
-        <%= f.select :resistance_main_material, options_for_select([["seleccione" ,""],
-        ['Buscar resistencia', 'buscar'],
-        ["12 PTS", class: "main plegadizo hidden"],
-        ["14 PTS", class: 'main plegadizo hidden'],
-        ["16 PTS", class: 'main plegadizo hidden'],
-        ["18 PTS", class: 'main plegadizo hidden'],
-        ["20 PTS", class: 'main plegadizo hidden'],
-        ["22 PTS", class: 'main plegadizo hidden'],
-        ["24 PTS", class: 'main plegadizo hidden'],
-        ["170 grs", class: 'main liner hidden'],
-        ["180 grs", class: 'main liner hidden'],
-        ["275 grs", class: 'main liner hidden'],
-        ["300 grs", class: 'main liner hidden'],
-        ["SG - 20 ECT", class: 'main corrugado hidden'],
-        ["7kg - 23 ECT", class: 'main corrugado hidden'],
-        ["9kg - 26 ECT", class: 'main corrugado hidden'],
-        ["11kg - 29 ECT", class: 'main corrugado hidden'],
-        ["12kg - 32 ECT", class: 'main corrugado hidden'],
-        ["14kg - 40 ECT", class: 'main corrugado hidden'],
-        ["16kg - 44 ECT", class: 'main corrugado hidden'],
-        ["18kg - 51 ECT", class: 'main corrugado hidden'],
-        ["No aplica", class: 'main otros hidden'],
-        ["12kg - 36 ECT", class: 'main doble_corrugado hidden'],
-        ["14kg - 42 ECT", class: 'main doble_corrugado hidden'],
-        ["19kg - 48 ECT", class: 'main doble_corrugado hidden'],
-        ["225kg - 51 ECT", class: 'main doble_corrugado hidden'],
-        ["28kg - 61 ECT", class: 'main doble_corrugado hidden'],
-        ["35kg - 71 ECT", class: 'main doble_corrugado hidden'],
-        ["42kg - 82 ECT", class: 'main doble_corrugado hidden'],
-        ["Sugerir resistencia"]], selected: @request.resistance_main_material) %>
+        <%= f.select :resistance_main_material, options_for_select(main_resistance_options, selected: @request.resistance_main_material) %>
       </div>
 
       <button type="button" name="button" class="secondary-button-small" id="agregar_material" >Agregar material</button>
 
       <div class="field form-inside-style secondary hidden">
         <%= f.label :material_secundario %>
-        <%= f.select :secondary_material, options_for_select([['seleccione', ''],
-        ['caple', class: "resistance secondary caja"],
-        ['sulfatada', class: "resistance secondary caja"],
-        ['multicapa', class: "resistance secondary caja"],
-        ['reverso blanco', class: "resistance secondary caja"],
-        ['reverso gris', class: "resistance secondary caja"],
-        ['liner', class: "resistance secondary caja"],
-        ['single face', class: "resistance secondary caja"],
-        ['microcorrugado', class: "resistance secondary caja"],
-        ['corrugado', class: "resistance secondary caja"],
-        ['rígido', class: "resistance secondary caja"],
-        ['papel arroz', class: "resistance secondary bolsa"],
-        ['celofán', class: "resistance secondary bolsa"],
-        ['sugerir material']], selected: @request.secondary_material) %>
+        <%= f.select :secondary_material, options_for_select(secondary_material_options, selected: @request.secondary_material) %>
       </div>
 
       <div class="field form-inside-style secondary hidden">
         <%= f.label :resistencia_del_material %>
-        <%= f.select :resistance_secondary_material, options_for_select([["seleccione", ''],
-        ["12 PTS", class: "secondary plegadizo hidden"],
-        ["14 PTS", class: 'secondary plegadizo hidden'],
-        ["16 PTS", class: 'secondary plegadizo hidden'],
-        ["18 PTS", class: 'secondary plegadizo hidden'],
-        ["20 PTS", class: 'secondary plegadizo hidden'],
-        ["22 PTS", class: 'secondary plegadizo hidden'],
-        ["24 PTS", class: 'secondary plegadizo hidden'],
-        ["170 grs", class: 'secondary liner hidden'],
-        ["180 grs", class: 'secondary liner hidden'],
-        ["275 grs", class: 'secondary liner hidden'],
-        ["300 grs", class: 'secondary liner hidden'],
-        ["SG - 20 ECT", class: 'secondary corrugado hidden'],
-        ["7kg - 23 ECT", class: 'secondary corrugado hidden'],
-        ["9kg - 26 ECT", class: 'secondary corrugado hidden'],
-        ["11kg - 29 ECT", class: 'secondary corrugado hidden'],
-        ["12kg - 32 ECT", class: 'secondary corrugado hidden'],
-        ["14kg - 40 ECT", class: 'secondary corrugado hidden'],
-        ["16kg - 44 ECT", class: 'secondary corrugado hidden'],
-        ["18kg - 51 ECT", class: 'secondary corrugado hidden'],
-        ["No aplica", class: 'secondary otros hidden'],
-        ["12kg - 36 ECT", class: 'secondary doble_corrugado hidden'],
-        ["14kg - 42 ECT", class: 'secondary doble_corrugado hidden'],
-        ["19kg - 48 ECT", class: 'secondary doble_corrugado hidden'],
-        ["225kg - 51 ECT", class: 'secondary doble_corrugado hidden'],
-        ["28kg - 61 ECT", class: 'secondary doble_corrugado hidden'],
-        ["35kg - 71 ECT", class: 'secondary doble_corrugado hidden'],
-        ["42kg - 82 ECT", class: 'secondary doble_corrugado hidden'],
-        ["Sugerir resistencia"]], selected: @request.resistance_secondary_material) %>
+        <%= f.select :resistance_secondary_material, options_for_select(secondary_resistance_options, selected: @request.resistance_secondary_material) %>
       </div>
 
       <div class="field form-inside-style third hidden">
         <%= f.label :material_adicional %>
-        <%= f.select :third_material, options_for_select([['seleccione', ''],
-        ['caple', class: "resistance third caja"],
-        ['sulfatada', class: "resistance third caja"],
-        ['multicapa', class: "resistance third caja"],
-        ['reverso blanco', class: "resistance third caja"],
-        ['reverso gris', class: "resistance third caja"],
-        ['liner', class: "resistance third caja"],
-        ['single face', class: "resistance third caja"],
-        ['microcorrugado', class: "resistance third caja"],
-        ['corrugado', class: "resistance third caja"],
-        ['rígido', class: "resistance third caja"],
-        ['papel arroz', class: "resistance third bolsa"],
-        ['celofán', class: "resistance third bolsa"],
-        ['papel bond', class: "resistance main bolsa"],
-        ['sugerir material']], selected: @request.third_material) %>
+        <%= f.select :third_material, options_for_select(third_material_options, selected: @request.third_material) %>
       </div>
 
       <div class="field form-inside-style third hidden">
         <%= f.label :resistencia_del_material %>
-        <%= f.select :resistance_third_material, options_for_select([["seleccione", ''],
-        ["Sugerir resistencia", class: 'third plegadizo hidden'],
-        ["12 PTS", class: "third plegadizo hidden"],
-        ["14 PTS", class: 'third plegadizo hidden'],
-        ["16 PTS", class: 'third plegadizo hidden'],
-        ["18 PTS", class: 'third plegadizo hidden'],
-        ["20 PTS", class: 'third plegadizo hidden'],
-        ["22 PTS", class: 'third plegadizo hidden'],
-        ["24 PTS", class: 'third plegadizo hidden'],
-        ["170 grs", class: 'third liner hidden'],
-        ["180 grs", class: 'third liner hidden'],
-        ["275 grs", class: 'third liner hidden'],
-        ["300 grs", class: 'third liner hidden'],
-        ["SG - 20 ECT", class: 'third corrugado hidden'],
-        ["7kg - 23 ECT", class: 'third corrugado hidden'],
-        ["9kg - 26 ECT", class: 'third corrugado hidden'],
-        ["11kg - 29 ECT", class: 'third corrugado hidden'],
-        ["12kg - 32 ECT", class: 'third corrugado hidden'],
-        ["14kg - 40 ECT", class: 'third corrugado hidden'],
-        ["16kg - 44 ECT", class: 'third corrugado hidden'],
-        ["18kg - 51 ECT", class: 'third corrugado hidden'],
-        ["No aplica", class: 'third otros hidden'],
-        ["12kg - 36 ECT", class: 'third doble_corrugado hidden'],
-        ["14kg - 42 ECT", class: 'third doble_corrugado hidden'],
-        ["19kg - 48 ECT", class: 'third doble_corrugado hidden'],
-        ["225kg - 51 ECT", class: 'third doble_corrugado hidden'],
-        ["28kg - 61 ECT", class: 'third doble_corrugado hidden'],
-        ["35kg - 71 ECT", class: 'third doble_corrugado hidden'],
-        ["42kg - 82 ECT", class: 'third doble_corrugado hidden'],
-        ["Sugerir resistencia"]], selected: @request.resistance_third_material) %>
+        <%= f.select :resistance_third_material, options_for_select(third_resistance_options, selected: @request.resistance_third_material) %>
       </div>
 
       <h3>Color e impresión</h3>
 
       <div class="field form-inside-style">
         <%= f.label :color_exterior_del_cartón %>
-        <%= f.select :exterior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.exterior_material_color) %>
+        <%= f.select :exterior_material_color, options_for_select(exterior_color_options, selected: @request.exterior_material_color) %>
       </div>
 
       <div class="field form-inside-style">
         <%= f.label :color_interior_del_cartón %>
-        <%= f.select :interior_material_color, options_for_select([['kraft'], ['bond']], selected: @request.interior_material_color) %>
+        <%= f.select :interior_material_color, options_for_select(interior_color_options, selected: @request.interior_material_color) %>
       </div>
 
       <div class="rigid hidden">
@@ -423,8 +297,8 @@
         </div>
 
         <div class="field form-inside-style">
-          <%= f.label :¿la_impresión_lleva_algún_acabado? %>
-          <%= f.select :impression_finishing, options_for_select([['Seleccione', ''], ['Sin acabados'], ['Barniz de máquina'], ['Barniz UV'], ['Plastificado mate'], ['Plastificado brillante'], ['Hot stamping']], selected: @request.impression_finishing) %>
+          <%= f.label :acabados %>
+          <%= f.select :impression_finishing, options_for_select(finishing_options, selected: @request.impression_finishing) %>
         </div>
 
         <div class="field form-inside-style">
@@ -447,7 +321,7 @@
 
       <div id="field_design" class="field form-inside-style hidden">
         <%= f.label :tipo_de_armado %>
-        <%= f.select :design_like, options_for_select([['Seleccione', ''], ['Muñeca'], ['Regalo'], ['Regalo con ventana'], ['Lonchera'], ['Caja regular CR'], ['Maletín'], ['Cierre automático'], ['Medicina o perfume'], [' Pizza'], ['Sugerir armado']], selected: @request.design_like) %>
+        <%= f.select :design_like, options_for_select(design_options, selected: @request.design_like) %>
       </div>
 
       <div class="field form-inside-style hidden" id="resistencia_como">

@@ -16,6 +16,7 @@ class Store < ActiveRecord::Base
   belongs_to :cost_type
   has_many :suppliers
   has_many :bills
+  has_many :discount_rules
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 

@@ -70,6 +70,8 @@ Rails.application.routes.draw do
 
   resources :documents
 
+  resources :discount_rules
+
   resources :business_units do
     resources :warehouses, :billing_addresses
   end

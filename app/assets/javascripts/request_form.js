@@ -1,4 +1,4 @@
-var actionForRequest = $("body.requests.new") || $("body.requests.edit")
+var actionForRequest = $("body.requests.new") || $("body.requests.edit") || $('body.products.new') || $('body.products.edit')
 
 actionForRequest.ready(function() {
 
@@ -144,7 +144,7 @@ actionForRequest.ready(function() {
       $(".main.doble_corrugado").addClass('hidden');
       $(".main.liner").addClass('hidden');
 
-    } else if (material == 'doble_corrugado') {
+    } else if (material == 'doble corrugado') {
       $(".main.doble_corrugado").removeClass('hidden');
       $(".main.plegadizo").addClass('hidden');
       $(".main.corrugado").addClass('hidden');
@@ -161,6 +161,67 @@ actionForRequest.ready(function() {
       $(".main.rigid").addClass('hidden');
     };
   });
+
+  $("#product_main_material").bind('change', function() {
+    var material = $("#product_main_material").val();
+
+    if (material == 'reverso gris' ||
+      material == 'reverso blanco' ||
+      material == 'caple' ||
+      material == 'sulfatada' ||
+      material == 'multicapa') {
+      $(".main.plegadizo").removeClass('hidden');
+      $(".main.liner").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.otros").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
+
+    } else if (material == 'liner') {
+      $(".main.liner").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.otros").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
+
+    } else if (material == 'microcorrugado' ||
+      material == 'single face' ||
+      material == 'papel kraft' ||
+      material == 'papel bond') {
+      $(".main.otros").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.liner").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
+
+    } else if (material == 'rígido') {
+      $(".main.rigid").removeClass('hidden');
+      $(".main.otros").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.liner").addClass('hidden');
+
+    } else if (material == 'doble corrugado') {
+      $(".main.doble_corrugado").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.otros").addClass('hidden');
+      $(".main.liner").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
+
+    } else if (material == 'corrugado') {
+      $(".main.corrugado").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.otros").addClass('hidden');
+      $(".main.liner").addClass('hidden');
+      $(".main.rigid").addClass('hidden');
+    };
+  });
+
 
 /* Este método esconde o muestra las resistencias, dependiendo de la elección del tipo de material elegido (segundo material)*/
   $("#request_secondary_material").bind('change', function() {
@@ -276,8 +337,6 @@ actionForRequest.ready(function() {
       $("#agregar_material").text('Agregar material');
     };
   });
-
-
 
 $("#request_impression_si").click(function () {
   $(".impression").removeClass('hidden');

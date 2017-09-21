@@ -1,5 +1,5 @@
 class BusinessUnit < ActiveRecord::Base
-  # Agrupa las tiendas que pertenecen al mismo dueño para generar reportes agrupados.
+  # Agrupa las tiendas que pertenecen a la misma razón social
   has_many :business_unit_sales
   has_many :movements
   has_many :pending_movements
@@ -10,4 +10,5 @@ class BusinessUnit < ActiveRecord::Base
   belongs_to :billing_address
   has_many :warehouses
   has_many :bills
+  has_many :discount_rules
 end

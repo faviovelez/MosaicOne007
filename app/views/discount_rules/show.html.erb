@@ -1,0 +1,74 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Percentage:</strong>
+  <%= @discount_rule.percentage %>
+</p>
+
+<p>
+  <strong>Product list:</strong>
+  <%= @discount_rule.product_list %>
+</p>
+
+<p>
+  <strong>Prospect list:</strong>
+  <%= @discount_rule.prospect_list %>
+</p>
+
+<p>
+  <strong>Product:</strong>
+  <%= @discount_rule.product %>
+</p>
+
+<p>
+  <strong>Initial date:</strong>
+  <%= @discount_rule.initial_date %>
+</p>
+
+<p>
+  <strong>Final date:</strong>
+  <%= @discount_rule.final_date %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @discount_rule.user %>
+</p>
+
+<p>
+  <strong>Rule:</strong>
+  <%= @discount_rule.rule %>
+</p>
+
+<p>
+  <strong>Minimum amount:</strong>
+  <%= @discount_rule.minimum_amount %>
+</p>
+
+<p>
+  <strong>Minimum quantity:</strong>
+  <%= @discount_rule.minimum_quantity %>
+</p>
+
+<p>
+  <strong>Exclusions:</strong>
+  <%= @discount_rule.exclusions %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @discount_rule.active %>
+</p>
+
+<p>
+  <strong>Business unit:</strong>
+  <%= @discount_rule.business_unit %>
+</p>
+
+<p>
+  <strong>Store:</strong>
+  <%= @discount_rule.store %>
+</p>
+
+<%= link_to 'Edit', edit_discount_rule_path(@discount_rule) %> |
+<%= link_to 'Back', discount_rules_path %>

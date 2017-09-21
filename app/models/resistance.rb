@@ -1,3 +1,4 @@
 class Resistance < ActiveRecord::Base
-  belongs_to :material
+  has_many :materials, through: :materials_resistances
+  has_many :materials_resistances
 end
