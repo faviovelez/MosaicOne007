@@ -9,9 +9,6 @@
     <%= wicked_pdf_javascript_include_tag "number_pages" %>
   </head>
   <body onload='number_pages'>
-    <div id="header">
-      <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'img-bill' %>
-    </div>
     <div id="content">
       <%= yield %>
     </div>

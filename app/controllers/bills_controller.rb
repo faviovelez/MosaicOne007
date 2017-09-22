@@ -11,7 +11,7 @@ class BillsController < ApplicationController
   # GET /bills/1
   # GET /bills/1.json
   def show
-  end
+  end 
 
   def qrcode
     site = 'https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx'

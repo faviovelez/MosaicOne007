@@ -5,26 +5,7 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-# {
-#  "platform-admin":   "Crea usuarios de todos los tipos, actualiza formularios",
-#  "director":         "Tiene acceso a todos los procesos y funciones de manager, puede crear usuarios manager",
-#  "store":            "Crea prospectos, cotizaciones y pedidos, autoriza, cancela o reactiva cotizaciones y pedidos",
-#  "manager":          "Asigna precio a cotizaciones y puede asignar costo a las entradas de materiales",
-#  "store-admin":      "Con acceso a todas las secciones, reportes y funcionalidades de tienda y puede crear usuarios store",
-#  "product-admin":    "Crea y modifica productos, asigna costos a entradas de mercancías, crea usuarios product-staff",
-#  "product-staff":    "Crea y modifica productos, asigna costos a entradas de mercancías",
-#  "warehouse-admin":  "Maneja inventario, órdenes de producción, prepara pedidos y crea usuarios wharehouse-staff",
-#  "warehouse-staff":  "Maneja inventario, órdenes de producción, prepara pedidos",
-#  "admin-desk":       "Crea usuarios tipo drivers, crea envíos y factura, elabora pedidos y cotizaciones",
-#  "designer-admin":   "Da respuesta a las solicitudes de diseño y puede crear usuarios designer",
-#  "designer":         "Da respuesta a las solicitudes de diseño",
-#  "driver":           "Entrega mercancía",
-#  "viewer":           "Da seguimiento a pedidos y cotizaciones"
-#}.each do |name, description|
-#  Role.find_or_create_by(name: name, description: description)
-#end
 
-#### CONFIRMAR CON EL CLIENTE CUÁNTOS MÁS TIPOS DE USUARIO SE CREARÁN Y SI ESTÁ DE ACUERDO CON LOS NOMBRES ####
 [
   {name: "platform-admin", translation: "administrador de plataforma", description: "Crea usuarios de todos los tipos, actualiza formularios" },
   {name: "director", translation: "director", description: "Tiene acceso a todos los procesos y funciones de manager, puede crear usuarios manager" },
@@ -41,7 +22,6 @@
   {name: "driver", translation: "chofer", description: "Entrega mercancía" },
   {name: "viewer", translation: "soporte", description: "Da seguimiento a pedidos y cotizaciones" }
 
-####### Comentar esta línea cuando esté listo ##### y descomentar las 3 líneas siguientes.
 ].each do |hash|
   Role.find_or_create_by(hash)
 end
@@ -107,9 +87,6 @@ User.create(
              store: default_store
              )
 
-# 100.times do |n|
-#  Supplier.create(name: Faker::Name.name)
-# end
 [
   { product_type: 'caja' },
   { product_type: 'bolsa' },
@@ -245,13 +222,163 @@ end
 end
 
 [
-  {name: 'Barniz a registro' },
-  {name: 'Barniz de máquina' },
-  {name: 'Barniz UV' },
-  {name: 'Plastificado mate' },
-  {name: 'Plastificado brillante' },
-  {name: 'Hot stamping' }
+  { name: 'Barniz a registro' },
+  { name: 'Barniz de máquina' },
+  { name: 'Barniz UV' },
+  { name: 'Plastificado mate' },
+  { name: 'Plastificado brillante' },
+  { name: 'Hot stamping' }
 
 ].each do |hash|
   Finishing.find_or_create_by(hash)
 end
+
+[
+  { key: 'I', description: 'Ingreso' },
+  { key: 'E', description: 'Egreso' },
+  { key: 'T', description: 'Traslado' },
+  { key: 'N', description: 'Nómina' },
+  { key: 'P', description: 'Pago' }
+
+].each do |hash|
+  TypeOfBill.find_or_create_by(hash)
+end
+
+[
+  { key: 001, description: 'ISR', retention: true, transfer: false },
+  { key: 002, description: 'IVA', retention: true, transfer: true, value: 16.0 },
+  { key: 003, description: 'IEPS', retention: true, transfer: true }
+].each do |hash|
+  Tax.find_or_create_by(hash)
+end
+
+require 'csv'
+
+Agrega el catálogo de Régimen fiscal del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'tax_regime.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+ t = TaxRegime.new
+ t.tax_id = row['tax_id']
+ t.description = row['description']
+ t.particular = row['particular']
+ t.corporate = row['corporate']
+ t.date_since = row['date_since']
+ t.save
+ puts "#{t.id}, #{t.tax_id}, #{t.description} saved"
+end
+
+puts "There are now #{TaxRegime.count} rows in the Tax Regime table"
+
+Agrega el catálogo de Forma de pago del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'payment_form.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+ t = PaymentForm.new
+ t.payment_id = row['payment_id']
+ t.description = row['description']
+ t.save
+ puts "#{t.id}, #{t.payment_id}, #{t.description} saved"
+end
+
+Agrega el catálogo de Método de pago del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'payment_method.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+ t = PaymentMethod.new
+ t.method = row['method']
+ t.description = row['description']
+ t.save
+ puts "#{t.id}, #{t.method}, #{t.description} saved"
+end
+
+Agrega el catálogo de Clave de productos del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'sat_key.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+ t = SatKey.new
+ t.sat_key = row['sat_key']
+ t.description = row['description']
+ t.save
+ puts "#{t.id}, #{t.sat_key}, #{t.description} saved"
+end
+
+Agrega el catálogo de Unidad de productos del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'sat_unit_key.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+ t = SatUnitKey.new
+ t.unit = row['unit']
+ t.description = row['description']
+ t.save
+ puts "#{t.id}, #{t.unit}, #{t.description} saved"
+end
+
+Agrega el catálogo del Código Postal de productos del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'sat_zipcode.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+ t = SatZipcode.new
+ t.zipcode = row['zipcode']
+ t.save
+ puts "#{t.id}, #{t.zipcode} saved"
+end
+
+puts "There are now #{PaymentForm.count} rows in the Payment Form table"
+puts "There are now #{PaymentMethod.count} rows in the Payment Method table"
+puts "There are now #{SatKey.count} rows in the SAT Key table"
+puts "There are now #{SatUnitKey.count} rows in the SAT Unit Key table"
+puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
+
+# Agrega el catálogo de monedas del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'currency.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+t = Currency.new
+t.name = row['name']
+t.description = row['description']
+t.decimals = row['decimals']
+t.save
+puts "#{t.id}, #{t.name} saved"
+end
+
+puts "There are now #{Currency.count} rows in the Currency table"
+
+# Agrega el catálogo de países del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'country.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+t = Country.new
+t.key = row['key']
+t.name = row['name']
+t.save
+puts "#{t.id}, #{t.name} saved"
+end
+
+puts "There are now #{Country.count} rows in the Country table"
+
+Agrega el catálogo de tipo de relaciones del CFDI del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'relation_type.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+t = RelationType.new
+t.key = row['key']
+t.description = row['description']
+t.save
+puts "#{t.id}, #{t.key} saved"
+end
+
+puts "There are now #{RelationType.count} rows in the Relation Type table"
+
+Agrega el catálogo de uso de CFDI del SAT
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'cfdi_use.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+t = CfdiUse.new
+t.key = row['key']
+t.description = row['description']
+t.save
+puts "#{t.id}, #{t.key} saved"
+end
+
+puts "There are now #{CfdiUse.count} rows in the CFDI Use table"

@@ -1,0 +1,22 @@
+tax_id,description,particular,corporate,date_since
+601,General de Ley Personas Morales,false,true,2016-11-12
+603,Personas Morales con Fines no Lucrativos,false,true,2016-11-12
+605,Sueldos y Salarios e Ingresos Asimilados a Salarios,true,false,2016-11-12
+606,Arrendamiento,true,false,2016-11-12
+608,Demás ingresos,true,false,2016-11-12
+609,Consolidación,false,true,2016-11-12
+610,Residentes en el Extranjero sin Establecimiento Permanente en México,true,true,2016-11-12
+611,Ingresos por Dividendos (socios y accionistas),true,false,2016-11-12
+612,Personas Físicas con Actividades Empresariales y Profesionales,true,false,2016-11-12
+614,Ingresos por intereses,true,false,2016-11-12
+616,Sin obligaciones fiscales,true,false,2016-11-12
+620,Sociedades Cooperativas de Producción que optan por diferir sus ingresos,false,true,2016-11-12
+621,Incorporación Fiscal,true,false,2016-11-12
+622,"Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras",true,true,2016-11-12
+623,Opcional para Grupos de Sociedades,false,true,2016-11-12
+624,Coordinados,false,true,2016-11-12
+628,Hidrocarburos,false,true,2020-01-01
+607,Régimen de Enajenación o Adquisición de Bienes,false,true,2016-11-12
+629,De los Regímenes Fiscales Preferentes y de las Empresas Multinacionales,true,false,2020-01-01
+630,Enajenación de acciones en bolsa de valores,true,false,2020-01-01
+615,Régimen de los ingresos por obtención de premios,true,false,2016-11-12

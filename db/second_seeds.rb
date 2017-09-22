@@ -9,7 +9,6 @@
   Store.find_or_create_by(hash)
 end
 
-
 # Esta parte es para usarla solo durante desarrollo
 if User.first.nil?
   20.times do |n|
@@ -41,4 +40,9 @@ end
 # Esta parte es para usarla solo durante desarrollo
 User.where(role: nil).each do |user|
   user.update_attributes(role: Role.all.sample, store:  Store.all.sample)
+end
+
+# Esta parte es para usarla solo durante desarrollo
+100.times do |n|
+  Supplier.create(name: Faker::Name.name)
 end

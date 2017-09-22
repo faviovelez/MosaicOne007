@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170921182535) do
+ActiveRecord::Schema.define(version: 20170922034148) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -198,6 +198,7 @@ ActiveRecord::Schema.define(version: 20170921182535) do
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "key"
   end
 
   create_table "classifications", force: :cascade do |t|
@@ -213,10 +214,19 @@ ActiveRecord::Schema.define(version: 20170921182535) do
     t.string   "description"
   end
 
-  create_table "currencies", force: :cascade do |t|
+  create_table "countries", force: :cascade do |t|
+    t.string   "key"
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "currencies", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "description"
+    t.integer  "decimals"
   end
 
   create_table "delivery_addresses", force: :cascade do |t|
@@ -526,12 +536,14 @@ ActiveRecord::Schema.define(version: 20170921182535) do
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "payment_id"
   end
 
   create_table "payment_methods", force: :cascade do |t|
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "method"
   end
 
   create_table "payments", force: :cascade do |t|
@@ -743,6 +755,7 @@ ActiveRecord::Schema.define(version: 20170921182535) do
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "key"
   end
 
   create_table "request_users", force: :cascade do |t|
@@ -867,6 +880,12 @@ ActiveRecord::Schema.define(version: 20170921182535) do
     t.datetime "updated_at",  null: false
   end
 
+  create_table "sat_zipcodes", force: :cascade do |t|
+    t.string   "zipcode"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "store_sales", force: :cascade do |t|
     t.integer  "store_id"
     t.string   "month"
@@ -914,6 +933,7 @@ ActiveRecord::Schema.define(version: 20170921182535) do
     t.integer  "business_group_id"
     t.string   "cell_phone"
     t.integer  "billing_address_id"
+    t.string   "zip_code"
   end
 
   add_index "stores", ["billing_address_id"], name: "index_stores_on_billing_address_id", using: :btree
@@ -951,6 +971,10 @@ ActiveRecord::Schema.define(version: 20170921182535) do
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "tax_id"
+    t.boolean  "corporate"
+    t.boolean  "particular"
+    t.date     "date_since"
   end
 
   create_table "taxes", force: :cascade do |t|
@@ -958,12 +982,16 @@ ActiveRecord::Schema.define(version: 20170921182535) do
     t.float    "value"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "key"
+    t.boolean  "transfer"
+    t.boolean  "retention"
   end
 
   create_table "type_of_bills", force: :cascade do |t|
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "key"
   end
 
   create_table "units", force: :cascade do |t|

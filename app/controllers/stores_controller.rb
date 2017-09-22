@@ -157,7 +157,8 @@ private
                                   :email,
                                   :type_of_person,
                                   :prospect_status,
-                                  :business_group_id
+                                  :business_group_id,
+                                  :zipcode
                                   )
   end
 
