@@ -3,6 +3,7 @@ border-width: 0;
 border-style: none;
 border-color: #0000ff;
 border-collapse: collapse;
+margin: 30px;
 }
 
 td.black,
@@ -13,8 +14,8 @@ td.white {
  border-collapse: collapse;
  padding: 0;
  margin: 0;
- width: 2px;
- height: 2px;
+ width: 4px;
+ height: 4px;
 }
 
 td.black { background-color: #000; }

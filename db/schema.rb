@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170922034148) do
+ActiveRecord::Schema.define(version: 20170922170025) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -687,7 +687,6 @@ ActiveRecord::Schema.define(version: 20170922034148) do
     t.float    "cost"
     t.string   "rack"
     t.string   "level"
-    t.integer  "unit_id"
     t.integer  "sat_key_id"
     t.integer  "sat_unit_key_id"
   end
@@ -695,7 +694,6 @@ ActiveRecord::Schema.define(version: 20170922034148) do
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
   add_index "products", ["sat_key_id"], name: "index_products_on_sat_key_id", using: :btree
   add_index "products", ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id", using: :btree
-  add_index "products", ["unit_id"], name: "index_products_on_unit_id", using: :btree
   add_index "products", ["warehouse_id"], name: "index_products_on_warehouse_id", using: :btree
 
   create_table "products_bills", force: :cascade do |t|
@@ -1166,7 +1164,6 @@ ActiveRecord::Schema.define(version: 20170922034148) do
   add_foreign_key "products", "business_units"
   add_foreign_key "products", "sat_keys"
   add_foreign_key "products", "sat_unit_keys"
-  add_foreign_key "products", "units"
   add_foreign_key "products", "warehouses"
   add_foreign_key "products_bills", "bills"
   add_foreign_key "products_bills", "products"

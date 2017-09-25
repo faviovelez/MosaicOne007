@@ -1,0 +1,211 @@
+#top-title {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: darkred;
+}
+
+.top-right {
+  margin-top: -285px;
+  margin-bottom: 40px;
+  width: 400px;
+  text-align: left;
+  margin-left: 1000px;
+}
+
+.img-bill {
+  margin-left: 50px;
+  width: 45%;
+  height: auto;
+}
+
+#bill > div > p,
+#bill > div > p > span,
+.quantity--letters > p,
+.title-cfdi,
+.grow {
+  font-size: 2.5rem;
+}
+
+.middle {
+  font-size: 2.1rem;
+}
+
+.header-main {
+  text-align: center;
+  background-color: black;
+  color: white;
+}
+
+.space {
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.center {
+  text-align: center;
+}
+
+.title-cfdi  {
+  font-weight: bold;
+  text-align: center;
+}
+
+.header {
+  margin-bottom: 0.5rem;
+}
+
+.second-table {
+  margin-bottom: 40px;
+}
+
+.two-columns-one-header,
+#issuing-receiving-table,
+#issuing-receiving-table > thead > tr > th,
+.two-columns-one-header > thead > tr > th {
+  border: 2px solid white;
+}
+
+#issuing-receiving-table > tbody > tr > td.first,
+.two-columns-one-header > tbody > tr > td.first,
+.second-table > tbody > tr > td.first {
+  border-right: 2px solid white;
+}
+
+#issuing-receiving-table > tbody > tr > td,
+.two-columns-one-header > tbody > tr > td {
+  padding-left: 2rem;
+}
+
+.right {
+  text-align: right;
+}
+
+.main-header {
+  border-right: 2px solid white;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+}
+
+.border-around {
+  border-right: 2px solid white;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+}
+
+.half {
+  width: 50%;
+  padding-left: 2rem;
+  padding-right: 1rem;
+  vertical-align: top;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.all {
+  width: 100%;
+  padding-left: 2rem;
+  padding-right: 1rem;
+  vertical-align: top;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.second-table,
+#issuing-receiving-table,
+.two-columns-one-header {
+  width: 100%;
+}
+
+.ligth-bg {
+  background-color: lightgray;
+}
+
+.border-top {
+  border-top: 1px solid black;
+}
+
+.final-total {
+  padding-left: 2rem;
+  padding-top: 0.8rem;
+  padding-right: 1rem;
+}
+
+.letter {
+  padding: 0 1rem;
+}
+
+.center > strong > p {
+  text-align: center;
+}
+
+.bottom > strong > p,
+.bottom > p {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.title-cfdi > span {
+  font-weight: normal;
+}
+
+.fiscal-folio {
+  width: 655px;
+  margin-top: -280px;
+  margin-left: 820px;
+  margin-bottom: 40px;
+}
+
+.fiscal-folio > p {
+  font-size: 2.5rem;
+}
+
+.break {
+  word-wrap: break-word;
+}
+
+.with-bg {
+  background-color: black;
+  color: white;
+  padding: 0.5rem 0;
+}
+
+.certificate {
+  margin-top: -280px;
+  margin-left: 320px;
+  width: 500px;
+  margin-bottom: 40px;
+}
+
+.certificate > p {
+  text-align: left;
+  line-height: 1.4;
+  font-size: 2.3rem;
+}
+
+.digital-stamp > p {
+  font-size: 2.4rem;
+}
+
+.smaller {
+  font-size: 2.3rem;
+  text-align: center;
+}
+
+.first-stamp {
+  margin-top: 80px;
+}
+
+#first,
+#second,
+#third {
+  line-height: 1.2;
+}
+
+.footer {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.digital-stamp {
+  margin-bottom: 30px;
+}

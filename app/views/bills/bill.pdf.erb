@@ -1,4 +1,211 @@
+<div id=bill>
+
   <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'img-bill' %>
+
+  <div class="top-right">
+    <h3 id="top-title"> FACTURA </h3>
+    <p> Serie: <span> A </span> </p>
+    <p> Folio: <span> 49 </span> </p>
+    <p> Fecha:  <span> 11/10/2017 </span> </p>
+    <p> Lugar de expedición: <span> 44600 </span> </p>
+    <p> Tipo de comprobante: <span> <strong> I </strong> - Ingresos </span> </p>
+  </div>
+
+  <table id="issuing-receiving-table">
+    <thead>
+      <tr class="ligth-bg">
+        <th class="title-cfdi half header"> EMISOR</th>
+        <th class="title-cfdi half header"> RECEPTOR </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="grow half first"> RFC: <span> VEMF8310119M7 </span> </td>
+        <td class="grow half "> RFC: <span> MOOR560620PK2 </span> </td>
+      </tr>
+      <tr>
+        <td class="grow half first"> Nombre: <span> Favio Velez Morales </span> </td>
+        <td class="grow half"> Nombre: <span> Rosario Morales Orozco </span> </td>
+      </tr>
+      <tr>
+        <td class="grow half first"> Régimen Fiscal: <span> <strong> 601 </strong> - General de Ley de Personas Morales </td>
+        <td class="grow half"> Uso CFDI: <span> <strong> G03 </strong> - Gastos en General </span> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="second-table">
+    <thead>
+      <tr class="ligth-bg">
+        <th class="title-cfdi all header main-header" colspan="2"> FORMA DE PAGO </th>
+      </tr>
+    </thead>
+    <tbody class="border-around">
+      <tr>
+        <td class="grow half first"> Moneda: <span> <strong> MXN </strong> - Peso Mexicano </span> </td>
+        <td class="grow half"> Forma de pago: <span> <strong> 04 </strong> - Tarjeta de Crédito </span> </td>
+      </tr>
+      <tr>
+        <td class="grow half first"> Método de pago:  <span> <strong> PUE </strong> - Pago en una sola exhibición </span> </td>
+        <td class="grow half"> Condiciones de pago: <span> Contado </span> </td>
+      </tr>
+      <tr>
+        <td class="grow half first"> Tipo de cambio: <span> 1.000000 </span> </td>
+        <td class="grow half"> Clave de confirmación: <span> A403b </span> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr class="header-main">
+        <th class="grow space"> Clave Prod / Serv </th>
+        <th class="grow space"> No. Identificación </th>
+        <th class="grow space"> Cantidad </th>
+        <th class="grow space"> Clave Unidad </th>
+        <th class="grow space"> Unidad </th>
+        <%# ESTE CAMPO DEBE SER EDITABLE%>
+        <th class="grow space"> Descripción </th>
+        <th class="grow space"> Valor Unitario </th>
+        <th class="grow space"> Descuento </th>
+        <th class="grow space"> Impuesto </th>
+        <th class="grow space"> Importe </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="grow space"> 31211502 </td>
+        <td class="grow space"> 3172904 </td>
+        <td class="grow space"> 24 </td>
+        <td class="grow space"> <strong> LTR </strong> </td>
+        <td class="grow space"> Litros </td>
+        <td class="grow space"> Pintura vinílica blanca </td>
+        <td class="grow space"> $490.50 </td>
+        <td class="grow space"> $0 </td>
+        <td class="grow space"> <span> <strong> 002 </strong> - IVA $19,990.08 </span> </td>
+        <td class="grow space"> $250,188.00 </td>
+      </tr>
+      <tr>
+        <td>
+          <br /><br /><br />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3 letter" class="grow center"> __________________________ </td>
+        <td></td>
+        <td></td>
+        <td colspan="3" class="final-total grow"> SubTotal </td>
+        <td colspan="2" class="final-total grow right"> $ 250,000.00 </td>
+      </tr>
+      <tr>
+        <td colspan="3" class="grow center"> Firma de conformidad </td>
+        <td></td>
+        <td></td>
+        <td colspan="3" class="final-total grow"> Descuento </td>
+        <td colspan="2" class="final-total grow right"> $ 30,000.00 </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td colspan="3" class="final-total grow"> Total Impuestos Trasladados </td>
+        <td colspan="2" class="final-total grow right"> $ 15,000.00 </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="grow letter"> <strong> Importe con letra </strong> </td>
+        <td colspan="3" class="final-total grow"> Total Impuestos Retenidos </td>
+        <td colspan="2" class="final-total grow right"> $ 12,000.00 </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="grow letter"> Un mil cuatrocientos cincuenta y nueve 28/100 </td>
+        <td colspan="3" class="final-total grow border-top"> <strong> Total </strong> </td>
+        <td colspan="2" class="final-total grow border-top right"> <strong> $ 250,498.90 </strong> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br /><br />
+
+  <table class="two-columns-one-header">
+    <thead>
+      <tr class="all">
+        <th class="title-cfdi all header" colspan="2"> CFDI RELACIONADO </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="grow half first smaller"> Tipo de Relación: <span> <strong> 04 </strong> - Sustitución de los CFDI previos </span> </td>
+        <td class="grow half smaller"> CFDI Relacionado: <span> A39DA66B-52CA-49E3-879B-FC05185B0EF7 </span> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="bill-first-footer">
+
+    <table id="qr-table">
+      <% @qr.modules.each_index do |x| -%>
+      <tr>
+        <% @qr.modules.each_index do |y| -%>
+        <% if @qr.dark?(x,y) -%>
+        <td class="black"/>
+        <% else -%>
+        <td class="white"/>
+        <% end -%>
+        <% end -%>
+      </tr>
+      <% end -%>
+    </table>
+
+    <div class="certificate">
+      <p class="title-cfdi"> Folio Fiscal - UUID: </p>
+      <p class="grow"> C26A3536-4E86-4123-B5E0-CF842D1B34EC </p>
+      <p class="title-cfdi"> Número de Serie del Certificado </p>
+      <p class="grow"> 00001000000404420163 </p>
+      <p class="title-cfdi"> Fecha y hora de Certificación </p>
+      <p class="grow"> 2017-07-01T11:20:08 </p>
+    </div>
+
+  <div class="fiscal-folio">
+    <p class="title-cfdi with-bg"> Sello Digital:</p>
+    <p class="grow break">
+      OG1WMyOQV8FM2apga08cfaQ+fB6cV3/zLQE0K975NSNJXtFpRG9OmiUoAU6KljUZyRHKH/7TWi98bMW2Gd7kR6992SyYCG17ZpgpqGX4RtbzZDu+d4oD54bEK4dRNeK2z6OAyCY/dkqIjpeybo4WnbJpUhjDRAhP/xQRDZ5VK2k=
+    </p>
+  </div>
+</div>
+
+  <div class="digital-stamp first-stamp">
+    <p class="title-cfdi with-bg"> Sello del SAT: </p>
+    <p class="grow break">
+      Rwxo+AXGh8k5lD0cbEpmdLghQZkJKmODGAaQpRhXAVB6lp2XmL0dlPy/e7JWUwFxIVGsvLRPLeb/iRp+3Qfbq5vfPLpQ1KGmTPP76TJhGJu4bhEp1bf707A74elvEziNtAzYZkOq7pgb4qxYtZnoL6kkjZ/unFwufAyQiHAcCoY=
+    </p>
+  </div>
+
+  <div class="digital-stamp">
+    <p class="title-cfdi with-bg"> Cadena Original: </p>
+    <p class="grow" id="first">
+      ||1.0|C26A3536-4E86-4123-B5E0-CF842D1B34EC|2016-12-09T16:21:48|OG1WMyOQV8FM2apga08cfaQ+fB6cV3/zLQE0K975NSN
+    </p>
+    <p id="second">
+      JXtFpRG9OmiUoAU6KljUZyRHKH/7TWi98bMW2Gd7kR6992SyYCG17ZpgpqGX4RtbzZDu+d4oD54bEK4dRNeK2z6OAyCY/dkqIjpeybo4Wn
+    </p>
+    <p id="third">
+      bJpUhjDRAhP/xQRDZ5VK2k=|00001000000202864883||
+    </p>
+  </div>
+
+  <p class="grow footer"> Este documento es una representación impresa de un CFDI </p>
+
+  <div class="center bottom">
+      <p class="grow"> <strong> Diseños de Cartón, más que cajas... soluciones. </strong> </p>
+      <p> Sucursal <%= current_user.store.store_name.capitalize %> </p>
+      <p> <%= address(current_user) %> </p>
+      <p> Tel. <%= number_to_phone(current_user.store.direct_phone, area_code: true) %> </p>
+      <p> <%= current_user.store.email %> </p>
+      <p> www.disenosdecarton.com.mx </p>
+  </div>
+
 
     <p>
       <strong>Status:</strong>
@@ -60,17 +267,3 @@
       <strong>Quantity:</strong>
       <%= @bill.quantity %>
     </p>
-
-    <table id="qr-table">
-     <% @qr.modules.each_index do |x| -%>
-       <tr>
-       <% @qr.modules.each_index do |y| -%>
-        <% if @qr.dark?(x,y) -%>
-        <td class="black"/>
-        <% else -%>
-        <td class="white"/>
-        <% end -%>
-       <% end -%>
-       </tr>
-     <% end -%>
-    </table>
