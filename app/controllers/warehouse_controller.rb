@@ -152,10 +152,11 @@ class WarehouseController < ApplicationController
   def attach_entry
     @collection.each do |movement|
       if movement.save
-        process_pendings(movement.product, movement)
         movement.warehouse_entry = WarehouseEntry.create(
-          product: movement.product,
-          quantity: movement.quantity
+          product:  movement.product,
+          quantity: movement.quantity - movement.process_pendings(
+            movement.quantity, order_type
+          )
         )
         begin
           movement.product.inventory.set_quantity(
@@ -191,24 +192,6 @@ class WarehouseController < ApplicationController
         )
       end
     end
-  end
-
-  def process_pendings(product, movement)
-    @entries = WarehouseEntry.where(
-      product: product
-    ).order("created_at #{order_type}")
-    PendingMovement.where(product: product).each do |pending_movement|
-      if movement.quantity >= pending_movement.quantity
-        @product_request = ProductRequest.find(
-          pending_movement.product_request_id
-        )
-        process_product_request
-        movement.quantity -= Movement.last.quantity
-        movement.save
-        pending_movement.destroy
-      end
-    end
-  rescue ActiveRecord::RecordNotFound
   end
 
   def filter_movement(movement)

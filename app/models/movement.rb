@@ -186,7 +186,7 @@ class Movement < ActiveRecord::Base
   end
 
   def get_product
-    self.product_request.product
+    self.product || self.product_request.product
   end
 
   def split(quantity, cost)
@@ -204,6 +204,27 @@ class Movement < ActiveRecord::Base
       attributes.delete(attr)
     end
     attributes
+  end
+
+  def process_pendings(quantity, order_type)
+    processed = 0
+    PendingMovement.where(
+      product: self.get_product
+    ).order(
+      "created_at #{order_type}"
+    ).each do |pending|
+      if quantity > pending.quantity
+        movement = remove_attributes(pending.attributes)
+        pending.destroy if movement.save
+        movement.product_request.update(
+          status: 'asignado'
+        )
+        processed += movement.quantity
+      else
+        break
+      end
+    end
+    processed
   end
 
   def process_extras(order_type, total_quantity, order)

@@ -104,7 +104,10 @@ class OrdersController < ApplicationController
     @product_request.update(order: @order)
     if order_quantity > inventory.fix_quantity
       @product_request.update(status: 'sin asignar')
-      create_movement(PendingMovement).update(quantity: @product_request.quantity)
+      create_movement(PendingMovement).update(
+        quantity: @product_request.quantity,
+
+      )
     else
       Movement.initialize_with(
         @product_request,
@@ -115,12 +118,11 @@ class OrdersController < ApplicationController
         status: 'asignado',
         movement: Movement.last
       )
-      if (@product_request.movement.process_extras(
+      @product_request.movement.process_extras(
         order_type,
         @product_request.quantity,
         @order
-      ))
-      end
+      )
     end
   end
 
