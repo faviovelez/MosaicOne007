@@ -160,6 +160,11 @@
       </div>
 
       <div class="form-inside-style">
+        <%= f.label :tienda %>
+        <%= f.select :store_id, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}, selected: @product.business_unit) %>
+      </div>
+
+      <div class="form-inside-style">
         <%= f.label :piezas_por_paquete %>
         <%= f.number_field :pieces_per_package, min: 0, max: 200, class: 'form-inside' %>
       </div>
@@ -203,5 +208,5 @@
     </div>
 
   <% end %>
-  
+
 </body>

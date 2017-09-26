@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  store_id: 
+  month: 1
+  year: 1
+  target: 1.5
+  actual_sales: 1.5
+  achieved: false
+
+two:
+  store_id: 
+  month: 1
+  year: 1
+  target: 1.5
+  actual_sales: 1.5
+  achieved: false

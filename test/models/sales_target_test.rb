@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class FiscalResidencyTest < ActiveSupport::TestCase
+class SalesTargetTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

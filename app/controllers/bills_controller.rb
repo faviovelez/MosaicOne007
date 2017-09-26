@@ -11,7 +11,7 @@ class BillsController < ApplicationController
   # GET /bills/1
   # GET /bills/1.json
   def show
-  end 
+  end
 
   def qrcode
     site = 'https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx'
@@ -95,6 +95,52 @@ class BillsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def bill_params
-      params.require(:bill).permit(:status, :order_id, :initial_price, :discount_applied, :additional_discount_applied, :price_before_taxes, :type_of_bill, :prospect_id, :classification, :store_id, :amount, :quantity, :pdf, :xml)
+      params.require(:bill).permit(
+      :status,
+      :order_id,
+      :initial_price,
+      :discount_applied,
+      :automatic_discount_applied,
+      :manual_discount_applied,
+      :price_before_taxes,
+      :type_of_bill,
+      :prospect_id,
+      :classification,
+      :amount,
+      :quantity,
+      :pdf,
+      :xml,
+      :issuing_company_id,
+      :receiving_company_id,
+      :store_id,
+      :sequence,
+      :folio,
+      :expedition_zip_id,
+      :payment_condition_id,
+      :payment_method_id,
+      :payment_form_id,
+      :tax_regime_id,
+      :cfdi_use_id,
+      :tax_id,
+      :pac_id,
+      :fiscal_folio,
+      :digital_stamp,
+      :sat_stamp,
+      :original_chain,
+      :relation_type_id,
+      :child_bills_id,
+      :parent_id,
+      :references_field,
+      :type_of_bill_id,
+      :certificate,
+      :currency_id,
+      :fiscal_residency_id,
+      :id_trib_reg_num,
+      :confirmation_key,
+      :exchange_rate,
+      :country_id,
+      :taxes_trasnferred,
+      :taxes_witheld
+      )
     end
 end

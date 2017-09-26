@@ -3,9 +3,8 @@ class BillingAddress < ActiveRecord::Base
   has_many :prospects
   has_many :business_units
   has_many :stores
-  has_many :issuing_companies, class_name: 'Bill', foreign_key: 'issuing_companies_id'
-  has_many :receiving_companies, class_name: 'Bill', foreign_key: 'receiving_company_id' 
-
+  has_many :issuing_companies, class_name: 'Bill', foreign_key: 'issuing_company_id'
+  has_many :receiving_companies, class_name: 'Bill', foreign_key: 'receiving_company_id'
 
   validates :business_name, presence: { message: 'Debe escribir la razón social.'}
 

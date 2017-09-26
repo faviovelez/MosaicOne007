@@ -5,4 +5,5 @@ class DiscountRule < ActiveRecord::Base
   belongs_to :user
   belongs_to :business_unit
   belongs_to :store
+  has_many :discount_rules
 end

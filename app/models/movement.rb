@@ -4,6 +4,7 @@ class Movement < ActiveRecord::Base
   belongs_to :order
   belongs_to :store
   belongs_to :supplier
+  # Ya que se modifique, quitaré la línea de movements
   belongs_to :user
   belongs_to :business_unit
   belongs_to :prospect
@@ -11,6 +12,9 @@ class Movement < ActiveRecord::Base
   has_one :warehouse_entry
   has_many :delivery_attempts
   belongs_to :product_request
+  belongs_to :discount_rule
+  belongs_to :seller_user, class_name: 'User'
+  belongs_to :buyer_user, class_name: 'User'
 
   before_save :create_update_summary, if: :is_sales?
 

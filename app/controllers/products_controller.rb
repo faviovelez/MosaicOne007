@@ -186,6 +186,7 @@ class ProductsController < ApplicationController
       :image,
       :pieces_per_package,
       :business_unit_id,
+      :store_id,
       :warehouse_id,
       :cost,
       :rack,
