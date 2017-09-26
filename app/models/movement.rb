@@ -222,10 +222,7 @@ class Movement < ActiveRecord::Base
         total_quantity -= Movement.last.fix_quantity
         entry.destroy
       else
-        split(
-          total_quantity,
-          entry.movement.fix_cost * entry.fix_quantity
-        )
+        self.update(quantity: total_quantity)
         entry.update(
           quantity: (entry.fix_quantity - total_quantity)
         )
