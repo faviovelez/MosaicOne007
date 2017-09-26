@@ -179,8 +179,8 @@ module BillsHelper
   end
 
   def unidades
+    @unit_value = @num_s[0].to_i
     if @num_unit > 0
-      @unit_value = @num_s[0].to_i
       @quantity_in_letters << UNIDADES[@unit_value]
     end
     @num_unit -= 1
@@ -218,7 +218,11 @@ module BillsHelper
         centenas
       end
     end
-    @quantity_in_letters << 'pesos '
+    if (@num_length == 1 && @unit_value)
+      @quantity_in_letters << 'peso '
+    else
+      @quantity_in_letters << 'pesos '
+    end
     @quantity_in_letters.capitalize
   end
 
