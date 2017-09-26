@@ -98,6 +98,7 @@ class StoresController < ApplicationController
                                   cell_phone: @store.cell_phone,
                                   email: @store.email,
                                   store_code: @store.store_code,
+                                  store_type: @store.store_type,
                                   business_unit: BusinessUnit.find(1),
                                   business_group: BusinessGroup.find_by_business_group_type('main')
                                   )
@@ -118,6 +119,7 @@ class StoresController < ApplicationController
                         cell_phone: @store.cell_phone,
                         email: @store.email,
                         store_code: @store.store_code,
+                        store_type: @store.store_type,
                         business_unit: BusinessUnit.find(1),
                         business_group: BusinessGroup.find_by_business_group_type('main')
                         )

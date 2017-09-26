@@ -11,6 +11,7 @@ class Prospect < ActiveRecord::Base
   has_many :prospect_sales
   belongs_to :business_unit
   belongs_to :business_group
+  belongs_to :store_type
 
   validates :legal_or_business_name, presence: { message: 'Debe especificar el nombre del prospecto.'}
 

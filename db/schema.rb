@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170926033635) do
+ActiveRecord::Schema.define(version: 20170926190834) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -780,6 +780,7 @@ ActiveRecord::Schema.define(version: 20170926033635) do
     t.string   "email"
     t.integer  "business_group_id"
     t.string   "store_code"
+    t.integer  "store_type_id"
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
@@ -787,6 +788,7 @@ ActiveRecord::Schema.define(version: 20170926033635) do
   add_index "prospects", ["business_unit_id"], name: "index_prospects_on_business_unit_id", using: :btree
   add_index "prospects", ["delivery_address_id"], name: "index_prospects_on_delivery_address_id", using: :btree
   add_index "prospects", ["store_id"], name: "index_prospects_on_store_id", using: :btree
+  add_index "prospects", ["store_type_id"], name: "index_prospects_on_store_type_id", using: :btree
 
   create_table "relation_types", force: :cascade do |t|
     t.string   "description"
@@ -986,6 +988,7 @@ ActiveRecord::Schema.define(version: 20170926033635) do
     t.string   "zip_code"
     t.boolean  "period_sales_achievement"
     t.boolean  "inspection_approved"
+    t.float    "overprice"
   end
 
   add_index "stores", ["billing_address_id"], name: "index_stores_on_billing_address_id", using: :btree
@@ -1237,6 +1240,7 @@ ActiveRecord::Schema.define(version: 20170926033635) do
   add_foreign_key "prospects", "business_groups"
   add_foreign_key "prospects", "business_units"
   add_foreign_key "prospects", "delivery_addresses"
+  add_foreign_key "prospects", "store_types"
   add_foreign_key "prospects", "stores"
   add_foreign_key "request_users", "requests"
   add_foreign_key "request_users", "users"
