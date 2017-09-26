@@ -214,7 +214,9 @@ class Movement < ActiveRecord::Base
       "created_at #{order_type}"
     ).each do |pending|
       if quantity > pending.quantity
-        movement = remove_attributes(pending.attributes)
+        movement = Movement.create(
+          remove_attributes(pending.attributes)
+        )
         pending.destroy if movement.save
         movement.product_request.update(
           status: 'asignado'

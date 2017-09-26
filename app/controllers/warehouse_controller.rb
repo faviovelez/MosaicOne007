@@ -159,6 +159,7 @@ class WarehouseController < ApplicationController
           )
         )
         begin
+          movement.update(quantity: WarehouseEntry.last.quantity)
           movement.product.inventory.set_quantity(
             movement.quantity
           )
