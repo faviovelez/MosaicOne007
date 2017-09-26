@@ -208,28 +208,34 @@ class Movement < ActiveRecord::Base
 
   def process_extras(order_type, total_quantity, order)
     self.update(order: order)
+    is_end = false
     WarehouseEntry.where(
       product: self.get_product
     ).order(
       "created_at #{order_type}"
     ).each do |entry|
-      split(
-        entry.fix_quantity,
-        entry.movement.fix_cost * entry.fix_quantity
-      )
       if total_quantity >= entry.fix_quantity
-        pending_order -= Movement.last.fix_quantity
+        split(
+          entry.fix_quantity,
+          entry.movement.fix_cost * entry.fix_quantity
+        )
+        total_quantity -= Movement.last.fix_quantity
         entry.destroy
       else
-        entry.update(
-          quantity: (entry.fix_quantity - pending_order)
+        split(
+          total_quantity,
+          entry.movement.fix_cost * entry.fix_quantity
         )
-        break
+        entry.update(
+          quantity: (entry.fix_quantity - total_quantity)
+        )
+        is_end = true
       end
+      get_product.update_inventory_quantity(
+        Movement.last.fix_quantity
+      )
+      break if is_end
     end
-    get_product.update_inventory_quantity(
-      @product_request.quantity
-    )
   rescue
     return false
   end
