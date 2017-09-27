@@ -1,60 +1,58 @@
+<div class="show-container" id="stores-container">
 
-<div class="info-container store-container">
-
-  <h3 class="info-title">
+  <h2 class="info-title">
     <%= @store.store_code %> -
     <%= @store.store_name %>
-  </h3>
+  </h2>
 
-  <p class="info">
+  <p>
     <strong>Tipo de tienda: </strong>
     <%= @store.store_type.store_type %>
   </p>
 
-  <p class="info">
+  <p>
     <strong>Empresa: </strong>
     <%= @store.business_unit.name %>
   </p>
 
-
-  <p class="info">
+  <p>
     <strong>Grupo de negocios: </strong>
     <%= @store.business_group.name %>
   </p>
 
-  <p class="info">
+  <p>
     <strong>Tipo de persona: </strong>
     <%= @store.type_of_person %>
   </p>
 
+  <h3 class="info-subtitle store-subtitle">Datos de contacto</h3>
 
-  <h4 class="info-subtitle store-subtitle">Datos de contacto</h4>
-
-  <p class="info">
+  <p>
     <strong>Nombre del contacto:</strong>
     <%= @store.contact_first_name %> <%= @store.contact_middle_name %> <%= @store.contact_last_name %> <%= @store.second_last_name %>
   </p>
 
-  <p class="info">
+  <p>
     <strong>Correo: </strong>
     <%=@store.email %>
   </p>
 
-  <p class="info">
+  <p>
     <strong>Teleléfono fijo: </strong>
     <%=@store.direct_phone %>
   </p>
 
-    <p class="info">
-      <strong>Extensión: </strong>
-      <%=@store.direct_phone %>
-    </p>
-
-
-  <p class="info">
-    <strong>Celular: </strong>
-    <%=@store.cell_phone %>
+  <p>
+    <strong>Extensión: </strong>
+    <%=@store.direct_phone %>
   </p>
+
+  <% if @store.cell_phone.present?%>
+    <p>
+      <strong>Celular: </strong>
+      <%=@store.cell_phone %>
+    </p>
+  <% end %>
 
   <p>
     <% if @store.business_unit.billing_address.present? %>

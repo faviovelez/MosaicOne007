@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170926190834) do
+ActiveRecord::Schema.define(version: 20170927223231) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -327,6 +327,8 @@ ActiveRecord::Schema.define(version: 20170926190834) do
     t.datetime "updated_at",                    null: false
     t.integer  "business_unit_id"
     t.integer  "store_id"
+    t.string   "prospect_filter"
+    t.string   "product_filter"
   end
 
   add_index "discount_rules", ["business_unit_id"], name: "index_discount_rules_on_business_unit_id", using: :btree
@@ -781,6 +783,7 @@ ActiveRecord::Schema.define(version: 20170926190834) do
     t.integer  "business_group_id"
     t.string   "store_code"
     t.integer  "store_type_id"
+    t.integer  "store_prospect_id"
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
@@ -788,6 +791,7 @@ ActiveRecord::Schema.define(version: 20170926190834) do
   add_index "prospects", ["business_unit_id"], name: "index_prospects_on_business_unit_id", using: :btree
   add_index "prospects", ["delivery_address_id"], name: "index_prospects_on_delivery_address_id", using: :btree
   add_index "prospects", ["store_id"], name: "index_prospects_on_store_id", using: :btree
+  add_index "prospects", ["store_prospect_id"], name: "index_prospects_on_store_prospect_id", using: :btree
   add_index "prospects", ["store_type_id"], name: "index_prospects_on_store_type_id", using: :btree
 
   create_table "relation_types", force: :cascade do |t|
@@ -988,7 +992,7 @@ ActiveRecord::Schema.define(version: 20170926190834) do
     t.string   "zip_code"
     t.boolean  "period_sales_achievement"
     t.boolean  "inspection_approved"
-    t.float    "overprice"
+    t.float    "overprice",                default: 0.0
   end
 
   add_index "stores", ["billing_address_id"], name: "index_stores_on_billing_address_id", using: :btree

@@ -1,83 +1,99 @@
-<%= form_for(@discount_rule) do |f| %>
-  <% if @discount_rule.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@discount_rule.errors.count, "error") %> prohibited this discount_rule from being saved:</h2>
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
 
-      <ul>
-      <% @discount_rule.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+<% end %>
+
+<body class="<%=params[:controller]%> <%=params[:action]%>">
+
+  <% render 'discount_rules_errors' %>
+
+  <%= form_for(@discount_rule) do |f| %>
+
+    <div class="form-container">
+
+      <div class="field form-inside-style">
+        <%= f.label :lista_de_productos %><br>
+        <%= f.select :product_list, options_for_select(select_products), {include_blank: true}, multiple: true %>
+      </div>
+
+      <div class="field form-inside-style">
+        <%= f.label :lista_de_productos %><br>
+        <%= f.select :product_list, options_for_select(select_products), {include_blank: true}, multiple: true %>
+      </div>
+
+      <div class="field">
+        <%= f.label :percentage %><br>
+        <%= f.text_field :percentage %>
+      </div>
+
+      <div class="field form-inside-style">
+        <%= f.label :lista_de_clientes %><br>
+        <%= f.select :prospect_list, options_for_select(select_prospects), {include_blank: true}, multiple: true %>
+      </div>
+
+      <div class="field">
+        <%= f.label :product_id %><br>
+        <%= f.text_field :product_id %>
+      </div>
+
+      <div class="field">
+        <%= f.label :initial_date %><br>
+        <%= f.date_select :initial_date %>
+      </div>
+
+      <div class="field">
+        <%= f.label :final_date %><br>
+        <%= f.date_select :final_date %>
+      </div>
+
+      <div class="field">
+        <%= f.label :user_id %><br>
+        <%= f.text_field :user_id %>
+      </div>
+
+      <div class="field">
+        <%= f.label :rule %><br>
+        <%= f.text_field :rule %>
+      </div>
+
+      <div class="field">
+        <%= f.label :minimum_amount %><br>
+        <%= f.text_field :minimum_amount %>
+      </div>
+
+      <div class="field">
+        <%= f.label :minimum_quantity %><br>
+        <%= f.number_field :minimum_quantity %>
+      </div>
+
+      <div class="field">
+        <%= f.label :exclusions %><br>
+        <%= f.text_field :exclusions %>
+      </div>
+
+      <div class="field">
+        <%= f.label :active %><br>
+        <%= f.check_box :active %>
+      </div>
+
+      <div class="field">
+        <%= f.label :business_unit_id %><br>
+        <%= f.text_field :business_unit_id %>
+      </div>
+
+      <div class="field">
+        <%= f.label :store_id %><br>
+        <%= f.text_field :store_id %>
+      </div>
+
+      <div class="actions">
+        <%= f.submit %>
+      </div>
+
     </div>
   <% end %>
 
-  <div class="form-container">
-
-    <div class="field form-inside-style">
-      <%= f.label :product_list %><br>
-      <%= f.select :product_list, options_for_select(all_products) %>
-    </div>
-
-  </div>
-
-
-  <div class="field">
-    <%= f.label :percentage %><br>
-    <%= f.text_field :percentage %>
-  </div>
-  <div class="field">
-    <%= f.label :product_list %><br>
-    <%= f.text_area :product_list %>
-  </div>
-  <div class="field">
-    <%= f.label :prospect_list %><br>
-    <%= f.text_area :prospect_list %>
-  </div>
-  <div class="field">
-    <%= f.label :product_id %><br>
-    <%= f.text_field :product_id %>
-  </div>
-  <div class="field">
-    <%= f.label :initial_date %><br>
-    <%= f.date_select :initial_date %>
-  </div>
-  <div class="field">
-    <%= f.label :final_date %><br>
-    <%= f.date_select :final_date %>
-  </div>
-  <div class="field">
-    <%= f.label :user_id %><br>
-    <%= f.text_field :user_id %>
-  </div>
-  <div class="field">
-    <%= f.label :rule %><br>
-    <%= f.text_field :rule %>
-  </div>
-  <div class="field">
-    <%= f.label :minimum_amount %><br>
-    <%= f.text_field :minimum_amount %>
-  </div>
-  <div class="field">
-    <%= f.label :minimum_quantity %><br>
-    <%= f.number_field :minimum_quantity %>
-  </div>
-  <div class="field">
-    <%= f.label :exclusions %><br>
-    <%= f.text_field :exclusions %>
-  </div>
-  <div class="field">
-    <%= f.label :active %><br>
-    <%= f.check_box :active %>
-  </div>
-  <div class="field">
-    <%= f.label :business_unit_id %><br>
-    <%= f.text_field :business_unit_id %>
-  </div>
-  <div class="field">
-    <%= f.label :store_id %><br>
-    <%= f.text_field :store_id %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
+</body>

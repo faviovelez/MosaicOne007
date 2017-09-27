@@ -45,4 +45,21 @@ $(document).ready(function() {
       $("#delivery_notes_div").addClass('hidden');
     };
   });
+
+  $('#discount_rule_product_list').select2({
+     placeholder: 'seleccione productos',
+     language: "es",
+  });
+
+  $('#discount_rule_prospect_list').select2({
+     placeholder: 'seleccione clientes',
+     language: "es",
+  });
+
+  $('#store_zip_code').select2({
+     placeholder: 'seleccione clientes',
+     language: "es",
+  });
+
+
 });

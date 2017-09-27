@@ -150,6 +150,7 @@ $(function(){
           $('tbody').prepend(tr);
           $('#selectForProduct'+ inc).append($('#trForProduct1 select').html());
           $('#selectForProduct'+ inc).select2({
+            language: "es",
             templateSelection: formatState,
             multiple: true,
             width: 200,
@@ -169,6 +170,7 @@ $(function(){
   if ($('#product1').length > 0) {
     setTimeout(function(){
       $('#product1').select2({
+        language: "es",
         templateSelection: formatState,
         multiple: true,
         width: 200,

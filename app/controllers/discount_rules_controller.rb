@@ -15,6 +15,7 @@ class DiscountRulesController < ApplicationController
   # GET /discount_rules/new
   def new
     @discount_rule = DiscountRule.new
+    @products = Product.all
   end
 
   # GET /discount_rules/1/edit
@@ -25,7 +26,9 @@ class DiscountRulesController < ApplicationController
   # POST /discount_rules.json
   def create
     @discount_rule = DiscountRule.new(discount_rule_params)
-
+    save_product_ids
+    save_prospect_ids
+    debugger
     respond_to do |format|
       if @discount_rule.save
         format.html { redirect_to @discount_rule, notice: 'Discount rule was successfully created.' }
@@ -61,6 +64,47 @@ class DiscountRulesController < ApplicationController
     end
   end
 
+  def product_params_ids
+    @products = params[:discount_rule][:product_list]
+  end
+
+  def prospect_params_ids
+    @prospects = params[:discount_rule][:prospect_list]
+  end
+
+  def save_product_ids
+    @products.each do |product|
+      @discount_rule.product_list << product.to_i unless product == ''
+    end
+  end
+
+  def save_prospect_ids
+    @prospects.each do |prospect|
+      @discount_rule.prospect_list << prospect.to_i unless prospect == ''
+    end
+  end
+
+# Revisar posteriormente para multiopción
+  def product_category
+    Classification.all.each do |c|
+      @line = c.name
+      if params[:discount_rule][:product_filter] == @line
+        @products = Product.where(line: @line)
+      end
+    end
+  end
+
+  # Revisar posteriormente para multiopción
+  def prospect_category
+    Classification.all.each do |c|
+      @line = c.name
+      if params[:discount_rule][:product_filter] == @line
+        @products = Product.where(line: @line)
+      end
+    end
+  end
+
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_discount_rule
@@ -69,6 +113,22 @@ class DiscountRulesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def discount_rule_params
-      params.require(:discount_rule).permit(:percentage, :product_list, :prospect_list, :product_id, :initial_date, :final_date, :user_id, :rule, :minimum_amount, :minimum_quantity, :exclusions, :active, :business_unit_id, :store_id)
+      params.require(:discount_rule).permit(
+      :percentage,
+      :product_list,
+      :prospect_list,
+      :product_id,
+      :initial_date,
+      :final_date,
+      :user_id,
+      :rule,
+      :minimum_amount,
+      :minimum_quantity,
+      :exclusions,
+      :active,
+      :business_unit_id,
+      :store_id,
+      :product_filter,
+      :prospect_filter)
     end
 end

@@ -1,0 +1,9 @@
+<% if @discount_rule.errors.any? %>
+  <ul>
+    <% @discount_rule.errors.messages.values.each do |msg| %>
+      <%msg.each do  |m| %>
+        <li><%= m %></li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>

@@ -12,6 +12,7 @@ class Prospect < ActiveRecord::Base
   belongs_to :business_unit
   belongs_to :business_group
   belongs_to :store_type
+  belongs_to :store_prospect, class_name: "Store", foreign_key: 'store_prospect_id'
 
   validates :legal_or_business_name, presence: { message: 'Debe especificar el nombre del prospecto.'}
 

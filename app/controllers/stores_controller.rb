@@ -1,7 +1,7 @@
 class StoresController < ApplicationController
   # En este se crean nuevas tiendas (solo el usuario de product-admin deberá poder crearlas y un user 'store' solo podrá modificarlas (algunas modificaciones estarán restringidas)
   before_action :authenticate_user!
-  before_action :set_store, only: [:show, :edit, :update, :show_settings, :inventory_settings]
+  before_action :set_store, only: [:show, :edit, :update, :show_settings, :settings]
   before_action :allow_only_platform_admin_role, only: :new
   before_action :allow_store_admin_or_platform_admin_role, only: :edit
 
@@ -20,7 +20,7 @@ class StoresController < ApplicationController
     @store = Store.new
   end
 
-  def inventory_settings
+  def settings
   end
 
   def show_settings
@@ -44,7 +44,7 @@ class StoresController < ApplicationController
 
   def update
     unless @store.id == 1
-      @prospect = Prospect.find_by_store_code(@store.store_code)
+      @prospect = Prospect.find_by_store_code(@store.store_code) || Prospect.find_by_store_prospect_id(@store)
     end
     respond_to do |format|
       if @store.update(store_params)
@@ -97,6 +97,7 @@ class StoresController < ApplicationController
                                   extension: @store.extension,
                                   cell_phone: @store.cell_phone,
                                   email: @store.email,
+                                  store: current_user.store,
                                   store_code: @store.store_code,
                                   store_type: @store.store_type,
                                   business_unit: BusinessUnit.find(1),
@@ -118,6 +119,7 @@ class StoresController < ApplicationController
                         extension: @store.extension,
                         cell_phone: @store.cell_phone,
                         email: @store.email,
+                        store: current_user.store,
                         store_code: @store.store_code,
                         store_type: @store.store_type,
                         business_unit: BusinessUnit.find(1),
@@ -141,7 +143,9 @@ private
                                   :store_type_id,
                                   :store_code,
                                   :store_name,
+                                  :store_id,
                                   :business_unit_id,
+                                  :business_group_id,
                                   :delivery_address_id,
                                   :billing_address_id,
                                   :cost_type_id,
@@ -159,8 +163,8 @@ private
                                   :email,
                                   :type_of_person,
                                   :prospect_status,
-                                  :business_group_id,
-                                  :zipcode
+                                  :zipcode,
+                                  :overprice
                                   )
   end
 

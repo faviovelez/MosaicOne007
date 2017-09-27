@@ -234,6 +234,7 @@ $(function(){
               .addClass('isSelect2')
               .select2({
                 templateSelection: formatState,
+                language: "es",
                 multiple: true,
                 maximumSelectionLength: 1
               })
@@ -255,6 +256,7 @@ $(function(){
           .select2({
           templateSelection: formatState,
           multiple: true,
+          language: "es",
           maximumSelectionLength: 1,
           width: 300
         })

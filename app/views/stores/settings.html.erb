@@ -1,6 +1,6 @@
 <%= form_for(@store) do |f| %>
 
-  <h2 class="info-title">Editar Configuración de Inventario de <%= @store.store_code %> - <%= @store.store_name %> </h2>
+  <h2 class="info-title">Editar Configuración de Tienda <%= @store.store_code %> - <%= @store.store_name %> </h2>
 
   <div class="form-container">
 
@@ -22,6 +22,11 @@
     <div class="form-inside-style">
       <%= f.label 'punto crítico (%)' %>
       <%= f.text_field :critical_point, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label 'Sobreprecio (%)' %>
+      <%= f.text_field :overprice, class: 'form-inside' %>
     </div>
 
     <div class="button-container">

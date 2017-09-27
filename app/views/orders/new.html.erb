@@ -1,11 +1,12 @@
 <%= content_for :stylesheet do %>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+  <%= stylesheet_link_tag 'select2.min' %>
 <% end %>
 
 <%= content_for :javascript do %>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'jquery.mask.min' %>
+  <%= javascript_include_tag 'underscore.min' %>
   <%= javascript_include_tag 'orders' %>
 <% end %>
 <script>

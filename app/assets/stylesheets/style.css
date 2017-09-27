@@ -161,7 +161,8 @@ p.info > strong {
 #billing-container > p,
 #delivery-container > p,
 #supplier-container > p,
-#products-container > p {
+#products-container > p,
+#stores-container > p {
   padding: 1rem 3rem;
   font-family: 'Open Sans', sans-serif;
   font-size: 1.8rem;

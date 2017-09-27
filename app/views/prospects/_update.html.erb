@@ -65,6 +65,11 @@
     </div>
 
     <div class="form-inside-style hidden">
+      <%= f.label :tienda %>
+      <%= f.text_field :store_id, value: current_user.store.id, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style hidden">
       <%= f.label :empresa %>
       <%= f.text_field :business_unit_id, value: current_user.store.business_unit.id, class: 'form-inside' %>
     </div>

@@ -17,6 +17,7 @@ class Store < ActiveRecord::Base
   has_many :suppliers
   has_many :bills
   has_many :discount_rules
+  has_many :store_prospect, class_name: "Prospect", foreign_key: 'store_prospect_id'
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 

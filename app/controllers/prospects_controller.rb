@@ -110,6 +110,7 @@ class ProspectsController < ApplicationController
       :email,
       :business_unit_id,
       :business_group_id,
+      :store_id,
       :store_code)
     end
 end

@@ -2,7 +2,9 @@
 <html>
 <head>
   <title>Sistema DC</title>
+  <meta name="robots" content="noindex">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <%= stylesheet_link_tag    'bootstrap', media: 'all' %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= stylesheet_link_tag    'application', 'https://fonts.googleapis.com/css?family=Open+Sans:300,400', media: 'all' %>
@@ -13,10 +15,8 @@
   <%= stylesheet_link_tag    'requests', media: 'all' %>
 
   <%= content_for :stylesheet %>
-
   <%= favicon_link_tag 'Mosaic-tech-cuadros.png' %>
   <%= csrf_meta_tags %>
-  <meta name="robots" content="noindex">
 </head>
 
 <% if params[:controller] == 'devise/sessions' %>
