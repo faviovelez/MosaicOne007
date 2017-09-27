@@ -152,26 +152,32 @@ class WarehouseController < ApplicationController
   def attach_entry
     @collection.each do |movement|
       if movement.save
-        movement.warehouse_entry = WarehouseEntry.create(
-          product:  movement.product,
-          quantity: movement.quantity - movement.process_pendings(
-            movement.quantity, order_type
-          )
+        put_inventory(movement)
+        after_processed = movement.process_pendings(
+          order_type, movement.quantity
         )
-        begin
-          movement.update(quantity: WarehouseEntry.last.quantity)
-          movement.product.inventory.set_quantity(
-            movement.quantity
-          )
-        rescue NoMethodError
-          movement.product.inventory = Inventory.create
-          movement.product.inventory.set_quantity(
-            movement.quantity
+        if after_processed > 0
+          movement.warehouse_entry = WarehouseEntry.create(
+            product:  movement.product,
+            quantity: after_processed
           )
         end
       end
     end
     @codes = @collection.map {|movement| movement.id}.join('-')
+  end
+
+  def put_inventory(movement)
+    begin
+      movement.product.inventory.set_quantity(
+        movement.quantity
+      )
+    rescue NoMethodError
+      movement.product.inventory = Inventory.create
+      movement.product.inventory.set_quantity(
+        movement.quantity
+      )
+    end
   end
 
   def attach_bill_received
