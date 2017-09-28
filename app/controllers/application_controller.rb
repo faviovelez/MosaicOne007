@@ -4,11 +4,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
   def process_product_request
-    @product_request.update(status: 'asignado')
     @entries = WarehouseEntry.where(
       product: @product_request.product
     ).order("created_at #{order_type}")
-    #TODO logic to set error
     if process_entries
       @product_request.product.update_inventory_quantity(
         @product_request.quantity
@@ -43,25 +41,6 @@ class ApplicationController < ActionController::Base
   rescue
     return false
   end
-
-  def create_movement(object)
-    product = @product_request.product
-    store = current_user.store
-    movement = object.create(
-      product: product,
-      order: @order,
-      unique_code: product.unique_code,
-      store: store,
-      initial_price: product.price,
-      movement_type: 'venta',
-      user: current_user,
-      business_unit: store.business_unit,
-      product_request_id: @product_request.id,
-      maximum_date: @product_request.maximum_date
-    )
-    movement
-  end
-
 
   protected
     def configure_permitted_parameters

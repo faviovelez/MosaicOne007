@@ -184,4 +184,140 @@ class Movement < ActiveRecord::Base
   def fix_final_price
     self.cost || 0
   end
+
+  def get_product
+    self.product || self.product_request.product
+  end
+
+  def split(quantity, cost)
+    movement = remove_attributes(self.attributes)
+    movement = Movement.create(movement)
+    movement.update_attributes(
+      quantity: quantity,
+      cost:     cost
+    )
+    movement
+  end
+
+  def remove_attributes(attributes)
+    %w(id created_at updated_at).each do |attr|
+      attributes.delete(attr)
+    end
+    attributes
+  end
+
+  def process_inventories(hash, pending)
+    if hash[:actual] < pending
+      to_used = hash[:actual] - pending
+      hash[:to_processed] -= to_used.abs
+    end
+  end
+
+  def transform(pending, inventory)
+    if inventory.quantity > pending.quantity
+      movement = Movement.create(
+        remove_attributes(pending.attributes)
+      )
+      if movement.save
+        inventory.set_quantity(pending.quantity, '-')
+        movement.product_request.update(
+          status: 'asignado'
+        )
+        return true
+      end
+    end
+    false
+  end
+
+  def actual_inventory
+    get_product.inventory.quantity || 0
+  end
+
+  def related_warehouses(order_type)
+    WarehouseEntry.where(
+      product: self.get_product
+    ).order(
+      "created_at #{order_type}"
+    )
+  end
+
+  def convert_warehouses(order_type, local_quantity)
+    related_warehouses(order_type).each do |entry|
+      if local_quantity > entry.fix_quantity
+        entry.destroy
+      else
+        entry.update(
+          quantity: entry.quantity - local_quantity
+        )
+      end
+    end
+  end
+
+  def process_pendings(order_type, quantity)
+    inventories = {
+      actual:       actual_inventory - quantity,
+      to_processed: quantity
+    }
+    inventory = get_product.inventory
+    PendingMovement.where(
+      product: self.get_product
+    ).order(
+      "created_at #{order_type}"
+    ).each do |pending|
+      if transform(pending, inventory)
+        convert_warehouses(order_type, pending.quantity)
+        pending.destroy
+        process_inventories(inventories, pending.quantity)
+        inventories[:actual] = actual_inventory
+      end
+    end
+    inventories[:to_processed]
+  end
+
+  def process_extras(order_type, total_quantity, order)
+    self.update(order: order)
+    is_end = false
+    related_warehouses(order_type).each do |entry|
+      if total_quantity >= entry.fix_quantity
+        split(
+          entry.fix_quantity,
+          entry.movement.fix_cost * entry.fix_quantity
+        )
+        total_quantity -= Movement.last.fix_quantity
+        temp_quantity = Movement.last.fix_quantity
+        entry.destroy
+      else
+        self.update(quantity: total_quantity)
+        temp_quantity = total_quantity
+        entry.update(
+          quantity: (entry.fix_quantity - total_quantity)
+        )
+        is_end = true
+      end
+      get_product.update_inventory_quantity(
+        temp_quantity
+      )
+      break if is_end
+    end
+  rescue
+    return false
+  end
+
+  class << self
+
+    def initialize_with(object, user ,type)
+      product = object.product
+      store   = user.store
+      create(
+        product: product,
+        unique_code: product.unique_code,
+        store: store,
+        initial_price: product.price,
+        movement_type: type,
+        user: user,
+        business_unit: store.business_unit,
+      )
+    end
+
+  end
 end

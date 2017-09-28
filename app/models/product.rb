@@ -39,7 +39,7 @@ class Product < ActiveRecord::Base
   end
 
   def valid_inventory
-    final_inventory = quantity - movements_quantity
+    final_inventory = quantity
     if final_inventory < 0
       return 0
     end
