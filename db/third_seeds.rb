@@ -140,3 +140,33 @@ require 'csv'
 # end
 
 # puts "There are now #{CfdiUse.count} rows in the CFDI Use table"
+
+#  Agrega el catálogo de Productos de Diseños de Cartón
+  csv_text = File.read(Rails.root.join('lib', 'seeds', 'products_trial.csv'))
+  csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+  csv.each do |row|
+    product = Product.find_or_create_by(
+                                  {
+                                    unique_code: row['cod'],
+                                    description: row['desc'],
+                                    business_unit: BusinessUnit.find_by_name(row['bu']),
+                                    line: Classification.find_by_name(row['line']).name,
+                                    classification: row['class'],
+                                    product_type: row['type'],
+                                    price: row['price']
+                                  }
+    )
+    puts "#{product.id}, #{product.unique_code} saved"
+    i = Inventory.find_or_create_by(
+                                {
+                                  product: product,
+                                  unique_code: product.unique_code
+                                }
+    )
+    puts "#{i.id}, #{i.unique_code} saved"
+  end
+
+  puts "There are now #{Product.count} rows in the Products table"
+  puts "There are now #{Inventory.count} rows in the Inventory table"
+
+#CUANDO AGREGUE EL DIRECTORIO DE TIENDAS, AGREGAR LÍNEAS PARA PROSPECTO Y ALMACÉN Y VER SI HAY OTRAS IMPLICACIONES

@@ -4,8 +4,19 @@ class SuppliersController < ApplicationController
   # GET /suppliers
   # GET /suppliers.json
   def index
-    # MODIFICAR
-    @suppliers = Supplier.all
+    user = current_user.role.name
+    if user == 'store' || user == 'store-admin'
+      @suppliers = store.suppliers
+    else
+      stores_ids = []
+      b_units = current_user.store.business_group.business_units
+      b_units.each do |bu|
+        bu.stores.each do |s|
+          stores_ids << s.id
+        end
+      end
+      @suppliers = Supplier.where(store: stores_ids)
+    end
   end
 
   # GET /suppliers/1
@@ -27,6 +38,7 @@ class SuppliersController < ApplicationController
   def create
     @supplier = Supplier.new(supplier_params)
     save_supplier_to_business_group
+    save_supplier_to_business_unit
     respond_to do |format|
       if @supplier.save
         format.html { redirect_to @supplier, notice: 'El proveedor fue dado de alta correctamente.' }
@@ -68,6 +80,12 @@ class SuppliersController < ApplicationController
     @business_group.save
   end
 
+  def save_supplier_to_business_unit
+    @business_unit = current_user.store.business_unit
+    @business_unit.suppliers << @supplier
+    @business_unit.save
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_supplier
@@ -80,6 +98,26 @@ class SuppliersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def supplier_params
-      params.require(:supplier).permit(:name, :business_type, :type_of_person, :contact_first_name, :contact_middle_name, :contact_last_name, :contact_position, :direct_phone, :extension, :cell_phone, :email, :supplier_status, :delivery_address_id, :last_purchase_bill_date, :last_purhcase_folio, :store_id)
+      params.require(:supplier).permit(
+      :name,
+      :business_type,
+      :type_of_person,
+      :contact_first_name,
+      :contact_middle_name,
+      :contact_last_name,
+      :contact_position,
+      :direct_phone,
+      :extension,
+      :cell_phone,
+      :email,
+      :supplier_status,
+      :delivery_address_id,
+      :last_purchase_bill_date,
+      :last_purhcase_folio,
+      :store_id,
+      :business_unit_id,
+      :business_group_id
+      )
     end
+
 end

@@ -33,6 +33,7 @@ class StoresController < ApplicationController
       if @store.save
         create_warehouse
         create_prospect_from_store
+        create_supplier_for_store
         format.html { redirect_to @store, notice: 'La tienda fue dada de alta exitosamente.' }
         format.json { render :show, status: :created, location: @store }
       else
@@ -70,7 +71,7 @@ class StoresController < ApplicationController
 
   def create_warehouse
     @warehouse = Warehouse.create(
-                                  name: "almacén #{@store.store_name}",
+                                  name: "Almacén #{@store.store_name}",
                                   store: @store,
                                   business_unit: @store.business_unit,
                                   business_group: @store.business_group,
@@ -97,9 +98,9 @@ class StoresController < ApplicationController
                                   extension: @store.extension,
                                   cell_phone: @store.cell_phone,
                                   email: @store.email,
-                                  store: current_user.store,
                                   store_code: @store.store_code,
                                   store_type: @store.store_type,
+                                  store_prospect: @store,
                                   business_unit: BusinessUnit.find(1),
                                   business_group: BusinessGroup.find_by_business_group_type('main')
                                   )
@@ -119,13 +120,21 @@ class StoresController < ApplicationController
                         extension: @store.extension,
                         cell_phone: @store.cell_phone,
                         email: @store.email,
-                        store: current_user.store,
                         store_code: @store.store_code,
                         store_type: @store.store_type,
+                        store_prospect: @store,
                         business_unit: BusinessUnit.find(1),
                         business_group: BusinessGroup.find_by_business_group_type('main')
                         )
     end
+  end
+
+  def create_supplier_for_store
+    patria_supplier = Supplier.find_by_name('Diseños de Cartón')
+    comercializadora_supplier = Supplier.find_by_name('Comercializadora de Cartón y Diseño')
+    @store.suppliers << patria_supplier
+    @store.suppliers << comercializadora_supplier
+    @store.save
   end
 
 private

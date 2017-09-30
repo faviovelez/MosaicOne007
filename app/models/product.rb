@@ -16,6 +16,13 @@ class Product < ActiveRecord::Base
   belongs_to :unit
   belongs_to :sat_key
   belongs_to :sat_unit_key
+  belongs_to :supplier
+  belongs_to :store
+  has_many :stores, through: :stores_inventories
+  has_many :stores_inventories
+  has_many :stores, through: :stores_warehouse_entries
+  has_many :movements, through: :stores_warehouse_entries
+  has_many :stores_warehouse_entries
 
   validates :unique_code, presence: { message: "Debe anotar un código de producto."}
 

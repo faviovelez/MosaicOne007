@@ -160,9 +160,16 @@
       </div>
 
       <div class="form-inside-style">
-        <%= f.label :tienda %>
-        <%= f.select :store_id, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}, selected: @product.business_unit) %>
+        <%= f.label :proveedor %>
+        <%= f.select :supplier_id, options_for_select(suppliers) %>
       </div>
+
+      <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+        <div class="form-inside-style hidden">
+          <%= f.label :tienda %>
+          <%= f.select :store_id, options_for_select([[current_user.store.store_name, current_user.store.id]]) %>
+        </div>
+      <% end %>
 
       <div class="form-inside-style">
         <%= f.label :piezas_por_paquete %>

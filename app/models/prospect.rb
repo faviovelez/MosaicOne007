@@ -9,6 +9,7 @@ class Prospect < ActiveRecord::Base
   has_many :movements
   has_many :pending_movements
   has_many :prospect_sales
+  belongs_to :store
   belongs_to :business_unit
   belongs_to :business_group
   belongs_to :store_type
@@ -26,6 +27,6 @@ class Prospect < ActiveRecord::Base
 
   validates :direct_phone, length: {is: 10, message: 'Por favor anote el número telefónico completo a 10 dígitos (incluyendo clave LADA) solo números.'}
 
-  validates :cell_phone, length: {is: 10, message: 'Por favor anote el celular completo a 10 dígitos sin 044 O 045.'}
+  # validates :cell_phone, length: {is: 10, message: 'Por favor anote el celular completo a 10 dígitos sin 044 O 045.'}
 
 end

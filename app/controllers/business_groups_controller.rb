@@ -21,6 +21,7 @@ class BusinessGroupsController < ApplicationController
     @business_group = BusinessGroup.new(business_group_params)
     respond_to do |format|
       if @business_group.save
+        create_supplier_for_business_group
         format.html { redirect_to @business_group, notice: 'El grupo de negocios fue creado correctamente.' }
         format.json { render :show, status: :created, location: @business_group }
       else
@@ -50,6 +51,14 @@ class BusinessGroupsController < ApplicationController
       format.html { redirect_to @owner, notice: 'El grupo de negocios fue eliminado correctamente' }
       format.json { head :no_content }
     end
+  end
+
+  def create_supplier_for_business_group
+    patria_supplier = Supplier.find_by_name('Diseños de Cartón')
+    comercializadora_supplier = Supplier.find_by_name('Comercializadora de Cartón y Diseño')
+    @business_group.suppliers << patria_supplier
+    @business_group.suppliers << comercializadora_supplier
+    @business_group.save
   end
 
 private

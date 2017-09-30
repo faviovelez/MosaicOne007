@@ -25,6 +25,7 @@ class BusinessUnitsController < ApplicationController
     @business_unit = BusinessUnit.new(business_unit_params)
     respond_to do |format|
       if @business_unit.save
+        create_supplier_for_business_unit
         format.html { redirect_to @business_unit, notice: 'La empresa fue creada correctamente.' }
         format.json { render :show, status: :created, location: @business_unit }
       else
@@ -54,6 +55,14 @@ class BusinessUnitsController < ApplicationController
       format.html { redirect_to @owner, notice: 'La empresa fue eliminado correctamente' }
       format.json { head :no_content }
     end
+  end
+
+  def create_supplier_for_business_unit
+    patria_supplier = Supplier.find_by_name('Diseños de Cartón')
+    comercializadora_supplier = Supplier.find_by_name('Comercializadora de Cartón y Diseño')
+    @business_unit.suppliers << patria_supplier
+    @business_unit.suppliers << comercializadora_supplier
+    @business_unit.save
   end
 
 private

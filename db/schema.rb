@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170927223231) do
+ActiveRecord::Schema.define(version: 20170930210853) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -177,16 +177,27 @@ ActiveRecord::Schema.define(version: 20170927223231) do
 
   create_table "business_units", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.integer  "business_group_id"
     t.integer  "billing_address_id"
     t.boolean  "current"
     t.float    "pending_balance"
+    t.boolean  "main",               default: false
   end
 
   add_index "business_units", ["billing_address_id"], name: "index_business_units_on_billing_address_id", using: :btree
   add_index "business_units", ["business_group_id"], name: "index_business_units_on_business_group_id", using: :btree
+
+  create_table "business_units_suppliers", force: :cascade do |t|
+    t.integer  "business_unit_id"
+    t.integer  "supplier_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "business_units_suppliers", ["business_unit_id"], name: "index_business_units_suppliers_on_business_unit_id", using: :btree
+  add_index "business_units_suppliers", ["supplier_id"], name: "index_business_units_suppliers_on_supplier_id", using: :btree
 
   create_table "carriers", force: :cascade do |t|
     t.string   "name"
@@ -312,27 +323,30 @@ ActiveRecord::Schema.define(version: 20170927223231) do
 
   create_table "discount_rules", force: :cascade do |t|
     t.float    "percentage"
-    t.text     "product_list",     default: [],              array: true
-    t.text     "prospect_list",    default: [],              array: true
-    t.integer  "product_id"
+    t.text     "product_list",     default: [],               array: true
+    t.text     "prospect_list",    default: [],               array: true
     t.date     "initial_date"
     t.date     "final_date"
     t.integer  "user_id"
     t.string   "rule"
-    t.float    "minimum_amount"
-    t.integer  "minimum_quantity"
+    t.float    "minimum_amount",   default: 0.0
+    t.integer  "minimum_quantity", default: 0
     t.string   "exclusions"
     t.boolean  "active"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
     t.integer  "business_unit_id"
     t.integer  "store_id"
     t.string   "prospect_filter"
     t.string   "product_filter"
+    t.boolean  "product_all"
+    t.boolean  "prospect_all"
+    t.string   "product_gift",     default: [],               array: true
+    t.text     "line_filter",      default: [],               array: true
+    t.text     "material_filter",  default: [],               array: true
   end
 
   add_index "discount_rules", ["business_unit_id"], name: "index_discount_rules_on_business_unit_id", using: :btree
-  add_index "discount_rules", ["product_id"], name: "index_discount_rules_on_product_id", using: :btree
   add_index "discount_rules", ["store_id"], name: "index_discount_rules_on_store_id", using: :btree
   add_index "discount_rules", ["user_id"], name: "index_discount_rules_on_user_id", using: :btree
 
@@ -420,11 +434,9 @@ ActiveRecord::Schema.define(version: 20170927223231) do
     t.string   "unique_code"
     t.boolean  "alert"
     t.string   "alert_type"
-    t.integer  "store_id"
   end
 
   add_index "inventories", ["product_id"], name: "index_inventories_on_product_id", using: :btree
-  add_index "inventories", ["store_id"], name: "index_inventories_on_store_id", using: :btree
 
   create_table "inventory_configurations", force: :cascade do |t|
     t.integer  "business_unit_id"
@@ -483,6 +495,8 @@ ActiveRecord::Schema.define(version: 20170927223231) do
     t.float    "amount"
     t.integer  "seller_user_id"
     t.integer  "buyer_user_id"
+    t.boolean  "rule_could_be",       default: false
+    t.boolean  "rule_applied",        default: false
   end
 
   add_index "movements", ["bill_id"], name: "index_movements_on_bill_id", using: :btree
@@ -729,12 +743,14 @@ ActiveRecord::Schema.define(version: 20170927223231) do
     t.integer  "sat_unit_key_id"
     t.boolean  "current"
     t.integer  "store_id"
+    t.integer  "supplier_id"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
   add_index "products", ["sat_key_id"], name: "index_products_on_sat_key_id", using: :btree
   add_index "products", ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id", using: :btree
   add_index "products", ["store_id"], name: "index_products_on_store_id", using: :btree
+  add_index "products", ["supplier_id"], name: "index_products_on_supplier_id", using: :btree
   add_index "products", ["warehouse_id"], name: "index_products_on_warehouse_id", using: :btree
 
   create_table "products_bills", force: :cascade do |t|
@@ -969,7 +985,6 @@ ActiveRecord::Schema.define(version: 20170927223231) do
     t.datetime "updated_at",                              null: false
     t.string   "store_code"
     t.string   "store_name"
-    t.float    "discount"
     t.integer  "delivery_address_id"
     t.integer  "business_unit_id"
     t.integer  "store_type_id"
@@ -988,19 +1003,53 @@ ActiveRecord::Schema.define(version: 20170927223231) do
     t.string   "second_last_name"
     t.integer  "business_group_id"
     t.string   "cell_phone"
-    t.integer  "billing_address_id"
     t.string   "zip_code"
     t.boolean  "period_sales_achievement"
     t.boolean  "inspection_approved"
     t.float    "overprice",                default: 0.0
   end
 
-  add_index "stores", ["billing_address_id"], name: "index_stores_on_billing_address_id", using: :btree
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree
   add_index "stores", ["business_unit_id"], name: "index_stores_on_business_unit_id", using: :btree
   add_index "stores", ["cost_type_id"], name: "index_stores_on_cost_type_id", using: :btree
   add_index "stores", ["delivery_address_id"], name: "index_stores_on_delivery_address_id", using: :btree
   add_index "stores", ["store_type_id"], name: "index_stores_on_store_type_id", using: :btree
+
+  create_table "stores_inventories", force: :cascade do |t|
+    t.integer  "product_id"
+    t.integer  "store_id"
+    t.integer  "quantity",   default: 0
+    t.boolean  "alert",      default: false
+    t.string   "alert_type"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  add_index "stores_inventories", ["product_id"], name: "index_stores_inventories_on_product_id", using: :btree
+  add_index "stores_inventories", ["store_id"], name: "index_stores_inventories_on_store_id", using: :btree
+
+  create_table "stores_suppliers", force: :cascade do |t|
+    t.integer  "store_id"
+    t.integer  "supplier_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "stores_suppliers", ["store_id"], name: "index_stores_suppliers_on_store_id", using: :btree
+  add_index "stores_suppliers", ["supplier_id"], name: "index_stores_suppliers_on_supplier_id", using: :btree
+
+  create_table "stores_warehouse_entries", force: :cascade do |t|
+    t.integer  "product_id"
+    t.integer  "store_id"
+    t.integer  "quantity"
+    t.integer  "movement_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "stores_warehouse_entries", ["movement_id"], name: "index_stores_warehouse_entries_on_movement_id", using: :btree
+  add_index "stores_warehouse_entries", ["product_id"], name: "index_stores_warehouse_entries_on_product_id", using: :btree
+  add_index "stores_warehouse_entries", ["store_id"], name: "index_stores_warehouse_entries_on_store_id", using: :btree
 
   create_table "suppliers", force: :cascade do |t|
     t.string   "name"
@@ -1160,6 +1209,8 @@ ActiveRecord::Schema.define(version: 20170927223231) do
   add_foreign_key "business_unit_sales", "business_units"
   add_foreign_key "business_units", "billing_addresses"
   add_foreign_key "business_units", "business_groups"
+  add_foreign_key "business_units_suppliers", "business_units"
+  add_foreign_key "business_units_suppliers", "suppliers"
   add_foreign_key "carriers", "delivery_addresses"
   add_foreign_key "delivery_attempts", "movements"
   add_foreign_key "delivery_attempts", "orders"
@@ -1170,7 +1221,6 @@ ActiveRecord::Schema.define(version: 20170927223231) do
   add_foreign_key "design_request_users", "users"
   add_foreign_key "design_requests", "requests"
   add_foreign_key "discount_rules", "business_units"
-  add_foreign_key "discount_rules", "products"
   add_foreign_key "discount_rules", "stores"
   add_foreign_key "discount_rules", "users"
   add_foreign_key "documents", "design_requests"
@@ -1183,7 +1233,6 @@ ActiveRecord::Schema.define(version: 20170927223231) do
   add_foreign_key "images", "products"
   add_foreign_key "interior_colors", "materials"
   add_foreign_key "inventories", "products"
-  add_foreign_key "inventories", "stores"
   add_foreign_key "inventory_configurations", "business_units"
   add_foreign_key "inventory_configurations", "stores"
   add_foreign_key "materials_resistances", "materials"
@@ -1236,6 +1285,7 @@ ActiveRecord::Schema.define(version: 20170927223231) do
   add_foreign_key "products", "sat_keys"
   add_foreign_key "products", "sat_unit_keys"
   add_foreign_key "products", "stores"
+  add_foreign_key "products", "suppliers"
   add_foreign_key "products", "warehouses"
   add_foreign_key "products_bills", "bills"
   add_foreign_key "products_bills", "products"
@@ -1254,12 +1304,18 @@ ActiveRecord::Schema.define(version: 20170927223231) do
   add_foreign_key "sales_targets", "stores"
   add_foreign_key "store_sales", "stores"
   add_foreign_key "store_types", "business_units"
-  add_foreign_key "stores", "billing_addresses"
   add_foreign_key "stores", "business_groups"
   add_foreign_key "stores", "business_units"
   add_foreign_key "stores", "cost_types"
   add_foreign_key "stores", "delivery_addresses"
   add_foreign_key "stores", "store_types"
+  add_foreign_key "stores_inventories", "products"
+  add_foreign_key "stores_inventories", "stores"
+  add_foreign_key "stores_suppliers", "stores"
+  add_foreign_key "stores_suppliers", "suppliers"
+  add_foreign_key "stores_warehouse_entries", "movements"
+  add_foreign_key "stores_warehouse_entries", "products"
+  add_foreign_key "stores_warehouse_entries", "stores"
   add_foreign_key "suppliers", "delivery_addresses"
   add_foreign_key "suppliers", "stores"
   add_foreign_key "user_requests", "requests"

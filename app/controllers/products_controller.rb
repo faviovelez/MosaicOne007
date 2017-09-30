@@ -5,26 +5,7 @@ class ProductsController < ApplicationController
   # GET /products
   # GET /products.json
   def index
-    business_units = BusinessGroup.find_by_business_group_type('main').business_units
-    ids = business_units.collect{|bu| bu.id}
-    if current_user.role.name == 'product-admin'
-      @products = Product.where(business_unit: ids)
-    else
-      main_products = Product.where(business_unit: ids)
-      my_business_units = current_user.store.business_unit.business_group.business_units
-      my_ids = my_business_units.collect{|bu| bu.id}
-      my_products = Product.where(business_unit: my_ids)
-      @products = []
-      main_products.each do |product|
-        @products << product
-      end
-      unless my_products.count == 0
-        my_products.each do |product|
-          @products << product
-        end
-      end
-      @products
-    end
+    filter_products
   end
 
   def images
@@ -32,11 +13,12 @@ class ProductsController < ApplicationController
   end
 
   def catalogue
-    @products = Product.where(classification: 'de línea')
+    filter_products
+    @products = @products.where(classification: 'de línea')
   end
 
   def special
-    @products = Product.where(classification: 'especial')
+    @products = @products.where(classification: 'especial')
   end
 
   # GET /products/1
@@ -76,7 +58,11 @@ class ProductsController < ApplicationController
           @order.users  << @finded_user
           @order.save
           @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date)
-          @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
+          if @product.classification == 'de tienda'
+            @inventory = StoresInventory.create(product: @product, store: current_user.store)
+          else
+            @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
+          end
           @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, order: @order)
           format.html { redirect_to @product, notice: 'Se creó un nuevo producto y una petición de baja de productos en espera del inventario.' }
           format.json { render :show, status: :created, location: @product }
@@ -96,12 +82,14 @@ class ProductsController < ApplicationController
   # PATCH/PUT /products/1.json
   # Este método también lo puede usar solamente 'product-admin'. Tanto en create como en update falta agregar que pueda subir imágenes (un modelo diferente de documents).
   def update
-    @inventory = Inventory.find_by_unique_code(@product.unique_code)
+    @inventory = Inventory.find_by_product_id(@product) || StoresInventory.find_by_product_id(@product)
     save_image
     respond_to do |format|
       if @product.update(product_params)
-        @inventory.unique_code = @product.unique_code
-        @inventory.save
+        if @inventory.is_a?(Inventory)
+          @inventory.unique_code = @product.unique_code
+          @inventory.save
+        end
         format.html { redirect_to @product, notice: 'El producto se ha modificado exitosamente.' }
         format.json { render :show, status: :ok, location: @product }
       else
@@ -144,6 +132,27 @@ class ProductsController < ApplicationController
   end
 
   private
+
+    def filter_products
+      @products = []
+      user = current_user.role.name
+      suppliers_id = []
+      @store = current_user.store
+      Supplier.where(name: [
+                            'Diseños de Cartón',
+                            'Comercializadora de Cartón y Diseño'
+                            ]).each do |supplier|
+                              suppliers_id << supplier.id
+                            end
+      @dc_products = Product.where(supplier: suppliers_id)
+      if user == 'store-admin' || user == 'store'
+        @products = @store.products + @dc_products
+      else
+        @products = @dc_products
+      end
+      @products
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_product
       @product = Product.find(params[:id])
@@ -186,6 +195,7 @@ class ProductsController < ApplicationController
       :image,
       :pieces_per_package,
       :business_unit_id,
+      :supplier_id,
       :store_id,
       :warehouse_id,
       :cost,

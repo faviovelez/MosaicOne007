@@ -1,9 +1,12 @@
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'select2.min' %>
+  <%= stylesheet_link_tag 'discount_rules.scss' %>
 <% end %>
 
 <%= content_for :javascript do %>
   <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'discount_rules' %>
 <% end %>
 
 <body class="<%=params[:controller]%> <%=params[:action]%>">
@@ -14,86 +17,117 @@
 
     <div class="form-container">
 
-      <div class="field form-inside-style">
-        <%= f.label :lista_de_productos %><br>
-        <%= f.select :product_list, options_for_select(select_products), {include_blank: true}, multiple: true %>
-      </div>
+      <% unless current_user.role.name == 'admin-desk' %>
+        <div class="field form-inside-style hidden">
+          <%= f.label :tienda %>
+          <%= f.select :store_id, options_for_select(stores, selected: current_user.store.id) %>
+        </div>
+      <% end %>
+
+      <% unless (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+        <div class="field form-inside-style">
+          <%= f.label :empresa %>
+          <%= f.select :business_unit_id, options_for_select(business_units, selected: current_user.store.business_unit.id) %>
+        </div>
+      <% end %>
 
       <div class="field form-inside-style">
-        <%= f.label :lista_de_productos %><br>
-        <%= f.select :product_list, options_for_select(select_products), {include_blank: true}, multiple: true %>
+        <%= f.label :nombre %>
+        <%= f.text_field :rule, class: 'form-inside' %>
       </div>
 
-      <div class="field">
-        <%= f.label :percentage %><br>
-        <%= f.text_field :percentage %>
+      <div class="clear-options-n-wrap">
+        <div class="field form-inside-style">
+          <%= f.label '¿Para quiénes aplica?' %>
+          <%= f.select :prospect_filter, options_for_select(prospect_filter), {}, class: 'who' %>
+        </div>
+
+        <div class="field form-inside-style">
+          <%= f.label '¿Para qué productos aplica?' %>
+          <%= f.select :product_filter, options_for_select(product_filter), {}, class: 'which' %>
+        </div>
+      </div>
+
+        <div class="field form-inside-style prospect-list hidden margin-select">
+          <%= f.label :buscar_en_lista_de_clientes %>
+          <%= f.select :prospect_list, options_for_select(select_prospects), {include_blank: true}, multiple: true, class: 'select2-field' %>
+        </div>
+
+        <div class="field form-inside-style product-list hidden margin-select">
+          <%= f.label :buscar_en_lista_de_productos %>
+          <%= f.select :product_list, options_for_select(select_products), {include_blank: true}, multiple: true, class: 'select2-field' %>
+        </div>
+
+        <div class="field form-inside-style product-line hidden margin-select">
+          <%= f.label :lineas_de_productos %>
+          <%= f.select :line_filter, options_for_select(select_product_line), {include_blank: true}, multiple: true, class: 'select2-field' %>
+        </div>
+
+        <div class="field form-inside-style product-material hidden margin-select">
+          <%= f.label :productos_por_materiales %>
+          <%= f.select :material_filter, options_for_select(select_product_material), {include_blank: true}, multiple: true, class: 'select2-field' %>
+        </div>
+
+      <div class="clear-options">
+        <div class="field form-inside-style">
+          <label> ¿Producto de regalo? (seleccionar en caso de que sí)
+            <input type="checkbox" value="sí" id="gift">
+          </label>
+        </div>
+
+        <div class="field form-inside-style product-gift hidden">
+          <%= f.label :producto_de_regalo %>
+          <%= f.select :product_gift, options_for_select(select_products), {include_blank: true}, {multiple: true, class: 'select2-field'} %>
+        </div>
       </div>
 
       <div class="field form-inside-style">
-        <%= f.label :lista_de_clientes %><br>
-        <%= f.select :prospect_list, options_for_select(select_prospects), {include_blank: true}, multiple: true %>
+        <%= f.label :inicia %>
+        <%= f.date_field :initial_date, class: 'form-inside' %>
       </div>
 
-      <div class="field">
-        <%= f.label :product_id %><br>
-        <%= f.text_field :product_id %>
+      <div class="field form-inside-style">
+        <%= f.label :finaliza %>
+        <%= f.date_field :final_date, class: 'form-inside' %>
       </div>
 
-      <div class="field">
-        <%= f.label :initial_date %><br>
-        <%= f.date_select :initial_date %>
+      <div class="field form-inside-style">
+        <%= f.label :porcentaje %>
+        <%= f.text_field :percentage, class: 'form-inside' %>
       </div>
 
-      <div class="field">
-        <%= f.label :final_date %><br>
-        <%= f.date_select :final_date %>
+      <div class="field form-inside-style">
+        <%= f.label :monto_mínimo %>
+        <%= f.number_field :minimum_amount, class: 'form-inside' %>
       </div>
 
-      <div class="field">
-        <%= f.label :user_id %><br>
-        <%= f.text_field :user_id %>
+      <div class="field form-inside-style">
+        <%= f.label :cantidad_mínima %>
+        <%= f.number_field :minimum_quantity, class: 'form-inside' %>
       </div>
 
-      <div class="field">
-        <%= f.label :rule %><br>
-        <%= f.text_field :rule %>
-      </div>
-
-      <div class="field">
-        <%= f.label :minimum_amount %><br>
-        <%= f.text_field :minimum_amount %>
-      </div>
-
-      <div class="field">
-        <%= f.label :minimum_quantity %><br>
-        <%= f.number_field :minimum_quantity %>
-      </div>
-
-      <div class="field">
-        <%= f.label :exclusions %><br>
+      <div class="field form-inside-style hidden">
+        <%= f.label :exclusiones %>
         <%= f.text_field :exclusions %>
       </div>
 
-      <div class="field">
-        <%= f.label :active %><br>
+      <div class="field hidden">
+        <%= f.label :active %>
         <%= f.check_box :active %>
       </div>
 
-      <div class="field">
-        <%= f.label :business_unit_id %><br>
-        <%= f.text_field :business_unit_id %>
+      <div class="field hidden">
+        <%= f.label :usuario %>
+        <%= f.select :user_id, selected: current_user.id %>
       </div>
 
-      <div class="field">
-        <%= f.label :store_id %><br>
-        <%= f.text_field :store_id %>
+      <div class="button-container">
+        <div class="actions">
+          <%= f.submit 'crear', class: 'capitalize main-button' %>
+        </div>
       </div>
 
-      <div class="actions">
-        <%= f.submit %>
-      </div>
-
-    </div>
   <% end %>
+  </div>
 
 </body>

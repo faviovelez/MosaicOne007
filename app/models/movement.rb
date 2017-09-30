@@ -15,6 +15,9 @@ class Movement < ActiveRecord::Base
   belongs_to :discount_rule
   belongs_to :seller_user, class_name: 'User'
   belongs_to :buyer_user, class_name: 'User'
+  has_many :stores, through: :stores_warehouse_entries
+  has_many :products, through: :stores_warehouse_entries
+  has_many :stores_warehouse_entries
 
   before_save :create_update_summary, if: :is_sales?
 

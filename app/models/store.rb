@@ -7,7 +7,6 @@ class Store < ActiveRecord::Base
   has_many :movements
   has_many :pending_movements
   belongs_to :delivery_address
-  belongs_to :billing_address
   has_many :store_sales
   belongs_to :business_unit
   belongs_to :business_group
@@ -18,6 +17,15 @@ class Store < ActiveRecord::Base
   has_many :bills
   has_many :discount_rules
   has_many :store_prospect, class_name: "Prospect", foreign_key: 'store_prospect_id'
+  has_many :suppliers, through: :stores_suppliers
+  has_many :stores_suppliers
+  has_many :prospects
+  has_many :products
+  has_many :products, through: :stores_inventories
+  has_many :stores_inventories
+  has_many :products, through: :stores_warehouse_entries
+  has_many :movements, through: :stores_warehouse_entries
+  has_many :stores_warehouse_entries
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 

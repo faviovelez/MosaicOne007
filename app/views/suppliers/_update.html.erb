@@ -12,12 +12,12 @@
 
     <div class="form-inside-style">
       <%= f.label :giro_comercial %>
-      <%= f.select :business_type, options_for_select(['persona física', 'persona moral'], selected: @supplier.business_type) %>
+      <%= f.text_field :business_type, value: @supplier.business_type), class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">
       <%= f.label :tipo_de_persona %>
-      <%= f.text_field :type_of_person, class: 'form-inside' %>
+      <%= f.select :type_of_person, options_for_select(['persona física', 'persona moral'], selected: @supplier.type_of_person) %>
     </div>
 
     <h3>Datos de contacto</h3>

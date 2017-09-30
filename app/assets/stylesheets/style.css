@@ -228,6 +228,24 @@ p.info > strong {
   justify-content: center;
 }
 
+.clear-options {
+  display: flex;
+  flex-wrap: wrap;
+  width: 75vw;
+  justify-content: center;
+}
+
+.clear-options-n-wrap {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 75vw;
+  justify-content: center;
+}
+
+.clear-options > div {
+  padding: 1rem 15rem;
+}
+
 .show-container {
   display: flex;
   flex-wrap: wrap;
