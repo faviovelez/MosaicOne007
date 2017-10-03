@@ -12,6 +12,7 @@ class Order < ActiveRecord::Base
   belongs_to :carrier
   has_many :delivery_packages
   belongs_to :store
+  has_many :design_requests
 
   def all_movements
     self.movements + self.pending_movements

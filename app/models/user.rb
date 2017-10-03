@@ -24,6 +24,8 @@ class User < ActiveRecord::Base
   has_many :buyer_users, class_name: 'Movement', foreign_key: 'buyer_user_id'
   has_many :seller_users, class_name: 'PendingMovement', foreign_key: 'seller_user_id'
   has_many :buyer_users, class_name: 'PendingMovement', foreign_key: 'buyer_user_id'
+  has_many :tickets
+  has_many :estimate_docs 
 
   validates :first_name, presence: { message: 'Por favor escriba el primer nombre del usuario.'}
 

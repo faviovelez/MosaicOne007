@@ -411,6 +411,14 @@ end
   Tax.find_or_create_by(hash)
 end
 
+[
+  { complexity: 'muy baja', cost: 200.00},
+  { complexity: 'media', cost: 500.00},
+  { complexity: 'muy alta', cost: 1000.00}
+].each do |hash|
+  DesignCost.find_or_create_by(hash)
+end
+
 require 'csv'
 
 # Agrega el catálogo de Régimen fiscal del SAT

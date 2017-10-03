@@ -31,6 +31,8 @@ class Store < ActiveRecord::Base
   has_many :service_offereds
   has_many :store_use_inventories
   has_many :exhibition_inventories
+  has_many :tickets
+  has_many :estimate_docs
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 

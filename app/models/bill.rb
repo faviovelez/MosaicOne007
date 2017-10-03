@@ -23,4 +23,6 @@ class Bill < ActiveRecord::Base
   belongs_to :parent, class_name: "Bill", foreign_key: 'parent_id'
   has_many :child_bills, class_name: "Bill", foreign_key: 'child_bills_id'
   has_many :service_offereds
+  has_many :tickets
+  has_many :payments
 end

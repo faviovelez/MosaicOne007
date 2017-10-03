@@ -4,4 +4,5 @@ class DesignRequest < ActiveRecord::Base
   has_many :documents
   has_many :users, through: :design_request_users
   has_many :design_request_users
+  belongs_to :order
 end

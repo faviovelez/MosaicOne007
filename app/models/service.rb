@@ -4,4 +4,6 @@ class Service < ActiveRecord::Base
   belongs_to :store
   belongs_to :business_unit
   has_many :service_offereds
+  has_many :services_tickets
+  has_many :tickets, through: :services_tickets
 end

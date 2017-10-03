@@ -18,6 +18,7 @@ class Movement < ActiveRecord::Base
   has_many :stores, through: :stores_warehouse_entries
   has_many :products, through: :stores_warehouse_entries
   has_many :stores_warehouse_entries
+  belongs_to :ticket
 
   before_save :create_update_summary, if: :is_sales?
 

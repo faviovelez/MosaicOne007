@@ -1,0 +1,31 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 
+  store_id: 
+  subtotal: 1.5
+  tax_id: 
+  taxes: 1.5
+  automatic_discount: 1.5
+  manual_discount: 1.5
+  total_discount: 1.5
+  total: 1.5
+  prospect_id: 
+  payment_id: 
+  bill_id: 
+  ticket_type: MyString
+
+two:
+  user_id: 
+  store_id: 
+  subtotal: 1.5
+  tax_id: 
+  taxes: 1.5
+  automatic_discount: 1.5
+  manual_discount: 1.5
+  total_discount: 1.5
+  total: 1.5
+  prospect_id: 
+  payment_id: 
+  bill_id: 
+  ticket_type: MyString

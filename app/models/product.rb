@@ -25,6 +25,9 @@ class Product < ActiveRecord::Base
   has_many :stores_warehouse_entries
   has_many :store_use_inventories
   has_many :exhibition_inventories
+  has_many :products_tickets
+  has_many :tickets, through: :products_tickets
+  has_many :estimates
 
   validates :unique_code, presence: { message: "Debe anotar un código de producto."}
 

@@ -8,6 +8,7 @@ class Request < ActiveRecord::Base
   has_many :design_requests
   has_one :order
   belongs_to :product
+  belongs_to :estimate_doc 
 
   # Valida que solo se escriban números en el campo de cantidad y que solo sean enteros.
   validates :quantity, on: :create, numericality: { only_integer: true, message: "%{value} No es una cantidad válida, solo se aceptan enteros." }

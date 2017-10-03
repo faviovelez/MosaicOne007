@@ -1,0 +1,39 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sender_name: MyString
+  sender_zipcode: MyString
+  tracking_number: MyString
+  receivers_name: MyString
+  contact_name: MyString
+  street: MyString
+  exterior_number: MyString
+  interior_number: MyString
+  neighborhood: MyString
+  city: MyString
+  state: MyString
+  country: MyString
+  phone: MyString
+  cellphone: MyString
+  email: MyString
+  company: MyString
+  service_offered_id: 
+
+two:
+  sender_name: MyString
+  sender_zipcode: MyString
+  tracking_number: MyString
+  receivers_name: MyString
+  contact_name: MyString
+  street: MyString
+  exterior_number: MyString
+  interior_number: MyString
+  neighborhood: MyString
+  city: MyString
+  state: MyString
+  country: MyString
+  phone: MyString
+  cellphone: MyString
+  email: MyString
+  company: MyString
+  service_offered_id: 
