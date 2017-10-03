@@ -1,0 +1,33 @@
+<table class="table" id="productsList">
+  <thead>
+    <tr>
+      <th>Codigo unico</th>
+      <th>Descripcion</th>
+      <th>Image</th>
+      <th>Cantidad</th>
+      <% if supplier %>
+        <th>Proveedor</th>
+      <% end %>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id='trForProduct1'>
+      <td class='select'>
+        <%= select_tag :product1, options_for_select([]), include_blank: 'Selecionar un producto' %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<% if supplier %>
+  <a href='#' id='saveInfoSupplier' class='btn btn-primary' >Dar de alta</a>
+<% else %>
+  <a href='#' id='saveInfo' class='btn btn-primary' >Dar de alta</a>
+<%end %>
+<br /> <br /><br />
+<br /> <br /><br />
+<div id='productInfo'>
+  <%= link_to product_product_images_path(product_id: 0), id: 'link_to_images' do %>
+    <%= image_tag 'product_thumb.png', class: 'hidden', id: 'not_image_temp' %>
+  <% end %>
+</div>

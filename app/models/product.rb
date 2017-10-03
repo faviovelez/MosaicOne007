@@ -67,8 +67,16 @@ class Product < ActiveRecord::Base
   end
 
   class << self
-    def has_inventory
-      all.select {|product| product.inventory }
+    def has_inventory(find = nil)
+      if find.nil?
+        return all.select {|product| product.inventory }
+      end
+      query = ''
+      %w(unique_code description).each do |field|
+        query << "#{field} LIKE ? or "
+      end
+      query << "exterior_color_or_design LIKE ?"
+      where(query, "%#{find}%", "%#{find}%", "%#{find}%")
     end
   end
 end

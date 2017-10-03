@@ -63,6 +63,10 @@ class WarehouseController < ApplicationController
     redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
   end
 
+  def remove_inventory
+    
+  end
+
   def show
     @codes = params[:entry_codes]
   end
