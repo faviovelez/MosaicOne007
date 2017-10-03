@@ -39,7 +39,7 @@ $(function(){
     language: "es",
     templateSelection: formatState,
     multiple: true,
-    width: 200,
+    width: 300,
     maximumSelectionLength: 1,
     ajax: {
       url: '/api/get_all_products',
