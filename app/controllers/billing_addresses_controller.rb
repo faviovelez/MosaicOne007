@@ -67,9 +67,10 @@ class BillingAddressesController < ApplicationController
       current_user.store.business_unit.billing_address = @billing
     elsif @owner.is_a?(BusinessUnit)
       store = current_user.store
-      store.update(billing_address: @owner.billing_address)
-      store.save
-      prospect = Prospect.find_by_store_code(store.store_code)
+      business_unit = current_user.store.business_unit
+      business_unit.update(billing_address: @owner.billing_address)
+      business_unit.save
+      prospect = Prospect.find_by_store_prospect_id(store)
       prospect.update(billing_address: @owner.billing_address)
       prospect.save
       current_user.store.business_unit.billing_address = @billing

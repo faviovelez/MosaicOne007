@@ -44,7 +44,7 @@ end
 default_cost_type = CostType.find_by_warehouse_cost_type('PEPS')
 
 # Cada tienda debe pertenecer a un Business Unit y cada Business Unit debe pertenecer a un Business Group, se crean defaults para funcionalidad inicial que deben ser modificadas (y/o agregadas nuevas)
-default_business_group = BusinessGroup.find_by_name('Diseños de Cartón')
+default_business_group = BusinessGroup.find_by_business_group_type('main')
 default_terceros_business_group = BusinessGroup.find_by_name('default terceros')
 
 [
@@ -89,6 +89,22 @@ default_store_patria = Store.find_or_create_by(
                                                 email: 'facturaspatria@disenosdecarton.com.mx'
                                                 )
 
+patria_prospect = Prospect.find_or_create_by(
+                            legal_or_business_name: patria_business_unit.store_name,
+                            business_type: patria_business_unit.type_of_person,
+                            prospect_type: 'comercialización de productos',
+                            contact_first_name: patria_business_unit.contact_first_name,
+                            contact_last_name: patria_business_unit.contact_last_name,
+                            second_last_name: patria_business_unit.second_last_name,
+                            direct_phone: patria_business_unit.direct_phone,
+                            email: patria_business_unit.email,
+                            store_code: patria_business_unit.store_code,
+                            store_type: patria_business_unit.store_type,
+                            store_prospect: default_store_patria,
+                            business_unit: patria_business_unit,
+                            business_group: default_business_group
+                            )
+
 default_store_compresor = Store.find_or_create_by(
                                                   store_name: 'Corporativo Compresor',
                                                   store_code: '001',
@@ -104,6 +120,22 @@ default_store_compresor = Store.find_or_create_by(
                                                   zip_code: '44490',
                                                   email: 'facturacion1@disenosdecarton.com.mx'
                                                   )
+
+compresor_prospect = Prospect.find_or_create_by(
+                            legal_or_business_name: default_store_compresor.store_name,
+                            business_type: default_store_compresor.type_of_person,
+                            prospect_type: 'comercialización de productos',
+                            contact_first_name: default_store_compresor.contact_first_name,
+                            contact_last_name: default_store_compresor.contact_last_name,
+                            second_last_name: default_store_compresor.second_last_name,
+                            direct_phone: default_store_compresor.direct_phone,
+                            email: default_store_compresor.email,
+                            store_code: default_store_compresor.store_code,
+                            store_type: default_store_compresor.store_type,
+                            store_prospect: default_store_compresor,
+                            business_unit: compresor_business_unit,
+                            business_group: default_business_group
+                            )
 
 # Se crean almacenes default
 Warehouse.find_or_create_by(
@@ -526,6 +558,29 @@ end
 
 puts "There are now #{CfdiUse.count} rows in the CFDI Use table"
 
+####### FALTA COMPLETAR LOS CAMPOS DE STORE #######
+# Agrega el catálogo de Tiendas de Diseños de Cartón
+csv_text = File.read(Rails.root.join('lib', 'seeds', 'stores.csv'))
+csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+csv.each do |row|
+  store = Store.find_or_create_by(
+                                    {
+                                      store_name: '',
+                                      store_code: '',
+                                      store_type: '',
+                                      type_of_person: 'persona moral',
+                                      business_unit: ,
+                                      business_group: BusinessGroup.find_by_name('Diseños de Cartón'),
+                                      contact_first_name: '',
+                                      contact_last_name: '',
+                                      direct_phone: '',
+                                      cost_type: CostType.find_by_warehouse_cost_type('PEPS'),
+                                      cost_type_selected_since: Date.today,
+                                      zip_code: ,
+                                      email:
+                                    }
+                                  )
+
 # Agrega el catálogo de Productos de Diseños de Cartón
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'products_trial.csv'))
 csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
@@ -550,9 +605,19 @@ csv.each do |row|
                                     }
                                   )
   puts "#{i.id}, #{i.unique_code} saved"
+
+# Crea masivamente los stores inventories para todas las tiendas excepto corporativo
+  corporate = StoreType.find_by_store_type('corporativo')
+  stores = Store.where.not(store_type: corporate)
+  if product.classification != 'especial'
+    stores.each do |store|
+      StoresInventory.find_or_create_by(product: product, store: store)
+    end
+  end
 end
 
 puts "There are now #{Product.count} rows in the Products table"
 puts "There are now #{Inventory.count} rows in the Inventory table"
+puts "There are now #{StoresInventory.count} rows in the Stores Inventory table"
 
 #CUANDO AGREGUE EL DIRECTORIO DE TIENDAS, AGREGAR LÍNEAS PARA PROSPECTO Y ALMACÉN Y VER SI HAY OTRAS IMPLICACIONES

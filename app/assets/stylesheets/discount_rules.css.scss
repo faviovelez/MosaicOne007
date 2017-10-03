@@ -1,6 +1,9 @@
-input.select2-search__field {
+/* Genera problemas con otros select2 */
+input[placeholder="seleccione productos"],
+input[placeholder="seleccione clientes"] {
   min-width: 200px !important;
 }
+
 .field.form-inside-style.prospect-list.margin-select,
 .field.form-inside-style.product-list.margin-select,
 .field.form-inside-style.product-line.margin-select,

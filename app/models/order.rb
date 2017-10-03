@@ -8,7 +8,7 @@ class Order < ActiveRecord::Base
   has_many :product_requests
   has_many :pending_movements
   belongs_to :prospect
-  has_many :bills
+  belongs_to :bill
   belongs_to :carrier
   has_many :delivery_packages
   belongs_to :store

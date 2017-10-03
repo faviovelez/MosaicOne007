@@ -13,4 +13,7 @@ class BusinessUnit < ActiveRecord::Base
   has_many :discount_rules
   has_many :suppliers, through: :business_units_suppliers
   has_many :business_units_suppliers
+  has_many :bill_sales
+  has_many :services
+  has_many :service_offereds
 end

@@ -76,20 +76,19 @@
       <%= f.text_field :cell_phone, maxlength: 10, class: 'form-inside' %>
     </div>
 
-    <%# CAMBIAR ESTE POR UN SELECT DE BUSCADOR CON AJAX%>
-    <div class="field form-inside-style">
-      <%= f.label :código_postal %><br>
-      <%= f.select :zip_code, options_for_select(select_zipcode), {include_blank: true}, multiple: true %>
+    <div class="form-inside-style">
+      <%= f.label :código_postal %>
+      <%= f.text_field :zip_code, maxlength: 5, class: 'form-inside', value: @store.zip_code %>
     </div>
 
     <div class="form-inside-style">
       <%= f.label :empresa %>
-      <%= f.select :business_unit_id, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}) %>
+      <%= f.select :business_unit_id, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}, selected: @store.business_unit_id) %>
     </div>
 
     <div class="form-inside-style">
       <%= f.label :grupo_de_negocios %>
-      <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}) %>
+      <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}, selected: @store.business_group_id) %>
     </div>
 
     <div class="button-container">

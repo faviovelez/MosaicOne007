@@ -111,12 +111,12 @@
         <%= f.text_field :exclusions %>
       </div>
 
-      <div class="field hidden">
-        <%= f.label :active %>
-        <%= f.check_box :active %>
+      <div class="field form-inside-style">
+        <%= f.label :estatus %>
+        <%= f.select :active, options_for_select([['activa'], ['inactiva']], selected: @discount_rule.active || 'activa') %>
       </div>
 
-      <div class="field hidden">
+      <div class="field hidden select">
         <%= f.label :usuario %>
         <%= f.select :user_id, selected: current_user.id %>
       </div>

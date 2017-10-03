@@ -4,5 +4,4 @@ class DeliveryPackage < ActiveRecord::Base
   has_many :movements
   belongs_to :delivery_attempt
   belongs_to :order
-  belongs_to :delivery_package
 end

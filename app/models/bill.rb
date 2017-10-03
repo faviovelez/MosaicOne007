@@ -2,7 +2,7 @@ class Bill < ActiveRecord::Base
   # Este modelo debe contener todo lo relacionado a las facturas
   has_many :products_bills
   has_many :products, through: :products_bills
-  belongs_to :order
+  has_many :orders
   has_many :movements
   has_many :pending_movements
   belongs_to :store
@@ -22,4 +22,5 @@ class Bill < ActiveRecord::Base
   belongs_to :type_of_bill
   belongs_to :parent, class_name: "Bill", foreign_key: 'parent_id'
   has_many :child_bills, class_name: "Bill", foreign_key: 'child_bills_id'
+  has_many :service_offereds
 end

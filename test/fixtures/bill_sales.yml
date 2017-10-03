@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business_unit_id: 
+  store_id: 
+  sales_quantity: 1
+  amount: 1.5
+  month: 1
+  year: 1
+
+two:
+  business_unit_id: 
+  store_id: 
+  sales_quantity: 1
+  amount: 1.5
+  month: 1
+  year: 1

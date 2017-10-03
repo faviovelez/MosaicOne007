@@ -1,13 +1,4 @@
 ################# INICIA SECCIÓN SOLO PARA DESARROLLO #####################
-# Esta parte es para usarla solo durante desarrollo
-[
-  { store_type: "tienda propia", store_code: "003", store_name: "calzada", discount: 0.0 },
-  { store_type: "corporativo", store_code: "003", store_name: "calzada", discount: 0.0 },
-  { store_type: "distribuidor", store_code: "003", store_name: "calzada", discount: 0.0 },
-  { store_type: "franquicia", store_code: "000", store_name: "aguascalientes", discount: 0.0 }
-].each do |hash|
-  Store.find_or_create_by(hash)
-end
 
 # Esta parte es para usarla solo durante desarrollo
 if User.first.nil?

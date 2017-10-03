@@ -60,36 +60,81 @@
     <%= @product.resistance_main_material %>
   </p>
 
-  <h4>Medidas Internas</h4>
+  <% if @product.outer_length.present? %>
+    <h4>Medidas Externas</h4>
 
-  <p> <strong>Largo: </strong>
-    <%= @product.inner_length %> cm
-  </p>
+    <p> <strong>Largo: </strong>
+      <%= @product.outer_length %> cm
+    </p>
 
-
-  <p> <strong>Ancho: </strong>
-    <%= @product.inner_width %> cm
-  </p>
-
-  <p> <strong>Alto: </strong>
-    <%= @product.inner_height %> cm
-  </p>
+    <p> <strong>Ancho: </strong>
+      <%= @product.outer_width %> cm
+    </p>
 
 
-  <h4>Medidas Externas</h4>
+    <p> <strong>Alto: </strong>
+      <%= @product.outer_height %> cm
+    </p>
+  <% end %>
 
-  <p> <strong>Largo: </strong>
-    <%= @product.outer_length %> cm
-  </p>
+  <% if @product.inner_length.present? %>
+    <h4>Medidas Internas</h4>
 
-  <p> <strong>Ancho: </strong>
-    <%= @product.outer_width %> cm
-  </p>
+    <p> <strong>Largo: </strong>
+      <%= @product.inner_length %> cm
+    </p>
 
 
-  <p> <strong>Alto: </strong>
-    <%= @product.outer_height %> cm
-  </p>
+    <p> <strong>Ancho: </strong>
+      <%= @product.inner_width %> cm
+    </p>
+
+    <p> <strong>Alto: </strong>
+      <%= @product.inner_height %> cm
+    </p>
+  <% end %>
+
+  <% if @product.product_type == 'exhibidor' %>
+    <h4>Medidas del exhibidor</h4>
+
+    <p> <strong>Alto: </strong>
+      <%= @product.exhibitor_height %> cm
+    </p>
+
+    <p> <strong>Bandejas: </strong>
+      <%= @product.tray_quantity %>
+    </p>
+
+    <p> <strong>Bandejas: </strong>
+      <%= @product.tray_length %>
+    </p>
+
+    <p> <strong>Alto: </strong>
+      <%= @product.tray_width %> cm
+    </p>
+
+    <p> <strong>Alto: </strong>
+      <%= @product.tray_divisions %>
+    </p>
+
+  <% elsif @product.product_type == 'bolsa' %>
+
+    <h4>Medidas de la bolsa</h4>
+
+    <p> <strong>Largo: </strong>
+      <%= @product.bag_length %> cm
+    </p>
+
+
+    <p> <strong>Fuelle: </strong>
+      <%= @product.bag_width %> cm
+    </p>
+
+    <p> <strong>Alto: </strong>
+      <%= @product.bag_height %> cm
+    </p>
+
+  <% end %>
 
   <h4>Diseño e Información Adicional</h4>
 
@@ -105,9 +150,11 @@
     <%= @product.accesories_kit %>
   </p>
 
-  <p> <strong>Precio de venta: </strong>
-    <%= number_to_currency(@product.price) %>
-  </p>
+  <% unless @product.price.blank? %>
+    <p> <strong>Precio de venta: </strong>
+      <%= number_to_currency(@product.price) %>
+    </p>
+  <% end %>
 
   <% unless (current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin' || (current_user.role.name == 'store-admin' && current_user.store.business_unit == @product.business_unit)) %>
     <p> <strong>Costo: </strong>
@@ -115,7 +162,7 @@
     </p>
   <% end %>
 
-  <p> <strong>Unidad de negocio: </strong>
+  <p> <strong>Empresa: </strong>
     <% if @product.business_unit %>
       <%= @product.business_unit.name %>
     <% end %>

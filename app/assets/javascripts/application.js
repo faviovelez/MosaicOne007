@@ -46,9 +46,4 @@ $(document).ready(function() {
     };
   });
 
-  $('#store_zip_code').select2({
-     placeholder: 'seleccione clientes',
-     language: "es",
-  });
-
 });

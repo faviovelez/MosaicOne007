@@ -25,7 +25,6 @@ class DiscountRulesController < ApplicationController
   # GET /discount_rules/new
   def new
     @discount_rule = DiscountRule.new
-    @products = Product.all
   end
 
   # GET /discount_rules/1/edit
@@ -36,10 +35,17 @@ class DiscountRulesController < ApplicationController
   # POST /discount_rules.json
   def create
     @discount_rule = DiscountRule.new(discount_rule_params)
+    @materials = params[:discount_rule][:material_filter]
+    @lines = params[:discount_rule][:line_filter]
+    @status = params[:discount_rule][:active]
     product_params_ids
     prospect_params_ids
     respond_to do |format|
       if @discount_rule.save
+        status_to_boolean
+        all_products_boolean
+        all_prospects_boolean
+        update_list_of_materials_or_product_lines
         format.html { redirect_to @discount_rule, notice: 'Se creó una nueva regla de descuento.' }
         format.json { render :show, status: :created, location: @discount_rule }
       else
@@ -56,6 +62,9 @@ class DiscountRulesController < ApplicationController
     prospect_params_ids
     respond_to do |format|
       if @discount_rule.update(discount_rule_params)
+        status_to_boolean
+        all_products_boolean
+        all_prospects_boolean
         format.html { redirect_to @discount_rule, notice: 'La regla de descuento fue modificada.' }
         format.json { render :show, status: :ok, location: @discount_rule }
       else
@@ -74,6 +83,15 @@ class DiscountRulesController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  def status_to_boolean
+    if @status == 'activa'
+      @discount_rule.update(active: true)
+    else
+      @discount_rule.update(active: false)
+    end
+  end
+
 
 # CREO QUE ESTE MÉTODO YA NO DEBE EXISTIR
   def product_category
@@ -97,16 +115,24 @@ class DiscountRulesController < ApplicationController
 
   private
 
+    def all_products_boolean
+      @discount_rule.update(product_all: true) if @discount_rule.product_filter == 'todos los productos de línea'
+    end
+
+    def all_prospects_boolean
+      @discount_rule.update(prospect_all: true) if @discount_rule.prospect_filter == 'todos los clientes'
+    end
+
     def product_params_ids
       @products = []
       ids = params[:discount_rule][:product_list]
-      filter = params[:discount_rule][:product_filter]
-      if ids = ['']
-        if filter = 'todos los productos de línea'
+      filter_field = params[:discount_rule][:product_filter]
+      if ids == ['']
+        if filter_field == 'todos los productos de línea'
           all_products_except_special
-        elsif filter = 'seleccionar líneas de producto'
+        elsif filter_field == 'seleccionar líneas de producto'
           products_by_line
-        elsif filter = 'seleccionar productos por material'
+        elsif filter_field == 'seleccionar productos por material'
           products_by_material
         end
         @products.each do |product|
@@ -123,21 +149,21 @@ class DiscountRulesController < ApplicationController
     def prospect_params_ids
       @prospects = []
       ids = params[:discount_rule][:prospect_list]
-      filter = params[:discount_rule][:prospect_filter]
-      if ids = ['']
-        if filter == 'todos los clientes'
+      filter_field = params[:discount_rule][:prospect_filter]
+      if ids == ['']
+        if filter_field == 'todos los clientes'
           all_prospects
-        elsif filter == 'clientes finales (no tiendas)'
+        elsif filter_field == 'clientes finales (no tiendas)'
           final_customers
-        elsif filter == 'tiendas propias y franquicias'
+        elsif filter_field == 'tiendas propias y franquicias'
           all_stores
-        elsif filter == 'solo tiendas propias'
+        elsif filter_field == 'solo tiendas propias'
           all_own_stores
-        elsif filter == 'solo franquicias'
+        elsif filter_field == 'solo franquicias'
           all_franchises
-        elsif filter == 'solo distribuidores'
+        elsif filter_field == 'solo distribuidores'
           all_distribuitors
-        elsif filter == 'solo corporativo'
+        elsif filter_field == 'solo corporativo'
           corporate_only
         end
         @prospects.each do |prospect|
@@ -163,31 +189,61 @@ class DiscountRulesController < ApplicationController
                             end
       dc_products = Product.where(supplier: suppliers_id).where.not(classification: ['especial', 'de tienda'])
       if user == 'store-admin' || user == 'store'
-        @products = store.products + dc_products
+        @products = dc_products
+        store.products.each do |product|
+          @products << product
+        end
       else
         @products = dc_products
       end
     end
 
+    def update_list_of_materials_or_product_lines
+      if @lines != []
+        lines_clean = @lines.reverse
+        lines_clean.pop
+        Classification.find(lines_clean).each do |c|
+          @discount_rule.line_filter << c.name
+        end
+      end
+      if @materials != []
+        materials_clean = @materials.reverse
+        materials_clean.pop
+        names = []
+        Material.find(materials_clean).each do |m|
+          @discount_rule.material_filter << m.name
+        end
+      end
+      @discount_rule.save
+    end
+
     def products_by_line
+      all_products_except_special
       if params[:discount_rule][:line_filter].present?
-        lines = params[:discount_rule][:line_filter]
+        lines = []
+        params[:discount_rule][:line_filter].each do |line|
+          lines << line unless line == ''
+        end
         names = []
         Classification.find(lines).each do |c|
           names << c.name
         end
-        @products = Product.where(line: names)
+        @products = @products.where(line: names)
       end
     end
 
     def products_by_material
+      all_products_except_special
       if params[:discount_rule][:material_filter].present?
-        materials = params[:discount_rule][:material_filter]
+        materials = []
+        params[:discount_rule][:material_filter].each do |material|
+          materials << material unless material == ''
+        end
         names = []
         Material.find(materials).each do |m|
           names << m.name
         end
-        @products = Product.where(main_material: names)
+        @products = @products.where(main_material: names)
       end
     end
 

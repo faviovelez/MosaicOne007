@@ -18,6 +18,7 @@ class ProductsController < ApplicationController
   end
 
   def special
+    filter_products
     @products = @products.where(classification: 'especial')
   end
 
@@ -54,20 +55,12 @@ class ProductsController < ApplicationController
       if @product.save
         if @request
           @request.update(status: 'código asignado', product: @product)
-          @order = Order.create(status: 'en espera', category: 'especial', prospect: @request.prospect, request: @request, store: @request.store, delivery_address: current_user.store.delivery_address)
-          @order.users  << @finded_user
-          @order.save
-          @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date)
-          if @product.classification == 'de tienda'
-            @inventory = StoresInventory.create(product: @product, store: current_user.store)
-          else
-            @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
-          end
-          @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, order: @order)
+          save_product_from_request_related_models
           format.html { redirect_to @product, notice: 'Se creó un nuevo producto y una petición de baja de productos en espera del inventario.' }
           format.json { render :show, status: :created, location: @product }
         else
-          @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
+          create_inventory_or_store_inventories
+          update_discount_rules
           format.html { redirect_to @product, notice: 'Se creó un nuevo producto.' }
           format.json { render :show, status: :created, location: @product }
         end
@@ -106,6 +99,85 @@ class ProductsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to products_url, notice: 'El producto fue eliminado exitosamente.' }
       format.json { head :no_content }
+    end
+  end
+
+  def get_discount_rules
+    b_units = BusinessGroup.find_by_business_group_type('main').business_units
+    all_rules = DiscountRule.all
+    @corporate_d_rules = DiscountRule.where(business_unit: b_units)
+    @stores_d_rules = all_rules - @corporate_d_rules
+  end
+
+  def update_discount_rules
+    get_discount_rules
+    @corporate_d_rules.each do |rule|
+      unless rule.product_list.include?(@product.id.to_s)
+        if rule.product_filter == 'todos los productos de línea'
+            rule.product_list << @product.id.to_s unless (@product.classification == 'especial' || rule.store != @product.store)
+        elsif rule.product_filter == 'seleccionar líneas de producto'
+          lines = rule.line_filter
+          if lines.include?(@product.line)
+            rule.product_list << @product.id.to_s unless (rule.product_list.include?(@product.id.to_s) || rule.store != @product.store)
+          end
+        elsif rule.product_filter == 'seleccionar productos por material'
+          materials = rule.material_filter
+          if materials.include?(@product.main_material)
+            rule.product_list << @product.id.to_s unless (rule.product_list.include?(@product.id.to_s) || rule.store != @product.store)
+          end
+        end
+      end
+      rule.save
+    end
+    @stores_d_rules.each do |rule|
+      unless rule.product_list.include?(@product.id.to_s)
+        if rule.product_filter == 'todos los productos de línea'
+            rule.product_list << @product.id.to_s unless (@product.classification == 'especial' || rule.store != @product.store)
+        elsif rule.product_filter == 'seleccionar líneas de producto'
+          lines = rule.line_filter
+          if lines.include?(@product.line)
+            rule.product_list << @product.id.to_s unless (rule.product_list.include?(@product.id.to_s) || rule.store != @product.store)
+          end
+        elsif rule.product_filter == 'seleccionar productos por material'
+          materials = rule.material_filter
+          if materials.include?(@product.main_material)
+            rule.product_list << @product.id.to_s unless (rule.product_list.include?(@product.id.to_s) || rule.store != @product.store)
+          end
+        end
+      end
+      rule.save
+    end
+  end
+
+  def save_product_from_request_related_models
+    @order = Order.create(status: 'en espera', category: 'especial', prospect: @request.prospect, request: @request, store: @request.store, delivery_address: current_user.store.delivery_address)
+    @order.users  << @finded_user
+    @order.save
+    @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date, status: 'sin asignar')
+    @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
+    store_inventory = StoresInventory.create(product: @product, store: @finded_user.store)
+    @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, order: @order, unique_code: @product.unique_code, product_request: @product_request, initial_price: @request.internal_price, buyer_user: @finded_user)
+  end
+
+  def create_inventory_without_order
+    @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
+  end
+
+  def create_store_inventories
+    if @product.classification != 'especial'
+      corporate = StoreType.find_by_store_type('corporativo')
+      stores = Store.where.not(store_type: corporate)
+      stores.each do |store|
+        StoresInventory.create(product: @product, store: store)
+      end
+    end
+  end
+
+  def create_inventory_or_store_inventories
+    if @product.classification == 'de tienda'
+      @inventory = StoresInventory.create(product: @product, store: current_user.store)
+    else
+      create_store_inventories
     end
   end
 

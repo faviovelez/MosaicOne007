@@ -38,6 +38,7 @@ class ProspectsController < ApplicationController
     save_store_prospect
     respond_to do |format|
       if @prospect.save
+        update_discount_rules
         format.html { redirect_to @prospect, notice: 'El prospecto fue dado de alta exitosamente.' }
         format.json { render :show, status: :created, location: @prospect }
       else
@@ -85,6 +86,90 @@ class ProspectsController < ApplicationController
   end
 
   private
+
+    def get_discount_rules
+      @b_units = BusinessGroup.find_by_business_group_type('main').business_units
+      @corporate_d_rules = DiscountRule.where(business_unit: @b_units)
+      @stores_d_rules = DiscountRule.where.not(store: nil)
+      debugger
+    end
+
+    def update_discount_rules
+      get_discount_rules
+      b_g = @b_units.first.business_group
+      debugger
+      @corporate_d_rules.each do |rule|
+        debugger
+        unless rule.prospect_list.include?(@prospect.id.to_s)
+          if rule.prospect_filter == 'todos los clientes'
+            rule.prospect_list << @prospect.id.to_s if @prospect.business_group == rule.business_unit.business_group
+          elsif rule.prospect_filter == 'clientes finales (no tiendas)'
+            rule.prospect_list << @prospect.id.to_s if (@prospect.business_group == rule.business_unit.business_group && @prospect.store_prospect == nil)
+          elsif rule.prospect_filter == 'tiendas propias y franquicias'
+            rule.prospect_list << @prospect.id.to_s if (@prospect.business_group == rule.business_unit.business_group && @prospect.store_prospect != nil)
+          elsif rule.prospect_filter == 'solo tiendas propias'
+            type = StoreType.find_by_store_type('tienda propia')
+            rule.prospect_list << @prospect.id.to_s if (@prospect.business_group == rule.business_unit.business_group && @prospect.store_type == type)
+          elsif rule.prospect_filter == 'solo franquicias'
+            type = StoreType.find_by_store_type('franquicia')
+            rule.prospect_list << @prospect.id.to_s if (@prospect.business_group == rule.business_unit.business_group && @prospect.store_type == type)
+          elsif rule.prospect_filter == 'solo distribuidores'
+            type = StoreType.find_by_store_type('distribuidor')
+            rule.prospect_list << @prospect.id.to_s if (@prospect.business_group == rule.business_unit.business_group && @prospect.store_type == type)
+          elsif rule.prospect_filter == 'solo corporativo'
+            type = StoreType.find_by_store_type('corporativo')
+            rule.prospect_list << @prospect.id.to_s if (@prospect.business_group == rule.business_unit.business_group && @prospect.store_type == type)
+          end
+        end
+        rule.save
+      end
+      @stores_d_rules.each do |rule|
+        unless rule.prospect_list.include?(@prospect.id.to_s)
+          if rule.prospect_filter == 'todos los clientes'
+            rule.prospect_list << @prospect.id.to_s if @prospect.store == rule.store
+          end
+        end
+        rule.save
+      end
+    end
+
+    # Use callbacks to share common setup or constraints between actions.
+    def set_discount_rule
+      @discount_rule = DiscountRule.find(params[:id])
+    end
+
+
+    def prospect_params_ids
+      @prospects = []
+      ids = params[:discount_rule][:prospect_list]
+      filter_field = params[:discount_rule][:prospect_filter]
+      if ids == ['']
+        if filter_field == 'todos los clientes'
+          all_prospects
+        elsif filter_field == 'clientes finales (no tiendas)'
+          final_customers
+        elsif filter_field == 'tiendas propias y franquicias'
+          all_stores
+        elsif filter_field == 'solo tiendas propias'
+          all_own_stores
+        elsif filter_field == 'solo franquicias'
+          all_franchises
+        elsif filter_field == 'solo distribuidores'
+          all_distribuitors
+        elsif filter_field == 'solo corporativo'
+          corporate_only
+        end
+        @prospects.each do |prospect|
+          @discount_rule.prospect_list << prospect.id unless prospect == ''
+        end
+      else
+        @prospects = params[:discount_rule][:prospect_list]
+        @prospects.each do |prospect|
+          @discount_rule.prospect_list << prospect unless prospect == ''
+        end
+      end
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_prospect
       @prospect = Prospect.find(params[:id])

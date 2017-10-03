@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  service_id: 
+  store_id: 
+  business_unit_id: 
+
+two:
+  service_id: 
+  store_id: 
+  business_unit_id: 

@@ -23,12 +23,22 @@ class Product < ActiveRecord::Base
   has_many :stores, through: :stores_warehouse_entries
   has_many :movements, through: :stores_warehouse_entries
   has_many :stores_warehouse_entries
+  has_many :store_use_inventories
+  has_many :exhibition_inventories
 
   validates :unique_code, presence: { message: "Debe anotar un código de producto."}
 
-  validates :price, presence: { message: "Es necesario el precio del producto."}
+  validate :price_present, unless: :classification_is_special
 
   validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya hay un producto con con este código."}
+
+  def price_present
+      errors[:base] << "Es necesario el precio del producto." if price.blank?
+  end
+
+  def classification_is_special
+    classification == 'especial'
+  end
 
   def update_inventory_quantity(quantity)
     actual_quantity = self.inventory.quantity

@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  unique_code: MyString
+  description: MyText
+  price: 1.5
+  sat_key_id: 
+  unit: MyString
+  sat_unit_key_id: 
+  shared: false
+  store_id: 
+  business_unit_id: 
+
+two:
+  unique_code: MyString
+  description: MyText
+  price: 1.5
+  sat_key_id: 
+  unit: MyString
+  sat_unit_key_id: 
+  shared: false
+  store_id: 
+  business_unit_id: 
