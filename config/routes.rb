@@ -111,7 +111,8 @@ Rails.application.routes.draw do
   get 'warehouse/new_own_entry'
 
   get 'warehouse/remove_inventory'
-  post '/api/get_all_products', to: 'api#get_all_products'
+  post '/api/get_all_products',    to: 'api#get_all_products'
+  post 'warehouse/remove_product', to: 'warehouse#remove_product', as: 'warehouse_remove_product'
 
   post 'warehouse/confirm/:entry_codes', to: 'warehouse#confirm', as: 'warehouse_confirm'
 

@@ -2,12 +2,10 @@
   <thead>
     <tr>
       <th>Codigo unico</th>
+      <th>Inventario</th>
       <th>Descripcion</th>
       <th>Image</th>
       <th>Cantidad</th>
-      <% if supplier %>
-        <th>Proveedor</th>
-      <% end %>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -19,11 +17,7 @@
     </tr>
   </tbody>
 </table>
-<% if supplier %>
-  <a href='#' id='saveInfoSupplier' class='btn btn-primary' >Dar de alta</a>
-<% else %>
-  <a href='#' id='saveInfo' class='btn btn-primary' >Dar de alta</a>
-<%end %>
+<a href='#' id='sendInfo' class='btn btn-primary' >Dar de baja</a>
 <br /> <br /><br />
 <br /> <br /><br />
 <div id='productInfo'>

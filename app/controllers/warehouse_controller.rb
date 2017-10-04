@@ -44,7 +44,11 @@ class WarehouseController < ApplicationController
   def get_product
     product = Product.find(params[:product])
     if product.present?
-      render json: {product: product, images: product.images}
+      render json: {
+        product: product,
+        images: product.images,
+        inventory: product.valid_inventory
+      }
     else
       render json: {product: false}
     end
@@ -64,7 +68,11 @@ class WarehouseController < ApplicationController
   end
 
   def remove_inventory
-    
+  end
+
+  def remove_product
+    remove_of_inventory
+    redirect_to warehouse_remove_inventory_path, notice: 'Se aplicacion las bajas solicitadas correctamente.'
   end
 
   def show
@@ -229,6 +237,14 @@ class WarehouseController < ApplicationController
         store: current_user.store,
         business_unit: current_user.store.business_unit
       )
+    end
+  end
+
+  def remove_of_inventory
+    params.select {|p| p.match('trForProduct').present? }.each do |product|
+      params = product.second
+      inventory = Inventory.find_by_product_id(params[:id])
+      inventory.set_quantity(params[:cantidad].to_i, '-')
     end
   end
 
