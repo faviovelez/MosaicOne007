@@ -6,12 +6,12 @@ class WarehouseController < ApplicationController
 
   def new_own_entry
     @movement = Movement.new
-    role = Role.find_by_name('warehouse-staff') || Role.find_by_name('warehouse-admin')
+    role = Role.find_by_name('warehouse-staff') || Role.find_by_name('warehouse-admin') || Role.find_by_name('store') || Role.find_by_name('store-admin')
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
   end
 
   def orders
-    @orders = Order.where.not(status: ['enviado', 'entregado', 'sin asignar', 'en espera']).order(:created_at)
+    @orders = Order.where.not(status: ['enviado', 'entregado', 'sin asignar']).order(:created_at)
   end
 
   def pending_orders
@@ -77,6 +77,9 @@ class WarehouseController < ApplicationController
   end
 
   def new_supplier_entry
+    @movement = Movement.new
+    role = Role.find_by_name('warehouse-staff') || Role.find_by_name('warehouse-admin') || Role.find_by_name('store') || Role.find_by_name('store-admin')
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
   end
 
   def orders_products
