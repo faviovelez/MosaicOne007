@@ -76,6 +76,9 @@ class WarehouseController < ApplicationController
     redirect_to warehouse_show_remove_path(@codes), notice: 'Se aplicacion las bajas solicitadas correctamente.'
   end
 
+  def show_removeds
+  end
+
   def show
     @codes = params[:entry_codes]
   end
@@ -253,6 +256,7 @@ class WarehouseController < ApplicationController
         movement.update(reason: params[:reason])
       end
     end
+    @codes = @collection.map {|movement| movement.id}.join('-')
   end
 
   def set_movements

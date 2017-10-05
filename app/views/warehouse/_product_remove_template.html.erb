@@ -2,7 +2,7 @@
   <td id='reason_{{= rc.id }}'>
     <div class="form-group">
      <% id = 'select_for_{{= rc.id }}_id' %>
-     <%= select_tag 'select_for_{{= rc.id }}', options_for_select(options_to_remove), include_blank: 'Selecionar un producto', class: 'form-control remove_margin', id: id %>
+     <%= select_tag 'select_for_{{= rc.id }}', options_for_select(options_to_remove), include_blank: 'Selecionar razon', class: 'form-control remove_margin', id: id %>
     </div>
   </td>
   <td id='inventory_{{= rc.id }}'>{{= rc.inventory }}</td>
