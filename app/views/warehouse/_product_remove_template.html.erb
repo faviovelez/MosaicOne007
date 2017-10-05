@@ -1,4 +1,10 @@
 <script type="text/template" class="template">
+  <td id='reason_{{= rc.id }}'>
+    <div class="form-group">
+     <% id = 'select_for_{{= rc.id }}_id' %>
+     <%= select_tag 'select_for_{{= rc.id }}', options_for_select(options_to_remove), include_blank: 'Selecionar un producto', class: 'form-control remove_margin', id: id %>
+    </div>
+  </td>
   <td id='inventory_{{= rc.id }}'>{{= rc.inventory }}</td>
   <td id='description_{{= rc.id}}'>{{= rc.description }}</td>
   <td id='image_{{= rc.id}}'><a href="{{= rc.link }}" ><img src="{{= rc.image }}" alt="{{= rc.description }}" /></a></td>

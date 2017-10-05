@@ -248,6 +248,7 @@ class Movement < ActiveRecord::Base
   def convert_warehouses(order_type, local_quantity)
     related_warehouses(order_type).each do |entry|
       if local_quantity > entry.fix_quantity
+        local_quantity -= entry.fix_quantity
         entry.destroy
       else
         entry.update(

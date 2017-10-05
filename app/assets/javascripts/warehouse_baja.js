@@ -29,8 +29,9 @@ $(function(){
     var data = {};
     $.each($('tr[id^=trForProduct]'), function(){
       data[$(this).attr('id')] = {
-        id       : $(this).find('select').val(),
-        cantidad : $(this).find('input[id^=numProduct]').val()
+        id       : $(this).find('select:first').val(),
+        cantidad : $(this).find('input[id^=numProduct]').val(),
+        reason   : $(this).find('select:last').val()
       };
       var index = $(this).attr('id').match(/\d+/)[0];
       if (supplier) {
