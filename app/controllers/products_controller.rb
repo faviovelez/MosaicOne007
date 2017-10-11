@@ -272,7 +272,15 @@ class ProductsController < ApplicationController
       :warehouse_id,
       :cost,
       :rack,
-      :level)
+      :level,
+      :unit,
+      :current,
+      :product_dependents,
+      :wholesale_id,
+      :retail_id,
+      :sat_key_id,
+      :sat_unit_key_id
+      )
     end
 
 end

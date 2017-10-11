@@ -101,6 +101,7 @@ patria_prospect = Prospect.find_or_create_by(
                             store_code: patria_business_unit.store_code,
                             store_type: patria_business_unit.store_type,
                             store_prospect: default_store_patria,
+                            credit_days: 30,
                             business_unit: patria_business_unit,
                             business_group: default_business_group
                             )
@@ -133,6 +134,7 @@ compresor_prospect = Prospect.find_or_create_by(
                             store_code: default_store_compresor.store_code,
                             store_type: default_store_compresor.store_type,
                             store_prospect: default_store_compresor,
+                            credit_days: 30,
                             business_unit: compresor_business_unit,
                             business_group: default_business_group
                             )
@@ -588,6 +590,33 @@ csv.each do |row|
                                       email:
                                     }
                                   )
+  puts "#{store.id}, #{store.name} saved"
+  prospect = Prospect.find_or_create_by(
+                                        {
+                                          legal_or_business_name: store.store_name,
+                                          business_type: store.type_of_person,
+                                          prospect_type: 'comercialización de productos',
+                                          contact_first_name: store.contact_first_name,
+                                          contact_middle_name: store.contact_middle_name,
+                                          contact_last_name: store.contact_last_name,
+                                          second_last_name: store.second_last_name,
+                                          direct_phone: store.direct_phone,
+                                          extension: store.extension,
+                                          cell_phone: store.cell_phone,
+                                          email: store.email,
+                                          store_code: store.store_code,
+                                          store_type: store.store_type,
+                                          store_prospect: store,
+                                          credit_days: 30,
+                                          business_unit: BusinessUnit.find(1),
+                                          business_group: BusinessGroup.find_by_business_group_type('main')
+                                        }
+                                       )
+  puts "#{prospect.id}, #{prospect.name} saved"
+end
+
+puts "There are now #{Store.count} rows in the Stores table"
+puts "There are now #{Prospect.count} rows in the Prospects table"
 
 # Agrega el catálogo de Productos de Diseños de Cartón
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'products_trial.csv'))
@@ -595,13 +624,23 @@ csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
 csv.each do |row|
   product = Product.find_or_create_by(
                                         {
+                                          former_code: ,
                                           unique_code: row['cod'],
                                           description: row['desc'],
+                                          product_type: ,
+                                          exterior_material_color: ,
+                                          interior_material_color: ,
+                                          number_of_pieces: ,
                                           business_unit: BusinessUnit.find_by_name(row['bu']),
                                           supplier: Supplier.find_by_name(row['bu']),
                                           line: Classification.find_by_name(row['line']).name,
                                           classification: row['class'],
                                           product_type: row['type'],
+                                          current: true,
+                                          sat_key_id: #Quitar el id#,
+                                          sat_unit_key_id: #Quitar el id#,
+                                          pieces_per_package: ,
+                                          warehouse_id: #Quitar el id#,
                                           price: row['price']
                                         }
                                       )

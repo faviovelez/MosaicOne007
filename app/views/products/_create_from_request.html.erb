@@ -185,40 +185,73 @@
 
       <div class="impresssion-second-div">
 
-      <div class="form-inside-style">
-        <%= f.label :color_exterior_del_cartón %>
-        <%= f.select :exterior_material_color, options_for_select(exterior_color_options, selected: @request.exterior_material_color) %>
-      </div>
+        <div class="form-inside-style">
+          <%= f.label :color_exterior_del_cartón %>
+          <%= f.select :exterior_material_color, options_for_select(exterior_color_options, selected: @request.exterior_material_color) %>
+        </div>
 
-      <div class="form-inside-style">
-        <%= f.label :color_interior_del_cartón %>
-        <%= f.select :interior_material_color, options_for_select(interior_color_options, selected: @request.interior_material_color) %>
-      </div>
+        <div class="form-inside-style">
+          <%= f.label :color_interior_del_cartón %>
+          <%= f.select :interior_material_color, options_for_select(interior_color_options, selected: @request.interior_material_color) %>
+        </div>
 
-      <div class="form-inside-style">
-        <%= f.label :color_o_diseño %>
-        <%= f.text_field :exterior_color_or_design, class: 'form-inside' %>
-      </div>
+        <div class="form-inside-style">
+          <%= f.label :color_o_diseño %>
+          <%= f.text_field :exterior_color_or_design, class: 'form-inside' %>
+        </div>
 
-      <div class="form-inside-style">
-        <%= f.label :tipo_de_armado %>
-        <%= f.text_field :design_type, value: @request.design_like, class: 'form-inside' %>
-      </div>
+        <div class="form-inside-style">
+          <%= f.label :tipo_de_armado %>
+          <%= f.text_field :design_type, value: @request.design_like, class: 'form-inside' %>
+        </div>
 
-      <div class="form-inside-style">
-        <%= f.label :número_de_piezas %>
-        <%= f.number_field :number_of_pieces, class: 'form-inside' %>
-      </div>
+        <div class="form-inside-style">
+          <%= f.label :número_de_piezas %>
+          <%= f.number_field :number_of_pieces, class: 'form-inside' %>
+        </div>
 
-      <div class="form-inside-style">
-        <%= f.label :kit_de_accesorios %>
-        <%= f.text_field :accesories_kit, class: 'form-inside' %>
+        <!-- producto_mayoreo wholesale -->
+        <!-- producto_menudeo retail -->
+
+        <div class="form-inside-style">
+          <%= f.label :kit_de_accesorios %>
+          <%= f.text_field :accesories_kit, class: 'form-inside' %>
+        </div>
       </div>
-    </div>
 
     <h3>Otros</h3>
 
     <div class="otros">
+
+      <div class="form-inside-style hidden">
+        <%= f.label '¿producto activo?' %>
+        <%= f.text_field :current, value: true, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label 'Código de producto SAT' %>
+        <%= f.select :sat_key_id, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label 'Unidad SAT' %>
+        <%= f.select :sat_unit_key_id, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :unit %>
+        <%= f.select :unit_id, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :anaquel %>
+        <%= f.text_field :rack, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :nivel %>
+        <%= f.text_field :level, class: 'form-inside' %>
+      </div>
 
       <div class="form-inside-style">
         <%= f.label :empresa %>
@@ -246,11 +279,11 @@
       </div>
     </div>
 
-      <div class="button-container">
-        <div class="actions">
-          <%= f.submit :Confirmar, class: 'main-button button-margin' %>
-        </div>
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :Confirmar, class: 'main-button button-margin' %>
       </div>
+    </div>
 
     </div>
 
