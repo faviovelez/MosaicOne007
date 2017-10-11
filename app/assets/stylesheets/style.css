@@ -850,3 +850,7 @@ h2.reg-title {
   z-index: 9999;
   background: url("Preloader.gif") center no-repeat #fff;
 }
+
+.remove_margin{
+  margin: 0;
+}

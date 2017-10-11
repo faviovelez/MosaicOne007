@@ -16,9 +16,13 @@ $(function(){
       var index = $(this).attr('id').replace(/\D/g,'');
       var actual_inventory = parseInt($('#inventory_product' + index).html());
       if ($(this).val() === '' || parseInt($(this).val()) > actual_inventory ){
-        hasError = false;
         $(this).parent().addClass('has-error');
-      } else {
+        hasError = false;
+      } else if ($("#select_for_product" + index +"_id").val() === '') {
+        $(this).parent().addClass('has-error');
+        hasError = false;
+      }
+      else {
         $(this).parent().removeClass('has-error').addClass('has-success');
       }
     });
@@ -29,8 +33,9 @@ $(function(){
     var data = {};
     $.each($('tr[id^=trForProduct]'), function(){
       data[$(this).attr('id')] = {
-        id       : $(this).find('select').val(),
-        cantidad : $(this).find('input[id^=numProduct]').val()
+        id       : $(this).find('select:first').val(),
+        cantidad : $(this).find('input[id^=numProduct]').val(),
+        reason   : $(this).find('select:last').val()
       };
       var index = $(this).attr('id').match(/\d+/)[0];
       if (supplier) {

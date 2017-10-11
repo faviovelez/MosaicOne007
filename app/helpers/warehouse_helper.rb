@@ -1,5 +1,16 @@
 module WarehouseHelper
 
+  def options_to_remove
+    [
+      "Uso tienda",
+      "Crear producto",
+      "Exhibición",
+      "Promocional",
+      "Producto dañado",
+      "Ajuste (producto faltante)"
+    ]
+  end
+
   def products_collection
     Product.has_inventory.collect do |p|
       words = p.description.split(' ') [0..5]
