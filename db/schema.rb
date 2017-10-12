@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171010032353) do
+ActiveRecord::Schema.define(version: 20171011160211) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -610,9 +610,7 @@ ActiveRecord::Schema.define(version: 20171010032353) do
     t.integer  "seller_user_id"
     t.integer  "buyer_user_id"
     t.boolean  "rule_could_be",       default: false
-    t.boolean  "rule_applied",        default: false
     t.integer  "ticket_id"
-    t.string   "reason"
   end
 
   add_index "movements", ["bill_id"], name: "index_movements_on_bill_id", using: :btree
