@@ -435,6 +435,7 @@ csv.each do |row|
                                     corporate: row['corporate'],
                                     date_since: row['date_since']
                                   }
+                                )
   puts "#{t.id}, #{t.tax_id}, #{t.description} saved"
 end
 
@@ -449,6 +450,7 @@ csv.each do |row|
                                       payment_id: row['payment_id'],
                                       description: row['description']
                                     }
+                                  )
   puts "#{t.id}, #{t.payment_id}, #{t.description} saved"
 end
 
@@ -461,6 +463,7 @@ csv.each do |row|
                                         method:row['method'],
                                         description: row['description']
                                       }
+                                    )
   puts "#{t.id}, #{t.method}, #{t.description} saved"
 end
 
@@ -473,6 +476,7 @@ csv.each do |row|
                                  sat_key: row['sat_key'],
                                  description: row['description']
                                }
+                             )
   puts "#{t.id}, #{t.sat_key}, #{t.description} saved"
 end
 
