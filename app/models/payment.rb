@@ -4,4 +4,6 @@ class Payment < ActiveRecord::Base
   belongs_to :supplier
   has_one :ticket
   belongs_to :bill
+  has_many :expenses
+  belongs_to :terminal
 end

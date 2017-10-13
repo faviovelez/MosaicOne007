@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  bank_id: 
+  number: MyString
+  comission: 1.5
+  store_id: 
+
+two:
+  name: MyString
+  bank_id: 
+  number: MyString
+  comission: 1.5
+  store_id: 

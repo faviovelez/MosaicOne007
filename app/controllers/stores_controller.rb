@@ -39,6 +39,7 @@ class StoresController < ApplicationController
         create_store_inventories
         create_prospect_from_store
         create_supplier_for_store
+        create_cash_register
         format.html { redirect_to @store, notice: 'La tienda fue dada de alta exitosamente.' }
         format.json { render :show, status: :created, location: @store }
       else
@@ -168,6 +169,15 @@ class StoresController < ApplicationController
                       )
     assign_delivery_address
     assign_billing_address
+  end
+
+  def create_cash_register
+    CashRegister.create(
+                        name: "1",
+                        store: @store,
+                        balance: 0,
+                        cash_number: 1
+                        )
   end
 
   def assign_delivery_address
