@@ -572,24 +572,31 @@ puts "There are now #{CfdiUse.count} rows in the CFDI Use table"
 # Agrega el catálogo de Tiendas de Diseños de Cartón
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'stores.csv'))
 csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+
+[
+  { store_type: "tienda propia" },
+  { store_type: "corporativo" },
+  { store_type: "distribuidor", business_unit_id: default_terceros_business_unit },
+  { store_type: "franquicia", business_unit_id: default_terceros_business_unit }
+
 csv.each do |row|
   store = Store.find_or_create_by(
                                     {
-                                      store_name: '',
-                                      store_code: '',
-                                      store_type: '',
-                                      type_of_person: 'persona moral',
-                                      business_unit: ,
-                                      business_group: BusinessGroup.find_by_name('Diseños de Cartón'),
-                                      contact_first_name: '',
-                                      contact_last_name: '',
-                                      direct_phone: '',
+                                      store_type: StoreType.find_by_store_type(row['store_type']),
+                                      store_name: row['store_name'],
+                                      store_code: '0' + (Store.last.id + 1).to_s
+                                      business_group: BusinessGroup.find_or_create_by(name: 'Diseños de Cartón'),
+                                      business_unit: BusinessUnit.find_or_create_by(name: row['business_unit'], business_group: store.business_group),
+                                      contact_first_name: row['contact_first_name'],
+                                      contact_last_name: row['contact_last_name'],
                                       cost_type: CostType.find_by_warehouse_cost_type('PEPS'),
                                       cost_type_selected_since: Date.today,
-                                      zip_code: ,
-                                      email:
+                                      zip_code: row['zip_code'],
+                                      email: row['email']
                                     }
                                   )
+
+  warehouse_code = "AT" + store.store_code
   puts "#{store.id}, #{store.name} saved"
   prospect = Prospect.find_or_create_by(
                                         {
@@ -612,6 +619,13 @@ csv.each do |row|
                                           business_group: BusinessGroup.find_by_business_group_type('main')
                                         }
                                        )
+   Warehouse.find_or_create_by(
+                               warehouse_code: warehouse_code,
+                               name: "Almacén #{store.name}",
+                               business_unit: store.business_unit,
+                               business_group: store.business_group
+                               )
+
   cash_register = CashRegister.find_or_create_by(
                                                  {
                                                    name: "1",
