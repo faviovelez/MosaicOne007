@@ -612,11 +612,20 @@ csv.each do |row|
                                           business_group: BusinessGroup.find_by_business_group_type('main')
                                         }
                                        )
+  cash_register = CashRegister.find_or_create_by(
+                                                 {
+                                                   name: "1",
+                                                   store: store,
+                                                   balance: 0,
+                                                   cash_number: 1
+                                                 }
+                                                )
   puts "#{prospect.id}, #{prospect.name} saved"
 end
 
 puts "There are now #{Store.count} rows in the Stores table"
 puts "There are now #{Prospect.count} rows in the Prospects table"
+puts "There are now #{CashRegister.count} rows in the Prospects table"
 
 # Agrega el catálogo de Productos de Diseños de Cartón
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'products_trial.csv'))

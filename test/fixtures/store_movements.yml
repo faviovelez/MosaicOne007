@@ -1,0 +1,45 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  product_id: 
+  quantity: 1
+  movement_type: MyString
+  order_id: 
+  ticket_id: 
+  store_id: 
+  initial_price: 1.5
+  automatic_discount: 1.5
+  manual_discount: 1.5
+  discount_applied: 1.5
+  rule_could_be: false
+  final_price: 1.5
+  amount: 1.5
+  return_ticket_id: 
+  change_ticket_id: 
+  tax_id: 
+  taxes: 1.5
+  cost: 1.5
+  supplier_id: 
+  product_request_id: 
+
+two:
+  product_id: 
+  quantity: 1
+  movement_type: MyString
+  order_id: 
+  ticket_id: 
+  store_id: 
+  initial_price: 1.5
+  automatic_discount: 1.5
+  manual_discount: 1.5
+  discount_applied: 1.5
+  rule_could_be: false
+  final_price: 1.5
+  amount: 1.5
+  return_ticket_id: 
+  change_ticket_id: 
+  tax_id: 
+  taxes: 1.5
+  cost: 1.5
+  supplier_id: 
+  product_request_id: 
