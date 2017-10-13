@@ -15,8 +15,7 @@
     <% if params[:action] == 'new' %>
       <h2 class="info-title">Crear Producto</h2>
     <% elsif params[:action] == 'edit' %>
-    <h2 class="info-title">Modificar Producto</h2>
-
+      <h2 class="info-title">Modificar Producto</h2>
     <% end %>
 
     <div class="form-container">
@@ -174,6 +173,32 @@
       <div class="form-inside-style">
         <%= f.label :piezas_por_paquete %>
         <%= f.number_field :pieces_per_package, min: 0, max: 200, class: 'form-inside' %>
+      </div>
+
+
+      <% if params[:action] == 'new' %>
+        <div class="form-inside-style hidden">
+      <% elsif params[:action] == 'edit' %>
+        <div class="form-inside-style">
+      <% end %>
+
+        <%= f.label '¿producto activo?' %>
+        <%= f.text_field :current, value: true, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label 'Código de producto SAT' %>
+        <%= f.select :sat_key_id, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label 'Unidad SAT' %>
+        <%= f.select :sat_unit_key_id, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :unit %>
+        <%= f.select :unit_id, class: 'form-inside' %>
       </div>
 
       <div class="form-inside-style">

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171004011948) do
+ActiveRecord::Schema.define(version: 20171011160211) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -346,6 +346,7 @@ ActiveRecord::Schema.define(version: 20171004011948) do
     t.integer  "service_offered_id"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
+    t.string   "receivers_zipcode"
   end
 
   add_index "delivery_services", ["service_offered_id"], name: "index_delivery_services_on_service_offered_id", using: :btree
@@ -609,7 +610,6 @@ ActiveRecord::Schema.define(version: 20171004011948) do
     t.integer  "seller_user_id"
     t.integer  "buyer_user_id"
     t.boolean  "rule_could_be",       default: false
-    t.boolean  "rule_applied",        default: false
     t.integer  "ticket_id"
   end
 
@@ -942,6 +942,7 @@ ActiveRecord::Schema.define(version: 20171004011948) do
     t.string   "store_code"
     t.integer  "store_type_id"
     t.integer  "store_prospect_id"
+    t.integer  "credit_days"
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
@@ -1217,13 +1218,14 @@ ActiveRecord::Schema.define(version: 20171004011948) do
   create_table "stores_inventories", force: :cascade do |t|
     t.integer  "product_id"
     t.integer  "store_id"
-    t.integer  "quantity",   default: 0
-    t.boolean  "alert",      default: false
+    t.integer  "quantity",            default: 0
+    t.boolean  "alert",               default: false
     t.string   "alert_type"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
     t.string   "rack"
     t.string   "level"
+    t.boolean  "manual_price_update", default: false
   end
 
   add_index "stores_inventories", ["product_id"], name: "index_stores_inventories_on_product_id", using: :btree
@@ -1244,8 +1246,10 @@ ActiveRecord::Schema.define(version: 20171004011948) do
     t.integer  "store_id"
     t.integer  "quantity"
     t.integer  "movement_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.integer  "retail_units_per_unit"
+    t.integer  "units_used"
   end
 
   add_index "stores_warehouse_entries", ["movement_id"], name: "index_stores_warehouse_entries_on_movement_id", using: :btree
@@ -1331,9 +1335,11 @@ ActiveRecord::Schema.define(version: 20171004011948) do
   end
 
   create_table "units", force: :cascade do |t|
-    t.string   "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.string   "name"
+    t.string   "plural_name"
+    t.string   "abbreviation"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "user_requests", force: :cascade do |t|
@@ -1386,10 +1392,12 @@ ActiveRecord::Schema.define(version: 20171004011948) do
     t.integer  "product_id"
     t.integer  "quantity"
     t.integer  "entry_number"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
     t.integer  "movement_id"
     t.integer  "store_id"
+    t.integer  "retail_units_per_unit"
+    t.integer  "units_used"
   end
 
   add_index "warehouse_entries", ["movement_id"], name: "index_warehouse_entries_on_movement_id", using: :btree

@@ -12,10 +12,6 @@ label {
   padding-right: 1.5rem;
 }
 
-.hidden {
-  display: none;
-}
-
 button.close {
   padding-left: 1rem;
 }
@@ -853,4 +849,8 @@ h2.reg-title {
   height: 100%;
   z-index: 9999;
   background: url("Preloader.gif") center no-repeat #fff;
+}
+
+.remove_margin{
+  margin: 0;
 }

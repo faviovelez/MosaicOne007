@@ -204,6 +204,36 @@
 
     <div class="otros">
 
+      <div class="form-inside-style hidden">
+        <%= f.label '¿producto activo?' %>
+        <%= f.text_field :current, value: true, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label 'Código de producto SAT' %>
+        <%= f.select :sat_key_id, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label 'Unidad SAT' %>
+        <%= f.select :sat_unit_key_id, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :unit %>
+        <%= f.select :unit_id, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :anaquel %>
+        <%= f.text_field :rack, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :nivel %>
+        <%= f.text_field :level, class: 'form-inside' %>
+      </div>
+
       <div class="form-inside-style">
         <%= f.label :empresa %>
         <%= f.select :business_unit_id, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}) %>

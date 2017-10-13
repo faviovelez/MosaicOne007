@@ -44,23 +44,39 @@ class WarehouseController < ApplicationController
   def get_product
     product = Product.find(params[:product])
     if product.present?
-      render json: {product: product, images: product.images}
+      render json: {
+        product: product,
+        images: product.images,
+        inventory: product.valid_inventory
+      }
     else
       render json: {product: false}
     end
   end
 
   def save_own_product
-    create_movements
+    create_movements('alta')
     attach_entry
     redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
   end
 
   def save_supplier_product
-    create_movements
+    create_movements('alta')
     attach_entry
     attach_bill_received
     redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
+  end
+
+  def remove_inventory
+  end
+
+  def remove_product
+    create_movements('baja')
+    remove_of_inventory
+    redirect_to warehouse_show_remove_path(@codes), notice: 'Se aplicacion las bajas solicitadas correctamente.'
+  end
+
+  def show_removeds
   end
 
   def show
@@ -211,7 +227,7 @@ class WarehouseController < ApplicationController
     movement
   end
 
-  def create_movements
+  def create_movements(type)
     @collection = []
     params.select {|p| p.match('trForProduct').present? }.each do |product|
       attributes = product.second
@@ -219,13 +235,28 @@ class WarehouseController < ApplicationController
       @collection << Movement.new(
         product: product,
         quantity:  attributes[:cantidad],
-        movement_type: 'alta',
+        movement_type: type,
         user: current_user,
         unique_code: product.unique_code,
         store: current_user.store,
         business_unit: current_user.store.business_unit
       )
     end
+  end
+
+  def remove_of_inventory
+    params.select {|p| p.match('trForProduct').present? }.each_with_index do |product, index|
+      params    = product.second
+      movement = @collection[index]
+      quantity = params[:cantidad].to_i
+      if movement.save
+        inventory = Inventory.find_by_product_id(params[:id])
+        inventory.set_quantity(quantity, '-')
+        movement.convert_warehouses(order_type, quantity)
+        movement.update(reason: params[:reason])
+      end
+    end
+    @codes = @collection.map {|movement| movement.id}.join('-')
   end
 
   def set_movements

@@ -321,6 +321,15 @@
           <%= link_to 'Entrada mercancía terceros', warehouse_new_supplier_entry_path, class: 'text-link' %>
             </li>
 
+          <% if params[:controller] == 'warehouse' && params[:action] == 'new_own_entry'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-industry other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Baja productos', warehouse_remove_inventory_path, class: 'text-link' %>
+            </li>
+
             <% if params[:controller] == 'warehouse' && (params[:action] == 'orders' || params[:action] == 'prepare_order')  %>
               <li class="vertical-link actual-vertical-link">
             <% else %>

@@ -236,7 +236,20 @@ $(function(){
                 templateSelection: formatState,
                 language: "es",
                 multiple: true,
-                maximumSelectionLength: 1
+                maximumSelectionLength: 1,
+                width: 300,
+                ajax: {
+                  url: '/api/get_all_products',
+                  method: 'POST',
+                  dataType: 'json',
+                  delay: 250,
+                  processResults: function (data) {
+                    return {
+                      results: createJson(data.products)
+                    };
+                  },
+                  cache: true
+                }
               })
               .change(function(){
                 var dec = parseInt($(this).attr('id').match(/\d+/)[0]);
@@ -249,16 +262,37 @@ $(function(){
       }
     };
 
+    var createJson = function(products){
+      return _.map(products, function(product){
+        return {
+          text: product.shift(),
+          id  : product.shift()
+        };
+      });
+    };
+
     if ($('#product1').length > 0) {
       setTimeout(function(){
         $('#product1')
           .addClass('isSelect2')
           .select2({
-          templateSelection: formatState,
-          multiple: true,
-          language: "es",
-          maximumSelectionLength: 1,
-          width: 300
+            templateSelection: formatState,
+            multiple: true,
+            language: "es",
+            maximumSelectionLength: 1,
+            width: 300,
+            ajax: {
+              url: '/api/get_all_products',
+              method: 'POST',
+              dataType: 'json',
+              delay: 250,
+              processResults: function (data) {
+                return {
+                  results: createJson(data.products)
+                };
+              },
+              cache: true
+            }
         })
           .change(function(){
             changeAction(this, 2, 1);

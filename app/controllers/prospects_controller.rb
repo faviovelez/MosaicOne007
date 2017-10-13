@@ -91,15 +91,12 @@ class ProspectsController < ApplicationController
       @b_units = BusinessGroup.find_by_business_group_type('main').business_units
       @corporate_d_rules = DiscountRule.where(business_unit: @b_units)
       @stores_d_rules = DiscountRule.where.not(store: nil)
-      debugger
     end
 
     def update_discount_rules
       get_discount_rules
       b_g = @b_units.first.business_group
-      debugger
       @corporate_d_rules.each do |rule|
-        debugger
         unless rule.prospect_list.include?(@prospect.id.to_s)
           if rule.prospect_filter == 'todos los clientes'
             rule.prospect_list << @prospect.id.to_s if @prospect.business_group == rule.business_unit.business_group
@@ -201,6 +198,7 @@ class ProspectsController < ApplicationController
       :business_unit_id,
       :business_group_id,
       :store_id,
-      :store_code)
+      :store_code,
+      :credit_days)
     end
 end

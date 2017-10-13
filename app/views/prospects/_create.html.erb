@@ -83,6 +83,11 @@
       <%= f.text_field :business_group_id, value: current_user.store.business_unit.business_group.id, class: 'form-inside' %>
     </div>
 
+    <div class="form-inside-style">
+      <%= f.label :días_de_crédito %>
+      <%= f.text_field :credit_days, class: 'form-inside' %>
+    </div>
+
     <div class="button-container">
       <div class="actions">
         <%= f.submit :Crear, class: 'main-button' %>

@@ -138,6 +138,7 @@ class StoresController < ApplicationController
                                 store_code: @store.store_code,
                                 store_type: @store.store_type,
                                 store_prospect: @store,
+                                credit_days: 30,
                                 business_unit: BusinessUnit.find(1),
                                 business_group: BusinessGroup.find_by_business_group_type('main')
                                 )

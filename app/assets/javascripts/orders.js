@@ -167,6 +167,15 @@ $(function(){
     }
   };
 
+  var createJson = function(products){
+    return _.map(products, function(product){
+      return {
+        text: product.shift(),
+        id  : product.shift()
+      };
+    });
+  };
+
   if ($('#product1').length > 0) {
     setTimeout(function(){
       $('#product1').select2({
@@ -174,7 +183,19 @@ $(function(){
         templateSelection: formatState,
         multiple: true,
         width: 200,
-        maximumSelectionLength: 1
+        maximumSelectionLength: 1,
+        ajax: {
+          url: '/api/get_all_products',
+          method: 'POST',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            return {
+              results: createJson(data.products)
+            };
+          },
+          cache: true
+        }
       })
       .change(function(){
         changeAction(this, 2, 1);
