@@ -91,6 +91,11 @@
       <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}, selected: @store.business_group_id) %>
     </div>
 
+    <div class="form-inside-style">
+      <%= f.label :sobreprecio %>
+      <%= f.text_field :overprice, maxlength: 5, class: 'form-inside' %>
+    </div>
+
     <div class="button-container">
       <div class="actions">
         <%= f.submit :Crear, class: 'main-button' %>
