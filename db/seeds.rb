@@ -577,12 +577,6 @@ puts "There are now #{CfdiUse.count} rows in the CFDI Use table"
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'stores.csv'))
 csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
 
-[
-  { store_type: "tienda propia" },
-  { store_type: "corporativo" },
-  { store_type: "distribuidor", business_unit_id: default_terceros_business_unit },
-  { store_type: "franquicia", business_unit_id: default_terceros_business_unit }
-
 csv.each do |row|
   store = Store.find_or_create_by(
                                     {
