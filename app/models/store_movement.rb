@@ -8,4 +8,5 @@ class StoreMovement < ActiveRecord::Base
   belongs_to :tax
   belongs_to :supplier
   belongs_to :product_request
+  belongs_to :ticket
 end

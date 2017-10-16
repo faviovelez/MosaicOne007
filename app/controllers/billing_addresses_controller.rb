@@ -38,6 +38,9 @@ class BillingAddressesController < ApplicationController
   end
 
   def update
+    debugger
+    save_tax_regime
+    debugger
     respond_to do |format|
       if @billing.update(billing_params)
         format.html { redirect_to @billing, notice: 'Los datos de facturación fueron modificados exitosamente.' }
@@ -84,6 +87,15 @@ private
     @billing = BillingAddress.find(params[:id])
   end
 
+  def save_tax_regime
+    @tax_regime = ''
+    tax_regime = params[:billing_address][:tax_regime_id]
+    tax_regime.each do |regime|
+      @tax_regime = TaxRegime.find(regime) unless regime == ''
+    end
+    @billing.update(tax_regime: @tax_regime)
+  end
+
   # Este método identifica desde qué owner se agrega la dirección, ya están creados los recursos anidados en routes (Store, Prospect u Order)
     def identify_owner_type
     if params[:store_id]
@@ -98,7 +110,22 @@ private
   end
 
   def billing_params
-    params.require(:billing_address).permit(:type_of_person, :business_name, :rfc, :street, :exterior_number, :interior_number, :zipcode, :neighborhood, :city, :state, :country, :prospect_id, :store_id)
+    params.require(:billing_address).permit(
+    :type_of_person,
+    :business_name,
+    :rfc,
+    :street,
+    :exterior_number,
+    :interior_number,
+    :zipcode,
+    :neighborhood,
+    :city,
+    :state,
+    :country,
+    :prospect_id,
+    :store_id,
+    :tax_regime_id
+    )
   end
 
 end

@@ -1,5 +1,6 @@
 class BillsController < ApplicationController
   before_action :set_bill, only: [:show, :edit, :bill, :bill_doc, :update, :destroy]
+
   require 'rqrcode'
 
   # GET /bills
@@ -13,23 +14,131 @@ class BillsController < ApplicationController
   def show
   end
 
+  def select_data
+  end
+
+  def preview
+    @tickets_selected = []
+    tickets = params[:tickets].split('/')
+    tickets.each do |ticket|
+      @tickets_selected << Ticket.find(ticket)
+    end
+    @prospect = Prospect.find(params[:prospect])
+    cfdi_use = CfdiUse.find(params[:cfdi_use])
+    @cfdi_use = cfdi_use.description
+    @cfdi_use_key = cfdi_use.key
+    type_of_bill = TypeOfBill.find(params[:type_of_bill])
+    @type_of_bill_key = type_of_bill.key + ' '
+    @type_of_bill = '-' + ' ' + type_of_bill.description
+    if @prospect.billing_address == nil
+      redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
+    end
+  end
+
+  def rows
+    @rows = []
+    @tickets_selected.each do |ticket|
+      ticket.store_movements.each do |sale|
+        @rows << sale
+      end
+      ticket.service_offereds.each do |serv|
+        @rows << serv
+      end
+    end
+    @rows
+  end
+
+  def subtotal
+    rows
+    amounts = []
+    @rows.each do |row|
+      amounts << row.amount
+    end
+    @subtotal = amounts.inject(&:+)
+  end
+
+  def total_taxes
+    rows
+    amounts = []
+    @rows.each do |row|
+      amounts << row.taxes
+    end
+    @total_taxes = amounts.inject(&:+)
+  end
+
+  def total
+    rows
+    amounts = []
+    @rows.each do |row|
+      total = row.taxes + row.amount
+      amounts << total
+    end
+    @total = amounts.inject(&:+)
+  end
+
+  def process_info
+    @tickets = params[:tickets].split('/').flatten
+    type_of_bill = params[:type_of_bill]
+    get_prospect_from_tickets
+    get_cfdi_use_from_tickets
+    params[:prospect].blank? ? prospect = @prospect : prospect = params[:prospect]
+    params[:cfdi_use].blank? ? cfdi_use = @cfdi_use : cfdi_use = params[:cfdi_use]
+    redirect_to bills_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
+  end
+
+  def get_prospect_from_tickets
+    @ticket_prospect = []
+    @tickets.each do |ticket|
+      @ticket_prospect << Ticket.find(ticket).prospect unless Ticket.find(ticket).prospect == nil
+    end
+    @prospect = @ticket_prospect.first
+  end
+
+  def get_cfdi_use_from_tickets
+    @ticket_cfdi_use = []
+    @tickets.each do |ticket|
+      @ticket_cfdi_use << Ticket.find(ticket).cfdi_use unless Ticket.find(ticket).cfdi_use == nil
+    end
+    @cfdi_use = @ticket_cfdi_use.first
+  end
+
   def qrcode
     site = 'https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx'
     id = 'F7C0E3BC-B09D-482F-881E-3F6B063DED31'
-    emisor = 'AAA010101AAA'
-    receptor = 'XXX010101XXA'
-    total = (125.6).to_s
+    emisor = current_user.store.business_unit.billing_address.rfc
+    receptor = Prospect.find(params[:prospect]).billing_address.rfc
+    total = @total.round(2).to_s
     sello = 'A1345678'
-    @qr = RQRCode::QRCode.new( (site + '&id=' + id + '&re=' + emisor + '&rr=' + '&rr=' + total + '&fe=' + sello),  :size => 12, :level => :h )
+    @qr = RQRCode::QRCode.new( (site + '&id=' + id + '&re=' + emisor + '&rr=' + receptor + '&tt' + total + '&fe=' + sello),  :size => 13, :level => :h )
   end
 
   def bill_doc
     qrcode
-    filename = "fact-#{@bill.id}"
+    filename = "fact_#{current_user.store.series}_#{current_user.store.last_bill.next}_#{Prospect.find(params[:prospect]).billing_address.rfc}"
     respond_to do |format|
       format.html
       format.pdf {
         render template: 'bills/bill',
+        pdf: filename,
+        page_size: 'Letter',
+        layout: 'bill.html',
+        show_as_html: params[:debug].present?
+      }
+    end
+  end
+
+  def doc
+    preview
+    rows
+    subtotal
+    total_taxes
+    total
+    qrcode
+    filename = "fact_#{current_user.store.series}_#{current_user.store.last_bill.next}_#{Prospect.find(params[:prospect]).billing_address.rfc}"
+    respond_to do |format|
+      format.html
+      format.pdf {
+        render template: 'bills/doc',
         pdf: filename,
         page_size: 'Letter',
         layout: 'bill.html',
@@ -51,7 +160,6 @@ class BillsController < ApplicationController
   # POST /bills.json
   def create
     @bill = Bill.new(bill_params)
-
     respond_to do |format|
       if @bill.save
         format.html { redirect_to @bill, notice: 'Bill was successfully created.' }

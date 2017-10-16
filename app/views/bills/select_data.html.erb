@@ -1,0 +1,38 @@
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'bills' %>
+<% end %>
+
+<h2> Seleccione los datos de la factura que desea elaborar</h2>
+
+<%= form_tag({ controller: 'bills', action: 'process_info' }, method: 'get') do %>
+  <div class="field form-inside-style prospect-list margin-select">
+    <%= label_tag :buscar_tickets %>
+    <%= select_tag :tickets, options_for_select(select_tickets), {include_blank: true, multiple: true, class: 'select2-tickets'} %>
+  </div>
+
+  <div class="field form-inside-style prospect-list margin-select">
+    <%= label_tag :seleccione_cliente %>
+    <%= select_tag :prospect, options_for_select(select_prospect), {include_blank: true, multiple: true, class: 'select2-prospect'} %>
+  </div>
+
+  <div class="field form-inside-style prospect-list margin-select">
+    <%= label_tag :seleccione_uso_de_la_factura %>
+    <%= select_tag :cfdi_use, options_for_select(select_cfdi_use), {include_blank: true, multiple: true, class: 'select2-cfdi'} %>
+  </div>
+
+  <div class="field form-inside-style prospect-list margin-select">
+    <%= label_tag :seleccione_el_tipo_de_factura %>
+    <%= select_tag :type_of_bill, options_for_select(select_cfdi_type), {include_blank: true, multiple: true, class: 'select2-cfdi_type'} %>
+  </div>
+
+  <div class="actions">
+    <%= submit_tag 'Nueva factura', class: 'main-button' %>
+  </div>
+
+<% end %>

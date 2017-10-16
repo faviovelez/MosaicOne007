@@ -1,0 +1,45 @@
+<%= form_for(@bill) do |f| %>
+
+  <div class="field form-inside-style prospect-list hidden margin-select">
+    <%= f.label :buscar_tickets %>
+    <%= f.select :status, options_for_select(select_tickets), {include_blank: true}, multiple: true, class: 'select2-field' %>
+  </div>
+
+  <% unless @bill.orders == [] %>
+    <div class="field">
+      <%= f.label :order_id %><br>
+      <%= f.text_field :order_id %>
+    </div>
+  <% end %>
+
+
+  ["id", "status", "initial_price", "discount_applied", "price_before_taxes", "type_of_bill", "prospect_id", "classification", "amount", "quantity", "pdf", "xml", "issuing_company_id", "receiving_company_id", "store_id", "sequence", "folio", "expedition_zip_id", "payment_condition_id", "payment_method_id", "payment_form_id", "tax_regime_id", "cfdi_use_id", "tax_id", "pac_id", "fiscal_folio", "digital_stamp", "sat_stamp", "original_chain", "relation_type_id", "child_bills_id", "parent_id", "references_field", "type_of_bill_id", "certificate", "currency_id", "id_trib_reg_num", "confirmation_key", "exchange_rate", "country_id", "automatic_discount_applied", "manual_discount_applied", "taxes_transferred", "taxes_witheld"]
+
+  <div class="field">
+    <%= f.label :type_of_bill %><br>
+    <%= f.text_field :type_of_bill %>
+  </div>
+  <div class="field">
+    <%= f.label :prospect_id %><br>
+    <%= f.text_field :prospect_id %>
+  </div>
+  <div class="field">
+    <%= f.label :classification %><br>
+    <%= f.text_field :classification %>
+  </div>
+  <div class="field">
+    <%= f.label :store_id %><br>
+    <%= f.number_field :store_id %>
+  </div>
+  <div class="field">
+    <%= f.label :amount %><br>
+    <%= f.text_field :amount %>
+  </div>
+  <div class="field">
+    <%= f.label :quantity %><br>
+    <%= f.number_field :quantity %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

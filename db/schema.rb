@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171013145444) do
+ActiveRecord::Schema.define(version: 20171016153654) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,7 +93,10 @@ ActiveRecord::Schema.define(version: 20171013145444) do
     t.string   "country"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.integer  "tax_regime_id"
   end
+
+  add_index "billing_addresses", ["tax_regime_id"], name: "index_billing_addresses_on_tax_regime_id", using: :btree
 
   create_table "bills", force: :cascade do |t|
     t.string   "status"
@@ -621,10 +624,10 @@ ActiveRecord::Schema.define(version: 20171013145444) do
     t.integer  "product_request_id"
     t.date     "maximum_date"
     t.boolean  "confirm",            default: false
-    t.float    "discount_applied"
+    t.float    "discount_applied",   default: 0.0
     t.float    "final_price"
-    t.float    "automatic_discount"
-    t.float    "manual_discount"
+    t.float    "automatic_discount", default: 0.0
+    t.float    "manual_discount",    default: 0.0
     t.integer  "discount_rule_id"
     t.float    "amount"
     t.integer  "seller_user_id"
@@ -633,6 +636,7 @@ ActiveRecord::Schema.define(version: 20171013145444) do
     t.integer  "ticket_id"
     t.integer  "tax_id"
     t.float    "taxes"
+    t.float    "total_cost"
   end
 
   add_index "movements", ["bill_id"], name: "index_movements_on_bill_id", using: :btree
@@ -754,8 +758,8 @@ ActiveRecord::Schema.define(version: 20171013145444) do
   create_table "pending_movements", force: :cascade do |t|
     t.integer  "product_id"
     t.integer  "quantity"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.integer  "order_id"
     t.float    "cost"
     t.string   "unique_code"
@@ -769,14 +773,15 @@ ActiveRecord::Schema.define(version: 20171013145444) do
     t.integer  "bill_id"
     t.integer  "product_request_id"
     t.date     "maximum_date"
-    t.float    "discount_applied"
+    t.float    "discount_applied",   default: 0.0
     t.float    "final_price"
-    t.float    "automatic_discount"
-    t.float    "manual_discount"
+    t.float    "automatic_discount", default: 0.0
+    t.float    "manual_discount",    default: 0.0
     t.integer  "discount_rule_id"
     t.integer  "seller_user_id"
     t.integer  "buyer_user_id"
     t.integer  "ticket_id"
+    t.float    "total_cost"
   end
 
   add_index "pending_movements", ["bill_id"], name: "index_pending_movements_on_bill_id", using: :btree
@@ -1148,12 +1153,12 @@ ActiveRecord::Schema.define(version: 20171013145444) do
   create_table "service_offereds", force: :cascade do |t|
     t.integer  "service_id"
     t.integer  "store_id"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.float    "initial_price"
-    t.float    "automatic_discount"
-    t.float    "manual_discount"
-    t.float    "discount_applied"
+    t.float    "automatic_discount", default: 0.0
+    t.float    "manual_discount",    default: 0.0
+    t.float    "discount_applied",   default: 0.0
     t.boolean  "rule_could_be"
     t.float    "final_price"
     t.float    "amount"
@@ -1164,6 +1169,8 @@ ActiveRecord::Schema.define(version: 20171013145444) do
     t.float    "taxes"
     t.float    "cost"
     t.integer  "ticket_id"
+    t.float    "total_cost"
+    t.integer  "quantity"
   end
 
   add_index "service_offereds", ["change_ticket_id"], name: "index_service_offereds_on_change_ticket_id", using: :btree
@@ -1211,9 +1218,9 @@ ActiveRecord::Schema.define(version: 20171013145444) do
     t.integer  "ticket_id"
     t.integer  "store_id"
     t.float    "initial_price"
-    t.float    "automatic_discount"
-    t.float    "manual_discount"
-    t.float    "discount_applied"
+    t.float    "automatic_discount", default: 0.0
+    t.float    "manual_discount",    default: 0.0
+    t.float    "discount_applied",   default: 0.0
     t.boolean  "rule_could_be"
     t.float    "final_price"
     t.float    "amount"
@@ -1224,8 +1231,9 @@ ActiveRecord::Schema.define(version: 20171013145444) do
     t.float    "cost"
     t.integer  "supplier_id"
     t.integer  "product_request_id"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.float    "total_cost"
   end
 
   add_index "store_movements", ["change_ticket_id"], name: "index_store_movements_on_change_ticket_id", using: :btree
@@ -1296,6 +1304,8 @@ ActiveRecord::Schema.define(version: 20171013145444) do
     t.boolean  "period_sales_achievement"
     t.boolean  "inspection_approved"
     t.float    "overprice",                default: 0.0
+    t.string   "series"
+    t.integer  "last_bill",                default: 0
   end
 
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree
@@ -1412,18 +1422,18 @@ ActiveRecord::Schema.define(version: 20171013145444) do
     t.float    "taxes"
     t.float    "total"
     t.integer  "prospect_id"
-    t.integer  "payment_id"
     t.integer  "bill_id"
     t.string   "ticket_type"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.integer  "cash_register_id"
     t.integer  "ticket_number"
+    t.integer  "cfdi_use_id"
   end
 
   add_index "tickets", ["bill_id"], name: "index_tickets_on_bill_id", using: :btree
   add_index "tickets", ["cash_register_id"], name: "index_tickets_on_cash_register_id", using: :btree
-  add_index "tickets", ["payment_id"], name: "index_tickets_on_payment_id", using: :btree
+  add_index "tickets", ["cfdi_use_id"], name: "index_tickets_on_cfdi_use_id", using: :btree
   add_index "tickets", ["prospect_id"], name: "index_tickets_on_prospect_id", using: :btree
   add_index "tickets", ["store_id"], name: "index_tickets_on_store_id", using: :btree
   add_index "tickets", ["tax_id"], name: "index_tickets_on_tax_id", using: :btree
@@ -1543,6 +1553,7 @@ ActiveRecord::Schema.define(version: 20171013145444) do
   add_foreign_key "bill_receiveds", "suppliers"
   add_foreign_key "bill_sales", "business_units"
   add_foreign_key "bill_sales", "stores"
+  add_foreign_key "billing_addresses", "tax_regimes"
   add_foreign_key "bills", "cfdi_uses"
   add_foreign_key "bills", "countries"
   add_foreign_key "bills", "currencies"
@@ -1729,7 +1740,7 @@ ActiveRecord::Schema.define(version: 20171013145444) do
   add_foreign_key "terminals", "stores"
   add_foreign_key "tickets", "bills"
   add_foreign_key "tickets", "cash_registers"
-  add_foreign_key "tickets", "payments"
+  add_foreign_key "tickets", "cfdi_uses"
   add_foreign_key "tickets", "prospects"
   add_foreign_key "tickets", "stores"
   add_foreign_key "tickets", "taxes"

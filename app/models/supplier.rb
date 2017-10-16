@@ -12,6 +12,7 @@ class Supplier < ActiveRecord::Base
   belongs_to :delivery_address
   belongs_to :store
   has_many :products
+  has_many :payments
 
   validates :name, presence: { message: 'Debe especificar el nombre del proveedor.'}
 

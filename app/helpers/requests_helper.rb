@@ -149,10 +149,11 @@ module RequestsHelper
     @total = @taxes + @product_total
   end
 
-  def address(request)
+  def request_address(request)
     @address = request.store.delivery_address.street + ' ' + request.store.delivery_address.exterior_number + ' '
     @address += 'Int. ' + request.store.delivery_address.interior_number + ' ' unless request.store.delivery_address.interior_number.blank?
     @address += 'Col. ' + request.store.delivery_address.neighborhood + '.' + ' ' + request.store.delivery_address.city + ',' + ' ' + request.store.delivery_address.state
+    @address = @address.split.map(&:capitalize)*' '
     @address
   end
 
