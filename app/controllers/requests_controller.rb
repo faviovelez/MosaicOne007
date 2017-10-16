@@ -216,7 +216,7 @@ class RequestsController < ApplicationController
         format.json { head :no_content }
       end
     else
-      rediret_to root_path, notice: 'Solo el usuario que creó esta solicitud o el administrador de tienda pueden borrar esta solicitud'
+      redirect_to root_path, notice: 'Solo el usuario que creó esta solicitud o el administrador de tienda pueden borrar esta solicitud'
     end
   end
 

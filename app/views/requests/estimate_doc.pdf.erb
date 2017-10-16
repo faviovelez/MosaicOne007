@@ -79,7 +79,7 @@
     <p> Diseños de Cartón, más que cajas... soluciones. </p>
   </strong>
     <p> Sucursal <%= @request.store.store_name.capitalize %> </p>
-    <p> <%= address(@request) %> </p>
+    <p> <%= request_address(@request) %> </p>
     <p> Tel. <%= number_to_phone(@request.store.direct_phone, area_code: true) %> </p>
     <p> <%= @request.store.email %> </p>
     <p> www.disenosdecarton.com.mx </p>

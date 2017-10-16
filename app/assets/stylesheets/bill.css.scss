@@ -12,10 +12,24 @@
   margin-left: 1000px;
 }
 
+.top-right-preview {
+  margin-bottom: 10px;
+  width: 400px;
+  text-align: left;
+  margin-left: 700px;
+}
+
 .img-bill {
   margin-left: 50px;
   width: 45%;
   height: auto;
+}
+
+img.img-bill-preview {
+  position: absolute;
+  left: 330px;
+  top: 100px;
+  width: 400px;
 }
 
 #bill > div > p,
@@ -32,12 +46,34 @@
 
 .header-main {
   text-align: center;
-  background-color: black;
-  color: white;
+  background-color: #364150;
+  color: #fff;
+}
+
+.quantities-table {
+  margin-left: 4rem;
+}
+
+.header-main-preview {
+  text-align: center;
+  background-color: #364150;
+  color: #fff;
+}
+
+.header-main-preview:hover,
+.header-main-preview:focus {
+  text-align: center;
+  background-color: #364150;
+  color: #fff;
 }
 
 .space {
   padding: 0.5rem;
+  text-align: center;
+}
+
+.space-preview {
+  padding: 0.5rem 0.5rem;
   text-align: center;
 }
 
@@ -54,21 +90,40 @@
   margin-bottom: 0.5rem;
 }
 
+.header-preview {
+  margin-bottom: 0.5rem;
+}
+
 .second-table {
   margin-bottom: 40px;
+}
+
+#issuing-receiving-table-preview,
+.second-table-preview {
+  margin-left: 4.5rem;
+  width: 95%;
+  margin-bottom: 10px;
+}
+
+#issuing-receiving-table-preview > thead > tr > th, {
+  border: 2px solid #fff;
+}
+
+#issuing-receiving-table-preview > tbody > tr > td.first {
+  border-right: 2px solid #fff;
 }
 
 .two-columns-one-header,
 #issuing-receiving-table,
 #issuing-receiving-table > thead > tr > th,
 .two-columns-one-header > thead > tr > th {
-  border: 2px solid white;
+  border: 2px solid #fff;
 }
 
 #issuing-receiving-table > tbody > tr > td.first,
 .two-columns-one-header > tbody > tr > td.first,
 .second-table > tbody > tr > td.first {
-  border-right: 2px solid white;
+  border-right: 2px solid #fff;
 }
 
 #issuing-receiving-table > tbody > tr > td,
@@ -81,15 +136,15 @@
 }
 
 .main-header {
-  border-right: 2px solid white;
-  border-left: 2px solid white;
-  border-bottom: 2px solid white;
+  border-right: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
 }
 
 .border-around {
-  border-right: 2px solid white;
-  border-left: 2px solid white;
-  border-bottom: 2px solid white;
+  border-right: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
 }
 
 .half {
@@ -118,6 +173,15 @@
 
 .ligth-bg {
   background-color: lightgray;
+}
+
+.ligth-bg-preview {
+  background-color: #D4D8D7;
+}
+
+.ligth-bg-preview:hover,
+.ligth-bg-preview:active {
+  background-color: #D4D8D7;
 }
 
 .border-top {
@@ -164,8 +228,8 @@
 }
 
 .with-bg {
-  background-color: black;
-  color: white;
+  background-color: #364150;
+  color: #fff;
   padding: 0.5rem 0;
 }
 

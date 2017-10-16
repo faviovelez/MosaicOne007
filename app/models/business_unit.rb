@@ -17,4 +17,5 @@ class BusinessUnit < ActiveRecord::Base
   has_many :services
   has_many :service_offereds
   has_one :bank_balance
+  has_many :payments
 end

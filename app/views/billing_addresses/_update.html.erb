@@ -1,3 +1,13 @@
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'billing_address' %>
+<% end %>
+
 <%= render 'billing_errors' %>
 
 <%= form_for(@billing) do |f| %>
@@ -5,6 +15,11 @@
   <h2 class="info-title">Datos de facturación </h2>
 
   <div class="form-container">
+
+    <div class="form-inside-style tax-regime">
+        <%= f.label :régimen_fiscal %>
+        <%= f.select :tax_regime_id, options_for_select(tax_regime_options, value: @billing.tax_regime_id), {include_blank: true}, multiple: true, class: 'select2-field' %>
+    </div>
 
     <div class="form-inside-style">
       <%= f.label :tipo_de_persona %>

@@ -15,38 +15,61 @@
       <%= @billing.rfc %>
     </p>
 
-    <p><strong>Calle: </strong>
-      <%= @billing.street  %>
-    </p>
+    <% if @billing.tax_regime.present? %>
+      <p><strong>Régimen Fiscal: </strong>
+        <%= @billing.tax_regime.description %>
+      </p>
+    <% end %>
 
-    <p><strong>Número exterior: </strong>
-      <%= @billing.exterior_number %>
-    </p>
+    <% if @billing.street.present? %>
+      <p><strong>Calle: </strong>
+        <%= @billing.street %>
+      </p>
+    <% end %>
 
-    <p><strong>Número interior: </strong>
-      <%= @billing.interior_number %>
-    </p>
+    <% if @billing.exterior_number.present? %>
+      <p><strong>Número exterior: </strong>
+        <%= @billing.exterior_number %>
+      </p>
+    <% end %>
 
-    <p><strong>Colonia: </strong>
-      <%= @billing.neighborhood %>
-    </p>
+    <% if @billing.interior_number.present? %>
+      <p><strong>Número interior: </strong>
+        <%= @billing.interior_number %>
+      </p>
+    <% end %>
 
-    <p><strong>Código postal: </strong>
-      <%= @billing.zipcode %>
-    </p>
+    <% if @billing.neighborhood.present? %>
+      <p><strong>Colonia: </strong>
+        <%= @billing.neighborhood %>
+      </p>
+    <% end %>
 
-    <p><strong>Ciudad: </strong>
-      <%= @billing.city %>
-    </p>
+    <% if @billing.zipcode.present? %>
+      <p><strong>Código postal: </strong>
+        <%= @billing.zipcode %>
+      </p>
+    <% end %>
 
-    <p><strong>Estado: </strong>
-      <%= @billing.state %>
-    </p>
+    <% if @billing.city.present? %>
+      <p><strong>Ciudad: </strong>
+        <%= @billing.city %>
+      </p>
+    <% end %>
 
-    <p><strong>País: </strong>
-      <%= @billing.country %>
-    </p>
-</div>
+    <% if @billing.state.present? %>
+      <p><strong>Estado: </strong>
+        <%= @billing.state %>
+      </p>
+    <% end %>
+
+    <% if @billing.country.present? %>
+      <p><strong>País: </strong>
+        <%= @billing.country %>
+      </p>
+    <% end %>
+
+  </div>
 
 <br>
 <br>

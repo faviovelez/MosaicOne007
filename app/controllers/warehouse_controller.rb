@@ -73,7 +73,7 @@ class WarehouseController < ApplicationController
   def remove_product
     create_movements('baja')
     remove_of_inventory
-    redirect_to warehouse_show_remove_path(@codes), notice: 'Se aplicacion las bajas solicitadas correctamente.'
+    redirect_to warehouse_show_remove_path(@codes), notice: 'Se aplicaron las bajas solicitadas correctamente.'
   end
 
   def show_removeds

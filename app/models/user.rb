@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
   has_many :estimate_docs
   has_many :delivery_attempts
   has_many :deposits
+  has_many :payments
 
   validates :first_name, presence: { message: 'Por favor escriba el primer nombre del usuario.'}
 

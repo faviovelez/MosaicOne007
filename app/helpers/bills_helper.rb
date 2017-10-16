@@ -92,21 +92,14 @@ module BillsHelper
   ]
 
   def decimals(number)
-    @num_s = number.to_s
-    @num_length = @num_s.index('.')
-    first_dec = @num_length + 1
-    last_num = @num_s.length
-    num_decimals = last_num - first_dec
-    if num_decimals < 2
-      @decimals = @num_s[first_dec] + '0'
-    else
-      @decimals = @num_s.slice(first_dec..last_num)
-    end
-    @decimals += '/100 M.N.'
-    @decimals
+    decimals = ((number % 1).round(2) * 100 ).to_i.to_s
+    decimals += '/100 M.N.'
+    @decimals = decimals
   end
 
   def variables_to_number(number)
+    @num_s = number.to_s
+    @num_length = @num_s.index('.')
     @quantity_in_letters = ''
     decimals(number)
     @num_s = number.to_s
@@ -226,11 +219,212 @@ module BillsHelper
     @quantity_in_letters.capitalize
   end
 
-  def address(user)
+  def address(user = current_user)
     @address = user.store.delivery_address.street + ' ' + user.store.delivery_address.exterior_number + ' '
     @address += 'Int. ' + user.store.delivery_address.interior_number + ' ' unless user.store.delivery_address.interior_number.blank?
     @address += 'Col. ' + user.store.delivery_address.neighborhood + '.' + ' ' + user.store.delivery_address.city + ',' + ' ' + user.store.delivery_address.state
+    @address = @address.split.map(&:capitalize)*' '
     @address
+  end
+
+  def select_tickets(store = current_user.store)
+    tickets = store.tickets.where(bill: nil)
+    @tickets = []
+    tickets.each do |ticket|
+       name = ticket.ticket_type.first + ticket.ticket_number.to_s + ' ' + number_to_currency(ticket.total).to_s + ' '
+       date = I18n.l (ticket.created_at).to_date, format: :short
+       name << date + ' '
+       name << ticket.prospect.legal_or_business_name + ' ' if ticket.prospect.present?
+       name << ticket.cfdi_use.key if ticket.cfdi_use.present?
+      @tickets << [name, ticket.id]
+    end
+    @tickets
+  end
+
+  def select_prospect(store = current_user.store)
+    prospects = store.prospects
+    @prospects = []
+    prospects.each do |prospect|
+      @prospects << [prospect.legal_or_business_name, prospect.id]
+    end
+    @prospects
+  end
+
+  def select_cfdi_use
+    @uses = []
+    CfdiUse.all.each do |use|
+      name = use.key + ' ' + '-' + ' ' + use.description
+      @uses << [name, use.id]
+    end
+    @uses
+  end
+
+  def select_cfdi_type
+    @types = []
+    TypeOfBill.all.each do |bill_type|
+      string = bill_type.key + ' ' + '-' + ' ' + bill_type.description
+      @types << [string, bill_type.id]
+    end
+    @types
+  end
+
+  def store_rfc
+    @store_rfc = current_user.store.business_unit.billing_address.rfc.upcase
+  end
+
+  def store_name
+    @store_name = current_user.store.business_unit.billing_address.business_name.split.map(&:capitalize)*' '
+  end
+
+  def prospect_rfc
+    @prospect_rfc = @prospect.billing_address.rfc.upcase
+  end
+
+  def prospect_name
+    @prospect_name = @prospect.billing_address.business_name.split.map(&:capitalize)*' '
+  end
+
+  def rows
+    @rows = []
+    @tickets_selected.each do |ticket|
+      ticket.store_movements.each do |sale|
+        @rows << sale
+      end
+      ticket.service_offereds.each do |serv|
+        @rows << serv
+      end
+    end
+    @rows
+  end
+
+  def subtotal
+    rows
+    amounts = []
+    @rows.each do |row|
+      amounts << row.amount
+    end
+    @subtotal = amounts.inject(&:+)
+  end
+
+  def total_taxes
+    rows
+    amounts = []
+    @rows.each do |row|
+      amounts << row.taxes
+    end
+    @total_taxes = amounts.inject(&:+)
+  end
+
+  def total
+    rows
+    amounts = []
+    @rows.each do |row|
+      total = row.taxes + row.amount
+      amounts << total
+    end
+    @total = amounts.inject(&:+)
+  end
+
+  def total_discount
+    rows
+    amounts = []
+    @rows.each do |row|
+      total = row.discount_applied * row.quantity
+      amounts << total
+    end
+    @total_discount = amounts.inject(&:+)
+  end
+
+  def tax_regime_key(regime = current_user.store.business_unit.billing_address.tax_regime)
+    @regime = regime.tax_id
+  end
+
+  def tax_regime(regime = current_user.store.business_unit.billing_address.tax_regime)
+    @regime = regime.description
+  end
+
+  def get_payments
+    @all_payments = []
+    payments = []
+    @tickets_selected.each do |ticket|
+      ticket.payments.where(payment_type: 'pago').each do |payment|
+        payments << [payment.payment_form.description, payment.amount]
+        @all_payments << payment
+      end
+    end
+    @payments = payments.group_by(&:first).map{ |k,v| [k, v.inject(0){ |sum, i| (sum + i.second).round(2) }] }.sort_by{|pay_form| pay_form.second}.reverse
+    total_payment = []
+    @payments.each do |payment|
+      total_payment << payment.second
+    end
+    @total_payment = total_payment.inject(&:+)
+  end
+
+  def list_of_payments
+    # Falta agregar devoluciones y cambios #
+    rows
+    @all_payments = []
+    @tickets_selected.each do |ticket|
+      ticket.payments.where(payment_type: 'pago').each do |payment|
+        @all_payments << payment
+      end
+    end
+    @all_payments
+  end
+
+  def greatest_payment
+    get_payments
+    @greatest = @payments.first.first
+  end
+
+  def greatest_payment_key
+    get_payments
+    @greatest_key = PaymentForm.find_by_description(@payments.first.first).payment_id
+  end
+
+  def payment_method
+    total
+    get_payments
+    @method = ''
+    # REVISAR SI CON VARIOS PAGOS PREVIOS A LA FACTURA PUEDE SER TAMBIÉN PUE #
+    if (@payments.length == 1 && @total_payment >= @total)
+      @method = PaymentMethod.find_by_method('PUE')
+    else
+      @method = PaymentMethod.find_by_method('PPD')
+    end
+    @method_description = @method.description
+  end
+
+  def payment_method_key
+    payment_method
+    @method_key = @method.method
+  end
+
+  def payed_bill?
+    total
+    get_payments
+    @payed = false
+    if @total_payment >= @total
+      @payed = true
+    end
+    @payed
+  end
+
+  def payment_form
+    payment_method
+    credit_payments = []
+    @form = ''
+    if @method.method == 'PUE'
+      @form = 'Contado'
+    else
+      @all_payments.each do |payment|
+        credit_payments << payment.credit_days unless (payment.credit_days == nil || payment.credit_days == 0 || payment.credit_days == '')
+      end
+      days = credit_payments.sort.reverse.first
+      @form = 'Crédito'
+      @form += ' ' + days.to_s + ' ' + días unless (days == nil || days == [] || days == [''] || days == '')
+    end
+    @form
   end
 
 end

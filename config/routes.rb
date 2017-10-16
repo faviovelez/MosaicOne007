@@ -80,9 +80,17 @@ Rails.application.routes.draw do
     resources :delivery_addresses
   end
 
-  resources :bills
+  get 'bills/select_data'
 
-  get 'bills/bill_doc/:id', to: 'bills#bill_doc'
+  get 'bills/bill_doc_/:id', to: 'bills#bill_doc', as: 'bills_doc'
+
+  get 'bills/doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#doc', as: 'bill_doc'
+
+  get 'bills/preview/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#preview', as: 'bills_preview'
+
+  get 'bills/process_info'
+
+  resources :bills
 
   get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc'
 

@@ -33,6 +33,7 @@ class StoresController < ApplicationController
     zip_code_is_in_sat_list
 ############################################################
     assign_cost_type
+    assign_series
     respond_to do |format|
       if @store.save
         create_warehouse
@@ -76,6 +77,12 @@ class StoresController < ApplicationController
       format.html { redirect_to @store, notice: 'La tienda fue eliminada correctamente.' }
       format.json { head :no_content }
     end
+  end
+
+  def assign_series
+    stores = Store.all.order.(:created_at)
+    last_series = stores.last.series
+    @store.series = last_series.next
   end
 
 ############################################################
@@ -247,7 +254,6 @@ private
       rule.save
     end
   end
-
 
   def set_store
     if current_user.role.name == 'platform-admin'

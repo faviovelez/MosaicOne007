@@ -49,7 +49,7 @@ default_terceros_business_group = BusinessGroup.find_by_name('default terceros')
 
 [
   { name: "Diseños de Cartón", business_group: default_business_group, main: true },
-  { name: "Comercializadora de Carton y Diseño", business_group: default_business_group, main: true},
+  { name: "Comercializadora de Cartón y Diseño", business_group: default_business_group, main: true},
   { name: "default terceros", business_group: default_terceros_business_group}
 ].each do |hash|
   BusinessUnit.find_or_create_by(hash)
@@ -63,8 +63,8 @@ default_terceros_business_unit = BusinessUnit.find_by_name('default terceros')
 [
   { store_type: "tienda propia" },
   { store_type: "corporativo" },
-  { store_type: "distribuidor", business_unit_id: default_terceros_business_unit },
-  { store_type: "franquicia", business_unit_id: default_terceros_business_unit }
+  { store_type: "distribuidor" },
+  { store_type: "franquicia" }
 ].each do |hash|
   StoreType.find_or_create_by(hash)
 end
@@ -90,16 +90,16 @@ default_store_patria = Store.find_or_create_by(
                                                 )
 
 patria_prospect = Prospect.find_or_create_by(
-                            legal_or_business_name: patria_business_unit.store_name,
-                            business_type: patria_business_unit.type_of_person,
+                            legal_or_business_name: default_store_patria.store_name,
+                            business_type: default_store_patria.type_of_person,
                             prospect_type: 'comercialización de productos',
-                            contact_first_name: patria_business_unit.contact_first_name,
-                            contact_last_name: patria_business_unit.contact_last_name,
-                            second_last_name: patria_business_unit.second_last_name,
-                            direct_phone: patria_business_unit.direct_phone,
-                            email: patria_business_unit.email,
-                            store_code: patria_business_unit.store_code,
-                            store_type: patria_business_unit.store_type,
+                            contact_first_name: default_store_patria.contact_first_name,
+                            contact_last_name: default_store_patria.contact_last_name,
+                            second_last_name: default_store_patria.second_last_name,
+                            direct_phone: default_store_patria.direct_phone,
+                            email: default_store_patria.email,
+                            store_code: default_store_patria.store_code,
+                            store_type: default_store_patria.store_type,
                             store_prospect: default_store_patria,
                             credit_days: 30,
                             business_unit: patria_business_unit,
@@ -227,6 +227,7 @@ comercializadora_billing = BillingAddress.find_or_create_by(
                                                             state: 'Jalisco',
                                                             country: 'México'
                                                             )
+
 patria_supplier.update(delivery_address: patria_delivery)
 
 comercializadora_supplier.update(delivery_address: comercializadora_delivery)
@@ -235,21 +236,24 @@ default_store_patria.update(delivery_address: patria_delivery)
 
 default_store_compresor.update(delivery_address: comercializadora_delivery)
 
-default_store_patria.update(billing_address: patria_billing)
+patria_business_unit.update(billing_address: patria_billing)
 
-default_store_compresor.update(billing_address: comercializadora_billing)
+compresor_business_unit.update(billing_address: comercializadora_billing)
 
 admin = Role.find_by_name('platform-admin')
 
-User.create(
-             email: "admin@adminmosaictech.com",
-             first_name: "Administrador",
-             last_name: "Diseños de Cartón",
-             password: ENV["admin_user_password"],
-             password_confirmation: ENV["admin_user_password"],
-             role: admin,
-             store: default_store_compresor
-             )
+
+unless User.find_by_email('admin@adminmosaictech.com').present?
+  User.create(
+               email: "admin@adminmosaictech.com",
+               first_name: "Administrador",
+               last_name: "Diseños de Cartón",
+               password: ENV["admin_user_password"],
+               password_confirmation: ENV["admin_user_password"],
+               role: admin,
+               store: default_store_compresor
+               )
+end
 
 [
   { product_type: 'caja' },
@@ -505,12 +509,6 @@ csv.each do |row|
   puts "#{t.id}, #{t.zipcode} saved"
 end
 
-puts "There are now #{PaymentForm.count} rows in the Payment Form table"
-puts "There are now #{PaymentMethod.count} rows in the Payment Method table"
-puts "There are now #{SatKey.count} rows in the SAT Key table"
-puts "There are now #{SatUnitKey.count} rows in the SAT Unit Key table"
-puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
-
 # Agrega el catálogo de monedas del SAT
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'currency.csv'))
 csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
@@ -525,8 +523,6 @@ csv.each do |row|
   puts "#{t.id}, #{t.name} saved"
 end
 
-puts "There are now #{Currency.count} rows in the Currency table"
-
 # Agrega el catálogo de países del SAT
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'country.csv'))
 csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
@@ -534,7 +530,7 @@ csv.each do |row|
   t = Country.find_or_create_by(
                                 {
                                   key: row['key'],
-                                  description: row['name']
+                                  name: row['name']
                                 }
                               )
   puts "#{t.id}, #{t.name} saved"
@@ -570,8 +566,6 @@ csv.each do |row|
   puts "#{t.id}, #{t.key} saved"
 end
 
-puts "There are now #{CfdiUse.count} rows in the CFDI Use table"
-
 ####### FALTA COMPLETAR LOS CAMPOS DE STORE #######
 # Agrega el catálogo de Tiendas de Diseños de Cartón
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'stores.csv'))
@@ -582,9 +576,9 @@ csv.each do |row|
                                     {
                                       store_type: StoreType.find_by_store_type(row['store_type']),
                                       store_name: row['store_name'],
-                                      store_code: '0' + (Store.last.id + 1).to_s
-                                      business_group: BusinessGroup.find_or_create_by(name: 'Diseños de Cartón'),
-                                      business_unit: BusinessUnit.find_or_create_by(name: row['business_unit'], business_group: store.business_group),
+                                      store_code: '0' + (Store.last.id + 1).to_s,
+                                      business_group: BusinessGroup.find_or_create_by(name: row['business_group']),
+                                      business_unit: BusinessUnit.find_or_create_by(name: row['business_unit'], business_group: BusinessGroup.find_or_create_by(name: row['business_group'])),
                                       contact_first_name: row['contact_first_name'],
                                       contact_last_name: row['contact_last_name'],
                                       cost_type: CostType.find_by_warehouse_cost_type('PEPS'),
@@ -595,7 +589,7 @@ csv.each do |row|
                                   )
 
   warehouse_code = "AT" + store.store_code
-  puts "#{store.id}, #{store.name} saved"
+  puts "#{store.id}, #{store.store_name} saved"
   prospect = Prospect.find_or_create_by(
                                         {
                                           legal_or_business_name: store.store_name,
@@ -619,7 +613,7 @@ csv.each do |row|
                                        )
    Warehouse.find_or_create_by(
                                warehouse_code: warehouse_code,
-                               name: "Almacén #{store.name}",
+                               name: "Almacén #{store.store_name}",
                                business_unit: store.business_unit,
                                business_group: store.business_group
                                )
@@ -632,12 +626,31 @@ csv.each do |row|
                                                    cash_number: 1
                                                  }
                                                 )
-  puts "#{prospect.id}, #{prospect.name} saved"
+  puts "#{prospect.id}, #{prospect.legal_or_business_name} saved"
+
+  unless User.find_by_email(store.email).present?
+    user = User.create(
+                 email: store.email,
+                 first_name: store.contact_first_name,
+                 last_name: store.contact_last_name,
+                 password: ENV["admin_user_password"],
+                 password_confirmation: ENV["admin_user_password"],
+                 role: Role.find_by_name('store-admin'),
+                 store: store
+                 )
+  end
+
 end
 
-puts "There are now #{Store.count} rows in the Stores table"
-puts "There are now #{Prospect.count} rows in the Prospects table"
-puts "There are now #{CashRegister.count} rows in the Prospects table"
+stores = Store.all.order(:created_at)
+unless stores == nil
+  stores.first.update(series: 'AA', last_bill: 0)
+  last_series = stores.first.series
+  stores.each do |s|
+    s.update(series: last_series.next, last_bill: 0) unless s == stores.first
+    last_series = s.series
+  end
+end
 
 # Agrega el catálogo de Productos de Diseños de Cartón
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'products_trial.csv'))
@@ -645,26 +658,18 @@ csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
 csv.each do |row|
   product = Product.find_or_create_by(
                                         {
-                                          former_code: ,
                                           unique_code: row['cod'],
                                           description: row['desc'],
-                                          product_type: ,
-                                          exterior_material_color: ,
-                                          interior_material_color: ,
-                                          number_of_pieces: ,
                                           business_unit: BusinessUnit.find_by_name(row['bu']),
                                           supplier: Supplier.find_by_name(row['bu']),
                                           line: Classification.find_by_name(row['line']).name,
                                           classification: row['class'],
                                           product_type: row['type'],
                                           current: true,
-                                          sat_key_id: #Quitar el id#,
-                                          sat_unit_key_id: #Quitar el id#,
-                                          pieces_per_package: ,
-                                          warehouse_id: #Quitar el id#,
                                           price: row['price']
                                         }
                                       )
+  #FALTA AGREGAR COSAS DEL SAT Y MUCHAS COSAS MÁS AL CATÁLOGO FINAL#
   puts "#{product.id}, #{product.unique_code} saved"
   i = Inventory.find_or_create_by(
                                     {
@@ -687,5 +692,15 @@ end
 puts "There are now #{Product.count} rows in the Products table"
 puts "There are now #{Inventory.count} rows in the Inventory table"
 puts "There are now #{StoresInventory.count} rows in the Stores Inventory table"
+puts "There are now #{Store.count} rows in the Stores table"
+puts "There are now #{Prospect.count} rows in the Prospects table"
+puts "There are now #{CashRegister.count} rows in the Prospects table"
+puts "There are now #{CfdiUse.count} rows in the CFDI Use table"
+puts "There are now #{Currency.count} rows in the Currency table"
+puts "There are now #{PaymentForm.count} rows in the Payment Form table"
+puts "There are now #{PaymentMethod.count} rows in the Payment Method table"
+puts "There are now #{SatKey.count} rows in the SAT Key table"
+puts "There are now #{SatUnitKey.count} rows in the SAT Unit Key table"
+puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
 
 #CUANDO AGREGUE EL DIRECTORIO DE TIENDAS, AGREGAR LÍNEAS PARA PROSPECTO Y ALMACÉN Y VER SI HAY OTRAS IMPLICACIONES

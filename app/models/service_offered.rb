@@ -4,4 +4,7 @@ class ServiceOffered < ActiveRecord::Base
   belongs_to :business_unit
   belongs_to :bill
   has_one :delivery_service
+  belongs_to :ticket
+  belongs_to :tax
+  belongs_to :ticket
 end
