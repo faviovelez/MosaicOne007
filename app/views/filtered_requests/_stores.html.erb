@@ -70,6 +70,11 @@
                <span class="link-to-confirm"> Confirmar </span>
              <% end %>
             </td>
+            <td>
+              <%= link_to request_estimate_path(format: :pdf, id: request), target: '_blank' do %>
+               <i class="fa fa-file-pdf-o link-to-details" aria-hidden="true"></i>
+             <% end %>
+            </td>
           <% elsif request.status == 'devuelta'  %>
             <td>
               <%= link_to edit_request_path(request) do %>

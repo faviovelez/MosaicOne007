@@ -100,7 +100,7 @@ Rails.application.routes.draw do
 
   get 'requests/authorisation_page/:id', to: 'requests#authorisation_page'
 
-  get 'requests/estimate_doc/:id', to: 'requests#estimate_doc'
+  get 'requests/estimate_doc/:id', to: 'requests#estimate_doc', as: 'request_estimate'
 
   get 'requests/estimate_page/:id', to: 'requests#estimate_page'
 
