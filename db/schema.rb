@@ -11,17 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171016153654) do
+ActiveRecord::Schema.define(version: 20171017024005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "additional_discounts", force: :cascade do |t|
-    t.string   "type_of_discount"
-    t.float    "percentage"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-  end
 
   create_table "bank_balances", force: :cascade do |t|
     t.float    "balance"
@@ -378,6 +371,7 @@ ActiveRecord::Schema.define(version: 20171016153654) do
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.integer  "cash_register_id"
+    t.string   "name"
   end
 
   add_index "deposits", ["cash_register_id"], name: "index_deposits_on_cash_register_id", using: :btree
@@ -541,11 +535,6 @@ ActiveRecord::Schema.define(version: 20171016153654) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "fiscal_residencies", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "images", force: :cascade do |t|
     t.string   "image"
     t.datetime "created_at", null: false
@@ -575,19 +564,6 @@ ActiveRecord::Schema.define(version: 20171016153654) do
   end
 
   add_index "inventories", ["product_id"], name: "index_inventories_on_product_id", using: :btree
-
-  create_table "inventory_configurations", force: :cascade do |t|
-    t.integer  "business_unit_id"
-    t.float    "reorder_point",       default: 0.5
-    t.float    "critical_point",      default: 0.25
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.integer  "months_in_inventory", default: 3
-    t.integer  "store_id"
-  end
-
-  add_index "inventory_configurations", ["business_unit_id"], name: "index_inventory_configurations_on_business_unit_id", using: :btree
-  add_index "inventory_configurations", ["store_id"], name: "index_inventory_configurations_on_store_id", using: :btree
 
   create_table "materials", force: :cascade do |t|
     t.string   "name"
@@ -653,11 +629,6 @@ ActiveRecord::Schema.define(version: 20171016153654) do
   add_index "movements", ["tax_id"], name: "index_movements_on_tax_id", using: :btree
   add_index "movements", ["ticket_id"], name: "index_movements_on_ticket_id", using: :btree
   add_index "movements", ["user_id"], name: "index_movements_on_user_id", using: :btree
-
-  create_table "num_reg_id_tribs", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "orders", force: :cascade do |t|
     t.string   "status"
@@ -914,26 +885,6 @@ ActiveRecord::Schema.define(version: 20171016153654) do
   add_index "products", ["supplier_id"], name: "index_products_on_supplier_id", using: :btree
   add_index "products", ["warehouse_id"], name: "index_products_on_warehouse_id", using: :btree
 
-  create_table "products_bills", force: :cascade do |t|
-    t.integer  "product_id"
-    t.integer  "bill_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "products_bills", ["bill_id"], name: "index_products_bills_on_bill_id", using: :btree
-  add_index "products_bills", ["product_id"], name: "index_products_bills_on_product_id", using: :btree
-
-  create_table "products_tickets", force: :cascade do |t|
-    t.integer  "ticket_id"
-    t.integer  "product_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "products_tickets", ["product_id"], name: "index_products_tickets_on_product_id", using: :btree
-  add_index "products_tickets", ["ticket_id"], name: "index_products_tickets_on_ticket_id", using: :btree
-
   create_table "prospect_sales", force: :cascade do |t|
     t.integer  "prospect_id"
     t.float    "sales_amount"
@@ -1110,13 +1061,6 @@ ActiveRecord::Schema.define(version: 20171016153654) do
     t.string   "translation"
   end
 
-  create_table "sak_keys", force: :cascade do |t|
-    t.string   "sat_key"
-    t.string   "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
   create_table "sales_targets", force: :cascade do |t|
     t.integer  "store_id"
     t.integer  "month"
@@ -1199,16 +1143,6 @@ ActiveRecord::Schema.define(version: 20171016153654) do
   add_index "services", ["sat_key_id"], name: "index_services_on_sat_key_id", using: :btree
   add_index "services", ["sat_unit_key_id"], name: "index_services_on_sat_unit_key_id", using: :btree
   add_index "services", ["store_id"], name: "index_services_on_store_id", using: :btree
-
-  create_table "services_tickets", force: :cascade do |t|
-    t.integer  "ticket_id"
-    t.integer  "service_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "services_tickets", ["service_id"], name: "index_services_tickets_on_service_id", using: :btree
-  add_index "services_tickets", ["ticket_id"], name: "index_services_tickets_on_ticket_id", using: :btree
 
   create_table "store_movements", force: :cascade do |t|
     t.integer  "product_id"
@@ -1539,6 +1473,7 @@ ActiveRecord::Schema.define(version: 20171016153654) do
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.integer  "cash_register_id"
+    t.string   "name"
   end
 
   add_index "withdrawals", ["cash_register_id"], name: "index_withdrawals_on_cash_register_id", using: :btree
@@ -1613,8 +1548,6 @@ ActiveRecord::Schema.define(version: 20171016153654) do
   add_foreign_key "images", "products"
   add_foreign_key "interior_colors", "materials"
   add_foreign_key "inventories", "products"
-  add_foreign_key "inventory_configurations", "business_units"
-  add_foreign_key "inventory_configurations", "stores"
   add_foreign_key "materials_resistances", "materials"
   add_foreign_key "materials_resistances", "resistances"
   add_foreign_key "movements", "bills"
@@ -1674,10 +1607,6 @@ ActiveRecord::Schema.define(version: 20171016153654) do
   add_foreign_key "products", "stores"
   add_foreign_key "products", "suppliers"
   add_foreign_key "products", "warehouses"
-  add_foreign_key "products_bills", "bills"
-  add_foreign_key "products_bills", "products"
-  add_foreign_key "products_tickets", "products"
-  add_foreign_key "products_tickets", "tickets"
   add_foreign_key "prospect_sales", "business_units"
   add_foreign_key "prospect_sales", "prospects"
   add_foreign_key "prospect_sales", "stores"
@@ -1707,8 +1636,6 @@ ActiveRecord::Schema.define(version: 20171016153654) do
   add_foreign_key "services", "sat_keys"
   add_foreign_key "services", "sat_unit_keys"
   add_foreign_key "services", "stores"
-  add_foreign_key "services_tickets", "services"
-  add_foreign_key "services_tickets", "tickets"
   add_foreign_key "store_movements", "change_tickets"
   add_foreign_key "store_movements", "orders"
   add_foreign_key "store_movements", "product_requests"
