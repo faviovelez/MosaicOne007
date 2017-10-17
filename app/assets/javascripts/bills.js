@@ -24,4 +24,12 @@ $(document).ready(function() {
      maximumSelectionLength: 1
   });
 
+  $("#cfdi_type_prospect").click(function () {
+    $(".select_prospect").removeClass('hidden');
+  });
+
+  $("#cfdi_type_global").click(function () {
+    $(".select_prospect").addClass('hidden');
+  });
+
 });
