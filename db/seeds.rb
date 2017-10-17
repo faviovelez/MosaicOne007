@@ -618,7 +618,7 @@ csv.each do |row|
                                           contact_middle_name: store.contact_middle_name,
                                           contact_last_name: store.contact_last_name,
                                           second_last_name: store.second_last_name,
-                                          direct_phone: store.direct_phone,
+                                          direct_phone: 1234567890,
                                           extension: store.extension,
                                           cell_phone: store.cell_phone,
                                           email: store.email,
