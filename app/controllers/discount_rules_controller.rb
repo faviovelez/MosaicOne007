@@ -251,7 +251,7 @@ class DiscountRulesController < ApplicationController
       user = current_user.role.name
       store = current_user.store
       b_g = current_user.store.business_group
-      if user = 'admin-desk'
+      if user == 'admin-desk'
         @prospects = b_g.prospects
       else
         @prospects = store.prospects
