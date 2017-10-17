@@ -96,7 +96,7 @@ Rails.application.routes.draw do
 
   resources :bills
 
-  get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc'
+  get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc', as: 'request_authorisation'
 
   get 'requests/authorisation_page/:id', to: 'requests#authorisation_page'
 

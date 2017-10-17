@@ -25,6 +25,12 @@ button#btn-notice {
   justify-content: center;
 }
 
+.extra-padding {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  font-size: 2rem;
+}
+
 .payments-summary > thead > tr > th,
 .payments-summary > tbody > tr > td {
   padding: 0.5rem 1rem;
