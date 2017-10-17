@@ -162,7 +162,7 @@
   </tbody>
 </table>
 
-<%= link_to 'Generar factura', bill_global_doc_path(format: :pdf, tickets: params[:tickets].split('/').flatten, prospect: params[:prospect], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
+<%= link_to 'Generar factura', bill_global_doc_path(format: :pdf, tickets: params[:tickets].split('/').flatten, prospect: params[:prospect], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]), target: '_blank' %>
 
 <br /><br /><br /><br />
 
