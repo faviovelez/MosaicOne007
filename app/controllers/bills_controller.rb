@@ -35,6 +35,24 @@ class BillsController < ApplicationController
     end
   end
 
+  def global_preview
+    @tickets_selected = []
+    tickets = params[:tickets].split('/')
+    tickets.each do |ticket|
+      @tickets_selected << Ticket.find(ticket)
+    end
+    @prospect = Prospect.find_by_legal_or_business_name('Público en General')
+    cfdi_use = CfdiUse.find(params[:cfdi_use])
+    @cfdi_use = cfdi_use.description
+    @cfdi_use_key = cfdi_use.key
+    type_of_bill = TypeOfBill.find(params[:type_of_bill])
+    @type_of_bill_key = type_of_bill.key + ' '
+    @type_of_bill = '-' + ' ' + type_of_bill.description
+    if @prospect.billing_address == nil
+      redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
+    end
+  end
+
   def rows
     @rows = []
     @tickets_selected.each do |ticket|
@@ -81,9 +99,15 @@ class BillsController < ApplicationController
     type_of_bill = params[:type_of_bill]
     get_prospect_from_tickets
     get_cfdi_use_from_tickets
-    params[:prospect].blank? ? prospect = @prospect : prospect = params[:prospect]
+    prospect = ''
     params[:cfdi_use].blank? ? cfdi_use = @cfdi_use : cfdi_use = params[:cfdi_use]
-    redirect_to bills_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
+    if params[:cfdi_type] == 'prospect'
+      params[:prospect].blank? ? prospect = @prospect : prospect = params[:prospect]
+      redirect_to bills_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
+    else
+      prospect = Prospect.find_by_legal_or_business_name('Público en General')
+      redirect_to bills_global_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
+    end
   end
 
   def get_prospect_from_tickets
@@ -112,19 +136,14 @@ class BillsController < ApplicationController
     @qr = RQRCode::QRCode.new( (site + '&id=' + id + '&re=' + emisor + '&rr=' + receptor + '&tt' + total + '&fe=' + sello),  :size => 13, :level => :h )
   end
 
-  def bill_doc
-    qrcode
-    filename = "fact_#{current_user.store.series}_#{current_user.store.last_bill.next}_#{Prospect.find(params[:prospect]).billing_address.rfc}"
-    respond_to do |format|
-      format.html
-      format.pdf {
-        render template: 'bills/bill',
-        pdf: filename,
-        page_size: 'Letter',
-        layout: 'bill.html',
-        show_as_html: params[:debug].present?
-      }
-    end
+  def global_qrcode
+    site = 'https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx'
+    id = 'F7C0E3BC-B09D-482F-881E-3F6B063DED31'
+    emisor = current_user.store.business_unit.billing_address.rfc
+    receptor = Prospect.find_by_legal_or_business_name('Público en General').billing_address.rfc
+    total = @total.round(2).to_s
+    sello = 'A1345678'
+    @qr = RQRCode::QRCode.new( (site + '&id=' + id + '&re=' + emisor + '&rr=' + receptor + '&tt' + total + '&fe=' + sello),  :size => 13, :level => :h )
   end
 
   def doc
@@ -146,6 +165,27 @@ class BillsController < ApplicationController
       }
     end
   end
+
+  def global_doc
+    preview
+    rows
+    subtotal
+    total_taxes
+    total
+    global_qrcode
+    filename = "fact_#{current_user.store.series}_#{current_user.store.last_bill.next}_#{Prospect.find(params[:prospect]).billing_address.rfc}"
+    respond_to do |format|
+      format.html
+      format.pdf {
+        render template: 'bills/global_doc',
+        pdf: filename,
+        page_size: 'Letter',
+        layout: 'bill.html',
+        show_as_html: params[:debug].present?
+      }
+    end
+  end
+
 
   # GET /bills/new
   def new

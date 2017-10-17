@@ -242,6 +242,25 @@ compresor_business_unit.update(billing_address: comercializadora_billing)
 
 admin = Role.find_by_name('platform-admin')
 
+billing_general_prospect = BillingAddress.find_or_create_by(
+                                                              {
+                                                                business_name: 'Público en General',
+                                                                rfc: 'XAXX010101000',
+                                                                country: 'México',
+                                                              }
+                                                            )
+
+general_prospect = Prospect.find_or_create_by(
+                                    {
+                                      legal_or_business_name: 'Público en General',
+                                      prospect_type: 'público en general',
+                                      contact_first_name: 'ninguno',
+                                      contact_last_name: 'ninguno',
+                                      direct_phone: 1111111111,
+                                      store: Store.find(1),
+                                      billing_address: billing_general_prospect
+                                    }
+                                  )
 
 unless User.find_by_email('admin@adminmosaictech.com').present?
   User.create(
@@ -611,6 +630,7 @@ csv.each do |row|
                                           business_group: BusinessGroup.find_by_business_group_type('main')
                                         }
                                        )
+
    Warehouse.find_or_create_by(
                                warehouse_code: warehouse_code,
                                name: "Almacén #{store.store_name}",
@@ -694,7 +714,7 @@ puts "There are now #{Inventory.count} rows in the Inventory table"
 puts "There are now #{StoresInventory.count} rows in the Stores Inventory table"
 puts "There are now #{Store.count} rows in the Stores table"
 puts "There are now #{Prospect.count} rows in the Prospects table"
-puts "There are now #{CashRegister.count} rows in the Prospects table"
+puts "There are now #{CashRegister.count} rows in the Cash Registers table"
 puts "There are now #{CfdiUse.count} rows in the CFDI Use table"
 puts "There are now #{Currency.count} rows in the Currency table"
 puts "There are now #{PaymentForm.count} rows in the Payment Form table"

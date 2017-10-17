@@ -297,6 +297,28 @@ module BillsHelper
     @rows
   end
 
+  def global_sat_key
+    @global_key = SatKey.find_by_sat_key('01010101').sat_key
+  end
+
+  def global_unit_key
+    @global_unit = SatUnitKey.find_by_unit('ACT').unit
+  end
+
+  def global_cfdi_use_key
+    @global_cfdi_use_key = CfdiUse.find_by_key('P01').key
+    @global_cfdi_use_key
+  end
+
+  def global_cfdi_use
+    @global_cfdi_use = CfdiUse.find_by_key('P01').description
+    @global_cfdi_use
+  end
+
+  def global_prospect
+    @global_prospect = Prospect.find_by_legal_or_business_name('Público en General').billing_address.rfc
+  end
+
   def subtotal
     rows
     amounts = []
