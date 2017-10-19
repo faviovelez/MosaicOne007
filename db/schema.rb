@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171019201219) do
+ActiveRecord::Schema.define(version: 20171019235913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1027,6 +1027,15 @@ ActiveRecord::Schema.define(version: 20171019201219) do
     t.string   "last_status"
     t.integer  "product_id"
     t.integer  "estimate_doc_id"
+    t.integer  "second_quantity"
+    t.integer  "third_quantity"
+    t.float    "second_internal_cost"
+    t.float    "third_internal_cost"
+    t.float    "second_internal_price"
+    t.float    "third_internal_price"
+    t.float    "second_sales_price"
+    t.float    "third_sales_price"
+    t.integer  "price_selected"
   end
 
   add_index "requests", ["estimate_doc_id"], name: "index_requests_on_estimate_doc_id", using: :btree
