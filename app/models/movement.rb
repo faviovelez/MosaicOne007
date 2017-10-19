@@ -62,7 +62,7 @@ class Movement < ActiveRecord::Base
     create_reports_data(
       ProspectSale
     ).update(
-      prospect_id: store.id
+      prospect_id: prospect.id
     )
     create_reports_data(
       ProductSale)

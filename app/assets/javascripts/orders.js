@@ -153,8 +153,20 @@ $(function(){
             language: "es",
             templateSelection: formatState,
             multiple: true,
+            maximumSelectionLength: 1,
             width: 200,
-            maximumSelectionLength: 1
+            ajax: {
+              url: '/api/get_all_products',
+              method: 'POST',
+              dataType: 'json',
+              delay: 250,
+              processResults: function (data) {
+                return {
+                  results: createJson(data.products)
+                };
+              },
+              cache: true
+            }
           })
             .change(function(){
               var dec = parseInt($(this).attr('id').match(/\d+/)[0]);

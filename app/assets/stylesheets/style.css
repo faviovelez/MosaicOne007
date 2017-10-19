@@ -872,3 +872,36 @@ h2.reg-title {
 .remove_margin{
   margin: 0;
 }
+
+.table-titles-inventories > th {
+  padding: 0.5rem 1rem;
+}
+
+.table-titles-inventories, .table-titles-inventories:hover {
+  background-color: #D72638;
+  opacity: .85;
+  color: #fff;
+  height: 4rem;
+}
+
+th.table-titles-inventories {
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: none !important;
+}
+
+#inventory_wrapper {
+  margin-left: 50px;
+}
+
+th.sorting_asc {
+  border-bottom: none !important;
+}
+
+th.sorting {
+  border-bottom: none !important;
+}
+
+.expand {
+  width: 100px;
+}

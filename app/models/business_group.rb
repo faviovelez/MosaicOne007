@@ -7,4 +7,5 @@ class BusinessGroup < ActiveRecord::Base
   has_many :business_groups_suppliers
   has_many :prospects
   has_many :stores
+  has_many :temporal_numbers  
 end

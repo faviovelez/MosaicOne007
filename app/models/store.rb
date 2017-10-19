@@ -38,6 +38,7 @@ class Store < ActiveRecord::Base
   has_many :terminals
   has_many :expenses
   has_many :payments
+  has_many :temporal_numbers
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 

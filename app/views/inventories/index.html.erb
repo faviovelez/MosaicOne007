@@ -1,0 +1,37 @@
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'data_tables' %>
+<% end %>
+
+<table id="inventory">
+  <thead>
+    <tr class="table-titles-inventories">
+      <th> Código </th>
+      <th> Descripción </th>
+      <th> Color </th>
+      <th> Inventario </th>
+      <th> Paquetes </th>
+      <th> P x P </th>
+      <th> Estatus </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @products.each do |product| %>
+    <tr>
+      <td> <%= show_non_blank_field(product.unique_code) %> </td>
+      <td> <%= show_non_blank_field(product.description) %> </td>
+      <td> <%= show_non_blank_field(product.exterior_color_or_design) %> </td>
+      <td> <%= show_non_blank_field(product.inventory.quantity) %> </td>
+      <td> <%= show_non_blank_field(packages(product).to_f) %> </td>
+      <td> <%= show_non_blank_field(product.pieces_per_package) %> </td>
+      <td> <%= inventory_alert(product) %> </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>

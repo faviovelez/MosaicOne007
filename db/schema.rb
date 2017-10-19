@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171017024005) do
+ActiveRecord::Schema.define(version: 20171019201219) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1115,6 +1115,7 @@ ActiveRecord::Schema.define(version: 20171017024005) do
     t.integer  "ticket_id"
     t.float    "total_cost"
     t.integer  "quantity"
+    t.string   "discount_reason"
   end
 
   add_index "service_offereds", ["change_ticket_id"], name: "index_service_offereds_on_change_ticket_id", using: :btree
@@ -1168,6 +1169,7 @@ ActiveRecord::Schema.define(version: 20171017024005) do
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
     t.float    "total_cost"
+    t.string   "discount_reason"
   end
 
   add_index "store_movements", ["change_ticket_id"], name: "index_store_movements_on_change_ticket_id", using: :btree
@@ -1335,14 +1337,27 @@ ActiveRecord::Schema.define(version: 20171017024005) do
     t.boolean  "retention"
   end
 
+  create_table "temporal_numbers", force: :cascade do |t|
+    t.integer  "store_id"
+    t.integer  "business_group_id"
+    t.string   "past_sales",        default: [],              array: true
+    t.string   "future_sales",      default: [],              array: true
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  add_index "temporal_numbers", ["business_group_id"], name: "index_temporal_numbers_on_business_group_id", using: :btree
+  add_index "temporal_numbers", ["store_id"], name: "index_temporal_numbers_on_store_id", using: :btree
+
   create_table "terminals", force: :cascade do |t|
     t.string   "name"
     t.integer  "bank_id"
     t.string   "number"
-    t.float    "comission"
     t.integer  "store_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.float    "debit_comission"
+    t.float    "credit_comission"
   end
 
   add_index "terminals", ["bank_id"], name: "index_terminals_on_bank_id", using: :btree
@@ -1363,6 +1378,7 @@ ActiveRecord::Schema.define(version: 20171017024005) do
     t.integer  "cash_register_id"
     t.integer  "ticket_number"
     t.integer  "cfdi_use_id"
+    t.string   "comments"
   end
 
   add_index "tickets", ["bill_id"], name: "index_tickets_on_bill_id", using: :btree
@@ -1663,6 +1679,8 @@ ActiveRecord::Schema.define(version: 20171017024005) do
   add_foreign_key "stores_warehouse_entries", "stores"
   add_foreign_key "suppliers", "delivery_addresses"
   add_foreign_key "suppliers", "stores"
+  add_foreign_key "temporal_numbers", "business_groups"
+  add_foreign_key "temporal_numbers", "stores"
   add_foreign_key "terminals", "banks"
   add_foreign_key "terminals", "stores"
   add_foreign_key "tickets", "bills"

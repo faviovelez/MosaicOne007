@@ -80,6 +80,10 @@ Rails.application.routes.draw do
     resources :delivery_addresses
   end
 
+  get 'inventories/index'
+
+  get 'inventories/order_suggestions'
+
   get 'bills/select_data'
 
   get 'bills/bill_doc_/:id', to: 'bills#bill_doc', as: 'bills_doc'
@@ -151,6 +155,8 @@ Rails.application.routes.draw do
 
   get 'warehouse/waiting_orders'
 
+  get 'warehouse/waiting_products/:id', to: 'warehouse#waiting_products', as: 'warehouse_waiting_products'
+
   patch 'orders/change_delivery_address/:id', to: 'orders#change_delivery_address', as: 'change_delivery_address'
 
   get 'warehouse/pending_products/:id', to: 'warehouse#pending_products', as: 'warehouse_pending_products'
@@ -171,11 +177,11 @@ Rails.application.routes.draw do
 
   post 'orders/save_products/:store', to: 'orders#save_products', as: 'orders_save_product'
 
-  get 'orders/show/:id', to: 'orders#show', as: 'orders_show'
+  get 'orders/show/:ids', to: 'orders#show', as: 'orders_show'
 
   get 'orders/show_for_store/:id', to: 'orders#show_for_store', as: 'orders_show_for_store'
 
-  post 'orders/confirm/:id', to: 'orders#confirm', as: 'orders_confirm'
+  post 'orders/confirm/:ids', to: 'orders#confirm', as: 'orders_confirm'
 
   get 'orders/history'
 

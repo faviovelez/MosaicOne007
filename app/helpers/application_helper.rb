@@ -1,5 +1,10 @@
 module ApplicationHelper
 
+  def show_non_blank_field(field)
+    field.blank? ? @field_value = '-' : @field_value = field
+    @field_value
+  end
+
   def find_manager(request, role = 'manager' || role = 'director')
     user_id = 0
     request.users.each do |user_in_request|

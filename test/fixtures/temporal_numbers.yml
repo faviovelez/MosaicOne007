@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  store_id: 
+  business_group_id: 
+  past_sales: 1.5
+  future_sales: MyString
+
+two:
+  store_id: 
+  business_group_id: 
+  past_sales: 1.5
+  future_sales: MyString
