@@ -843,3 +843,20 @@ general_prospect = Prospect.find_or_create_by(
                                       billing_address: billing_general_prospect
                                     }
                                   )
+
+  Stores.each do |store|
+    future_sales = []
+    past_sales = []
+    Product.all.count.times do
+      sample_future = rand(50..300)
+      sample_past = rand(500..300)
+      future_sales << sample_future
+      past_sales << sample_past
+    end
+    TemporalNumber.create(
+                          store: store,
+                          business_group: store.business_group,
+                          past_sales: past_sales,
+                          future_sales: future_sales
+                          )
+  end
