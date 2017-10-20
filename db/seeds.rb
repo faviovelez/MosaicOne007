@@ -844,12 +844,12 @@ general_prospect = Prospect.find_or_create_by(
                                     }
                                   )
 
-  Stores.each do |store|
+  Store.all.each do |store|
     future_sales = []
     past_sales = []
     Product.all.count.times do
       sample_future = rand(50..300)
-      sample_past = rand(500..300)
+      sample_past = rand(50..300)
       future_sales << sample_future
       past_sales << sample_past
     end
