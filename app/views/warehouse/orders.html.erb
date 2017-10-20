@@ -17,8 +17,7 @@
           <td> <%= order.id %> </td>
           <td> <%= order.store.store_code %> - <%= order.store.store_name %> </td>
           <td> <%= order.category %> </td>
-          <% @requests = order.product_requests.where('product_requests.status' => 'asignado') %>
-          <td> <%= @requests.count %> </td>
+          <td> <%= order.product_requests.count %> </td>
           <td> <%= number_with_delimiter(sum_quantity(order)) %> </td>
           <td> <%= order.status %> </td>
           <td> <%= warehouse_name(order) %> </td>

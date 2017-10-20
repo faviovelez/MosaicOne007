@@ -160,7 +160,10 @@ module RequestsHelper
   def username(request)
     roles = ['store', 'store-admin']
     user = request.users.joins(:role).where('roles.name' => roles).first
-    user_name = user.first_name.capitalize + ' ' + user.middle_name.capitalize + ' ' + user.last_name.capitalize
+    user_name = user.first_name.capitalize
+    user_name += ' ' + user.middle_name.capitalize unless user.middle_name.blank?
+    user_name += ' ' + user.last_name.capitalize unless user.last_name.capitalize.blank?
+    @user_name =user_name
   end
 # Aquí finaliza la sección para los documentos de Request (pedido - authorisation_doc y cotización - estimate_doc)
 

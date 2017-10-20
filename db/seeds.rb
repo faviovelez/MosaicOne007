@@ -242,26 +242,6 @@ compresor_business_unit.update(billing_address: comercializadora_billing)
 
 admin = Role.find_by_name('platform-admin')
 
-billing_general_prospect = BillingAddress.find_or_create_by(
-                                                              {
-                                                                business_name: 'Público en General',
-                                                                rfc: 'XAXX010101000',
-                                                                country: 'México',
-                                                              }
-                                                            )
-
-general_prospect = Prospect.find_or_create_by(
-                                    {
-                                      legal_or_business_name: 'Público en General',
-                                      prospect_type: 'público en general',
-                                      contact_first_name: 'ninguno',
-                                      contact_last_name: 'ninguno',
-                                      direct_phone: 1111111111,
-                                      store: Store.find(1),
-                                      billing_address: billing_general_prospect
-                                    }
-                                  )
-
 unless User.find_by_email('admin@adminmosaictech.com').present?
   User.create(
                email: "admin@adminmosaictech.com",
@@ -320,21 +300,21 @@ doble_corrugado = Material.where(name: 'doble corrugado')
   { name: '180 grs' },
   { name: '275 grs' },
   { name: '300 grs' },
-  { name: 'SG - 20 ECT' },
-  { name: '7kg - 23 ECT' },
-  { name: '9kg - 26 ECT' },
-  { name: '11kg - 29 ECT' },
-  { name: '12kg - 32 ECT' },
-  { name: '14kg - 40 ECT' },
-  { name: '16kg - 44 ECT' },
-  { name: '18kg - 51 ECT' },
-  { name: '12kg - 36 ECT DC' },
-  { name: '14kg - 42 ECT DC' },
-  { name: '19kg - 48 ECT DC' },
-  { name: '25kg - 51 ECT DC' },
-  { name: '28kg - 61 ECT DC' },
-  { name: '35kg - 71 ECT DC' },
-  { name: '42kg - 82 ECT DC' }
+  { name: '20 ECT' },
+  { name: '23 ECT' },
+  { name: '26 ECT' },
+  { name: '29 ECT' },
+  { name: '32 ECT' },
+  { name: '40 ECT' },
+  { name: '44 ECT' },
+  { name: '51 ECT' },
+  { name: '36 ECT DC' },
+  { name: '42 ECT DC' },
+  { name: '48 ECT DC' },
+  { name: '51 ECT DC' },
+  { name: '61 ECT DC' },
+  { name: '71 ECT DC' },
+  { name: '82 ECT DC' }
 ].each do |hash|
   Resistance.find_or_create_by(hash)
 end
@@ -672,6 +652,8 @@ unless stores == nil
   end
 end
 
+packets = [1, 10, 10, 15, 15, 20, 10, 1, 10]
+
 # Agrega el catálogo de Productos de Diseños de Cartón
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'products_trial.csv'))
 csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
@@ -686,9 +668,15 @@ csv.each do |row|
                                           classification: row['class'],
                                           product_type: row['type'],
                                           current: true,
-                                          price: row['price']
+                                          price: row['price'],
+                                          sat_unit_key: SatUnitKey.find_by_description(row['unit']),
+                                          sat_key: SatUnitKey.find_by_description(row['sat_key']),
+                                          warehouse: Warehouse.where(business_unit: BusinessUnit.find_by_name(row['bu'])).first,
+                                          exterior_color_or_design: row['color'],
+                                          pieces_per_package: packets.sample
                                         }
                                       )
+                                      # AGREGAR ALMACÉN Y REVISAR OTRAS COSAS DEL CATÁLOGO
   #FALTA AGREGAR COSAS DEL SAT Y MUCHAS COSAS MÁS AL CATÁLOGO FINAL#
   puts "#{product.id}, #{product.unique_code} saved"
   i = Inventory.find_or_create_by(
@@ -723,4 +711,152 @@ puts "There are now #{SatKey.count} rows in the SAT Key table"
 puts "There are now #{SatUnitKey.count} rows in the SAT Unit Key table"
 puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
 
-#CUANDO AGREGUE EL DIRECTORIO DE TIENDAS, AGREGAR LÍNEAS PARA PROSPECTO Y ALMACÉN Y VER SI HAY OTRAS IMPLICACIONES
+#ESTA PARTE ES SOLO PARA LAS PRUEBAS
+
+number_packets = [5, 10, 15, 20, 25, 10, 8, 20, 10]
+sales = [1, 5, 2, 3, 4, 5, 3, 2, 1, 5]
+entries = [3000, 9000, 500, 800, 5000, 4000]
+
+#SIMULAR ENTRADAS
+products = Product.all
+products.each do |product|
+  alta = Movement.create(
+                    {
+                      product: product,
+                      quantity: entries.sample,
+                      movement_type: 'alta',
+                      cost: product.price / 2,
+                      unique_code: product.unique_code,
+                      confirm: true,
+                    }
+                  )
+  WarehouseEntry.create(
+                          {
+                            product: product,
+                            quantity: Movement.last.quantity,
+                            entry_number: 1
+                          }
+                        )
+  puts "alta creada por #{alta.quantity} unidades"
+end
+
+#SIMULAR VENTAS
+store_type_default = StoreType.find_by_store_type('corporativo')
+stores = Store.where.not(store_type: store_type_default)
+products.each do |product|
+  store = stores.sample
+  store_prospect = Prospect.find_by_store_prospect_id(store)
+  prospect = store_prospect
+  quantity = number_packets.sample * product.pieces_per_package
+  price = product.price
+  tax = Tax.find_by_description('IVA')
+  amount = product.price * quantity
+  tax_rate = tax.value / 100
+  taxes = amount - (amount / (1 + tax_rate))
+  cost = product.price / 2
+  seller_store = Store.find_by_store_name('Corporativo Compresor')
+  buyer_store = prospect
+  sales.sample.times do |sale|
+    venta = Movement.create(
+                      {
+                        product: product,
+                        quantity: quantity,
+                        unique_code: product.unique_code,
+                        store: seller_store,
+                        initial_price: price,
+                        supplier: product.supplier,
+                        business_unit: seller_store.business_unit,
+                        prospect: prospect,
+                        manual_discount: 0,
+                        automatic_discount: 0,
+                        discount_applied: 0,
+                        final_price: price,
+                        amount: price * quantity,
+                        taxes: taxes,
+                        movement_type: 'venta',
+                        cost: cost,
+                        total_cost: cost * quantity
+                      }
+                    )
+    puts "venta creada por #{venta.quantity} unidades a #{venta.store.store_name}"
+
+    StoreMovement.create(
+                          {
+                            product: product,
+                            quantity: quantity,
+                            movement_type: 'alta',
+                            store: store,
+                            initial_price: 0,
+                            supplier: product.supplier,
+                            manual_discount: 0,
+                            automatic_discount: 0,
+                            discount_applied: 0,
+                            final_price: 0,
+                            amount: 0,
+                            tax: tax,
+                            taxes: taxes,
+                            cost: price,
+                            total_cost: price * quantity
+                          }
+                        )
+
+    StoresWarehouseEntry.create(
+                                  {
+                                    product: product,
+                                    quantity: quantity,
+                                    store: store,
+                                    store_movement: StoreMovement.last,
+                                    movement: Movement.last,
+                                  }
+                                )
+
+    inventory = Inventory.find_by_product_id(product)
+    new_quantity = inventory.quantity - quantity
+    inventory.update(quantity: new_quantity)
+    entry = WarehouseEntry.find_by_product_id(product)
+    entry.update(quantity: new_quantity)
+
+    store_inventory = StoresInventory.where(product: product).where(store:store).first
+    new_store_quantity = store_inventory.quantity + quantity
+    store_inventory.update(quantity: new_store_quantity)
+  end
+
+end
+
+billing_general_prospect = BillingAddress.find_or_create_by(
+                                                              {
+                                                                business_name: 'Público en General',
+                                                                rfc: 'XAXX010101000',
+                                                                country: 'México',
+                                                              }
+                                                            )
+
+general_prospect = Prospect.find_or_create_by(
+                                    {
+                                      legal_or_business_name: 'Público en General',
+                                      prospect_type: 'público en general',
+                                      contact_first_name: 'ninguno',
+                                      contact_last_name: 'ninguno',
+                                      direct_phone: 1111111111,
+                                      store: Store.find(1),
+                                      store_prospect: nil,
+                                      billing_address: billing_general_prospect
+                                    }
+                                  )
+
+  Stores.each do |store|
+    future_sales = []
+    past_sales = []
+    Product.all.count.times do
+      sample_future = rand(50..300)
+      sample_past = rand(500..300)
+      future_sales << sample_future
+      past_sales << sample_past
+    end
+    TemporalNumber.create(
+                          store: store,
+                          business_group: store.business_group,
+                          past_sales: past_sales,
+                          future_sales: future_sales
+                          )
+  end

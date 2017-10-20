@@ -10,7 +10,6 @@ $(".confirm").ready(function() {
       $("#information").addClass('hidden');
       counter -=1;
       $("#show").text('Mostrar detalles');
-
     };
   });
 });

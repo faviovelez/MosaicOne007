@@ -117,6 +117,13 @@
     <% end %>
 
     <%= link_to 'Regresar', :back, class: 'bottom-link' %>
+
+    <% if params[:controller] == 'inventories' && params[:action] == 'index' %>
+      <%= link_to 'Sugerencias de pedidos', inventories_order_suggestions_path %>
+    <% elsif params[:controller] == 'inventories' && params[:action] == 'order_suggestions' %>
+      <%= link_to 'Inventario total', inventories_index_path %>
+    <% end %>
+
   </div>
 
 <% end %>

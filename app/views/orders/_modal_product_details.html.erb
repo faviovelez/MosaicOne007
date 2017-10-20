@@ -1,0 +1,86 @@
+<!-- Inicia Modal para mostrar detalles del producto -->
+ <div class="modal fade" id="productShow" tabindex="-1" role="dialog">
+   <div class="modal-dialog" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         <h4 class="modal-title">Detalles del producto</h4>
+       </div>
+       <div class="modal-body">
+         <table>
+           <tbody>
+             <tr>
+               <td colspan="2">
+                 <p>
+                   <strong class="product_description" id="description">
+                     <%= @product.description %>
+                   </strong>
+                 </p>
+               </td>
+             </tr>
+             <tr>
+               <td class="padding-right" id="product_image">
+                 <% if @product.images.first != nil %>
+                  <%= image_tag @product.images.first.image_url(:small) %>
+                <% else %>
+                  <%= image_tag 'product_small.png' %>
+                <% end %>
+               </td>
+               <td>
+                 <p>
+                  <strong>
+                    Código:
+                  </strong>
+                  <span class="product_unique_code" id="unique_code">
+                    <%= @product.unique_code %>
+                  </span>
+                 </p>
+                 <p class="hidden">
+                   <strong>
+                     Medidas:
+                   </strong>
+                   <span class="product_measures" id="product_measures">
+                     34.0 x 24.5 x 17.4 cm
+                   </span>
+                 </p>
+                 <p>
+                   <strong>
+                     Material:
+                   </strong>
+                   <span class="product_main_material" id="main_material">
+                     <%= show_non_blank_field(@product.main_material) %>
+                   </span>
+                 </p>
+                 <p>
+                   <strong>
+                     Resistencia:
+                   </strong>
+                   <span class="product_resistance_main_material" id="resistance">
+                     <%= show_non_blank_field(@product.resistance_main_material) %>
+                   </span>
+                 </p>
+                 <p>
+                  <strong>
+                    Inventario:
+                  </strong>
+                  <span class="stores_inventory_quantity" id="inventory_quantity">
+                    <%= show_non_blank_field(@product.inventory.quantity) %>
+                  </span>
+                  <span class="product_unit" id="units">
+                    piezas
+                  </span>
+                 </p>
+               </td>
+             </tr>
+           </tbody>
+         </table>
+       </div>
+       <div class="modal-footer">
+         <button class="btn btn-default pos-main-btn" type="button">
+           Confirmar
+         </button>
+       </div>
+     </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+ </div><!-- /.modal -->
+<!-- Termina Modal para mostrar detalles del producto -->

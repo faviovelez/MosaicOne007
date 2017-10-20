@@ -6,30 +6,58 @@ class WarehouseController < ApplicationController
 
   def new_own_entry
     @movement = Movement.new
-    role = Role.find_by_name('warehouse-staff') || Role.find_by_name('warehouse-admin') || Role.find_by_name('store') || Role.find_by_name('store-admin')
-    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
   end
 
   def orders
-    @orders = Order.where.not(status: ['enviado', 'entregado', 'sin asignar']).order(:created_at)
+    current_orders
+  end
+
+  def current_orders
+    orders = Order.where.not(status: ['enviado', 'entregado'])
+    @orders = []
+    orders.each do |order|
+      @status = []
+      order.product_requests.each do |pr|
+        @status << pr.status
+      end
+      if (@status.uniq.length == 1 && @status.first == 'asignado')
+        @orders << order
+      end
+    end
+    @orders = @orders.sort_by {|obj| obj.id}
+    @orders
   end
 
   def pending_orders
-    result =  ProductRequest.where(status: 'sin asignar')
-    a = []
-    result.each do |pr|
-      a << pr.order.id unless a.include?(pr.order.id)
+    orders = Order.where.not(status: ['enviado', 'entregado'])
+    @orders = []
+    orders.each do |order|
+      @status = []
+      order.product_requests.each do |pr|
+        @status << pr.status
+      end
+      if (@status.uniq.length == 1 && @status.first == 'sin asignar')
+        @orders << order
+      end
     end
-    @orders = Order.where(id: a).order(:created_at)
+    @orders = @orders.sort_by {|obj| obj.id}
+    @orders
   end
 
   def waiting_orders
-    result =  ProductRequest.where(status: 'en espera')
-    a = []
-    result.each do |pr|
-      a << pr.order.id unless a.include?(pr.order.id)
+    orders = Order.where.not(status: ['enviado', 'entregado'])
+    @orders = []
+    orders.each do |order|
+      @status = []
+      order.product_requests.each do |pr|
+        @status << pr.status
+      end
+      if @status.uniq.length != 1
+        @orders << order
+      end
     end
-    @orders = Order.where(id: a).order(:created_at)
+    @orders = @orders.sort_by {|obj| obj.id}
+    @orders
   end
 
   def prepare_order
