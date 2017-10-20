@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171019235913) do
+ActiveRecord::Schema.define(version: 20171020012824) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -876,6 +876,7 @@ ActiveRecord::Schema.define(version: 20171019235913) do
     t.boolean  "current"
     t.integer  "store_id"
     t.integer  "supplier_id"
+    t.integer  "unit_id"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
@@ -883,6 +884,7 @@ ActiveRecord::Schema.define(version: 20171019235913) do
   add_index "products", ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id", using: :btree
   add_index "products", ["store_id"], name: "index_products_on_store_id", using: :btree
   add_index "products", ["supplier_id"], name: "index_products_on_supplier_id", using: :btree
+  add_index "products", ["unit_id"], name: "index_products_on_unit_id", using: :btree
   add_index "products", ["warehouse_id"], name: "index_products_on_warehouse_id", using: :btree
 
   create_table "prospect_sales", force: :cascade do |t|
@@ -1631,6 +1633,7 @@ ActiveRecord::Schema.define(version: 20171019235913) do
   add_foreign_key "products", "sat_unit_keys"
   add_foreign_key "products", "stores"
   add_foreign_key "products", "suppliers"
+  add_foreign_key "products", "units"
   add_foreign_key "products", "warehouses"
   add_foreign_key "prospect_sales", "business_units"
   add_foreign_key "prospect_sales", "prospects"
