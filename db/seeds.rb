@@ -713,9 +713,9 @@ puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
 
 #ESTA PARTE ES SOLO PARA LAS PRUEBAS
 
-number_packets = [5, 10, 15, 20, 25, 10, 8, 20, 10]
-sales = [1, 5, 2, 3, 4, 5, 3, 2, 1, 5]
-entries = [3000, 9000, 500, 800, 5000, 4000]
+number_packets = [50, 100, 40, 50, 25, 60, 30, 20, 15]
+sales = [1, 5, 2, 3, 4, 5, 3, 2, 1, 2]
+entries = [3000, 9000, 5000, 8000, 5000, 4000]
 
 #SIMULAR ENTRADAS
 products = Product.all
