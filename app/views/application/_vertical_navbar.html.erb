@@ -168,6 +168,15 @@
           <%= link_to 'Lista de productos', products_path, class: 'text-link' %>
             </li>
 
+          <% if params[:controller] == 'inventories' && (params[:action] == 'index' || params[:action] == 'order_suggestions')  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Inventario', inventories_index_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para store o store-admin %>
 
@@ -357,6 +366,14 @@
             <%= link_to 'Pedidos en espera', warehouse_waiting_orders_path, class: 'text-link' %>
               </li>
 
+            <% if params[:controller] == 'inventories' && (params[:action] == 'index' || params[:action] == 'order_suggestions')  %>
+              <li class="vertical-link actual-vertical-link">
+            <% else %>
+              <li class="vertical-link">
+            <% end %>
+            <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Inventario', inventories_index_path, class: 'text-link' %>
+              </li>
 
         <% end %>
         <%-# Aquí termina el área que muestra los links para warehouse-staff o warehouse-admin %>
