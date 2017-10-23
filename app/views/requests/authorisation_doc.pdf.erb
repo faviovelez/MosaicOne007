@@ -12,24 +12,24 @@
 
       <p class="doc-p">
         <strong> Nombre: </strong>
-        <%= @request.prospect.legal_or_business_name %>
+        <%= @request.store.business_unit.billing_address.business_name %>
       </p>
 
       <p class="doc-p">
         <strong>
           Atención:
         </strong>
-        <%=@request.prospect.contact_first_name %>
-        <%=@request.prospect.contact_middle_name %>
-        <%=@request.prospect.contact_last_name %>
-        <%=@request.prospect.second_last_name %>
+        <%= show_non_blank_field(@request.store.contact_first_name) %>
+        <%= show_non_blank_field(@request.store.contact_middle_name) %>
+        <%= show_non_blank_field(@request.store.contact_last_name) %>
+        <%= show_non_blank_field(@request.store.second_last_name) %>
       </p>
 
       <p class="doc-p">
         <strong>
           Teléfono:
         </strong>
-        <%= number_to_phone(@request.prospect.direct_phone, area_code: true) %>
+        <%= number_to_phone(@request.store.direct_phone, area_code: true) %>
       </p>
     </div>
 

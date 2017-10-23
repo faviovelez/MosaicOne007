@@ -12,7 +12,26 @@ class InventoriesController < ApplicationController
     @products = []
     user = current_user.role.name
     suppliers_id = []
-    @store = current_user.store
+    store = current_user.store
+    Supplier.where(name: [
+                          'Diseños de Cartón',
+                          'Comercializadora de Cartón y Diseño'
+                          ]).each do |supplier|
+                            suppliers_id << supplier.id
+                          end
+    @products = Product.where(supplier: suppliers_id)
+    @products
+  end
+
+  def order_suggestions
+    filter_products
+  end
+
+  def former_filter
+    @products = []
+    user = current_user.role.name
+    suppliers_id = []
+    store = current_user.store
     Supplier.where(name: [
                           'Diseños de Cartón',
                           'Comercializadora de Cartón y Diseño'
@@ -20,16 +39,15 @@ class InventoriesController < ApplicationController
                             suppliers_id << supplier.id
                           end
     @dc_products = Product.where(supplier: suppliers_id)
-    if user == 'store-admin' || user == 'store'
-      @products = @store.products + @dc_products
+    if (user == 'store-admin' || user == 'store')
+      @products = @dc_products
+      store.products each do |product|
+        @products << product unless @products.include?(product)
+      end
     else
       @products = @dc_products
     end
     @products
-  end
-
-  def order_suggestions
-    filter_products
   end
 
 end

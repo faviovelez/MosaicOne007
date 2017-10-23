@@ -24,12 +24,13 @@
   <tbody>
     <% @products.each do |product| %>
     <tr>
-      <td> <%= show_non_blank_field(product.unique_code) %> </td>
-      <td> <%= show_non_blank_field(product.description) %> </td>
-      <td> <%= show_non_blank_field(product.exterior_color_or_design) %> </td>
-      <td> <%= show_non_blank_field(product.inventory.quantity) %> </td>
-      <td> <%= show_non_blank_field(packages(product).to_f) %> </td>
-      <td> <%= show_non_blank_field(product.pieces_per_package) %> </td>
+      <td> <%= product.unique_code %> </td>
+      <td> <%= product.description %> </td>
+      <td> <%= product.exterior_color_or_design %> </td>
+      <% set_inventory(product) %>
+      <td> <%= set_inventory(product).quantity %> </td>
+      <td> <%= sales_future(product) %> </td>
+      <td> <%= sales_past(product) %> </td>
       <td> <%= inventory_alert(product) %> </td>
     </tr>
     <% end %>
