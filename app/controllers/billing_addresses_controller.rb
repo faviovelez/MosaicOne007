@@ -25,6 +25,7 @@ class BillingAddressesController < ApplicationController
 
   def create
     @billing = BillingAddress.new(billing_params)
+    save_tax_regime
     respond_to do |format|
       if @billing.save
         save_billing_address_to_owner
@@ -38,9 +39,7 @@ class BillingAddressesController < ApplicationController
   end
 
   def update
-    debugger
     save_tax_regime
-    debugger
     respond_to do |format|
       if @billing.update(billing_params)
         format.html { redirect_to @billing, notice: 'Los datos de facturación fueron modificados exitosamente.' }

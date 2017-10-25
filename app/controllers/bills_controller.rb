@@ -33,6 +33,7 @@ class BillsController < ApplicationController
     if @prospect.billing_address == nil
       redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
     end
+    @tickets_selected
   end
 
   def global_preview

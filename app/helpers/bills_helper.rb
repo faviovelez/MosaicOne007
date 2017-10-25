@@ -273,6 +273,7 @@ module BillsHelper
   end
 
   def store_name
+    #REVISAR SI USO CAPITALIZE O NO#
     @store_name = current_user.store.business_unit.billing_address.business_name.split.map(&:capitalize)*' '
   end
 
@@ -281,6 +282,7 @@ module BillsHelper
   end
 
   def prospect_name
+    #REVISAR SI USO CAPITALIZE O NO#
     @prospect_name = @prospect.billing_address.business_name.split.map(&:capitalize)*' '
   end
 

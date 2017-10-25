@@ -43,7 +43,7 @@ class OrdersController < ApplicationController
                           category: 'de línea',
                           delivery_address: current_user.store.delivery_address,
                           status: 'en espera',
-                          prospect: Prospect.find_by_store_prospect_id(@order.store)
+                          prospect: Prospect.find_by_store_prospect_id(current_user.store)
                           )
     @order.users << current_user
     @order.save
@@ -56,8 +56,7 @@ class OrdersController < ApplicationController
       @new_order = Order.create(store: current_user.store,
                             category: 'de línea',
                             delivery_address: current_user.store.delivery_address,
-                            status: 'en espera',
-                            prospect: Prospect.find_by_store_prospect_id(@order.store)
+                            status: 'en espera'
                             )
       status_and_ids.each do |array|
         if array.second == 'sin asignar'

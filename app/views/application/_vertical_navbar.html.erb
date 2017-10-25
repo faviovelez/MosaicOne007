@@ -177,6 +177,15 @@
           <%= link_to 'Inventario', inventories_index_path, class: 'text-link' %>
             </li>
 
+          <% if params[:controller] == 'bills' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-file-pdf-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Facturación', bills_select_data_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para store o store-admin %>
 
@@ -336,7 +345,7 @@
             <li class="vertical-link">
           <% end %>
           <i class="fa fa-tag other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Baja de productos', warehouse_remove_inventory_path, class: 'text-link' %>
+          <%= link_to 'Baja de mercancía', warehouse_remove_inventory_path, class: 'text-link' %>
             </li>
 
             <% if params[:controller] == 'warehouse' && (params[:action] == 'orders' || params[:action] == 'prepare_order')  %>
