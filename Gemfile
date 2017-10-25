@@ -50,7 +50,7 @@ end
 gem 'devise'
 gem 'carrierwave', '~> 1.0'
 gem 'rmagick'
-gem 'redis', '~>3.2'
+gem 'redis', '~>3.3.3'
 gem 'state_machine'
 gem 'dotenv-rails'
 gem 'fog'
