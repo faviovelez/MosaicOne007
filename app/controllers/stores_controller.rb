@@ -37,7 +37,7 @@ class StoresController < ApplicationController
     respond_to do |format|
       if @store.save
         create_warehouse
-        create_store_inventories
+        StoresJobsJob.perform_later @store
         create_prospect_from_store
         create_supplier_for_store
         create_cash_register
@@ -80,9 +80,9 @@ class StoresController < ApplicationController
   end
 
   def assign_series
-    stores = Store.all.order.(:created_at)
-    last_series = stores.last.series
-    @store.series = last_series.next
+    #stores = Store.all.order(:created_at)
+    #last_series = stores.last.series
+    #@store.series = last_series.next
   end
 
 ############################################################
@@ -103,25 +103,6 @@ class StoresController < ApplicationController
                                   business_group: @store.business_group,
                                   warehouse_code: "AT#{@store.store_code}"
                                   )
-  end
-
-  def create_store_inventories
-    all_products_except_special
-    @products.each do |product|
-      StoresInventory.create(product: @product, store: @store)
-    end
-  end
-
-  def all_products_except_special
-    suppliers_id = []
-    Supplier.where(name: [
-                          'Diseños de Cartón',
-                          'Comercializadora de Cartón y Diseño'
-                          ]).each do |supplier|
-                            suppliers_id << supplier.id
-                          end
-    @products = Product.where(supplier: suppliers_id).where.not(classification: ['especial', 'de tienda'])
-    @products
   end
 
   def assign_cost_type
@@ -215,7 +196,6 @@ private
     @b_units = BusinessGroup.find_by_business_group_type('main').business_units
     @corporate_d_rules = DiscountRule.where(business_unit: @b_units)
     @stores_d_rules = DiscountRule.where.not(store: nil)
-    debugger
   end
 
   def update_discount_rules

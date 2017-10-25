@@ -1,5 +1,4 @@
 <div class="show-container" id="stores-container">
-
   <h2 class="info-title">
     <%= @store.store_code %> -
     <%= @store.store_name %>
@@ -53,6 +52,11 @@
       <%=@store.cell_phone %>
     </p>
   <% end %>
+
+  <p>
+    <strong>Codigo de Instalacion: </strong>
+    <%=@store.install_code %>
+  </p>
 
   <p>
     <% if @store.business_unit.billing_address.present? %>

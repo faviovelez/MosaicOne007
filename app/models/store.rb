@@ -46,7 +46,9 @@ class Store < ActiveRecord::Base
 
 ############################################################
 #CAMBIAR TODA ESTA LÓGICA AL TENER UN BUSCADOR CON AJAX
-  validate :zip_code_is_in_sat_list
+  validate :zip_code_is_in_sat_list, :uniq_install_code
+
+  before_create :gen_install_code
 
   @@value = true
 
@@ -58,5 +60,39 @@ class Store < ActiveRecord::Base
     errors[:base] << "El código postal elegido no se encuentra en la base del SAT, por favor elija otro." if @@value == false
   end
 ############################################################
+
+  def gen_install_code(max = 4)
+    code = gen_random(self.store_name, max) + " "
+    code += gen_random(full_name_contact, max) + " "
+    code += gen_random(self.store_code, max)
+    self.install_code = "#{code} #{gen_random(code, max)}"
+  end
+
+  def full_name_contact
+    full_name = ''
+    %w(
+      contact_first_name contact_middle_name
+      contact_last_name second_last_name
+    ).each do |field|
+      full_name += "#{self.send(field)} "
+    end
+    full_name
+  end
+
+  private
+
+    def gen_random(cad, max = 4)
+      cad = cad.gsub(/\s+/, "")
+      (0...max).map do |n|
+        cad[rand(cad.length - 1)]
+      end.join
+    end
+
+    def uniq_install_code
+      count = 3
+      if Store.where(install_code: self.install_code).first.present?
+        gen_install_code(count+= 1)
+      end
+    end
 
 end
