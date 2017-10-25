@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171020012824) do
+ActiveRecord::Schema.define(version: 20171024232811) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -968,7 +968,6 @@ ActiveRecord::Schema.define(version: 20171020012824) do
     t.integer  "quantity"
     t.float    "inner_length"
     t.float    "inner_width"
-    t.string   "inner_height"
     t.float    "outer_length"
     t.float    "outer_width"
     t.float    "outer_height"
@@ -1038,6 +1037,7 @@ ActiveRecord::Schema.define(version: 20171020012824) do
     t.float    "second_sales_price"
     t.float    "third_sales_price"
     t.integer  "price_selected"
+    t.float    "inner_height"
   end
 
   add_index "requests", ["estimate_doc_id"], name: "index_requests_on_estimate_doc_id", using: :btree

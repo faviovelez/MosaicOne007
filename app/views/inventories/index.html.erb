@@ -15,9 +15,10 @@
       <th> Código </th>
       <th> Descripción </th>
       <th> Color </th>
-      <th> Inventario </th>
+      <th> Línea </th>
       <th> Paquetes </th>
-      <th> P x P </th>
+      <th> PxP </th>
+      <th> Inventario </th>
       <th> Estatus </th>
     </tr>
   </thead>
@@ -27,10 +28,10 @@
       <td> <%= show_non_blank_field(product.unique_code) %> </td>
       <td> <%= show_non_blank_field(product.description) %> </td>
       <td> <%= show_non_blank_field(product.exterior_color_or_design) %> </td>
-      <% set_inventory(product) %>
-      <td> <%= set_inventory(product).quantity %> </td>
-      <td> <%= set_inventory(product).quantity / product.pieces_per_package %> </td>
+      <td> <%= show_non_blank_field(product.line) %> </td>
+      <td> <%= packages(product) %> </td>
       <td> <%= product.pieces_per_package %> </td>
+      <td> <%= set_inventory(product).quantity %> </td>
       <td> <%= inventory_alert(product) %> </td>
     </tr>
     <% end %>

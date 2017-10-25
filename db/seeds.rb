@@ -652,6 +652,7 @@ unless stores == nil
   end
 end
 
+##### REVISAR EL CÓDIGO PARA PRODUCCIÓN#####
 packets = [1, 10, 10, 15, 15, 20, 10, 1, 10]
 
 # Agrega el catálogo de Productos de Diseños de Cartón
@@ -823,6 +824,141 @@ puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
 #
 # end
 #
+
+##ESTA PARTE ES SOLO PARA LAS PRUEBAS
+#
+#number_packets = [50, 100, 40, 50, 25, 60, 30, 20, 15]
+#sales = [1, 5, 2, 3, 4, 5, 3, 2, 1, 2]
+#entries = [3000, 9000, 5000, 8000, 5000, 4000]
+#
+##SIMULAR ENTRADAS
+#products = Product.all
+#products.each do |product|
+#  alta = Movement.create(
+#                    {
+#                      product: product,
+#                      quantity: entries.sample,
+#                      movement_type: 'alta',
+#                      cost: product.price / 2,
+#                      unique_code: product.unique_code,
+#                      confirm: true,
+#                    }
+#                  )
+#  WarehouseEntry.create(
+#                          {
+#                            product: product,
+#                            quantity: Movement.last.quantity,
+#                            entry_number: 1
+#                          }
+#                        )
+#  puts "alta creada por #{alta.quantity} unidades"
+#end
+#
+##SIMULAR VENTAS
+#store_type_default = StoreType.find_by_store_type('corporativo')
+#stores = Store.where.not(store_type: store_type_default)
+#products.each do |product|
+#  store = stores.sample
+#  store_prospect = Prospect.find_by_store_prospect_id(store)
+#  prospect = store_prospect
+#  quantity = number_packets.sample * product.pieces_per_package
+#  price = product.price
+#  tax = Tax.find_by_description('IVA')
+#  amount = product.price * quantity
+#  tax_rate = tax.value / 100
+#  taxes = amount - (amount / (1 + tax_rate))
+#  cost = product.price / 2
+#  seller_store = Store.find_by_store_name('Corporativo Compresor')
+#  buyer_store = prospect
+#  sales.sample.times do |sale|
+#    venta = Movement.create(
+#                      {
+#                        product: product,
+#                        quantity: quantity,
+#                        unique_code: product.unique_code,
+#                        store: seller_store,
+#                        initial_price: price,
+#                        supplier: product.supplier,
+#                        business_unit: seller_store.business_unit,
+#                        prospect: prospect,
+#                        manual_discount: 0,
+#                        automatic_discount: 0,
+#                        discount_applied: 0,
+#                        final_price: price,
+#                        amount: price * quantity,
+#                        taxes: taxes,
+#                        movement_type: 'venta',
+#                        cost: cost,
+#                        total_cost: cost * quantity
+#                      }
+#                    )
+#    puts "venta creada por #{venta.quantity} unidades a #{venta.store.store_name}"
+#
+#    StoreMovement.create(
+#                          {
+#                            product: product,
+#                            quantity: quantity,
+#                            movement_type: 'alta',
+#                            store: store,
+#                            initial_price: 0,
+#                            supplier: product.supplier,
+#                            manual_discount: 0,
+#                            automatic_discount: 0,
+#                            discount_applied: 0,
+#                            final_price: 0,
+#                            amount: 0,
+#                            tax: tax,
+#                            taxes: taxes,
+#                            cost: price,
+#                            total_cost: price * quantity
+#                          }
+#                        )
+#
+#    StoresWarehouseEntry.create(
+#                                  {
+#                                    product: product,
+#                                    quantity: quantity,
+#                                    store: store,
+#                                    store_movement: StoreMovement.last,
+#                                    movement: Movement.last,
+#                                  }
+#                                )
+#
+#    inventory = Inventory.find_by_product_id(product)
+#    new_quantity = inventory.quantity - quantity
+#    inventory.update(quantity: new_quantity)
+#    entry = WarehouseEntry.find_by_product_id(product)
+#    entry.update(quantity: new_quantity)
+#
+#    store_inventory = StoresInventory.where(product: product).where(store:store).first
+#    new_store_quantity = store_inventory.quantity + quantity
+#    store_inventory.update(quantity: new_store_quantity)
+#  end
+#
+#end
+#
+
+#  Store.all.each do |store|
+#    future_sales = []
+#    past_sales = []
+#    Product.all.count.times do
+#      sample_future = rand(50..300)
+#      sample_past = rand(50..300)
+#      future_sales << sample_future
+#      past_sales << sample_past
+#    end
+#    TemporalNumber.create(
+#                          store: store,
+#                          business_group: store.business_group,
+#                          past_sales: past_sales,
+#                          future_sales: future_sales
+#                          )
+#  end
+#
+
+
+#######TERMINA LA SECCIÓN PARA PRUEBAS######
+
 billing_general_prospect = BillingAddress.find_or_create_by(
                                                               {
                                                                 business_name: 'Público en General',
@@ -844,92 +980,92 @@ general_prospect = Prospect.find_or_create_by(
                                     }
                                   )
 
-  Store.all.each do |store|
-    future_sales = []
-    past_sales = []
-    Product.all.count.times do
-      sample_future = rand(50..300)
-      sample_past = rand(50..300)
-      future_sales << sample_future
-      past_sales << sample_past
-    end
-    TemporalNumber.create(
-                          store: store,
-                          business_group: store.business_group,
-                          past_sales: past_sales,
-                          future_sales: future_sales
-                          )
-  end
-
-  store_type_default = StoreType.find_by_store_type('corporativo')
-  stores = Store.where.not(store_type: store_type_default)
-  products = Product.all.limit(5)
-  product = products.sample
-  store = stores.sample
-  quantity = rand(1..5)
-  price = product.price
-  tax = Tax.find_by_description('IVA')
-  amount = product.price * quantity
-  tax_rate = tax.value / 100
-  taxes = amount - (amount / (1 + tax_rate))
-
-  stores.each do |store|
-    ticket = Ticket.create(
-    {
-      ticket_number: 1,
-      ticket_type: 'venta',
-      cash_register: store.cash_registers.first,
-      user: store.users.first,
-      store: store
-    }
-    )
-    3.times do
-      store_movement = StoreMovement.create(
-      {
-        product: product,
-        quantity: quantity,
-        movement_type: 'venta',
-        store: store,
-        initial_price: price,
-        supplier: product.supplier,
-        manual_discount: 0,
-        automatic_discount: 0,
-        discount_applied: 0,
-        final_price: price,
-        amount: price * quantity,
-        tax: tax,
-        taxes: taxes,
-        cost: price,
-        total_cost: price * quantity,
-        ticket: ticket
-      }
-      )
-    end
-    amounts = []
-    ticket.store_movements.each do |m|
-      amounts << m.amount
-    end
-    subtotal = amounts.inject(&:+)
-    ticket.update(subtotal: subtotal)
-
-    taxes = []
-    ticket.store_movements.each do |m|
-      taxes << m.taxes
-    end
-    taxes_total = taxes.inject(&:+)
-    ticket.update(taxes: taxes_total)
-
-    total = ticket.subtotal + ticket.taxes
-    ticket.update(total: total)
-
-    payment = Payment.create(
-                  {
-                    payment_date: Date.today,
-                    payment_form: PaymentForm.find(1),
-                    payment_type: 'pago',
-                    store: store,
-                    user: store.users.first,
-                    amount: total
-                  }
-    )
-  end
+#  Store.all.each do |store|
+#    future_sales = []
+#    past_sales = []
+#    Product.all.count.times do
+#      sample_future = rand(50..300)
+#      sample_past = rand(50..300)
+#      future_sales << sample_future
+#      past_sales << sample_past
+#    end
+#    TemporalNumber.create(
+#                          store: store,
+#                          business_group: store.business_group,
+#                          past_sales: past_sales,
+#                          future_sales: future_sales
+#                          )
+#  end
+#
+#  store_type_default = StoreType.find_by_store_type('corporativo')
+#  stores = Store.where.not(store_type: store_type_default)
+#  products = Product.all.limit(5)
+#  product = products.sample
+#  store = stores.sample
+#  quantity = rand(1..5)
+#  price = product.price
+#  tax = Tax.find_by_description('IVA')
+#  amount = product.price * quantity
+#  tax_rate = tax.value / 100
+#  taxes = amount - (amount / (1 + tax_rate))
+#
+#  stores.each do |store|
+#    ticket = Ticket.create(
+#    {
+#      ticket_number: 1,
+#      ticket_type: 'venta',
+#      cash_register: store.cash_registers.first,
+#      user: store.users.first,
+#      store: store
+#    }
+#    )
+#    3.times do
+#      store_movement = StoreMovement.create(
+#      {
+#        product: product,
+#        quantity: quantity,
+#        movement_type: 'venta',
+#        store: store,
+#        initial_price: price,
+#        supplier: product.supplier,
+#        manual_discount: 0,
+#        automatic_discount: 0,
+#        discount_applied: 0,
+#        final_price: price,
+#        amount: price * quantity,
+#        tax: tax,
+#        taxes: taxes,
+#        cost: price,
+#        total_cost: price * quantity,
+#      }
+#      )
+#    end
+#    amounts = []
+#    ticket.store_movements.each do |m|
+#      amounts << m.amount
+#    end
+#    subtotal = amounts.inject(&:+)
+#    ticket.update(subtotal: subtotal)
+#
+#    taxes = []
+#    ticket.store_movements.each do |m|
+#      taxes << m.taxes
+#    end
+#    taxes_total = taxes.inject(&:+)
+#    ticket.update(taxes: taxes_total)
+#
+#    total = ticket.subtotal + ticket.taxes
+#    ticket.update(total: total)
+#
+#    payment = Payment.create(
+#                  {
+#                    payment_date: Date.today,
+#                    payment_form: PaymentForm.find(1),
+#                    payment_type: 'pago',
+#                    store: store,
+#                    user: store.users.first,
+#                    amount: total
+#                  }
+#    )
+#  end
+#

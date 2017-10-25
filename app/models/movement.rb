@@ -38,7 +38,7 @@ class Movement < ActiveRecord::Base
     update_reports_data(
       ProspectSale.find_by_month(Date.today.month)
     ).update(
-      prospect_id: store.id,
+      prospect_id: prospect.id,
     )
     update_reports_data(
       ProductSale.find_by_month(Date.today.month)
@@ -313,6 +313,7 @@ class Movement < ActiveRecord::Base
     def initialize_with(object, user ,type)
       product = object.product
       store   = user.store
+      prospect = Prospect.find_by_store_prospect_id(store)
       create(
         product: product,
         unique_code: product.unique_code,
@@ -321,6 +322,7 @@ class Movement < ActiveRecord::Base
         movement_type: type,
         user: user,
         business_unit: store.business_unit,
+        prospect: prospect
       )
     end
 

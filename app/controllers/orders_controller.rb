@@ -5,7 +5,8 @@ class OrdersController < ApplicationController
   def new(role = current_user.role.name)
     @order = Order.new(store: current_user.store,
                        category: 'de línea',
-                       status: 'en espera'
+                       status: 'en espera',
+                       prospect: Prospect.find_by_store_prospect_id(current_user.store)
                       )
     @order.users << current_user
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'store' || role == 'store-admin')
@@ -41,7 +42,8 @@ class OrdersController < ApplicationController
     @order = Order.create(store: current_user.store,
                           category: 'de línea',
                           delivery_address: current_user.store.delivery_address,
-                          status: 'en espera'
+                          status: 'en espera',
+                          prospect: Prospect.find_by_store_prospect_id(current_user.store)
                           )
     @order.users << current_user
     @order.save

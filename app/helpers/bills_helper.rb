@@ -227,14 +227,6 @@ module BillsHelper
     @address
   end
 
-  def get_names(ticket)
-    name = ticket.ticket_type.first + ticket.ticket_number.to_s + ' ' + number_to_currency(ticket.total).to_s + ' '
-    date = I18n.l (ticket.created_at).to_date, format: :short
-    name << date + ' '
-    name << ticket.prospect.legal_or_business_name + ' ' if ticket.prospect.present?
-    name << ticket.cfdi_use.key if ticket.cfdi_use.present?
-  end
-
   def select_tickets(store = current_user.store)
     tickets = store.tickets.where(bill: nil)
     @tickets = []
@@ -246,8 +238,6 @@ module BillsHelper
        name << ticket.cfdi_use.key if ticket.cfdi_use.present?
       @tickets << [name, ticket.id]
     end
-    @tickets
-    @tickets << [get_names(Ticket.find(104)), Ticket.find(104).id]
     @tickets
   end
 
@@ -283,6 +273,7 @@ module BillsHelper
   end
 
   def store_name
+    #REVISAR SI USO CAPITALIZE O NO#
     @store_name = current_user.store.business_unit.billing_address.business_name.split.map(&:capitalize)*' '
   end
 
@@ -291,6 +282,7 @@ module BillsHelper
   end
 
   def prospect_name
+    #REVISAR SI USO CAPITALIZE O NO#
     @prospect_name = @prospect.billing_address.business_name.split.map(&:capitalize)*' '
   end
 
@@ -367,13 +359,11 @@ module BillsHelper
     @total_discount = amounts.inject(&:+)
   end
 
-  def tax_regime_key
-    regime = TaxRegime.find(9)
+  def tax_regime_key(regime = current_user.store.business_unit.billing_address.tax_regime)
     @regime = regime.tax_id
   end
 
-  def tax_regime
-    regime = TaxRegime.find(9)
+  def tax_regime(regime = current_user.store.business_unit.billing_address.tax_regime)
     @regime = regime.description
   end
 
@@ -407,39 +397,12 @@ module BillsHelper
   end
 
   def greatest_payment
-    @all_payments = []
-    payments = []
-    @tickets_selected.each do |ticket|
-      ticket.payments.where(payment_type: 'pago').each do |payment|
-        payments << [payment.payment_form.description, payment.amount]
-        @all_payments << payment
-      end
-    end
-    @payments = payments.group_by(&:first).map{ |k,v| [k, v.inject(0){ |sum, i| (sum + i.second).round(2) }] }.sort_by{|pay_form| pay_form.second}.reverse
-    total_payment = []
-    @payments.each do |payment|
-      total_payment << payment.second
-    end
-    @total_payment = total_payment.inject(&:+)
+    get_payments
     @greatest = @payments.first.first
   end
 
   def greatest_payment_key
-    @all_payments = []
-    payments = []
-    @tickets_selected.each do |ticket|
-      ticket.payments.where(payment_type: 'pago').each do |payment|
-        payments << [payment.payment_form.description, payment.amount]
-        @all_payments << payment
-      end
-    end
-    @payments = payments.group_by(&:first).map{ |k,v| [k, v.inject(0){ |sum, i| (sum + i.second).round(2) }] }.sort_by{|pay_form| pay_form.second}.reverse
-    total_payment = []
-    @payments.each do |payment|
-      total_payment << payment.second
-    end
-    @total_payment = total_payment.inject(&:+)
-    @greatest = @payments.first.first
+    get_payments
     @greatest_key = PaymentForm.find_by_description(@payments.first.first).payment_id
   end
 

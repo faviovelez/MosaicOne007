@@ -25,7 +25,7 @@
       <td> <%= entry.id %> </td>
       <td> <%=  entry.product.unique_code %> </td>
       <td> <%=  entry.product.exterior_color_or_design %> </td>
-      <td> <%=  number_with_delimiter(entry.quantity) %> </td>
+      <td> <%=  number_with_delimiter(entry.movement.quantity) %> </td>
       <td> <%= I18n.l entry.created_at.to_date, format: :short %> </td>
       <td class="col-md-1">
         <% if current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff' %>
