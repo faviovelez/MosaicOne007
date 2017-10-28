@@ -98,6 +98,8 @@ Rails.application.routes.draw do
 
   get 'bills/process_info'
 
+  get 'bills/cfdi/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#cfdi', as: 'bill_cfdi'
+
   resources :bills
 
   get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc', as: 'request_authorisation'

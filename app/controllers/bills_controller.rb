@@ -147,6 +147,66 @@ class BillsController < ApplicationController
     @qr = RQRCode::QRCode.new( (site + '&id=' + id + '&re=' + emisor + '&rr=' + receptor + '&tt' + total + '&fe=' + sello),  :size => 13, :level => :h )
   end
 
+# NOTAS PARA XML:
+  # En el caso del & se debe usar la secuencia &amp;
+  # En el caso del “ se debe usar la secuencia &quot;
+  # En el caso del < se debe usar la secuencia &lt;
+  # En el caso del > se debe usar la secuencia &gt;
+  # En el caso del ‘ se debe usar la secuencia &apos;
+
+# Para este método se necesita concatenar los siguientes elementos, iniciando y terminando con || y separados por un | (sin espacios):
+  #  1. Version
+  #  2. UUID
+  #  3. FechaTimbrado
+  #  4. RfcProvCertif
+  #  5. Leyenda (el SAT puede poner cualquier cosa aquí)
+  #  6. SelloCFD
+  #  7. NoCertificadoSAT
+
+# Atributos del elemento raíz TimbreFiscalDigital
+  #  1. version
+  #  2. UUID
+  #  3. FechaTimbrado
+  #  4. selloCFD
+  #  5. noCertificadoSAT
+
+# Ó también generarla a través de xslt, ejemplo:  ||1.1|ad662d33-6934-459c-a128-bdf0393e0f44|2001-12-17T09:30:47|AAA010802QT9|ValorDelAtributoLeyenda|iYyIk1MtEPzTxY3h57kYJnEXNae9lvLMgAq3jGMePsDtEOF6XLWbrV2GL/2TX00vP2+YsPN+5UmyRdzMLZGEfESiNQF9fotNbtA487dWnCf5pUu0ikVpgHvpY7YoA4Lb1D/JWc+zntkgW+Ig49WnlKyXi0LOlBOVuxckDb7Eax4=|12345678901234567890||
+
+  def generate_stamp_original_chain
+    xml = Nokogiri::XML(File.read(Rails.root.join('lib', 'sat', 'test.xml')))
+    xslt = Nokogiri::XSLT(File.read(Rails.root.join('lib', 'sat', 'cadenaoriginal_TFD_1_1.xslt')))
+    @stamp_original_chain = xslt.apply_to(xml)
+  end
+
+# PROBABLEMENTE NO NECESITARÉ ESTOS MÉTODOS
+  def generate_original_chain
+    xml = Nokogiri::XML(File.read(Rails.root.join('lib', 'sat', 'test.xml')))
+    xslt = Nokogiri::XSLT(File.read(Rails.root.join('lib', 'sat', 'cadenaoriginal_3_3.xslt')))
+    @original_chain = xslt.apply_to(xml)
+  end
+
+  def cfdi
+  end
+
+  def save_cer_as_cer_pem
+    cert = File.open(Rails.root.join('lib', 'cer', 'test', 'ACO560518KW7-20001000000300005692.cer'), )
+    File.open("ACO560518KW7-20001000000300005692.cer", "wb") { |f| f.write cert.to_pem }
+  end
+
+  def save_cer_pem_as_der
+  end
+
+  def save_key_as_pem
+    ACO560518KW7-20001000000300005692.key
+  end
+
+  def encrypt_in_des3
+  end
+
+  def unencrypt_from_des3
+  end
+# PROBABLEMENTE NO NECESITARÉ ESTOS MÉTODOS
+
   def doc
     preview
     rows

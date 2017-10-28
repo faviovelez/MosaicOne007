@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171024232811) do
+ActiveRecord::Schema.define(version: 20171025123211) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1253,6 +1253,7 @@ ActiveRecord::Schema.define(version: 20171024232811) do
     t.float    "overprice",                default: 0.0
     t.string   "series"
     t.integer  "last_bill",                default: 0
+    t.string   "install_code"
   end
 
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree

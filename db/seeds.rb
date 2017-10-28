@@ -712,6 +712,27 @@ puts "There are now #{SatKey.count} rows in the SAT Key table"
 puts "There are now #{SatUnitKey.count} rows in the SAT Unit Key table"
 puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
 
+billing_general_prospect = BillingAddress.find_or_create_by(
+                                                              {
+                                                                business_name: 'Público en General',
+                                                                rfc: 'XAXX010101000',
+                                                                country: 'México',
+                                                              }
+                                                            )
+
+general_prospect = Prospect.find_or_create_by(
+                                    {
+                                      legal_or_business_name: 'Público en General',
+                                      prospect_type: 'público en general',
+                                      contact_first_name: 'ninguno',
+                                      contact_last_name: 'ninguno',
+                                      direct_phone: 1111111111,
+                                      store: Store.find(1),
+                                      store_prospect: nil,
+                                      billing_address: billing_general_prospect
+                                    }
+                                  )
+
 #ESTA PARTE ES SOLO PARA LAS PRUEBAS
 
 # number_packets = [50, 100, 40, 50, 25, 60, 30, 20, 15]
@@ -955,31 +976,6 @@ puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
 #                          )
 #  end
 #
-
-
-#######TERMINA LA SECCIÓN PARA PRUEBAS######
-
-billing_general_prospect = BillingAddress.find_or_create_by(
-                                                              {
-                                                                business_name: 'Público en General',
-                                                                rfc: 'XAXX010101000',
-                                                                country: 'México',
-                                                              }
-                                                            )
-
-general_prospect = Prospect.find_or_create_by(
-                                    {
-                                      legal_or_business_name: 'Público en General',
-                                      prospect_type: 'público en general',
-                                      contact_first_name: 'ninguno',
-                                      contact_last_name: 'ninguno',
-                                      direct_phone: 1111111111,
-                                      store: Store.find(1),
-                                      store_prospect: nil,
-                                      billing_address: billing_general_prospect
-                                    }
-                                  )
-
 #  Store.all.each do |store|
 #    future_sales = []
 #    past_sales = []
@@ -1069,3 +1065,5 @@ general_prospect = Prospect.find_or_create_by(
 #    )
 #  end
 #
+
+#######TERMINA LA SECCIÓN PARA PRUEBAS######
