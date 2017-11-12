@@ -71,7 +71,6 @@ class Request < ActiveRecord::Base
 
   # ****** MAILERS DESACTIVADOS HASTA QUE SE CONFIGURE AMAZON ******
 
-
   # Si la fecha de entrega existe, validar que no sea en el pasado.
   def delivery_date_future
     if delivery_date.present? && delivery_date < Date.today

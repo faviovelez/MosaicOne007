@@ -1,0 +1,43 @@
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'order_bills' %>
+<% end %>
+
+<% if @orders.count >= 1 %>
+  <table id="orders">
+    <thead>
+      <tr class="table-titles">
+        <th></th>
+        <th class="col-md-1">No.</th>
+        <th class="col-md-1">Tienda</th>
+        <th>Tipo</th>
+        <th>Solicitada</th>
+        <th>Total</th>
+        <th>Saldo / Estauts</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= form_tag({ controller: 'bills', action: 'select_info' }, method: 'get') do %>
+        <% @orders.each do |order| %>
+          <tr>
+            <td> <%= check_box_tag "orders", "#{order.id}", false, { id: "orders[#{order.id}]" } %> </td>
+            <td> <%= order.id %> </td>
+            <td> <%= order.store.store_name %> </td>
+            <td> <%= order.category.capitalize %> </td>
+            <td> <%= l order.created_at.to_date %> </td>
+            <td> <%= number_to_currency(order.total) %> </td>
+            <td> <%= get_payments_from_individual_order(order) %> </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font">No hay pedidos pendientes por facturar </p>
+<% end %>

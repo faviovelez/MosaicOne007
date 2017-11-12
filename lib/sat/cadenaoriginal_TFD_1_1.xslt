@@ -21,7 +21,7 @@
 	<xsl:template match="/">|<xsl:apply-templates select="/tfd:TimbreFiscalDigital"/>||</xsl:template>
 	<!--  Aquí iniciamos el procesamiento de los datos incluidos en el comprobante -->
 	<xsl:template match="tfd:TimbreFiscalDigital">
-		<!-- Iniciamos el tratamiento de los atributos del Timbre-->		
+		<!-- Iniciamos el tratamiento de los atributos del Timbre-->
 		<xsl:call-template name="Requerido">
 			<xsl:with-param name="valor" select="./@Version"/>
 		</xsl:call-template>

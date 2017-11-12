@@ -84,7 +84,15 @@ Rails.application.routes.draw do
 
   get 'inventories/order_suggestions'
 
+  get 'bills/select_info'
+
+  post 'bills/select_info'
+
   get 'bills/select_data'
+
+  get 'bills/select_tickets'
+
+  get 'bills/select_orders'
 
   get 'bills/bill_doc_/:id', to: 'bills#bill_doc', as: 'bills_doc'
 
@@ -96,7 +104,9 @@ Rails.application.routes.draw do
 
   get 'bills/global_preview/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#global_preview', as: 'bills_global_preview'
 
-  get 'bills/process_info'
+  post 'bills/process_info'
+
+  get 'bills/process_data'
 
   get 'bills/cfdi/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#cfdi', as: 'bill_cfdi'
 

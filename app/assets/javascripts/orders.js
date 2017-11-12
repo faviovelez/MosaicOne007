@@ -129,8 +129,10 @@ $(function(){
             $('#orderProduct' + id).val( packets * pices );
             var pedido = parseInt($('#orderProduct' + id).val());
             var price = $('#price' + id).data().price;
-            $('#totalProduct' + id).val((price * pedido).toFixed(2));
+            $('#totalProduct' + id).val((price * 0.65 * pedido).toFixed(2));
           });
+
+// En la línea anterior cambié la multiplicación del precio por un descuento fijo del 35%
 
         $('#urgencyProduct_' + id).click(function(){
           var element = $('#maxDate' + $(this).attr('id').replace('urgency', '')).parent();

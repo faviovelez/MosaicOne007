@@ -206,7 +206,8 @@ class WarehouseController < ApplicationController
         if after_processed > 0
           movement.warehouse_entry = WarehouseEntry.create(
             product:  movement.product,
-            quantity: after_processed
+            quantity: after_processed,
+            movement: movement
           )
         end
       end
@@ -260,15 +261,20 @@ class WarehouseController < ApplicationController
     params.select {|p| p.match('trForProduct').present? }.each do |product|
       attributes = product.second
       product = Product.find(attributes.first.second).first
-      @collection << Movement.new(
-        product: product,
-        quantity:  attributes[:cantidad],
-        movement_type: type,
-        user: current_user,
-        unique_code: product.unique_code,
-        store: current_user.store,
-        business_unit: current_user.store.business_unit
-      )
+      quantity = attributes[:cantidad].to_i
+      @collection << Movement.new.tap do |movement|
+        movement.product = product
+        movement.quantity = quantity
+        movement.movement_type = type
+        movement.user = current_user
+        movement.unique_code = product.unique_code
+        movement.store = current_user.store
+        movement.business_unit = current_user.store.business_unit
+        unless (product.cost == 0 || product.cost == nil)
+          movement.cost = product.cost
+          movement.total_cost = (product.cost * quantity)
+        end
+      end
     end
   end
 

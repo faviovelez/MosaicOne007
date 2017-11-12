@@ -41,6 +41,8 @@ class Store < ActiveRecord::Base
   has_many :temporal_numbers
   has_many :cash_registers
   has_many :store_movements
+  mount_uploader :certificate, SatCertificateUploader
+  mount_uploader :key, SatKeyUploader
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 

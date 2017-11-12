@@ -83,10 +83,10 @@
         <td class="space-preview"> 1 </td>
         <td class="space-preview"> <strong> <%= global_unit_key %> </strong> </td>
         <td class="space-preview"> Venta </td>
-        <td class="space-preview"> <%= number_to_currency(row.amount) %> </td>
+        <td class="space-preview"> <%= number_to_currency(row.subtotal) %> </td>
         <td class="space-preview"> <%= number_to_currency(row.discount_applied) %> </td>
         <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
-        <td class="space-preview"> <%= number_to_currency(row.amount) %> </td>
+        <td class="space-preview"> <%= number_to_currency(row.subtotal) %> </td>
       </tr>
     <% end %>
     <tr>
@@ -140,7 +140,7 @@
         <td> <%= payment.ticket.ticket_number %> </td>
         <td> <%= payment.payment_date %> </td>
         <td> <%= payment.payment_form.description %> </td>
-        <td> <%= number_to_currency(payment.amount) %> </td>
+        <td> <%= number_to_currency(payment.total) %> </td>
         <td> <%= payment.ticket.user.first_name.capitalize %> <%= payment.ticket.user.last_name.capitalize %> </td>
       </tr>
       <tr>

@@ -90,7 +90,7 @@
           <td class="grow space"> <%= number_to_currency(row.initial_price) %> </td>
           <td class="grow space"> <%= number_to_currency(row.discount_applied) %> </td>
           <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
-          <td class="grow space"> <%= number_to_currency(row.amount) %> </td>
+          <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
         </tr>
       <% end %>
       <tr>
@@ -163,11 +163,13 @@
 
     <div class="certificate">
       <p class="title-cfdi"> Folio Fiscal - UUID: </p>
-      <p class="grow"> C26A3536-4E86-4123-B5E0-CF842D1B34EC </p>
+      <p class="grow"> <%= @uuid %> </p>
       <p class="title-cfdi"> Número de Serie del Certificado </p>
-      <p class="grow"> 00001000000404420163 </p>
+      <p class="grow"> <%= current_user.store.business_unit.billing_address.certificate_number %> </p>
+      <p class="title-cfdi"> Número de Serie del Certificado SAT </p>
+      <p class="grow"> <%= @sat_certificate %> </p>
       <p class="title-cfdi"> Fecha y hora de Certificación </p>
-      <p class="grow"> 2017-07-01T11:20:08 </p>
+      <p class="grow"> <%= @date %> </p>
     </div>
 
   <div class="fiscal-folio">
@@ -181,20 +183,20 @@
   <div class="digital-stamp first-stamp">
     <p class="title-cfdi with-bg"> Sello del SAT: </p>
     <p class="grow break">
-      Rwxo+AXGh8k5lD0cbEpmdLghQZkJKmODGAaQpRhXAVB6lp2XmL0dlPy/e7JWUwFxIVGsvLRPLeb/iRp+3Qfbq5vfPLpQ1KGmTPP76TJhGJu4bhEp1bf707A74elvEziNtAzYZkOq7pgb4qxYtZnoL6kkjZ/unFwufAyQiHAcCoY=
+      <%= @sat_seal %>
     </p>
   </div>
 
   <div class="digital-stamp">
     <p class="title-cfdi with-bg"> Cadena Original: </p>
     <p class="grow" id="first">
-      ||1.0|C26A3536-4E86-4123-B5E0-CF842D1B34EC|2016-12-09T16:21:48|OG1WMyOQV8FM2apga08cfaQ+fB6cV3/zLQE0K975NSN
+      <%= @stamp_original_chain.slice(0..105) %>
     </p>
     <p id="second">
-      JXtFpRG9OmiUoAU6KljUZyRHKH/7TWi98bMW2Gd7kR6992SyYCG17ZpgpqGX4RtbzZDu+d4oD54bEK4dRNeK2z6OAyCY/dkqIjpeybo4Wn
+      <%= @stamp_original_chain.slice(106..211) %>
     </p>
     <p id="third">
-      bJpUhjDRAhP/xQRDZ5VK2k=|00001000000202864883||
+      <%= @stamp_original_chain.slice(212..@stamp_original_chain.length) %>
     </p>
   </div>
 

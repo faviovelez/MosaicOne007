@@ -9,8 +9,8 @@ class PendingMovement < ActiveRecord::Base
   belongs_to :prospect
   belongs_to :bill
   belongs_to :product_request
-  belongs_to :seller_user, class_name: 'User'
-  belongs_to :buyer_user, class_name: 'User'
+  belongs_to :seller_user, class_name: 'User', foreign_key: 'seller_user_id'
+  belongs_to :buyer_user, class_name: 'User', foreign_key: 'buyer_user_id'
   belongs_to :ticket
 
   def fix_initial_price

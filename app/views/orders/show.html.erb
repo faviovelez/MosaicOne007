@@ -18,7 +18,7 @@
         <td><%= product_request.product.exterior_color_or_design %></td>
         <td><%= image_tag image(product_request), alt: product_request.product.description %></td>
         <td><%= number_with_delimiter(product_request.quantity) %></td>
-        <td><%= number_to_currency(product_request.product.price * product_request.quantity) %></td>
+        <td><%= number_to_currency(product_request.quantity * product_request.movements.first.final_price * 1.16) %></td>
         <td><%= product_request.urgency_level %></td>
         <td><%= get_maximum_date(product_request.maximum_date) %></td>
       </tr>
