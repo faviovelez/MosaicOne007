@@ -39,7 +39,6 @@ class BillingAddressesController < ApplicationController
   end
 
   def update
-    save_tax_regime
     respond_to do |format|
       if @billing.update(billing_params)
         format.html { redirect_to @billing, notice: 'Los datos de facturación fueron modificados exitosamente.' }

@@ -13,12 +13,16 @@ class Movement < ActiveRecord::Base
   has_many :delivery_attempts
   belongs_to :product_request
   belongs_to :discount_rule
-  belongs_to :seller_user, class_name: 'User'
-  belongs_to :buyer_user, class_name: 'User'
+  belongs_to :seller_user, class_name: 'User', foreign_key: 'seller_user_id'
+  belongs_to :buyer_user, class_name: 'User', foreign_key: 'buyer_user_id'
   has_many :stores, through: :stores_warehouse_entries
   has_many :products, through: :stores_warehouse_entries
   has_many :stores_warehouse_entries
   belongs_to :ticket
+  belongs_to :tax
+  has_many :sales, through: :sales_movements, foreign_key: 'sales_id'
+  has_many :sales_movements
+  belongs_to :entry_movement, class_name: 'Movement', foreign_key: 'entry_movement_id'
 
   before_save :create_update_summary, if: :is_sales?
 
@@ -38,7 +42,7 @@ class Movement < ActiveRecord::Base
     update_reports_data(
       ProspectSale.find_by_month(Date.today.month)
     ).update(
-      prospect_id: prospect.id,
+      prospect_id: store.id,
     )
     update_reports_data(
       ProductSale.find_by_month(Date.today.month)
@@ -122,57 +126,6 @@ class Movement < ActiveRecord::Base
     !!(movement_type == 'venta')
   end
 
-#  after_save :new_movement, on: :create, if: :pending_quantity_greater_than_zero
-#  after_save :sum_quantity, if: :type_is_alta
-#  after_save :substract_quantity, if: :type_is_baja
-
-#  def pending_movements_with_same_code
-#    @prod_quantity = 0
-#    PendingMovement.each do |mov|
-#      if product >= mov.product
-#        @prod_quantity = mov.quantity
-#      end
-#    end
-#    @prod_quantity
-#  end
-
-#  def pending_quantity_greater_than_zero
-#    pending_movements_with_same_code
-#    @prod_quantity > 0
-#  end
-
-#  def new_movement
-#    m = Movement.create(quantity: @prod_quantity, movement_type: 'baja', product: product)
-#    erase_pending_movement
-#  end
-
-#  def erase_pending_movement
-#    pm = PendingMovement.find_by_product_id(product)
-#    pm.destroy
-#  end
-
-#  def type_is_alta
-#    movement_type == 'alta'
-#  end
-
-#  def type_is_baja
-#    movement_type == 'baja'
-#  end
-
-#  def sum_quantity
-    # Utilizar warehouse_entry e Inventory para esto, en lugar de solo inventory
-#    q = Inventory.find_by_product_id(product).quantity.to_i
-#    q += quantity
-#    q.save
-#  end
-
-#  def substract_quantity
-    # Utilizar wharehouse_entry e inventory para esto, en lugar de solo inventory
-#    q = Inventory.find_by_product_id(product).quantity.to_i
-#    q -= quantity
-#    q.save
-#  end
-
   def fix_cost
     self.cost || 0
   end
@@ -198,7 +151,7 @@ class Movement < ActiveRecord::Base
     movement = Movement.create(movement)
     movement.update_attributes(
       quantity: quantity,
-      cost:     cost
+      cost: cost,
     )
     movement
   end
@@ -281,28 +234,47 @@ class Movement < ActiveRecord::Base
 
   def process_extras(order_type, total_quantity, order)
     self.update(order: order)
-    is_end = false
+    bigger_than_entry = false
     related_warehouses(order_type).each do |entry|
       if total_quantity >= entry.fix_quantity
-        split(
-          entry.fix_quantity,
-          entry.movement.fix_cost * entry.fix_quantity
-        )
-        total_quantity -= Movement.last.fix_quantity
-        temp_quantity = Movement.last.fix_quantity
+
+        bigger_than_entry = true
+        mov = entry.movement
+        mov_sales = entry.movement.sales
+        mov_sales << Movement.last unless mov_sales.include?(Movement.last)
+        q = entry.fix_quantity
+        c = entry.movement.fix_cost
+
+        if Movement.last.quantity == nil
+          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2))
+        end
+
+        total_quantity -= Movement.last.quantity
+        temp_quantity = Movement.last.quantity
         entry.destroy
       else
-        self.update(quantity: total_quantity)
+        bigger_than_entry = false
+        mov = entry.movement
+        mov_sales = entry.movement.sales
+        mov_sales << Movement.last unless mov_sales.include?(Movement.last)
+        q = total_quantity
+        c = entry.movement.fix_cost
+
+        if Movement.last.quantity == nil
+          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2))
+        end
+
         temp_quantity = total_quantity
-        entry.update(
-          quantity: (entry.fix_quantity - total_quantity)
-        )
-        is_end = true
+        entry.update(quantity: (entry.fix_quantity - total_quantity))
+        total_quantity -= Movement.last.quantity
+      end
+      if bigger_than_entry
+        split(nil, entry.movement.fix_cost)
       end
       get_product.update_inventory_quantity(
         temp_quantity
       )
-      break if is_end
+      break if total_quantity == 0
     end
   rescue
     return false
@@ -313,17 +285,32 @@ class Movement < ActiveRecord::Base
     def initialize_with(object, user ,type)
       product = object.product
       store   = user.store
+      discount = 0.35
       prospect = Prospect.find_by_store_prospect_id(store)
+      disc_app = product.price * discount
+      unit_price = product.price * (1 - discount)
       create(
         product: product,
         unique_code: product.unique_code,
         store: store,
         initial_price: product.price,
+        automatic_discount: disc_app,
+        discount_applied: disc_app,
+        final_price: unit_price,
+        taxes: unit_price * 0.16,
+        subtotal: product.price,
         movement_type: type,
         user: user,
         business_unit: store.business_unit,
-        prospect: prospect
+        prospect: prospect,
+        product_request: object,
+        tax: Tax.find(2)
       )
+      if (user.role.name == 'store' || user.role.name == 'store-admin')
+        Movement.last.update(buyer_user: user)
+      else
+        Movement.last.update(seller_user: user)
+      end
     end
 
   end

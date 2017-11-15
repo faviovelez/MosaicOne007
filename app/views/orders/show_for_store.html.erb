@@ -21,7 +21,7 @@
         </td>
         <td><%= product_request.product.exterior_color_or_design %></td>
         <td><%= number_with_delimiter(product_request.quantity) %></td>
-        <td><%= number_to_currency(product_request.quantity * product_request.product.price) %></td>
+        <td><%= number_to_currency(product_request.quantity * product_request.movements.first.final_price * 1.16) %></td>
         <td> <%= product_request.status%> </td>
       </tr>
     <% end %>

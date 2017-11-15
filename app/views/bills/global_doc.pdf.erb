@@ -85,10 +85,10 @@
           <td class="grow space"> 1 </td>
           <td class="grow space"> <strong> <%= global_unit_key %> </strong> </td>
           <td class="grow space"> Venta </td>
-          <td class="grow space"> <%= number_to_currency(row.amount) %> </td>
+          <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
           <td class="grow space"> <%= number_to_currency(row.discount_applied) %> </td>
           <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
-          <td class="grow space"> <%= number_to_currency(row.amount) %> </td>
+          <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
         </tr>
       <% end %>
       <tr>

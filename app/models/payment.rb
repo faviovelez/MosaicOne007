@@ -11,4 +11,5 @@ class Payment < ActiveRecord::Base
   belongs_to :business_unit
   belongs_to :payment_form
   belongs_to :bank
+  belongs_to :order
 end

@@ -56,7 +56,8 @@ class OrdersController < ApplicationController
       @new_order = Order.create(store: current_user.store,
                             category: 'de línea',
                             delivery_address: current_user.store.delivery_address,
-                            status: 'en espera'
+                            status: 'en espera',
+                            prospect: Prospect.find_by_store_prospect_id(current_user.store)
                             )
       status_and_ids.each do |array|
         if array.second == 'sin asignar'
@@ -74,7 +75,25 @@ class OrdersController < ApplicationController
   def confirm
     @orders = Order.find(params[:ids].split('/'))
     @orders.each do |order|
-      order.update(confirm: true)
+      sum_cost = []
+      sum_subtotal = []
+      sum_discounts = []
+      sum_taxes = []
+      sum_total = []
+      order.movements.each do |mov|
+        mov.update(confirm: true)
+        sum_cost << mov.total_cost
+        sum_subtotal << mov.subtotal
+        sum_discounts << mov.discount_applied
+        sum_taxes << mov.taxes
+        sum_total << mov.total
+      end
+      cost = sum_cost.inject(&:+)
+      subtotal = sum_subtotal.inject(&:+)
+      discount = sum_discounts.inject(&:+)
+      taxes = sum_taxes.inject(&:+)
+      total = sum_total.inject(&:+)
+      order.update(confirm: true, subtotal: subtotal, discount_applied: discount, taxes: taxes, total: total, cost: cost)
     end
     redirect_to store_orders_path(@orders.first.store),
       notice: 'Registros confirmados'
@@ -133,12 +152,12 @@ class OrdersController < ApplicationController
         if @product_request.urgency_level === 'alta'
           @product_request.update(maximum_date: attributes[:maxDate])
         end
-        passign_validation
+        passing_validation
       end
     end
   end
 
-  def passign_validation
+  def passing_validation
     order_quantity = @product_request.quantity
     inventory = @product_request.product.inventory
     @product_request.update(order: @order)
@@ -146,23 +165,17 @@ class OrdersController < ApplicationController
       @product_request.update(status: 'sin asignar')
       create_movement(PendingMovement).update(
         quantity: @product_request.quantity,
-
       )
     else
       Movement.initialize_with(
         @product_request,
         current_user,
         'venta'
-      )
-      @product_request.update(
-        status: 'asignado',
-        movement: Movement.last
-      )
-      @product_request.movement.process_extras(
-        order_type,
-        @product_request.quantity,
-        @order
-      )
+        )
+      @product_request.update(status: 'asignado')
+      # VALIDAR POR QUÉ DA ERROR #
+      movement = Movement.last
+      movement.process_extras(order_type, @product_request.quantity, @order)
     end
   end
 
@@ -178,8 +191,9 @@ class OrdersController < ApplicationController
       movement_type: 'venta',
       user: current_user,
       business_unit: store.business_unit,
-      product_request_id: @product_request.id,
-      maximum_date: @product_request.maximum_date
+      product_request: @product_request,
+      maximum_date: @product_request.maximum_date,
+      prospect: Prospect.find_by_store_prospect_id(current_user.store)
     )
     movement
   end

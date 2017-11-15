@@ -14,6 +14,7 @@ class Order < ActiveRecord::Base
   belongs_to :store
   has_many :design_requests
   belongs_to :delivery_attempt
+  has_many :payments
 
   def all_movements
     self.movements + self.pending_movements

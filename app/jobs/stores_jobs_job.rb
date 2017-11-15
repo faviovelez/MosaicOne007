@@ -1,5 +1,5 @@
 class StoresJobsJob < ActiveJob::Base
-  queue_as :default
+  queue_as :default 
 
   def perform(store)
     all_products_except_special.each do |product|

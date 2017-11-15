@@ -26,11 +26,9 @@
 end
 
 # Deben existir por lo menos dos Business Groups: Uno para tiendas propias y otro para tiendas externas
-[
-  { name: "Diseños de Cartón", business_group_type: 'main' },
-  { name: "default terceros" }
-].each do |hash|
-  BusinessGroup.find_or_create_by(hash)
+BusinessGroup.find_or_create_by(
+                                  { name: "Diseños de Cartón", business_group_type: 'main' },
+                                )
 end
 
 # Se establece por default la configuración de tipo de costeo a PEPS en la tabla CostType
@@ -45,19 +43,16 @@ default_cost_type = CostType.find_by_warehouse_cost_type('PEPS')
 
 # Cada tienda debe pertenecer a un Business Unit y cada Business Unit debe pertenecer a un Business Group, se crean defaults para funcionalidad inicial que deben ser modificadas (y/o agregadas nuevas)
 default_business_group = BusinessGroup.find_by_business_group_type('main')
-default_terceros_business_group = BusinessGroup.find_by_name('default terceros')
 
 [
   { name: "Diseños de Cartón", business_group: default_business_group, main: true },
   { name: "Comercializadora de Cartón y Diseño", business_group: default_business_group, main: true},
-  { name: "default terceros", business_group: default_terceros_business_group}
 ].each do |hash|
   BusinessUnit.find_or_create_by(hash)
 end
 
 patria_business_unit = BusinessUnit.find_by_name('Diseños de Cartón')
 compresor_business_unit = BusinessUnit.find_by_name('Comercializadora de Cartón y Diseño')
-default_terceros_business_unit = BusinessUnit.find_by_name('default terceros')
 
 # Se crea el modelo Store_type para los distintos tipos de tiendas. Al crear una tienda, se puede elegir entre los business_units default o los creados o modificados por los usuarios.
 [
@@ -186,6 +181,7 @@ comercializadora_supplier = Supplier.find_or_create_by(
 
 patria_billing = BillingAddress.find_or_create_by(
                                                   business_name: 'Diseños de Cartón S.A. de C.V.',
+                                                  type_of_person: 'Persona Moral',
                                                   rfc: 'DCA8603175G2',
                                                   street: 'Av. de la Patria',
                                                   exterior_number: '124',
@@ -218,6 +214,7 @@ comercializadora_delivery = DeliveryAddress.find_or_create_by(
 
 comercializadora_billing = BillingAddress.find_or_create_by(
                                                             business_name: 'Comercializadora de Cartón y Diseño S.A. de C.V.',
+                                                            type_of_person: 'Persona Moral',
                                                             rfc: 'CCD000517IF0',
                                                             street: 'Roble',
                                                             exterior_number: '1297-A',
@@ -671,7 +668,7 @@ csv.each do |row|
                                           current: true,
                                           price: row['price'],
                                           sat_unit_key: SatUnitKey.find_by_description(row['unit']),
-                                          sat_key: SatUnitKey.find_by_description(row['sat_key']),
+                                          sat_key: SatKey.find_by_sat_key(row['sat_key']),
                                           warehouse: Warehouse.where(business_unit: BusinessUnit.find_by_name(row['bu'])).first,
                                           exterior_color_or_design: row['color'],
                                           pieces_per_package: packets.sample
@@ -711,6 +708,27 @@ puts "There are now #{PaymentMethod.count} rows in the Payment Method table"
 puts "There are now #{SatKey.count} rows in the SAT Key table"
 puts "There are now #{SatUnitKey.count} rows in the SAT Unit Key table"
 puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
+
+billing_general_prospect = BillingAddress.find_or_create_by(
+                                                              {
+                                                                business_name: 'Público en General',
+                                                                rfc: 'XAXX010101000',
+                                                                country: 'México',
+                                                              }
+                                                            )
+
+general_prospect = Prospect.find_or_create_by(
+                                    {
+                                      legal_or_business_name: 'Público en General',
+                                      prospect_type: 'público en general',
+                                      contact_first_name: 'ninguno',
+                                      contact_last_name: 'ninguno',
+                                      direct_phone: 1111111111,
+                                      store: Store.find(1),
+                                      store_prospect: nil,
+                                      billing_address: billing_general_prospect
+                                    }
+                                  )
 
 #ESTA PARTE ES SOLO PARA LAS PRUEBAS
 
@@ -955,31 +973,6 @@ puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
 #                          )
 #  end
 #
-
-
-#######TERMINA LA SECCIÓN PARA PRUEBAS######
-
-billing_general_prospect = BillingAddress.find_or_create_by(
-                                                              {
-                                                                business_name: 'Público en General',
-                                                                rfc: 'XAXX010101000',
-                                                                country: 'México',
-                                                              }
-                                                            )
-
-general_prospect = Prospect.find_or_create_by(
-                                    {
-                                      legal_or_business_name: 'Público en General',
-                                      prospect_type: 'público en general',
-                                      contact_first_name: 'ninguno',
-                                      contact_last_name: 'ninguno',
-                                      direct_phone: 1111111111,
-                                      store: Store.find(1),
-                                      store_prospect: nil,
-                                      billing_address: billing_general_prospect
-                                    }
-                                  )
-
 #  Store.all.each do |store|
 #    future_sales = []
 #    past_sales = []
@@ -1069,3 +1062,5 @@ general_prospect = Prospect.find_or_create_by(
 #    )
 #  end
 #
+
+#######TERMINA LA SECCIÓN PARA PRUEBAS######

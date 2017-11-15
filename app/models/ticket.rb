@@ -11,12 +11,7 @@ class Ticket < ActiveRecord::Base
   has_many :service_offereds
   belongs_to :cfdi_use
   has_many :payments
-
-  # Estos ya no #
-  has_many :products, through: :products_tickets
-  has_many :products_tickets
-  has_many :services_tickets
-  has_many :services, through: :services_tickets
-  # Estos ya no #
-
+  has_many :children, through: :tickets_child, foreign_key: 'children_id'
+  has_many :tickets_child
+  belongs_to :parent, class_name: 'Ticket', foreign_key: 'parent_id'
 end

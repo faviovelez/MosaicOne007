@@ -227,18 +227,22 @@ module BillsHelper
     @address
   end
 
-  def select_tickets(store = current_user.store)
-    tickets = store.tickets.where(bill: nil)
-    @tickets = []
-    tickets.each do |ticket|
-       name = ticket.ticket_type.first + ticket.ticket_number.to_s + ' ' + number_to_currency(ticket.total).to_s + ' '
-       date = I18n.l (ticket.created_at).to_date, format: :short
-       name << date + ' '
-       name << ticket.prospect.legal_or_business_name + ' ' if ticket.prospect.present?
-       name << ticket.cfdi_use.key if ticket.cfdi_use.present?
-      @tickets << [name, ticket.id]
+  def select_tickets
+    tickets = []
+    @tickets.each do |ticket|
+      tickets << ticket
     end
+    @tickets = tickets
     @tickets
+  end
+
+  def select_orders
+    orders = []
+    @orders.each do |order|
+      orders << order
+    end
+    @orders = orders
+    @orders
   end
 
   def select_prospect(store = current_user.store)
@@ -248,6 +252,10 @@ module BillsHelper
       @prospects << [prospect.legal_or_business_name, prospect.id]
     end
     @prospects
+  end
+
+  def check_uncheck_checkbox
+    @value = (@prospect != nil)
   end
 
   def select_cfdi_use
@@ -270,6 +278,64 @@ module BillsHelper
 
   def store_rfc
     @store_rfc = current_user.store.business_unit.billing_address.rfc.upcase
+  end
+
+  def ticket_user(ticket)
+    @name = ''
+    user = ticket.user
+    string = user.first_name.split.map(&:capitalize)*' '
+    @name << string + ' '
+    user.middle_name == nil ? string = '' : user.middle_name.split.map(&:capitalize)*' '
+    @name << string
+    string = user.last_name.split.map(&:capitalize)*' '
+    @name << string
+    @name
+  end
+
+  def get_returns_or_changes(ticket)
+    difference = []
+    ticket.children.each do |ticket|
+      difference << ticket.total
+    end
+    difference = difference.inject(&:+)
+    difference == nil ? @difference = 0 : @difference = difference
+    @difference
+  end
+
+  def get_total_with_returns_or_changes(ticket)
+    get_returns_or_changes(ticket)
+    @ticket_total = ticket.total + @difference
+    @ticket_total
+  end
+
+  def get_payments_from_individual_ticket(ticket)
+    get_total_with_returns_or_changes(ticket)
+    payments = []
+    payments << ticket.payments_amount
+    ticket.children.each do |t|
+        payments << t.payments_amount
+    end
+    payments = payments.inject(&:+)
+    payments == nil ? @payments = 0 : @payments = payments
+    @ticket_total == @payments ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(@ticket_total - payments).to_s
+    @pending
+  end
+
+  def get_payments_from_individual_order(order)
+    payments = []
+    order.payments.each do |payment|
+      payments << payment.total
+    end
+    payments = payments.inject(&:+)
+    payments == nil ? @payments = 0 : @payments = payments
+    if @payments == 0
+      @pending = content_tag(:span, 'pendiente', class: 'label label-warning')
+    elsif @order_total == @payments
+      @pending = content_tag(:span, 'pagado', class: 'label label-success')
+    else
+      @pending = number_to_currency(@ticket_total - payments).to_s
+    end
+      @pending
   end
 
   def store_name
@@ -325,9 +391,11 @@ module BillsHelper
     rows
     amounts = []
     @rows.each do |row|
-      amounts << row.amount
+      amounts << row.subtotal
     end
-    @subtotal = amounts.inject(&:+)
+    subtotal = amounts.inject(&:+)
+    @subtotal = subotal.round(2)
+    @subtotal
   end
 
   def total_taxes
@@ -336,24 +404,28 @@ module BillsHelper
     @rows.each do |row|
       amounts << row.taxes
     end
-    @total_taxes = amounts.inject(&:+)
+    total_taxes = amounts.inject(&:+)
+    @total_taxes = total_taxes.round(2)
+    @total_taxes
   end
 
   def total
     rows
     amounts = []
     @rows.each do |row|
-      total = row.taxes + row.amount
+      total = row.total
       amounts << total
     end
-    @total = amounts.inject(&:+)
+    total = amounts.inject(&:+)
+    @total = total.round(2)
+    @total
   end
 
   def total_discount
     rows
     amounts = []
     @rows.each do |row|
-      total = row.discount_applied * row.quantity
+      total = row.discount_applied
       amounts << total
     end
     @total_discount = amounts.inject(&:+)
@@ -372,7 +444,7 @@ module BillsHelper
     payments = []
     @tickets_selected.each do |ticket|
       ticket.payments.where(payment_type: 'pago').each do |payment|
-        payments << [payment.payment_form.description, payment.amount]
+        payments << [payment.payment_form.description, payment.total]
         @all_payments << payment
       end
     end

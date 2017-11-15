@@ -3,7 +3,7 @@
   <h2 class="info-title">Datos de facturación </h2>
 
     <p><strong>Tipo de persona: </strong>
-      <%= @billing.type_of_person.titleize %>
+      <%= show_non_blank_field(@billing.type_of_person.titleize) %>
     </p>
 
     <p><strong>Nombre o Razón Social: </strong>

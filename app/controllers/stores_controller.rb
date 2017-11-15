@@ -5,6 +5,8 @@ class StoresController < ApplicationController
   before_action :allow_only_platform_admin_role, only: :new
   before_action :allow_store_admin_or_platform_admin_role, only: :edit
 
+  require 'csv'
+
   def index
     @stores = Store.all
   end
@@ -27,15 +29,23 @@ class StoresController < ApplicationController
   end
 
   def create
+    get_last_series
     @store = Store.new(store_params)
 ############################################################
 #CAMBIAR ESTA LÓGICA AL TENER UN BUSCADOR CON AJAX
     zip_code_is_in_sat_list
 ############################################################
     assign_cost_type
-    assign_series
+    get_last_series
     respond_to do |format|
       if @store.save
+        assign_series
+        save_certificate_number
+        save_certificate_content
+        save_pem_certificate
+        save_pem_key
+        save_encrypted_key
+        save_unencrypted_key
         create_warehouse
         StoresJobsJob.perform_later @store
         create_prospect_from_store
@@ -56,6 +66,13 @@ class StoresController < ApplicationController
     zip_code_is_in_sat_list
 ############################################################
     assign_cost_type
+    save_certificate_number
+    save_certificate_content
+    save_pem_certificate
+    save_pem_key
+    save_encrypted_key
+    save_unencrypted_key
+    save_csv_files
       @prospect = Prospect.find_by_store_code(@store.store_code) || Prospect.find_by_store_prospect_id(@store)
     respond_to do |format|
       if @store.update(store_params)
@@ -79,10 +96,40 @@ class StoresController < ApplicationController
     end
   end
 
+  def get_last_series
+    @last_series = Store.last.series
+  end
+
   def assign_series
-    #stores = Store.all.order(:created_at)
-    #last_series = stores.last.series
-    #@store.series = last_series.next
+    @store.update(series: @last_series)
+  end
+
+  def save_csv_files
+    if (params[:store][:initial_inventory].present? || params[:store][:current_inventory].present? || params[:store][:prospects].present?)
+      initial_inventory = params[:store][:initial_inventory]
+      current_inventory = params[:store][:current_inventory]
+      prospects = params[:store][:prospects]
+
+      csv_text = File.read(Rails.root.join('uploads', 'store', 'prospects', 'prospects.csv'))
+
+      csv_text = File.read(Rails.root.join('uploads', 'store', 'current_inventory', 'current_inventory.csv'))
+
+      csv_text = File.read(Rails.root.join('uploads', 'store', 'initial_inventory', 'initial_inventory.csv'))
+      csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+      csv.each do |row|
+        t = TaxRegime.find_or_create_by(
+                                        {
+                                          tax_id: row['tax_id'],
+                                          description: row['description'],
+                                          particular: row['particular'],
+                                          corporate: row['corporate'],
+                                          date_since: row['date_since']
+                                        }
+                                      )
+        puts "#{t.id}, #{t.tax_id}, #{t.description} saved"
+      end
+
+    end
   end
 
 ############################################################
@@ -192,6 +239,94 @@ class StoresController < ApplicationController
 
 private
 
+  def get_certificate_number
+    file = File.join(Rails.root, "public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer")
+    serial = `openssl x509 -inform DER -in #{file} -noout -serial`
+    n = serial.slice(7..46)
+    @certificate_number = ''
+    x = 1
+    for i in 0..n.length
+      if x % 2 == 0
+        @certificate_number << n[i]
+      end
+      x += 1
+    end
+    @certificate_number
+  end
+
+  def save_certificate_number
+    unless params[:store][:certificate] == nil
+      get_certificate_number
+      @store.update(certificate_number: @certificate_number)
+    end
+  end
+
+  def save_certificate_content
+    unless params[:store][:certificate] == nil
+      cer_file = Rails.root.join('public', 'uploads', 'store', "#{@store.id}", 'certificate', 'cer.cer')
+      b64 = Base64.encode64(File::read(cer_file))
+      clean = b64.gsub("\n",'')
+      @store.update(certificate_content: clean)
+    end
+  end
+
+  def save_pem_certificate
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.pem"), "w") do |file|
+      file.write('')
+    end
+
+    cer_pem = Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.pem")
+    `openssl x509 -inform DER -outform PEM -in #{cer_file} -pubkey -out #{cer_pem}`
+  end
+
+  def save_der_certificate
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.der"), "w") do |file|
+      file.write('')
+    end
+
+    cer_der = Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.der")
+
+    `openssl x509 -outform der -in #{cer_pem} -out #{cer_der}`
+  end
+
+  def save_pem_key
+    file = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.key")
+    password = params[:store][:certificate_password]
+
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.pem"), "w") do |file|
+      file.write('')
+    end
+
+    key_pem = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.pem")
+    `openssl pkcs8 -inform DER -in #{file} -passin pass:#{password} -out #{key_pem}`
+  end
+
+  def save_encrypted_key
+    file = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.pem")
+    password = ENV['password_pac']
+
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key"), "w") do |file|
+      file.write('')
+    end
+
+    enc = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key")
+
+    `openssl rsa -in #{file} -des3 -out #{enc} -passout pass:"#{password}"`
+  end
+
+  def save_unencrypted_key
+    file = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key")
+    password = ENV['password_pac']
+
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "new_key.pem"), "w") do |file|
+      file.write('')
+    end
+
+    new_pem = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "new_key.pem")
+
+    `openssl rsa -in #{file} -passin pass:"#{password}" -out #{new_pem}`
+  end
+
   def get_discount_rules
     @b_units = BusinessGroup.find_by_business_group_type('main').business_units
     @corporate_d_rules = DiscountRule.where(business_unit: @b_units)
@@ -269,7 +404,22 @@ private
                                   :type_of_person,
                                   :prospect_status,
                                   :zipcode,
-                                  :overprice
+                                  :overprice,
+                                  :certificate,
+                                  :key,
+                                  :certificate_password,
+                                  :certificate_number,
+                                  :certificate_content,
+                                  :bill_last_folio,
+                                  :credit_note_last_folio,
+                                  :debit_note_last_folio,
+                                  :return_last_folio,
+                                  :pay_bill_last_folio,
+                                  :advance_e_last_folio,
+                                  :advance_i_last_folio,
+                                  :initial_inventory,
+                                  :current_inventory,
+                                  :prospects
                                   )
   end
 

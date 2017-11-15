@@ -21,7 +21,7 @@
 
     <div class="form-inside-style">
       <%= f.label :código_de_la_tienda %>
-      <%= f.text_field :store_code, class: 'form-inside' %>
+      <%= f.text_field :store_code, value: @store.store_code class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">
@@ -89,6 +89,26 @@
     <div class="form-inside-style">
       <%= f.label :grupo_de_negocios %>
       <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}, selected: @store.business_group_id) %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :sobreprecio %>
+      <%= f.text_field :overprice, maxlength: 5, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :certificado_sat %>
+      <%= f.file_field :certificate, accept: '.cer' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :llave_sat %>
+      <%= f.file_field :key, accept: '.key' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :password_del_certificado %>
+      <%= f.text_field :certificate_password, class: 'form-inside', value: @store.certificate_password %>
     </div>
 
     <div class="button-container">
