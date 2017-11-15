@@ -10,23 +10,23 @@
 <% end %>
 
 <% if @orders.count >= 1 %>
-  <table id="orders">
-    <thead>
-      <tr class="table-titles">
-        <th></th>
-        <th class="col-md-1">No.</th>
-        <th class="col-md-1">Tienda</th>
-        <th>Tipo</th>
-        <th>Solicitada</th>
-        <th>Total</th>
-        <th>Saldo / Estauts</th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= form_tag({ controller: 'bills', action: 'select_info' }, method: 'get') do %>
+  <%= form_tag({ controller: 'bills', action: 'select_info' }, method: 'post') do %>
+    <table id="orders">
+      <thead>
+        <tr class="table-titles">
+          <th></th>
+          <th class="col-md-1">No.</th>
+          <th class="col-md-1">Tienda</th>
+          <th>Tipo</th>
+          <th>Solicitada</th>
+          <th>Total</th>
+          <th>Saldo / Estauts</th>
+        </tr>
+      </thead>
+      <tbody>
         <% @orders.each do |order| %>
           <tr>
-            <td> <%= check_box_tag "orders", "#{order.id}", false, { id: "orders[#{order.id}]" } %> </td>
+            <td> <%= check_box_tag "orders[]", "#{order.id}", false, { multiple: true, id: "orders[#{order.id}]" } %> </td>
             <td> <%= order.id %> </td>
             <td> <%= order.store.store_name %> </td>
             <td> <%= order.category.capitalize %> </td>
@@ -35,9 +35,15 @@
             <td> <%= get_payments_from_individual_order(order) %> </td>
           </tr>
         <% end %>
-      <% end %>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+
+    <div class="actions">
+      <%= submit_tag 'Seleccionar datos', class: 'main-button' %>
+    </div><br /><br />
+
+  <% end %>
+
 <% else %>
   <p class="individual-font">No hay pedidos pendientes por facturar </p>
 <% end %>

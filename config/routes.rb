@@ -38,6 +38,8 @@ Rails.application.routes.draw do
 
   get 'products/special'
 
+  get 'stores/upload_info'
+
   resources :products do
     get 'images', to: 'products#images', as: 'product_images'
     resources :images, controller: 'products'
@@ -100,9 +102,9 @@ Rails.application.routes.draw do
 
   get 'bills/global_doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#global_doc', as: 'bill_global_doc'
 
-  get 'bills/preview/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#preview', as: 'bills_preview'
+  get 'bills/preview'
 
-  get 'bills/global_preview/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#global_preview', as: 'bills_global_preview'
+  get 'bills/global_preview'
 
   post 'bills/process_info'
 

@@ -8,31 +8,43 @@
   <%= javascript_include_tag 'bills' %>
 <% end %>
 
-<h2> Seleccione los datos de la factura que desea elaborar</h2>
+<h2> Selecciona los datos de la factura que desea elaborar</h2>
 
-<%= form_tag({ controller: 'bills', action: 'process_info' }, method: 'get') do %>
+<%= form_tag({ controller: 'bills', action: 'preview' }, method: 'get') do %>
 
   <div class="field form-inside-style prospect-list margin-select">
     <%= label_tag :facturar_a_cliente %>
-    <%= radio_button_tag(:cfdi_type, 'prospect') %>
+    <%= radio_button_tag :cfdi_type, 'prospect', check_uncheck_checkbox %>
     <%= label_tag :factura_global %>
-    <%= radio_button_tag(:cfdi_type, 'global') %>
+    <%= radio_button_tag :cfdi_type, 'global' %>
   </div>
 
   <div class="field form-inside-style prospect-list margin-select select_prospect">
     <%= label_tag :seleccione_cliente %>
-    <%= select_tag :prospect, options_for_select(select_prospect, selected: @prospect.id), {include_blank: true, multiple: true, class: 'select2-prospect'} %>
+    <%= select_tag :prospect, options_for_select(select_prospect, selected: @prospect&.id), {include_blank: true, multiple: true, class: 'select2-prospect'} %>
   </div>
 
   <div class="field form-inside-style prospect-list margin-select">
     <%= label_tag :seleccione_uso_de_la_factura %>
-    <%= select_tag :cfdi_use, options_for_select(select_cfdi_use, selected: @cfdi_use.id), {include_blank: true, multiple: true, class: 'select2-cfdi'} %>
+    <%= select_tag :cfdi_use, options_for_select(select_cfdi_use, selected: @cfdi_use&.id), {include_blank: true, multiple: true, class: 'select2-cfdi'} %>
   </div>
 
   <div class="field form-inside-style prospect-list margin-select hidden">
     <%= label_tag :seleccione_el_tipo_de_factura %>
-    <%= select_tag :type_of_bill, options_for_select(select_cfdi_type, selected: @type_of_bill) %>
+    <%= select_tag :type_of_bill, options_for_select(select_cfdi_type, selected: @type_of_bill&.id) %>
   </div>
+
+  <% unless @tickets == nil%>
+    <div class="hidden">
+      <%= select_tag :tickets, options_for_select(select_tickets, selected: @tickets), {multiple: true} %>
+    </div>
+  <% end %>
+
+  <% unless @orders == nil%>
+    <div class="hidden">
+      <%= select_tag :orders, options_for_select(select_orders, selected: @orders), {multiple: true} %>
+    </div>
+  <% end %>
 
   <div class="actions">
     <%= submit_tag 'Vista previa de factura', class: 'main-button' %>

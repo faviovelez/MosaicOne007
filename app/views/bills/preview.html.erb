@@ -2,11 +2,11 @@
 
 <div class="top-right-preview">
   <h3 id="top-title"> FACTURA </h3>
-  <p> Serie: <span> <%= current_user.store.series %> </span> </p>
-  <p> Folio: <span> <%= current_user.store.last_bill.next %> </span> </p>
-  <p> Fecha:  <span> <%= l Date.today %> </span> </p>
-  <p> Lugar de expedición: <span> <%= current_user.store.zip_code %> </span> </p>
-  <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> <%= @type_of_bill %> </span> </p>
+  <p> Serie: <span> <%= @series %> </span> </p>
+  <p> Folio: <span> <%= @folio %> </span> </p>
+  <p> Fecha:  <span> <%= @date %> </span> </p>
+  <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
+  <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill %> </span> </p>
 </div>
 
 <table id="issuing-receiving-table-preview">
@@ -18,15 +18,15 @@
   </thead>
   <tbody>
     <tr>
-      <td class="half first"> RFC: <span> <%= store_rfc %> </span> </td>
-      <td class="half "> RFC: <span> <%= prospect_rfc %> </span> </td>
+      <td class="half first"> RFC: <span> <%= @store_rfc %> </span> </td>
+      <td class="half "> RFC: <span> <%= @prospect_rfc %> </span> </td>
     </tr>
     <tr>
-      <td class="half first"> Nombre: <span> <%= store_name %> </span> </td>
-      <td class="half"> Nombre: <span> <%= prospect_name %> </span> </td>
+      <td class="half first"> Nombre: <span> <%= @store_name %> </span> </td>
+      <td class="half"> Nombre: <span> <%= @prospect_name %> </span> </td>
     </tr>
     <tr>
-      <td class="half first"> Régimen Fiscal: <span> <strong> <%= tax_regime_key %> </strong> - <%= tax_regime %> </td>
+      <td class="half first"> Régimen Fiscal: <span> <strong> <%= @tax_regime_key %> </strong> - <%= @tax_regime %> </td>
       <td class="half"> Uso CFDI: <span> <strong> <%= @cfdi_use_key %> </strong> - <%= @cfdi_use %> </span> </td>
     </tr>
   </tbody>
@@ -41,11 +41,11 @@
   <tbody class="border-around">
     <tr>
       <td class="half first"> Moneda: <span> <strong> MXN </strong> - Peso Mexicano </span> </td>
-      <td class="half"> Forma de pago: <span> <strong> <%= greatest_payment_key %> </strong> - <%= greatest_payment %> </span> </td>
+      <td class="half"> Forma de pago: <span> <strong> <%= @payment_key %> </strong> - <%= @payment_description %> </span> </td>
     </tr>
     <tr>
-      <td class="half first"> Método de pago:  <span> <strong> <%= payment_method_key %> </strong> - <%= payment_method %> </span> </td>
-      <td class="half"> Condiciones de pago: <span> <%= payment_form %> </span> </td>
+      <td class="half first"> Método de pago:  <span> <strong> <%= @method_key %> </strong> - <%= @method_description %> </span> </td>
+      <td class="half"> Condiciones de pago: <span> <%= @payment_form %> </span> </td>
     </tr>
     <tr class="hidden">
       <td class="half first"> Tipo de cambio: <span> 1.000000 </span> </td>

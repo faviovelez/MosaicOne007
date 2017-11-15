@@ -5,6 +5,8 @@ class StoresController < ApplicationController
   before_action :allow_only_platform_admin_role, only: :new
   before_action :allow_store_admin_or_platform_admin_role, only: :edit
 
+  require 'csv'
+
   def index
     @stores = Store.all
   end
@@ -70,6 +72,7 @@ class StoresController < ApplicationController
     save_pem_key
     save_encrypted_key
     save_unencrypted_key
+    save_csv_files
       @prospect = Prospect.find_by_store_code(@store.store_code) || Prospect.find_by_store_prospect_id(@store)
     respond_to do |format|
       if @store.update(store_params)
@@ -99,6 +102,34 @@ class StoresController < ApplicationController
 
   def assign_series
     @store.update(series: @last_series)
+  end
+
+  def save_csv_files
+    if (params[:store][:initial_inventory].present? || params[:store][:current_inventory].present? || params[:store][:prospects].present?)
+      initial_inventory = params[:store][:initial_inventory]
+      current_inventory = params[:store][:current_inventory]
+      prospects = params[:store][:prospects]
+
+      csv_text = File.read(Rails.root.join('uploads', 'store', 'prospects', 'prospects.csv'))
+
+      csv_text = File.read(Rails.root.join('uploads', 'store', 'current_inventory', 'current_inventory.csv'))
+
+      csv_text = File.read(Rails.root.join('uploads', 'store', 'initial_inventory', 'initial_inventory.csv'))
+      csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+      csv.each do |row|
+        t = TaxRegime.find_or_create_by(
+                                        {
+                                          tax_id: row['tax_id'],
+                                          description: row['description'],
+                                          particular: row['particular'],
+                                          corporate: row['corporate'],
+                                          date_since: row['date_since']
+                                        }
+                                      )
+        puts "#{t.id}, #{t.tax_id}, #{t.description} saved"
+      end
+
+    end
   end
 
 ############################################################
@@ -385,7 +416,10 @@ private
                                   :return_last_folio,
                                   :pay_bill_last_folio,
                                   :advance_e_last_folio,
-                                  :advance_i_last_folio
+                                  :advance_i_last_folio,
+                                  :initial_inventory,
+                                  :current_inventory,
+                                  :prospects
                                   )
   end
 

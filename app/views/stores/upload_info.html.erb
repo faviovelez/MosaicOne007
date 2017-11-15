@@ -1,0 +1,32 @@
+
+<%= form_for(@store) do |f| %>
+
+  <h2 class="info-title">Actualizar datos de tienda</h2>
+  <div class="form-container">
+
+    <div class="form-inside-style">
+      <%= f.label :archivo_de_clientes %>
+      <%= f.file_field :prospects, accept: '.csv' %>
+    </div>
+
+    <% if @store.initial_inventory.present? %>
+      <div class="form-inside-style">
+        <%= f.label :archivo_de_inventario %>
+        <%= f.file_field :initial_inventory, accept: '.csv' %>
+      </div>
+    <% else %>
+      <div class="form-inside-style">
+        <%= f.label :archivo_de_inventario %>
+        <%= f.file_field :current_inventory, accept: '.csv' %>
+      </div>
+    <% else %>
+
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :Crear, class: 'main-button' %>
+      </div>
+    </div>
+
+  </div>
+
+<% end %>

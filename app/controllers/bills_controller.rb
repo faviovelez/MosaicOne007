@@ -22,7 +22,12 @@ class BillsController < ApplicationController
 
     store = current_user.store
     @tickets = store.tickets.where(parent:nil).where(bill: nil)
-    tickets = params[:tickets]
+  end
+
+  def select_orders(user_role = current_user.role.name)
+    permitted_roles = ['admin-desk']
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless permitted_roles.include?(user_role)
+    @orders = Order.where(status: 'en espera').where(bill: nil)
   end
 
   def select_info
@@ -36,28 +41,11 @@ class BillsController < ApplicationController
     end
     get_prospect_from_objects(objects)
     @type_of_bill = TypeOfBill.first
+    @tickets = params[:tickets] unless params[:tickets] == nil
+    @orders = params[:orders] unless params[:orders] == nil
   end
 
-  def process_data
-    @tickets = params[:tickets].split('/').flatten
-    type_of_bill = params[:type_of_bill]
-    get_prospect_from_tickets
-    get_cfdi_use_from_tickets
-    prospect = ''
-    params[:cfdi_use].blank? ? cfdi_use = @cfdi_use : cfdi_use = params[:cfdi_use]
-    if params[:cfdi_type] == 'prospect'
-      params[:prospect].blank? ? prospect = @prospect : prospect = params[:prospect]
-      redirect_to bills_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
-    else
-      prospect = Prospect.find_by_legal_or_business_name('Público en General')
-      redirect_to bills_global_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
-    end
-  end
-
-  def select_orders(user_role = current_user.role.name)
-    permitted_roles = ['admin-desk']
-    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless permitted_roles.include?(user_role)
-    @orders = Order.where(status: 'en espera').where(bill: nil)
+  def process_info
   end
 
   def process_info
@@ -76,26 +64,170 @@ class BillsController < ApplicationController
     end
   end
 
+  def process_info
+    @tickets = params[:tickets].split('/').flatten
+    type_of_bill = params[:type_of_bill]
+    get_prospect_from_tickets
+    get_cfdi_use_from_tickets
+    prospect = ''
+    params[:cfdi_use].blank? ? cfdi_use = @cfdi_use : cfdi_use = params[:cfdi_use]
+    if params[:cfdi_type] == 'prospect'
+      params[:prospect].blank? ? prospect = @prospect : prospect = params[:prospect]
+      redirect_to bills_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
+    else
+      prospect = Prospect.find_by_legal_or_business_name('Público en General')
+      redirect_to bills_global_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
+    end
+  end
+
+  def process_data
+    @tickets = params[:tickets].split('/').flatten
+    type_of_bill = params[:type_of_bill]
+    get_prospect_from_tickets
+    get_cfdi_use_from_tickets
+    prospect = ''
+    params[:cfdi_use].blank? ? cfdi_use = @cfdi_use : cfdi_use = params[:cfdi_use]
+    if params[:cfdi_type] == 'prospect'
+      params[:prospect].blank? ? prospect = @prospect : prospect = params[:prospect]
+      redirect_to bills_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
+    else
+      prospect = Prospect.find_by_legal_or_business_name('Público en General')
+      redirect_to bills_global_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
+    end
+  end
+
+  def
+
   def preview
-    @tickets_selected = []
-    tickets = params[:tickets].split('/')
-    tickets.each do |ticket|
-      @tickets_selected << Ticket.find(ticket)
-    end
-    @prospect = Prospect.find(params[:prospect])
-    cfdi_use = CfdiUse.find(params[:cfdi_use])
-    @cfdi_use = cfdi_use.description
-    @cfdi_use_key = cfdi_use.key
-    type_of_bill = TypeOfBill.find(params[:type_of_bill])
-    @type_of_bill_key = type_of_bill.key
-    @type_of_bill =  ' ' + '-' + ' ' + type_of_bill.description
-    if @prospect.billing_address == nil
+    prospect = Prospect.find(params[:prospect])
+    if prospect.billing_address == nil
       redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
+    else
+      if params[:cfdi_type] == 'global'
+        redirect_to bills_global_preview_path()
+        @general_bill = true
+      else
+        @general_bill = false
+        store = current_user.store
+        s_billing = store.business_unit.billing_address
+        # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL prospect = Prospect.find_by_legal_or_business_name('Público en General')
+        prospect = Prospect.find(params[:prospect])
+        p_billing = prospect.billing_address
+        @series = store.series
+        @folio = store.bill_last_folio.next
+        @date = Time.now.strftime('%FT%T')
+        @zipcode = store.zip_code
+        type_of_bill = TypeOfBill.find(params[:type_of_bill])
+        @type_of_bill_key = type_of_bill.key
+        @type_of_bill = type_of_bill.description
+        @store_rfc = s_billing.rfc.upcase
+        @prospect_rfc = p_billing.rfc.upcase
+        @store_name = s_billing.business_name.split.map(&:capitalize)*' '
+        # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL NO DEBE SALIR
+        @prospect_name = p_billing.business_name.split.map(&:capitalize)*' '
+        regime = current_user.store.business_unit.billing_address.tax_regime
+        @tax_regime_key = s_billing.regime.tax_id
+        @tax_regime = s_billing.regime.description
+        # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL CfdiUse.find_by_key('P01')
+        cfdi_use = CfdiUse.find(params[:cfdi_use])
+        @cfdi_use_key = cfdi_use.key
+        @cfdi_use = cfdi_use.description
+        greatest_payment_key
+        @payment_key = @greatest_payment.payment_id
+        @payment_description = @payments.first.first
+        payment_method_(@total_payment, @list_of_payments)
+        @method_description = @method.description
+        @method_key = @method.method
+        @payment_form
+      end
     end
-    @tickets_selected
+  end
+
+  def get_payments
+    @tickets == nil ? objects = @orders : objects = @tickets
+    payments = []
+    if objects.first.is_a?(Ticket)
+      objects.each do |object|
+        object.payments.each do |payment|
+          payments << [payment.payment_form.description, payment.total]
+        end
+        object.children.each do |children|
+          children.payments.each do |pay|
+            payments << [pay.payment_form.description, pay.total]
+          end
+        end
+      end
+    else
+      objects.each do |object|
+        object.payments.each do |payment|
+          payments << [payment.payment_form.description, payment.total]
+        end
+      end
+    end
+    @list_of_payments = payments
+    @payments = payments.group_by(&:first).map{ |k,v| [k, v.inject(0){ |sum, i| (sum + i.second).round(2) }] }.sort_by{|pay_form| pay_form.second}.reverse
+    total_payment = []
+    @payments.each do |payment|
+      total_payment << payment.second
+    end
+    @total_payment = total_payment.inject(&:+)
+  end
+
+  def greatest_payment_key
+    get_payments
+    @greatest_payment = PaymentForm.find_by_description(@payments.first.first)
+  end
+
+  def get_returns_or_changes_(ticket)
+    difference = []
+    ticket.children.each do |ticket|
+      difference << ticket.total
+    end
+    difference = difference.inject(&:+)
+    difference == nil ? @difference = 0 : @difference = difference
+    @difference
+  end
+
+  def get_total_with_returns_or_changes_(ticket)
+    get_returns_or_changes(ticket)
+    @ticket_total = ticket.total + @difference
+    @ticket_total
+  end
+
+  def payment_method_(payments, list_of_payments)
+    total_all_tickets = 0
+    object.each do |o|
+      get_total_with_returns_or_changes_(o)
+      total_all_tickets += @ticket_total
+    end
+    if total_all_tickets <= payments
+      method = PaymentMethod.find_by_method('PUE')
+    else
+      method = PaymentMethod.find_by_method('PPD')
+    end
+    @method = method
+    payment_form(@method, list_of_payments)
+    @method
+  end
+
+  def payment_form(method, list_of_payments)
+    credit_payments = []
+    if method.method == 'PUE'
+      @form = 'Contado'
+    else
+      list_of_payments.each do |payment|
+        credit_payments << payment.credit_days unless (payment.credit_days == nil || payment.credit_days == 0 || payment.credit_days == '')
+      end
+      days = credit_payments.sort.reverse.first
+      @form = 'Crédito'
+      @form += ' ' + days.to_s + ' ' + días unless (days == nil || days == [] || days == [''] || days == '')
+    end
+    @payment_form
   end
 
   def global_preview
+    @date = Time.now.strftime('%FT%T')
+    debugger
     @tickets_selected = []
     tickets = params[:tickets].split('/')
     tickets.each do |ticket|
@@ -391,28 +523,204 @@ class BillsController < ApplicationController
     ##TAL VEZ GUARDE EN UNA CONSTANTE EL PASSWORD DE FINKOK##
   end
 
-  def rows
+  def rows(general_bill, objects)
     @rows = []
-    if @general_bill
-      @tickets_selected.each do |ticket|
-        @rows << ticket
+    if (general_bill == true && objects.first.is_a?(Ticket))
+      objects.each do |o|
+        new_hash = Hash.new.tap do |hash|
+          hash["ticket"] = ''
+          hash["quantity"] = '1'
+          hash["unit_value"] = 0
+          hash["sat_key"] = '01010101'
+          hash["sat_unit_key"] = 'ACT'
+          hash["description"] = 'Venta'
+          hash["total"] = 0
+          hash["subtotal"] = 0
+          hash["taxes"] = 0
+          hash["discount"] = 0
+        end
+        new_hash["ticket"] = o.ticket_number
+        new_hash["total"] += o.total unless o.total == nil
+        new_hash["unit_value"] += o.subtotal unless o.subtotal == nil
+        new_hash["subtotal"] += o.subtotal unless o.subtotal == nil
+        new_hash["taxes"] += o.taxes unless o.taxes == nil
+        new_hash["discount"] += o.discount_applied unless o.discount_applied == nil
+        o.children.each do |children|
+          new_hash["total"] += children.total unless children.total == nil
+          new_hash["unit_value"] += children.subtotal unless children.subtotal == nil
+          new_hash["subtotal"] += children.subtotal unless children.subtotal == nil
+          new_hash["taxes"] += children.taxes unless children.taxes == nil
+          new_hash["discount"] += children.discount_applied unless children.discount_applied == nil
+        end
+        @rows << new_hash
       end
-    else
-      if @tickets_selected.is_a?(Ticket)
-        @tickets_selected.store_movements.each do |sale|
+    elsif (general_bill == false && objects.first.is_a?(Ticket))
+      objects.each do |o|
+        o.store_movements.each do |sm|
+          new_hash = Hash.new.tap do |hash|
+            hash["product_id"] = ''
+            hash["unique_code"] = ''
+            hash["quantity"] = 0
+            hash["unit_value"] = 0
+            hash["ticket"] = ''
+            hash["sat_key"] = ''
+            hash["sat_unit_key"] = ''
+            hash["description"] = ''
+            hash["total"] = 0
+            hash["subtotal"] = 0
+            hash["taxes"] = 0
+            hash["discount"] = 0
+          end
+          new_hash["product_id"] = sm.product.id
+          new_hash["ticket"] = sm.ticket.id
+          new_hash["quantity"] = sm.quantity
+          new_hash["unit_value"] = sm.initial_price
+          new_hash["sat_key"] = sm.product.sat_key.sat_key
+          new_hash["sat_unit_key"] = sm.product.sat_unit_key.unit
+          new_hash["sat_unit_description"] = sm.product.sat_unit_key.description
+          new_hash["description"] = sm.product.description.capitalize
+          new_hash["unique_code"] = sm.product.unique_code
+          new_hash["total"] = sm.total
+          new_hash["subtotal"] = sm.subtotal
+          new_hash["taxes"] = sm.taxes
+          sm.discount_applied == nil ? new_hash["discount"] = 0 : new_hash["discount"] = sm.discount_applied
+          @rows << new_hash
+        end
+        o.service_offereds.each do |so|
+          new_hash = Hash.new.tap do |hash|
+            hash["service_id"] = ''
+            hash["unique_code"] = ''
+            hash["quantity"] = 0
+            hash["unit_value"] = 0
+            hash["ticket"] = ''
+            hash["sat_key"] = ''
+            hash["sat_unit_key"] = ''
+            hash["description"] = ''
+            hash["total"] = 0
+            hash["subtotal"] = 0
+            hash["taxes"] = 0
+            hash["discount"] = 0
+          end
+          new_hash["service_id"] = sm.service.id
+          new_hash["ticket"] = so.ticket.id
+          new_hash["quantity"] = so.quantity
+          new_hash["unit_value"] = so.initial_price
+          new_hash["sat_key"] = so.service.sat_key.sat_key
+          new_hash["sat_unit_key"] = so.service.sat_unit_key.unit
+          new_hash["sat_unit_description"] = so.service.sat_unit_key.description
+          new_hash["description"] = so.service.description.capitalize
+          new_hash["unique_code"] = so.service.unique_code
+          new_hash["total"] = so.total
+          new_hash["subtotal"] = so.subtotal
+          new_hash["taxes"] = so.taxes
+          so.discount_applied == nil ? new_hash["discount"] = 0 : new_hash["discount"] = so.discount_applied
+          @rows << new_hash
+        end
+        o.children.each do |children|
+          children.store_movements.each do |sm|
+            product = sm.product.unique_code
+            ticket = sm.ticket.parent.id
+            i = ''
+            @rows.each_with_index do |key, index|
+              i = index if (key["unique_code"] == product && key["ticket"] == ticket)
+            end
+            if i == ''
+              new_hash = Hash.new.tap do |hash|
+                hash["product_id"] = ''
+                hash["unique_code"] = ''
+                hash["quantity"] = 0
+                hash["unit_value"] = 0
+                hash["ticket"] = ''
+                hash["sat_key"] = ''
+                hash["sat_unit_key"] = ''
+                hash["description"] = ''
+                hash["total"] = 0
+                hash["subtotal"] = 0
+                hash["taxes"] = 0
+                hash["discount"] = 0
+              end
+              new_hash["product_id"] = sm.product.id
+              new_hash["ticket"] = sm.ticket.id
+              new_hash["quantity"] = sm.quantity
+              new_hash["unit_value"] = sm.initial_price
+              new_hash["sat_key"] = sm.product.sat_key.sat_key
+              new_hash["sat_unit_key"] = sm.product.sat_unit_key.unit
+              new_hash["sat_unit_description"] = sm.product.sat_unit_key.description
+              new_hash["description"] = sm.product.description.capitalize
+              new_hash["unique_code"] = sm.product.unique_code
+              new_hash["total"] = sm.total
+              new_hash["subtotal"] = sm.subtotal
+              new_hash["taxes"] = sm.taxes
+              sm.discount_applied == nil ? new_hash["discount"] = 0 : new_hash["discount"] = sm.discount_applied
+              @rows << new_hash
+            else
+              @rows[i]["quantity"] += sm.quantity
+            end
+          end
+          children.service_offereds.each do |so|
+            serv = so.product.unique_code
+            ticket = so.ticket.parent.id
+            i = ''
+            @rows.each_with_index do |key, index |
+              i = index if (key["unique_code"] == serv && key["ticket"] == ticket)
+            end
+            if i == ''
+              new_hash = Hash.new.tap do |hash|
+                hash["service_id"] = ''
+                hash["unique_code"] = ''
+                hash["quantity"] = 0
+                hash["unit_value"] = 0
+                hash["ticket"] = ''
+                hash["sat_key"] = ''
+                hash["sat_unit_key"] = ''
+                hash["description"] = ''
+                hash["total"] = 0
+                hash["subtotal"] = 0
+                hash["taxes"] = 0
+                hash["discount"] = 0
+              end
+              new_hash["service_id"] = sm.service.id
+              new_hash["ticket"] = so.ticket.id
+              new_hash["quantity"] = so.quantity
+              new_hash["unit_value"] = so.initial_price
+              new_hash["sat_key"] = so.service.sat_key.sat_key
+              new_hash["sat_unit_key"] = so.service.sat_unit_key.unit
+              new_hash["sat_unit_description"] = so.service.sat_unit_key.description
+              new_hash["description"] = so.service.description.capitalize
+              new_hash["unique_code"] = so.service.unique_code
+              new_hash["total"] = so.total
+              new_hash["subtotal"] = so.subtotal
+              new_hash["taxes"] = so.taxes
+              so.discount_applied == nil ? new_hash["discount"] = 0 : new_hash["discount"] = so.discount_applied
+              @rows << new_hash
+            else
+              @rows[i]["quantity"] += so.quantity
+            end
+          end
+        end
+        blank_rows_indices = []
+        @rows.each_with_index{ |key, index | blank_rows_indices << index if key["quantity"] == 0 }
+        blank_rows_indices.each do |i|
+          @rows.delete_at(i)
+        end
+      end
+      # Falta ver si agrego un código para agrupar sin tener que coincidir el ticket
+    elsif (general_bill == true && objects.first.is_a?(Order))
+      objects.each do |ticket|
+        ticket.store_movements.each do |sale|
           @rows << sale
         end
-        @tickets_selected.service_offereds.each do |serv|
+        ticket.service_offereds.each do |serv|
           @rows << serv
         end
-      else
-        @tickets_selected.each do |ticket|
-          ticket.store_movements.each do |sale|
-            @rows << sale
-          end
-          ticket.service_offereds.each do |serv|
-            @rows << serv
-          end
+      end
+    else (general_bill == false && objects.first.is_a?(Order))
+      objects.each do |ticket|
+        ticket.store_movements.each do |sale|
+          @rows << sale
+        end
+        ticket.service_offereds.each do |serv|
+          @rows << serv
         end
       end
     end
@@ -445,22 +753,6 @@ class BillsController < ApplicationController
       amounts << total
     end
     @total = amounts.inject(&:+)
-  end
-
-  def process_info
-    @tickets = params[:tickets].split('/').flatten
-    type_of_bill = params[:type_of_bill]
-    get_prospect_from_tickets
-    get_cfdi_use_from_tickets
-    prospect = ''
-    params[:cfdi_use].blank? ? cfdi_use = @cfdi_use : cfdi_use = params[:cfdi_use]
-    if params[:cfdi_type] == 'prospect'
-      params[:prospect].blank? ? prospect = @prospect : prospect = params[:prospect]
-      redirect_to bills_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
-    else
-      prospect = Prospect.find_by_legal_or_business_name('Público en General')
-      redirect_to bills_global_preview_path(tickets: [@tickets], prospect: prospect, cfdi_use: cfdi_use, type_of_bill: type_of_bill), notice: "Confirme que la información es correcta."
-    end
   end
 
   def get_prospect_from_objects(object)

@@ -227,18 +227,22 @@ module BillsHelper
     @address
   end
 
-  def select_tickets(store = current_user.store)
-    tickets = store.tickets.where(bill: nil)
-    @tickets = []
-    tickets.each do |ticket|
-       name = ticket.ticket_type.first + ticket.ticket_number.to_s + ' ' + number_to_currency(ticket.total).to_s + ' '
-       date = I18n.l (ticket.created_at).to_date, format: :short
-       name << date + ' '
-       name << ticket.prospect.legal_or_business_name + ' ' if ticket.prospect.present?
-       name << ticket.cfdi_use.key if ticket.cfdi_use.present?
-      @tickets << [name, ticket.id]
+  def select_tickets
+    tickets = []
+    @tickets.each do |ticket|
+      tickets << ticket
     end
+    @tickets = tickets
     @tickets
+  end
+
+  def select_orders
+    orders = []
+    @orders.each do |order|
+      orders << order
+    end
+    @orders = orders
+    @orders
   end
 
   def select_prospect(store = current_user.store)
@@ -248,6 +252,10 @@ module BillsHelper
       @prospects << [prospect.legal_or_business_name, prospect.id]
     end
     @prospects
+  end
+
+  def check_uncheck_checkbox
+    @value = (@prospect != nil)
   end
 
   def select_cfdi_use
