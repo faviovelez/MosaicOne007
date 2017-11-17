@@ -26,6 +26,22 @@ Rails.application.routes.draw do
 
   get 'filtered_requests/product_view'
 
+  get 'stores/download_products_example'
+
+  get 'stores/download_prospects_example'
+
+  get 'stores/upload_info'
+
+  post 'stores/save_csv_files'
+
+  get 'stores/show_settings/:id', to: 'stores#show_settings', as: 'store_settings'
+
+  get 'stores/settings/:id', to: 'stores#settings', as: 'edit_store_settings'
+
+  get 'products/catalogue'
+
+  get 'products/special'
+
   devise_for :users
 
   scope "/admin" do
@@ -33,12 +49,6 @@ Rails.application.routes.draw do
   end
 
   resources :delivery_addresses
-
-  get 'products/catalogue'
-
-  get 'products/special'
-
-  get 'stores/upload_info'
 
   resources :products do
     get 'images', to: 'products#images', as: 'product_images'
@@ -199,8 +209,9 @@ Rails.application.routes.draw do
 
   get 'orders/history'
 
-  get 'stores/show_settings/:id', to: 'stores#show_settings', as: 'store_settings'
-
-  get 'stores/settings/:id', to: 'stores#settings', as: 'edit_store_settings'
-
+  # Agregar la ruta para descargar los archivos, el link para descargarlos y el link en el navbar
+  # Agregar un proceso para crear un archivo de productos csv en las carpetas de stores
+  # con nuevos códigos cada que se cree un nuevo producto de tienda (solo agregar renglón
+  # para su tienda) o de corporativo
+  # Links dinámicos para actualizar
 end

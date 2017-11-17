@@ -31,6 +31,10 @@ button#btn-notice {
   font-size: 2rem;
 }
 
+.extra-margin-top {
+  margin-top: 4rem;
+}
+
 .payments-summary > thead > tr > th,
 .payments-summary > tbody > tr > td {
   padding: 0.5rem 1rem;

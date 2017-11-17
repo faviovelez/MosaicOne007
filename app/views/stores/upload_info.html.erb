@@ -1,29 +1,34 @@
 
-<%= form_for(@store) do |f| %>
+<%= link_to 'Archivo de inventarios', "/example_files/inventarios.csv" %>
+
+<%= link_to 'Archivo de clientes',  '/example_files/clientes.csv' %>
+
+<%= form_for(@store, url: {action: 'save_csv_files'}, method: :post) do |user_form| %>
 
   <h2 class="info-title">Actualizar datos de tienda</h2>
   <div class="form-container">
 
     <div class="form-inside-style">
-      <%= f.label :archivo_de_clientes %>
-      <%= f.file_field :prospects, accept: '.csv' %>
+      <%= user_form.label :archivo_de_clientes %>
+      <%= user_form.file_field :prospects, accept: '.csv' %>
     </div>
 
-    <% if @store.initial_inventory.present? %>
+    <% if @store.initial_inventory.blank? %>
       <div class="form-inside-style">
-        <%= f.label :archivo_de_inventario %>
-        <%= f.file_field :initial_inventory, accept: '.csv' %>
+        <%= user_form.label :archivo_de_inventario %>
+        <%= user_form.file_field :initial_inventory, accept: '.csv' %>
       </div>
+
     <% else %>
       <div class="form-inside-style">
-        <%= f.label :archivo_de_inventario %>
-        <%= f.file_field :current_inventory, accept: '.csv' %>
+        <%= user_form.label :archivo_de_inventario %>
+        <%= user_form.file_field :current_inventory, accept: '.csv' %>
       </div>
-    <% else %>
+    <% end %>
 
     <div class="button-container">
-      <div class="actions">
-        <%= f.submit :Crear, class: 'main-button' %>
+      <div class="actions extra-margin-top">
+        <%= user_form.submit :subir_archivos, class: 'main-button' %>
       </div>
     </div>
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171111221308) do
+ActiveRecord::Schema.define(version: 20171117041744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1294,6 +1294,9 @@ ActiveRecord::Schema.define(version: 20171111221308) do
     t.integer  "pay_bill_last_folio",      default: 0
     t.integer  "advance_e_last_folio",     default: 0
     t.integer  "advance_i_last_folio",     default: 0
+    t.string   "initial_inventory"
+    t.string   "current_inventory"
+    t.string   "prospects"
   end
 
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree
@@ -1331,10 +1334,10 @@ ActiveRecord::Schema.define(version: 20171111221308) do
   create_table "stores_warehouse_entries", force: :cascade do |t|
     t.integer  "product_id"
     t.integer  "store_id"
-    t.integer  "quantity"
+    t.integer  "quantity",              default: 0
     t.integer  "movement_id"
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.integer  "retail_units_per_unit"
     t.integer  "units_used"
     t.integer  "store_movement_id"
