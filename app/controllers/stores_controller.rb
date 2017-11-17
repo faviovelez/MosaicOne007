@@ -35,9 +35,10 @@ class StoresController < ApplicationController
 
   def download_products_example
     send_file(
-      "#{Rails.root}/public/example_files/inventarios.csv",
+      "/example_files/inventarios.csv",
       type: 'text/csv; charset=iso-8859-1; header=present',
-      disposition: "attachment; filename=inventarios_tienda_#{@store.id}.csv"
+      disposition: "attachment",
+      filename: "inventarios_tienda_#{@store.id}.csv"
     )
   end
 
@@ -45,7 +46,8 @@ class StoresController < ApplicationController
     send_file(
       "#{Rails.root}/public/example_files/clientes.csv",
       type: 'text/csv; charset=iso-8859-1; header=present',
-      disposition: "attachment; filename=clientes_tienda_#{@store.id}.csv"
+      disposition: "attachment",
+      filename: "clientes_tienda_#{@store.id}.csv"
     )
   end
 

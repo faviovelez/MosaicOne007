@@ -1,7 +1,7 @@
 
-<%= link_to 'Archivo de inventarios', stores_download_products_example_path %>
+<%= link_to 'Archivo de inventarios', "/example_files/inventarios.csv" %>
 
-<%= link_to 'Archivo de clientes',  stores_download_prospects_example_path %>
+<%= link_to 'Archivo de clientes',  '/example_files/clientes.csv' %>
 
 <%= form_for(@store, url: {action: 'save_csv_files'}, method: :post) do |user_form| %>
 
