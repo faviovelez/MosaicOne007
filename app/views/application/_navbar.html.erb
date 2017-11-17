@@ -63,6 +63,9 @@
                   <li>
                     <%= link_to 'Alta de proveedor', new_business_group_supplier_path(current_user.store.business_unit.business_group) %>
                   </li>
+                  <li>
+                    <%= link_to 'Alta de inventario', stores_upload_info_path %>
+                  </li>
                 <% end %>
                 <% if current_user.role.name == 'platform-admin' || current_user.role.name == 'store-admin' %>
                   <li>
