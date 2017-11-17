@@ -1,11 +1,12 @@
 class StoresController < ApplicationController
   # En este se crean nuevas tiendas (solo el usuario de product-admin deberá poder crearlas y un user 'store' solo podrá modificarlas (algunas modificaciones estarán restringidas)
   before_action :authenticate_user!
-  before_action :set_store, only: [:show, :edit, :update, :show_settings, :settings]
+  before_action :set_store, only: [:show, :edit, :update, :show_settings, :settings, :download_products_example, :download_prospects_example]
   before_action :allow_only_platform_admin_role, only: :new
   before_action :allow_store_admin_or_platform_admin_role, only: :edit
 
   require 'csv'
+  require 'open-uri'
 
   def index
     @stores = Store.all
@@ -28,6 +29,32 @@ class StoresController < ApplicationController
   def show_settings
   end
 
+  def upload_info
+    @store = current_user.store
+  end
+
+  def download_products_example
+    send_file(
+      "#{Rails.root}/public/example_files/inventarios.csv",
+      type: 'text/csv; charset=iso-8859-1; header=present',
+      disposition: "attachment; filename=inventarios_tienda_#{@store.id}.csv"
+    )
+  end
+
+  def download_prospects_example
+    send_file(
+      "#{Rails.root}/public/example_files/clientes.csv",
+      type: 'text/csv; charset=iso-8859-1; header=present',
+      disposition: "attachment; filename=clientes_tienda_#{@store.id}.csv"
+    )
+  end
+
+  def generate_products_example
+  end
+
+  def generate_prospects_example
+  end
+
   def create
     get_last_series
     @store = Store.new(store_params)
@@ -40,14 +67,10 @@ class StoresController < ApplicationController
     respond_to do |format|
       if @store.save
         assign_series
-        save_certificate_number
-        save_certificate_content
-        save_pem_certificate
-        save_pem_key
-        save_encrypted_key
-        save_unencrypted_key
+        certificate_saving_process
+        key_savign_process
         create_warehouse
-        StoresJobsJob.perform_later @store
+        create_stores_inventory(@store)
         create_prospect_from_store
         create_supplier_for_store
         create_cash_register
@@ -66,14 +89,9 @@ class StoresController < ApplicationController
     zip_code_is_in_sat_list
 ############################################################
     assign_cost_type
-    save_certificate_number
-    save_certificate_content
-    save_pem_certificate
-    save_pem_key
-    save_encrypted_key
-    save_unencrypted_key
-    save_csv_files
-      @prospect = Prospect.find_by_store_code(@store.store_code) || Prospect.find_by_store_prospect_id(@store)
+    certificate_saving_process
+    key_savign_process
+    @prospect = Prospect.find_by_store_code(@store.store_code) || Prospect.find_by_store_prospect_id(@store)
     respond_to do |format|
       if @store.update(store_params)
         update_prospect_from_store
@@ -105,30 +123,255 @@ class StoresController < ApplicationController
   end
 
   def save_csv_files
+    @store = current_user.store
     if (params[:store][:initial_inventory].present? || params[:store][:current_inventory].present? || params[:store][:prospects].present?)
-      initial_inventory = params[:store][:initial_inventory]
-      current_inventory = params[:store][:current_inventory]
-      prospects = params[:store][:prospects]
+      @store.update(
+      initial_inventory: params[:store][:initial_inventory],
+      current_inventory: params[:store][:current_inventory],
+      prospects: params[:store][:prospects]
+      )
+      process_csv_files
+    end
+  end
 
-      csv_text = File.read(Rails.root.join('uploads', 'store', 'prospects', 'prospects.csv'))
+  def process_csv_files
+    @product_counter = 0
+    @prospect_create_counter = 0
+    @prospect_update_counter = 0
+    initial_inventory = params[:store][:initial_inventory]
+    current_inventory = params[:store][:current_inventory]
+    prospects = params[:store][:prospects]
 
-      csv_text = File.read(Rails.root.join('uploads', 'store', 'current_inventory', 'current_inventory.csv'))
-
-      csv_text = File.read(Rails.root.join('uploads', 'store', 'initial_inventory', 'initial_inventory.csv'))
-      csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+    unless initial_inventory == nil
+      url = @store.initial_inventory_url
+      csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+      unfinded = []
       csv.each do |row|
-        t = TaxRegime.find_or_create_by(
-                                        {
-                                          tax_id: row['tax_id'],
-                                          description: row['description'],
-                                          particular: row['particular'],
-                                          corporate: row['corporate'],
-                                          date_since: row['date_since']
-                                        }
-                                      )
-        puts "#{t.id}, #{t.tax_id}, #{t.description} saved"
+        store = @store
+        product = Product.find_by_unique_code(row['cod'])
+        if product.nil?
+          unfinded << row['cod']
+        else
+          inventory = store.stores_inventories.where(product: product).first
+          entries = store.stores_warehouse_entries.where(product: product)
+          quantity = row['cant'].to_i
+          discount_percent = 0.35
+          cost = product.price * (1 - discount_percent)
+          discount = cost * discount_percent * quantity
+          final_price = cost * (1 - discount_percent)
+          entries.each do |entry|
+            entry.delete
+          end
+          movement = StoreMovement.new(
+            movement_type: 'alta',
+            store: store,
+            product: product,
+            quantity: quantity,
+            cost: cost,
+            total_cost: (cost * quantity).round(2),
+            supplier: product.supplier,
+            discount_applied: discount.round(2),
+            automatic_discount: discount.round(2)
+          )
+          if movement.save
+            @product_counter += 1
+          end
+          StoresWarehouseEntry.create(
+            product: product,
+            store: store,
+            quantity: quantity,
+            store_movement: movement
+          )
+          inventory.update(quantity: quantity)
+        end
       end
+      unfinded.join(", ")
+      @product_undefined = unfinded
+    end
 
+    unless current_inventory == nil
+      url = @store.current_inventory_url
+      csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+      unfinded = []
+      csv.each do |row|
+        store = @store
+        product = Product.find_by_unique_code(row['cod'])
+        if product.nil?
+          unfinded << row['cod']
+        else
+          inventory = store.stores_inventories.where(product: product).first
+          entries = store.stores_warehouse_entries.where(product: product)
+          quantity = row['cant'].to_i
+          discount_percent = 0.35
+          cost = product.price * (1 - discount_percent)
+          discount = cost * discount_percent * quantity
+          final_price = cost * (1 - discount_percent)
+          entries.each do |entry|
+            entry.delete
+          end
+          movement = StoreMovement.new(
+            movement_type: 'alta',
+            store: store,
+            product: product,
+            quantity: quantity,
+            cost: cost,
+            total_cost: (cost * quantity).round(2),
+            supplier: product.supplier,
+            discount_applied: discount.round(2),
+            automatic_discount: discount.round(2)
+          )
+          if movement.save
+            @product_counter += 1
+          end
+          StoresWarehouseEntry.create(
+            product: product,
+            store: store,
+            quantity: quantity,
+            store_movement: movement
+          )
+          inventory.update(quantity: quantity)
+        end
+      end
+      unfinded.join(", ")
+      @product_undefined = unfinded
+    end
+
+    unless prospects == nil
+      url = @store.prospects_url
+      csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+      unfinded = []
+      csv.each do |row|
+        store = @store
+        name = row['nombre_de_empresa_o_cliente']
+        phone = row['tel_fijo']
+        contact_first_name = row['contacto_primer_nombre']
+        contact_last_name = row['contacto_apellido_paterno']
+        if (name == '' || phone == '' || contact_first_name == '' || contact_last_name == '' || phone.length < 10)
+          unfinded << name
+        else
+          if Prospect.find_by_legal_or_business_name(name) == nil
+            prospect = Prospect.create(
+              legal_or_business_name: name,
+              prospect_type: row['giro'],
+              contact_first_name: contact_first_name,
+              contact_middle_name: row['contacto_segundo_nombre'],
+              contact_last_name: contact_last_name,
+              second_last_name: row['contacto_apellido_materno'],
+              contact_position: row['puesto_del_contacto'],
+              direct_phone: phone,
+              extension: row['ext'],
+              cell_phone: row['cel'],
+              email: row['mail']
+            )
+            @prospect_create_counter += 1
+            if prospect.billing_address == nil
+              rfc = row['rfc']
+              unless (rfc == nil || rfc.length < 12 || rfc.length > 13)
+                BillingAddress.create(
+                  business_name: name,
+                  rfc: row['rfc'],
+                  street: row['calle'],
+                  exterior_number: row['num_ext'],
+                  interior_number: row['num_int'],
+                  zipcode: row['cod_postal'],
+                  neighborhood: row['colonia'],
+                  city: row['ciudad'],
+                  state: row['estado'],
+                  country: 'México'
+                )
+              end
+            else
+              BillingAddress.update(
+                business_name: name,
+                rfc: row['rfc'],
+                street: row['calle'],
+                exterior_number: row['num_ext'],
+                interior_number: row['num_int'],
+                zipcode: row['cod_postal'],
+                neighborhood: row['colonia'],
+                city: row['ciudad'],
+                state: row['estado']
+              )
+            end
+          else
+            prospect = Prospect.find_by_legal_or_business_name(name)
+            prospect.update(
+              legal_or_business_name: name,
+              prospect_type: row['giro'],
+              contact_first_name: contact_first_name,
+              contact_middle_name: row['contacto_segundo_nombre'],
+              contact_last_name: contact_last_name,
+              second_last_name: row['contacto_apellido_materno'],
+              contact_position: row['puesto_del_contacto'],
+              direct_phone: phone,
+              extension: row['ext'],
+              cell_phone: row['cel'],
+              email: row['mail']
+            )
+            @prospect_update_counter += 1
+            if prospect.billing_address == nil
+              rfc = row['rfc']
+              unless (rfc == nil || rfc.length < 12 || rfc.length > 13)
+                BillingAddress.create(
+                  business_name: name,
+                  rfc: row['rfc'].upcase,
+                  street: row['calle'],
+                  exterior_number: row['num_ext'],
+                  interior_number: row['num_int'],
+                  zipcode: row['cod_postal'],
+                  neighborhood: row['colonia'],
+                  city: row['ciudad'],
+                  state: row['estado'],
+                  country: 'México'
+                )
+              end
+            else
+              BillingAddress.update(
+                business_name: name,
+                rfc: row['rfc'].upcase,
+                street: row['calle'],
+                exterior_number: row['num_ext'],
+                interior_number: row['num_int'],
+                zipcode: row['cod_postal'],
+                neighborhood: row['colonia'],
+                city: row['ciudad'],
+                state: row['estado']
+              )
+            end
+          end
+        end
+      end
+      unfinded.join(", ")
+      @prospects_results = unfinded
+    end
+    @product_counter
+    @prospect_create_counter
+    @prospect_update_counter
+
+    notice_string = ""
+    notice_string += "Productos actualizados: #{@product_counter}. " if @product_counter > 0
+    notice_string += "Prospectos creados: #{@prospect_create_counter}. " if @prospect_create_counter > 0
+    notice_string += "Prospectos actualizados: #{@prospect_update_counter}. " if @prospect_update_counter > 0
+    notice_string += "Los siguientes códigos no fueron encontrados: #{@product_undefined}. " if @product_undefined != ''
+    notice_string += "Los prospectos no fueron agregados / actualizados por falta de datos: #{@prospects_results}. " if @prospects_results != ''
+
+    redirect_to root_path, notice: "#{notice_string}"
+  end
+
+  def all_products_except_special
+    suppliers_id = []
+    Supplier.where(name: [
+                          'Diseños de Cartón',
+                          'Comercializadora de Cartón y Diseño'
+                          ]).each do |supplier|
+                            suppliers_id << supplier.id
+                          end
+    Product.where(supplier: suppliers_id).where.not(classification: ['especial', 'de tienda'])
+  end
+
+  def create_stores_inventory(store)
+    all_products_except_special.each do |product|
+      StoresInventory.create(product: product, store: store)
     end
   end
 
@@ -239,6 +482,22 @@ class StoresController < ApplicationController
 
 private
 
+  def certificate_saving_process
+    unless params[:store][:certificate] == nil
+      save_certificate_number
+      save_certificate_content
+      save_pem_certificate
+    end
+  end
+
+  def key_savign_process
+    unless params[:store][:key] == nil
+      save_pem_key
+      save_encrypted_key
+      save_unencrypted_key
+    end
+  end
+
   def get_certificate_number
     file = File.join(Rails.root, "public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer")
     serial = `openssl x509 -inform DER -in #{file} -noout -serial`
@@ -255,10 +514,8 @@ private
   end
 
   def save_certificate_number
-    unless params[:store][:certificate] == nil
-      get_certificate_number
-      @store.update(certificate_number: @certificate_number)
-    end
+    get_certificate_number
+    @store.update(certificate_number: @certificate_number)
   end
 
   def save_certificate_content
