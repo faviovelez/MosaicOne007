@@ -30,5 +30,5 @@ class Prospect < ActiveRecord::Base
   validates :direct_phone, length: {is: 10, message: 'Por favor anote el número telefónico completo a 10 dígitos (incluyendo clave LADA) solo números.'}
 
   # validates :cell_phone, length: {is: 10, message: 'Por favor anote el celular completo a 10 dígitos sin 044 O 045.'}
-
+  # Que pida solo un teléfono, o cel o fijo
 end
