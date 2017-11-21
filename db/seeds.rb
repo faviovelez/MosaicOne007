@@ -353,7 +353,6 @@ end
 [
   { name: 'kraft' },
   { name: 'bond' }
-
 ].each do |hash|
   InteriorColor.find_or_create_by(hash)
   ExteriorColor.find_or_create_by(hash)
@@ -369,7 +368,6 @@ end
   { name: 'Cierre automático'},
   { name: 'Medicina o perfume'},
   { name: 'Pizza'}
-
 ].each do |hash|
   DesignLike.find_or_create_by(hash)
 end
@@ -392,7 +390,6 @@ end
   { key: 'T', description: 'Traslado' },
   { key: 'N', description: 'Nómina' },
   { key: 'P', description: 'Pago' }
-
 ].each do |hash|
   TypeOfBill.find_or_create_by(hash)
 end
