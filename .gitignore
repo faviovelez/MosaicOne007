@@ -15,7 +15,7 @@
 /log/*
 !/log/.keep
 /tmp
-
+/public/uploads
 /public/assets
 /.env
 /.env.production
