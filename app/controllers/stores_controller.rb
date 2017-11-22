@@ -91,11 +91,11 @@ class StoresController < ApplicationController
     zip_code_is_in_sat_list
 ############################################################
     assign_cost_type
-    certificate_saving_process
-    key_savign_process
     @prospect = Prospect.find_by_store_code(@store.store_code) || Prospect.find_by_store_prospect_id(@store)
     respond_to do |format|
       if @store.update(store_params)
+        certificate_saving_process
+        key_savign_process
         update_prospect_from_store
         format.html { redirect_to @store, notice: 'La tienda fue modificado exitosamente.' }
         format.json { render :show, status: :ok, location: @store }
@@ -501,6 +501,7 @@ private
   end
 
   def get_certificate_number
+    debugger
     file = File.join(Rails.root, "public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer")
     serial = `openssl x509 -inform DER -in #{file} -noout -serial`
     n = serial.slice(7..46)
@@ -522,8 +523,8 @@ private
 
   def save_certificate_content
     unless params[:store][:certificate] == nil
-      cer_file = Rails.root.join('public', 'uploads', 'store', "#{@store.id}", 'certificate', 'cer.cer')
-      b64 = Base64.encode64(File::read(cer_file))
+      @cer_file = Rails.root.join('public', 'uploads', 'store', "#{@store.id}", 'certificate', 'cer.cer')
+      b64 = Base64.encode64(File::read(@cer_file))
       clean = b64.gsub("\n",'')
       @store.update(certificate_content: clean)
     end
@@ -535,7 +536,7 @@ private
     end
 
     cer_pem = Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.pem")
-    `openssl x509 -inform DER -outform PEM -in #{cer_file} -pubkey -out #{cer_pem}`
+    `openssl x509 -inform DER -outform PEM -in #{@cer_file} -pubkey -out #{cer_pem}`
   end
 
   def save_der_certificate
@@ -678,7 +679,7 @@ private
                                   :advance_i_last_folio,
                                   :initial_inventory,
                                   :current_inventory,
-                                  :prospects
+                                  :prospects_file
                                   )
   end
 

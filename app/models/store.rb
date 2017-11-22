@@ -45,7 +45,7 @@ class Store < ActiveRecord::Base
   mount_uploader :key, SatKeyUploader
   mount_uploader :initial_inventory, InitialInventoryUploader
   mount_uploader :current_inventory, CurrentInventoryUploader
-  mount_uploader :prospects, ProspectsUploader
+  mount_uploader :prospects_file, ProspectsUploader
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 

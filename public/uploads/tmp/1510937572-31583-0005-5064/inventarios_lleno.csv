@@ -1,0 +1,723 @@
+cod,desc,cant,estante,nivel,costo_unitario
+1002,ecoburo combo zapatera 12 espacios 38x33x63,100,1,1,120.34
+1005,ecoburo combo zapatera 8 espacios 38x33x63,500,2,2,100.35
+1007,ecoburo combo p/bolsa de dama 38x33x63,200,3,3,99.28
+1101,archiva extra 35x15x27,300,4,4,10.5
+1201,ecoburo (3 cajones) 26x36x28,150,5,5,8.5
+1205,ecojoyero vintage y turquesa 10.5x12.8x15,450,6,1,9.23
+1301,caja sastre chica vintage y turquesa  35x26x10,325,7,2,7.45
+1305,caja sastre mini 22.5x30.5x7,100,8,3,1456
+1306,caja sastre chica  35x26x10,500,9,4,6.55
+1307,caja sastre mediana 49x42x10,200,10,5,4.58
+1308,caja sastre grande 81x50x13,300,1,1,10.5
+1309,caja sastre chica impresa  35x26x10,150,2,2,8.5
+1310,caja sastre mediana impresa 49x42x10,450,3,3,9.23
+1311,caja sastre grande impresa 81x50x13,325,4,4,7.45
+1502,archivo plástico oficio 50x38x26,100,5,5,1456
+1503,archivo plástico economico 37x31x28,500,6,1,6.55
+1801,lh 00 neceser 25x17x12.5,200,7,2,4.58
+1802,pc archivo 80 decorada 78x40x30,300,8,3,10.5
+1803,pc archivo 50 decorada 50x35x25,150,9,4,8.5
+1804,pc archivo 30 decorada 38x30x25,450,10,5,9.23
+1805,lh 00 neceser decorado 25x17x12.5,325,1,1,7.45
+1905,ecoburo combo grande 4 cajones 38x33x63,100,2,2,1456
+1906,ecoburo combo chico 3 cajones 38x34x49,500,3,3,6.55
+2001,correcajon mediano 18x14x10,200,4,4,4.58
+2002,concentra cajon mediano 30.5x19.5x22,300,5,5,10.5
+2003,correcajon grande 23x23x15.5,150,6,1,8.5
+2005,concentra cajon grande 23x24.5x31.5,450,7,2,9.23
+2006,correcajon chico 12.7x19.2x8.4,325,8,3,7.45
+2007,concentra cajon chico 20x27x9,100,9,4,1456
+2008,concentra cd 30.4x16.7x26,500,10,5,6.55
+2010,corre cd 24.5x14x15.5,200,1,1,4.58
+2302,cofre chico 18x12x8.5,300,2,2,10.5
+2303,hexagono 3 charolas 10.5x10.5x11,150,3,3,8.5
+2304,lapicero c/divisiones 8.5x8.5x9.5,450,4,4,9.23
+2305,dispenser unipecos 9.5x9.5x3.5,325,5,5,7.45
+2306,gavetero 3 cajones 12x14x12,100,6,1,1456
+2307,hexagono grande 13.5x13.5x8,500,7,2,6.55
+2308,hexágono mediano  12x12x7,200,8,3,4.58
+2309,hexágono chico 10x10x7,300,9,4,10.5
+2313,alhajero secreter 17x11.5x9,150,10,5,8.5
+2314,porta unipcos c/cajón 11x11x10.5,450,1,1,9.23
+2315,revistero 25x10.5x30,325,2,2,7.45
+2317,portatarjeta 10x6x3.5,100,3,3,1456
+2318,portaretratos 19x24,500,4,4,6.55
+2319,caja lapicera 22x8x3.5,200,5,5,4.58
+2320,clinera 23x12x5.5,300,6,1,10.5
+2323,estuche p/reloj 20.5x5.5x2.5,150,7,2,8.5
+2324,estuchep/pluma 17x5x2,450,8,3,9.23
+2326,joyero rectangular  26.5x12x8,325,9,4,7.45
+2327,octagono 25x25x14,100,10,5,1456
+2328,porta clips 11x7x7,500,1,1,6.55
+2401,pc archivo 80 super 55 ect 78x40x30,200,2,2,4.58
+2402,pc archivo 70 oficio largo 55 ect 60x35x25,300,3,3,10.5
+2403,pc archivo 50 oficio 55 ect 50x35x25,150,4,4,8.5
+2404,pc archivo 40 carta 55 ect 50x31x25,450,5,5,9.23
+2405,pc archivo 30 mixto 55 ect 38x30x25,325,6,1,7.45
+2406,pc archivo 20 1/2 carta largo 44 ect 50x23x16,100,7,2,1456
+2407,pc archivo 10 1/2 carta 44 ect 25x23x16,500,8,3,6.55
+2409,pc archivo 60 carta larga 55 ect 60x31x25,200,9,4,4.58
+2410,pc archivo 55 archivo carpeta 55 ect 50x35x29,300,10,5,10.5
+2413,pc archivo 40 blanca alta 44 ect 50x31x25,150,1,1,8.5
+2501,dc archivo 70 oficio larga económica 40 ect 60x35x25,450,2,2,9.23
+2502,dc archivo 60 carta larga económica 40 ect 60x31x25,325,3,3,7.45
+2503,dc archivo 50 oficio económica 40 ect 50x35x25,100,4,4,1456
+2504,dc archivo 40 carta económica 40 ect 50x31x25,500,5,5,6.55
+2505,dc archivo 30 archivo mixta económica 40 ect 38x30x25,200,6,1,4.58
+2506,dc archivo 55 archivo carpeta 40 ect 50x35x29,300,7,2,10.5
+2602,eco 40 archivo carta 26 ect 50x31x25,150,8,3,8.5
+2603,eco 50 archivo oficio 26 ect 50x35x25,450,9,4,9.23
+2804,archidiario 44 ect 39x17.5x30,325,10,5,7.45
+2900,sobre jiffylite # 0 16x22,100,1,1,1456
+2901,sobre jiffylite # 1 18.5x27.5,500,2,2,6.55
+2902,sobre jiffylite # 2 21.5x30.5,200,3,3,4.58
+2903,sobre jiffylite # 4 24x37,300,4,4,10.5
+2904,sobre jiffylite # 5 27x37,150,5,5,8.5
+2905,sobre jiffylite # 7 36.5x50.5,450,6,1,9.23
+2906,sobre jiffylite # 000 12x18,325,7,2,7.45
+2907,sobre manila t/carta 23x30.5,100,8,3,1456
+2908,sobre manila t/oficio 26x34,500,9,4,6.55
+3103,archigaveta oficio largo 44 ect 40x64.5x28,200,10,5,4.58
+3203,archiva oficio corr. bond 44 ect 35x10x26.5,300,1,1,10.5
+3204,archiva carta corr. bond  44 ect 31x10x26.5,150,2,2,8.5
+3401,maletin micro blanco 35x27x9,450,3,3,9.23
+3402,maletin blanco corrugado 44 ect 37.5x26x10.5,325,4,4,7.45
+3404,sobre ecológico carta 44 ect 34.5x24.5x2.8,100,5,5,1456
+3405,sobre ecológico t/oficio 44 ect 36x25.5x3,500,6,1,6.55
+3501,reviarchivo grande 29 ect 26.5x12x25.9,200,7,2,4.58
+3502,reviarchivo chico 26 ect 23x10x24,300,8,3,10.5
+3503,revistero chico c/e vintage y turqueza 23x10x25,150,9,4,8.5
+3206,archiva gob 1 44 ect 38x12x30,450,10,5,9.23
+3601,archiva gob 1 economica 29 ect 38x12x30,325,1,1,7.45
+3602,archiva gob 2 44 ect 38x19x30,100,2,2,1456
+3701,tubo portaplano  1.09 cm,500,3,3,6.55
+3702,tubo portaplano  91.5 cm,200,4,4,4.58
+3703,tubo portaplano  78 cm,300,5,5,10.5
+3704,tubo portaplano  66 cm,150,6,1,8.5
+3705,tubo portaplano  33.5,450,7,2,9.23
+3801,tarjetero grande 44 ect 22x14x13,325,8,3,7.45
+3802,tarjetero mediano 44 ect 15.5x10.5x11,100,9,4,1456
+3803,tarjetero chico 44 ect 13.5x8.5x9,500,10,5,6.55
+3912,carpeta c/herraje de argolla 3/4 carta kraft ,200,1,1,4.58
+3913,"carpeta c/herraje de argolla 1"" carta kraft ",300,2,2,10.5
+3914,"carpeta c/herraje de argolla 2"" carta kraft ",150,3,3,8.5
+3915,"carpeta c/herraje de argolla 3"" carta kraft ",450,4,4,9.23
+3916,folder carta kraft  29.6x23.5,325,5,5,7.45
+3917,folder oficio kraft  34.6x23.5,100,6,1,1456
+3922,dispenser unipecos kraft ,500,7,2,6.55
+3924,lapicero con divisiones kraft ,200,8,3,4.58
+3925,portatarjetas kraft ,300,9,4,10.5
+3926,sobre tipo bolsa carta kraft  ,150,10,5,8.5
+3927,sobre tipo bolsa oficio kraft  ,450,1,1,9.23
+3932,libreta forma francesa kraft ,325,2,2,7.45
+3933,libreta 1/4 de carta kraft ,100,3,3,1456
+3935,pluma ecologica de papel reciclado kraft  ,500,4,4,6.55
+3941,archiva carta ecologica 29 ect 31x10x26.5,200,5,5,4.58
+3942,archiva oficio ecologica 29 ect 35x10x26.5,300,6,1,10.5
+3943,reviarchivo grande ecologico 29 ect 26.5x12x26,150,7,2,8.5
+3944,archiva gob 1 ecologica ,450,8,3,9.23
+3945,portaretrato kraft ,325,9,4,7.45
+3946,sobre tipo bolsa kraft 1/2 carta  14.5x22,100,10,5,1456
+4002,polipack 1/8 x105 1/8 x 105mts,500,1,1,6.55
+4004,burbuja de aire chica 3/16 (120 mts) 1.22 x 120 mt,200,2,2,4.58
+4005,burbuja de aire gde 1/2 (60 mts) 1.22 x 60 mt,300,3,3,10.5
+4101,mic pack(por bolsa) ,150,4,4,8.5
+4201,rollo cartón corrugado 2.00 altura,450,5,5,9.23
+4202,rollo-microkraft  100 mts. 1.00 altura ,325,6,1,7.45
+4203,micro color  77x54,100,7,2,1456
+4206,codigo es servicio de empaque ,500,8,3,6.55
+4207,lamina de corrugado 29 ect 74 x 121 mt,200,9,4,4.58
+4208,lamina de corrugado 29 ect 1.00 x 1.50 mt,300,10,5,10.5
+4209,lamina doble corrugado 1.95x2.10mt,150,1,1,8.5
+4211,lamina micro bond y kraft .80 x 1.60 mt,450,2,2,9.23
+4212,lámina micro bond y kraft .60 x 90 mt,325,3,3,7.45
+4213,lámina caple .60 x 1.25 mt,100,4,4,1456
+4217,separador p/12 botellas 29 ect ,500,5,5,6.55
+4301,rollo papelkraft (precio x kilo) 1.25,200,6,1,4.58
+4302,rollo papelkraft(precio x kilo) 90,300,7,2,10.5
+4303,rollo papelkraft(precio x kilo) 60,150,8,3,8.5
+4304,rollo papelkraft(precio x kilo) 1,450,9,4,9.23
+4305,papelkraft 1.25 x metro (180 mts aprox) ,325,10,5,7.45
+4401,cinta plástica chica  48 x 50 mts,100,1,1,1456
+4402,cinta plástica mediana 48 x 100 mts,500,2,2,6.55
+4403,cinta plástica grande 48 x 150 mts,200,3,3,4.58
+4404,"despachador de cinta 2"" 2""",300,4,4,10.5
+4405,"engomado 3""",150,5,5,8.5
+4406,"engomado  2.5""",450,6,1,9.23
+4407,"engomado  2""",325,7,2,7.45
+4408,"engomado  1""",100,8,3,1456
+4412,cinta impresa fragil  ,500,9,4,6.55
+4502,millar de sellos 1/2 ,200,10,5,4.58
+4503,flejadora ,300,1,1,10.5
+4504,pinzas para flejar ,150,2,2,8.5
+4507,fleje 1/2 negro precio x kilo ,450,3,3,9.23
+4601,cutter grande  ,325,4,4,7.45
+4603,cutter chico ,100,5,5,1456
+4604,marcador de aceite ,500,6,1,6.55
+4605,silicato de sodio galón ,200,7,2,4.58
+4606,bola rafia 1 kg aprox ,300,8,3,10.5
+4609,rollo de blister 18¨x1200 pies calibre 50,150,9,4,8.5
+4612,"etiqueta fragil, hecho en mexico, copa, arriba ",450,10,5,9.23
+4613,esquineros 2¨x2¨x1.00,325,1,1,7.45
+4615,bola papel arroz 200 mts. aprox. ,100,2,2,1456
+4618,etiqueta remitente-destinatario (jgo) ,500,3,3,6.55
+4619,cinta masking tape  18x50,200,4,4,4.58
+4620,cinta masking tape  24x50,300,5,5,10.5
+4625,"blister 5"" x 1500 pies calibre 80 ",150,6,1,8.5
+4702,le e7 estantera 44 ect  46x16x13 cm,450,7,2,9.23
+4703,le e6 estantera 44 ect 32x11x11 cm,325,8,3,7.45
+4704,le e5 estantera 44 ect 30x30x11 cm,100,9,4,1456
+4705,le e4 estantera 44 ect 30x15x20 cm,500,10,5,6.55
+4706,le e3 estantera 44 ect 30x15x11 cm,200,1,1,4.58
+4707,le e2 estantera 44 ect 30x10x11 cm,300,2,2,10.5
+4708,le e01 estantera 44 ect 30x5x11 cm,150,3,3,8.5
+4709,le e3 estantera económica 29 ect 30x15x11 cm,450,4,4,9.23
+4710,ordenador de cajones 44 ect 29x10x6 cm,325,5,5,7.45
+4801,cz 06 seis pares 23 ect 32x26x28,100,6,1,1456
+4802,cz 12 doce pares 23 ect 33x27x55,500,7,2,6.55
+4803,cz 18 diesciocho pares 23 ect 48x27x55,200,8,3,4.58
+4804,cz 24 veinticuatro pares 23 ect 48x35x55,300,9,4,10.5
+4805,cz 36 treinta y seis pares 23 ect 53x48x55,150,10,5,8.5
+4806,cz 48 cuarenta y ocho pares 23 ect 54x54x65,450,1,1,9.23
+4807,caja bota grande 29 ect 43x34x11,325,2,2,7.45
+4808,caja bota chica 29 ect 31x20.5x11,100,3,3,1456
+4810,caja zapato gde micro 32x21x11,500,4,4,6.55
+4811,caja zapato chica micro 28x18x10,200,5,5,4.58
+4900,cr 98 caja reg dc 84x50x83,300,6,1,10.5
+4901,cr 90 caja reg 40 ect 90x60x50,150,7,2,8.5
+4902,cr 85 caja reg 32 ect 70x40x40,450,8,3,9.23
+4902SG,cr 85 caja reg sg 70x40x40,325,9,4,7.45
+4903,cr 80caja reg 29 ect 50x40x50,100,10,5,1456
+4904,cr 70 caja reg  29 ect 55x45x35,500,1,1,6.55
+4904SG,cr 70 caja reg sg 55x45x35,200,2,2,4.58
+4905SG,cr 60 caja reg sg 62x37x25,300,3,3,10.5
+4906,cr 50 caja reg 29 ect 50x40x25,150,4,4,8.5
+4906SG,cr 50 caja reg sg  50x40x25,450,5,5,9.23
+4907,cr 75dc caja reg 42 ect 80x50x50,325,6,1,7.45
+4908,cr 45 caja reg 29 ect 60x30x25,100,7,2,1456
+4908SG,cr 45 caja reg sg 60x30x25,500,8,3,6.55
+4909,cr 40 caja reg 29 ect 40x30x40,200,9,4,4.58
+4909SG,cr 40 caja reg sg 40x30x40,300,10,5,10.5
+4910,cr 30 caja reg 26ect 45x30x30,150,1,1,8.5
+4910SG,cr 30 caja reg sg 45x30x30,450,2,2,9.23
+4911,cr 30n caja reg navideña 26 ect 45x30x30,325,3,3,7.45
+4912,cr 20 caja reg 26 ect 40x30x30,100,4,4,1456
+4912SG,cr 20 caja reg sg 40x30x30,500,5,5,6.55
+4913,cr 15 caja reg 26 ect 30x20x20,200,6,1,4.58
+4914,cr 10 caja reg 26 ect 40x30x20,300,7,2,10.5
+4914SG,cr 10 caja reg sg 40x30x20,150,8,3,8.5
+4915,cr 03 caja reg 26 ect 30x15x20,450,9,4,9.23
+4916,cr 01 caja reg 26 ect 19x15x15,325,10,5,7.45
+4917,cr 02 caja reg 26 ect 20x16x13,100,1,1,1456
+4918,cr 75 caja reg 32 ect 80x50x50,500,2,2,6.55
+4919,cr 05 caja reg 26 ect 14x14x28,200,3,3,4.58
+4920,cr 08 caja reg 26 ect 25x16x16,300,4,4,10.5
+4921,cr 04 caja reg 26 ect 32x22x13,150,5,5,8.5
+4922,cr cubo caja reg  29 ect 60x60x60,450,6,1,9.23
+4923,cr 50 dc caja reg 42 ect 50x40x25,325,7,2,7.45
+4924,cr 09 caja reg 26 ect 38x26.5x12,100,8,3,1456
+4925,cr 25 caja reg 26 ect 30x30x30,500,9,4,6.55
+4925SG,cr 25 caja reg sg 30x30x30,200,10,5,4.58
+4926,cr 35 caja reg 26 ect 45x45x45,300,1,1,10.5
+4927,gobierno chico 26 ect 29x24x30,150,2,2,8.5
+4928,gobierno grande 29 ect 36.5x26x29,450,3,3,9.23
+4929,gobierno super 29 ect 46.5x36.5x40,325,4,4,7.45
+4930,serfin 29 ect 60x30x30,100,5,5,1456
+4930SG,serfin sg 60x30x30,500,6,1,6.55
+4931,pastelera kraft eco. 29 ect 30x30x14,200,7,2,4.58
+4932,cr 63 caja reg 29ect 63x36x26,300,8,3,10.5
+4934,cr 85 dc 42 ect 70x40x40,150,9,4,8.5
+4935,gobierno chico navideña 26 ect 29x24x30,450,10,5,9.23
+4936,cr-12 caja regular  29 ect 15x15x95,325,1,1,7.45
+5003,cr 57 caja reg 23 ect 1.00x60x50,100,2,2,1456
+5020,caja para corona 29 ect 60x22x60,500,3,3,6.55
+5021,caja para árbol de navidad 29 ect 35x35x1.50,200,4,4,4.58
+5023,caja p/corona  29 ect 80x19x80,300,5,5,10.5
+5101,er 00   caja regalo 14  pts. 14x9.5x2.5,150,6,1,8.5
+5102,er 01   caja regalo 14  pts. 14.5x12.5x5,450,7,2,9.23
+5103,er 02   caja regalo 14  pts. 17x12.5x5,325,8,3,7.45
+5104,er 03   caja regalo 14  pts. 20x14x5,100,9,4,1456
+5105,er 04   caja regalo 14  pts. 13x13x10,500,10,5,6.55
+5106,er 04e caja regalo 14 pts. 8x8x8,200,1,1,4.58
+5108,er 05 caja regalo 14 pts. 22x16x5,300,2,2,10.5
+5109,er 05v caja regalo c/ ventana 14 pts. 22x16x5,150,3,3,8.5
+5110,er 06   caja regalo 14 pts. 25.5x20x6.5,450,4,4,9.23
+5111,er 06 caja regalo  happy birthday 25.5x20x6.5,325,5,5,7.45
+5112,er 6b   caja regalo bebe  14 pts. 25.5x20x6.5,100,6,1,1456
+5113,er 6v   caja regalo c/ventana 14 pts. 25.5x20x6.5,500,7,2,6.55
+5114,er 06c   caja regalo color 14 pts. 25.5x20x6.5,200,8,3,4.58
+5115,er 07   caja regalo 14 pts. 24x14x8,300,9,4,10.5
+5116,er 08   caja regalo 14 pts. 28x20x3,150,10,5,8.5
+5117,er 09   caja regalo 14 pts. 11x6.5x3,450,1,1,9.23
+5118,er 09c caja regalo color 11x6.5x3,325,2,2,7.45
+5119,er 10   caja regalo 14 pts. 23x15.5x12.5,100,3,3,1456
+5120,er 11   caja regalo 14 pts. 39.5x24.5x9,500,4,4,6.55
+5121,er 11c caja regalo color 39.5x24.5x9,200,5,5,4.58
+5122,er 11e  caja regalo 14 pts. 35x21x9,300,6,1,10.5
+5123,er 12    caja regalo 14 pts. 11x8x2.5,150,7,2,8.5
+5124,er 13    caja regalo 14 pts. 36x23x5.5,450,8,3,9.23
+5125,er 13c caja regalo color 36x23x5.5,325,9,4,7.45
+5126,er 14      caja regalo    26.5x10x7,100,10,5,1456
+5127,er 14v    caja regalo c/ventana   30x10x7,500,1,1,6.55
+5128,er 15      caja regalo 14 pts. 45x29x8.5,200,2,2,4.58
+5129,er 15c   caja regalo color 14 pts. 45x29x8.5,300,3,3,10.5
+5130,er 16      caja regalo 14 pts. 12.5x8.5x4.5,150,4,4,8.5
+5131,er 17      caja regalo 14 pts. 17x10x9,450,5,5,9.23
+5132,er 18      caja regalo 14 pts. 49x32x12,325,6,1,7.45
+5133,caja joyeria especial 7x5.5x3,100,7,2,1456
+5134,caja joyeria especial color    7x5.5x3,500,8,3,6.55
+5135,caja bolitos   4x4x4,200,9,4,4.58
+5136,er 19     caja regalo 14 pts  32x30x8,300,10,5,10.5
+5137,caja para reloj  14 pts. 22x5x3,150,1,1,8.5
+5138,caja joyeria  5x3.5x1.5,450,2,2,9.23
+5139,caja muñeca grande color 32x18x15,325,3,3,7.45
+5140,caja muñeca chica color 11x11x11,100,4,4,1456
+5141,caja muñeca med. color 15x18x11,500,5,5,6.55
+5142,caja camioncito 18.5x7.5x10,200,6,1,4.58
+5143,caja muñeca mini esp color 9x9x9,300,7,2,10.5
+5144,alcancia tortuga y puerquito 10x10x13,150,8,3,8.5
+5145,caja pingüino  10x7x15,450,9,4,9.23
+5147,caja para palomita mini kraft 7x7x13,325,10,5,7.45
+5148,caja p/tarjeta presentación blanca 9.5x5.5x3,100,1,1,1456
+5149,cubo mini color  7.5x7.5x5,500,2,2,6.55
+5150,lonchera rayas y zebra 16x8.5x10,200,3,3,4.58
+5151,caja para cd caple 15x13x2.5,300,4,4,10.5
+5153,caja p/perfume 5.5x6x11,150,5,5,8.5
+5154,caja palomitas chica blanca 7.5x7.5x19,450,6,1,9.23
+5155,er 13b   caja regalo bebe   36x23x5.5,325,7,2,7.45
+5156,casita caple blanca 13x11x8,100,8,3,1456
+5159,caja para corbata 33x10x3.5,500,9,4,6.55
+5161,cubo mini caple kraft 7.5x7.5x5,200,10,5,4.58
+5162,hexagono caple kraft 6x9,300,1,1,10.5
+5163,funda cd caple kraft 12.5x12.5,150,2,2,8.5
+5164,almohada mini caple kraft 8x7x2.5,450,3,3,9.23
+5165,caja caple kraft tapa integrada 12.5x11x4.5,325,4,4,7.45
+5166,dulcera chica caple kraft 10.5x8.5x7,100,5,5,1456
+5167,muñeca micro caple kraft 7x7x5.5,500,6,1,6.55
+5168,caja sorpresa caple kraft 5x4x6,200,7,2,4.58
+5169,almohada mediana caple kraft 16x15x4,300,8,3,10.5
+5175,caja muñeca mini 14 feb 9x9x9,150,9,4,8.5
+5176,caja muñeca ch 14 feb 11x11x11,450,10,5,9.23
+5177,caja muñeca med 14 feb 15x18x11,325,1,1,7.45
+5178,caja muñeca gde 14 feb 32x18x15,100,2,2,1456
+5180,bolsa europa 14 feb chica 21.5x10.5x28,500,3,3,6.55
+5181,bolsa europa 14 feb mediana 31x12x36,200,4,4,4.58
+5182,bolsa europa 14 feb grande 40x13x46.5,300,5,5,10.5
+5183,peluchera caple 14 feb chica 15x9.5x16.5,150,6,1,8.5
+5184,peluchera caple 14 feb mediana 20x13x28,450,7,2,9.23
+5185,peluchera caple 14 feb grande 29x19x38,325,8,3,7.45
+5188,lonchera mini love 14x11x10,100,9,4,1456
+5191,caja para palomitas grande 14 feb 13x13x29,500,10,5,6.55
+5192,caja para palomitas mediana 14 feb 10x10x20,200,1,1,4.58
+5193,caja para palomitas chica 14 feb 7.5x7.5x19,300,2,2,10.5
+5196,caja trenecito caple 16x11x14,150,3,3,8.5
+5197,cubo turquesa  y rojo 15x15x15,450,4,4,9.23
+5198,cubo chocolate  21x21x21,325,5,5,7.45
+5201,bolsa chica sulfatada  9.5x9.5x12,100,6,1,1456
+5202,bolsa mediana sulfatada  18.5x11.5x16,500,7,2,6.55
+5203,bolsa grande sulfatada  18.5x11.5x24,200,8,3,4.58
+5204,bolsa sulfatada mini 6x3x9,300,9,4,10.5
+5205,camion bombero 17x9x9,150,10,5,8.5
+5209,hexagono sulfatado 6x9,450,1,1,9.23
+5210,muñeca sulfatada 7x7x5.5,325,2,2,7.45
+5253,almohada con agarradera papa ,100,3,3,1456
+5254,lonchera grande papa ,500,4,4,6.55
+5255,er 06 mama caple kraft 25.5x20x6.5,200,5,5,4.58
+5256,lonchera grande mama caple kraft ,300,6,1,10.5
+5257,almohada con agarradera mama caple kraft ,150,7,2,8.5
+5258,caja yours tipo sobre grande ,450,8,3,9.23
+5259,dulcera ventana corazon roja y kraft ,325,9,4,7.45
+5260,cubo contraencolado color liso 20x20x20,100,10,5,1456
+5261,cubo contraencolado color liso 30x30x30,500,1,1,6.55
+5262,cubo contraencolado color liso 40x40x40,200,2,2,4.58
+5263,cubo contraencolado color liso 9x9x9,300,3,3,10.5
+5264,caja vizcaino baby girl 33x23.5x7.5,150,4,4,8.5
+5265,caja vizcaino baby boy 33x23.5x7.5,450,5,5,9.23
+5266,lonchera be mine 16x8.5x10,325,6,1,7.45
+5267,cubo tu 8.5x8.5x8.5,100,7,2,1456
+5269,almohada corazon  26x24x6,500,8,3,6.55
+5270,caja vizcaino dude 33x23.5x7.5,200,9,4,4.58
+5271,caja vizcaino happy day 14 feb 33x23.5x7.5,300,10,5,10.5
+5272,er 06 you & me 25.5x20x6.5,150,1,1,8.5
+5273,caja multiusos true love 27x14.5x20.5,450,2,2,9.23
+5274,caja vizcaino keep calm 33x23.5x7.5,325,3,3,7.45
+5275,contenedor color 7.5x7.5x9,100,4,4,1456
+5276,caja vizcaino 14 de feb y happy birthday 33x23.5x7.5,500,5,5,6.55
+5277,caja lunares con corazon 16x11x14,200,6,1,4.58
+5278,caja tipo frack 7x2.5x11,300,7,2,10.5
+5279,caja tipo vestido de novia 7x2.5x11,150,8,3,8.5
+5280,bolsa franky 10x6x13,450,9,4,9.23
+5281,caja i love you 30x15x6,325,10,5,7.45
+5283,caja empaque corazon chica 26 ect 19x15x15,100,1,1,1456
+5284,caja empaque corazon mediana 26 ect 25x16x16,500,2,2,6.55
+5285,caja empaque corazon grande 26 ect 30x15x20,200,3,3,4.58
+5286,cubo surprice 21x21x21,300,4,4,10.5
+5287,caja muñeca rayas 18x15.5x10,150,5,5,8.5
+5288,caja happy day 13.5x13.5x28,450,6,1,9.23
+5289,alcancia fantasma  10x10x13 ,325,7,2,7.45
+5290,lonchera calabaza 16x9x10,100,8,3,1456
+5291,caja vizcaino love 33x23.5x7.5,500,9,4,6.55
+5292,lonchera siempre tu 16x9x10,200,10,5,4.58
+5293,caja yours tipo sobre  20x15x4,300,1,1,10.5
+5294,caja corazon rojo y negro  19x5x5,150,2,2,8.5
+5296,muñeca mini love 14x11x10,450,3,3,9.23
+5297,cubo kraft corazon 8.5x8.5x8.5,325,4,4,7.45
+5301,pastelera super 39x39x12,100,5,5,1456
+5302,pasteleragrande 33x33x12,500,6,1,6.55
+5303,pastelera mediana 30x30x12,200,7,2,4.58
+5304,pastelera chica  27x27x8,300,8,3,10.5
+5305,pay chica alta 24x24x10,150,9,4,8.5
+5306,pastelera chica alta 27x27x12,450,10,5,9.23
+5307,charola don bosco 41x11x3.5,325,1,1,7.45
+5308,caja tipo moka 40x14x12,100,2,2,1456
+5309,pastelera especial mini 20x20x10,500,3,3,6.55
+5311,caja para papa grande 9x6x12,200,4,4,4.58
+5312,caja para papa chica 7x4x9.8,300,5,5,10.5
+5313,caja para pay (almohada) 13x9x3.5,150,6,1,8.5
+5314,caja para hamburguesa 14x14x6.5,450,7,2,9.23
+5315,charola para rebanada de pizza 17x19x2,325,8,3,7.45
+5316,caja para rebanada de pizza 22.5x23.5x3.5,100,9,4,1456
+5317,caja para sandwich 12x10x10,500,10,5,6.55
+5318,charola para hot dog 14.5x5.5x4,200,1,1,4.58
+5319,cono para crepa 15.5x14,300,2,2,10.5
+5320,caja para 4 cup cake con tambor c/vent 16x16x7,150,3,3,8.5
+5321,caja para 9 cup cake con tambor c/vent 24x24x10,450,4,4,9.23
+5322,caja para 6 cup cake con tambor c/vent 25x17x7.5,325,5,5,7.45
+5323,caja para 12 cup cake con tambor c/vent 34x25x7,100,6,1,1456
+5324,caja para 1 cup cake con tambor c/vent 9x9x9,500,7,2,6.55
+5325,caja para 2 cup cake con tambor c/vent 17x9.5x8,200,8,3,4.58
+5326,caja para 1 cup cake color con tambor c/vent ,300,9,4,10.5
+5402,lonchera mex box  kraft 29 ect 30x15x19,150,10,5,8.5
+5403,lonchera super  20x12.3x20.5,450,1,1,9.23
+5404,lonchera grande 21.5x13x14,325,2,2,7.45
+5405,lonchera mediana 17x12x14,100,3,3,1456
+5406,lonchera chica  17.5x11x7.5,500,4,4,6.55
+5407,lonchera grande kraft impresa 21.5x13x14,200,5,5,4.58
+5408,lonchera con ventana de acetato 16x7.5x9,300,6,1,10.5
+5410,dulcera grande  19.9x11x8.5,150,7,2,8.5
+5411,dulcera chica  10.5x8.5x7,450,8,3,9.23
+5412,dulcera lunares chica 11x9x7,325,9,4,7.45
+5414,dulcera mediana felicidades 16x10x9.5,100,10,5,1456
+5495,caja bolito de acetato 5x5x5,500,1,1,6.55
+5496,hexagono miniatura de acetato  ,200,2,2,4.58
+5497,er 01 caja regalo 14  pts. con tapa de acetato 14.5x12.5x5,300,3,3,10.5
+5498,er 03 caja regalo 14  pts. con tapa de acetato 20x14x5,150,4,4,8.5
+5499,er 06 caja regalo 14  pts. con tapa de acetato 25.5x20x6.5,450,5,5,9.23
+5501,disco chico p/pastel 25 cm ,325,6,1,7.45
+5502,disco mediano p/pastel 28 cm ,100,7,2,1456
+5503,disco grande p/pastel 35 cm ,500,8,3,6.55
+5504,base rosca  mediana 60x40,200,9,4,4.58
+5505,base rosca chica 45x35,300,10,5,10.5
+5506,base rosca grande 65x45,150,1,1,8.5
+5507,caja rosca grande micro 67x45x8,450,2,2,9.23
+5508,caja rosca mediana micro 58x46x6,325,3,3,7.45
+5509,caja rosca chica micro 34x37x6,100,4,4,1456
+5510,caja rosca grande micro 60x45x8,500,5,5,6.55
+5511,caja rosca mediana micro 45x36x8,200,6,1,4.58
+5512,caja rosca chica micro 46x29.5x8,300,7,2,10.5
+5601,caja jumbo micro 64x47x12,150,8,3,8.5
+5602,caja vestido de novia 59x39x12,450,9,4,9.23
+5603,caja para ramo de novia 56x30x22,325,10,5,7.45
+5604,caja para ramo xv años 30x30x22,100,1,1,1456
+5605,caja para ramo xv años 26x26x22,500,2,2,6.55
+5606,archialta 18.5x6.5x23.5,200,3,3,4.58
+5607,archimini 20.5x6x14.5,300,4,4,10.5
+5608,cubo micro blanco 10x10x10,150,5,5,8.5
+5609,caja gis 15x11x8,450,6,1,9.23
+5610,caja micro bond ho 9.5x8.5x12,325,7,2,7.45
+5611,caja vela grande micro 29x6.3x8,100,8,3,1456
+5612,caja vela chica micro 27.5x6x8,500,9,4,6.55
+5613,cubo rehilete 12x12x12,200,10,5,4.58
+5614,caja crema gde.   micro kraft 18x12x11,300,1,1,10.5
+5615,caja crema chica micro kraft 13x10x7,150,2,2,8.5
+5619,cubo 20x20x20 kraft 20x20x20,450,3,3,9.23
+5623,cubo micro kraft 30x30x30,325,4,4,7.45
+5624,cubo micro kraft 40x40x40,100,5,5,1456
+5625,centro de mesa micro kraft grande 16x16x7,500,6,1,6.55
+5626,bolsa micro kraft grande 15.5x11x17.5,200,7,2,4.58
+5627,cubo micro kraft  9x9x9,300,8,3,10.5
+5628,casita micro kraft 17.5x14.5x11,150,9,4,8.5
+5629,vela mini micro bond 16x6x8,450,10,5,9.23
+5630,caja doble gis  31x10x8,325,1,1,7.45
+5631,bolsa micro kraft chica 11.5x7x13,100,2,2,1456
+5632,centro de mesa micro kraft chico 13x13x7.5,500,3,3,6.55
+5634,ordenador de cajon corto 44 ect 19x15x6,200,4,4,4.58
+5637,caja botella micro kraft  12x12x35,300,5,5,10.5
+5638,cubo micro kraft  60x60x60,150,6,1,8.5
+5639,cubo micro kraft  12x12x12,450,7,2,9.23
+5640,lonchera six micro kraft  18.5x12.5x19,325,8,3,7.45
+5703,parasol no. 3                                            ,100,9,4,1456
+5801,pizza 0 bond 20x20x3,500,10,5,6.55
+5802,pizza 0 kraft 20x20x3,200,1,1,4.58
+5803,pizza 1 bond 25x25x3,300,2,2,10.5
+5804,pizza 1 kraft 25x25x3,150,3,3,8.5
+5807,pizza 3 bond 32x32x3,450,4,4,9.23
+5808,pizza 3 kraft 32x32x3,325,5,5,7.45
+5809,pizza 4 bond 34x34x3,100,6,1,1456
+5810,pizza 4 kraft 34x34x3,500,7,2,6.55
+5811,pizza 4a bond 38x38x3,200,8,3,4.58
+5812,pizza 4a kraft 38x38x3,300,9,4,10.5
+5813,pizza 5 bond 41x41x4,150,10,5,8.5
+5814,pizza 5 kraft 41x41x4,450,1,1,9.23
+5815,pizza 5a bond 44x44x4,325,2,2,7.45
+5816,pizza 5a kraft 44x44x4,100,3,3,1456
+5818,pizza 30cm bond 30x30x4,500,4,4,6.55
+5819,pizza 30cm kraft 30x30x4,200,5,5,4.58
+5820,pizza 36cm bond 36x36x4,300,6,1,10.5
+5821,pizza 36cm kraft 36x36x4,150,7,2,8.5
+5901,caja single no. 3 20x14x5,450,8,3,9.23
+5902,caja single no. 6 25x20x6,325,9,4,7.45
+5903,caja single no. 13 36x23x5,100,10,5,1456
+5904,pastelera mediana single 30x30x12,500,1,1,6.55
+5905,almohada grande single  31x24x6,200,2,2,4.58
+5906,cofre mini single 7x4.5x6,300,3,3,10.5
+5907,cofre mediano single 13x8x11,150,4,4,8.5
+5908,cofre grande single 20x12x16,450,5,5,9.23
+5909,lonchera chica single 14x11x10,325,6,1,7.45
+5910,caja p/botella single 11x11x25,100,7,2,1456
+5911,bolsa single chica 9.6x6x12,500,8,3,6.55
+5913,cubo single 10x10x10,200,9,4,4.58
+5914,sobre single t/carta 28.5x21.5x1.5,300,10,5,10.5
+5916,bolo single tipo alcancia 15x8x16,150,1,1,8.5
+5917,bolsa single mediana 18.5x11.5x16,450,2,2,9.23
+5918,bolsa single grande 18.5x11.5x24,325,3,3,7.45
+5920,almohada mini single 8x7x2.5,100,4,4,1456
+5921,caja para cd single 15.5x13x3,500,5,5,6.55
+5922,caja single no.11 39.5x24.5x9,200,6,1,4.58
+5923,caja single no.15 45x29x8.5,300,7,2,10.5
+5924,lonchera mediana single 17x12x14,150,8,3,8.5
+5929,cubo sorpresa single 15x15x23,450,9,4,9.23
+5930,almohada chica single 26x24x6,325,10,5,7.45
+5931,centro de mesa single mediano 14x8.5x7,100,1,1,1456
+5932,centro de mesa single grande 20x12.5x12.5,500,2,2,6.55
+5933,centro de mesa single mini 8x5x4.5,200,3,3,4.58
+5934,cofre corrugado 30x20x15,300,4,4,10.5
+5935,dulcero grande single 14x8x20,150,5,5,8.5
+5936,dulcero chica single  11x9x13,450,6,1,9.23
+5937,centro de mesa plano grande single 19x19x7.5,325,7,2,7.45
+5938,centro de mesa plano chico single 15x15x7.5,100,8,3,1456
+5939,cofre corrugado jumbo 40x30x20,500,9,4,6.55
+5940,cubo single ho 9.5x8.5x12,200,10,5,4.58
+5941,almohada jumbo single 35x30x10,300,1,1,10.5
+6001,caja joyería # 32 8x5.5x2.5,150,2,2,8.5
+6002,caja pulsera # 33  9x9x2.5,450,3,3,9.23
+6005,caja reloj # 82 20.5x5x2,325,4,4,7.45
+6006,caja collar # 75 18x13x2.5,100,5,5,1456
+6007,papel regalo disney ,500,6,1,6.55
+6008,papel regalo couche ,200,7,2,4.58
+6009,papel regalo kraft ,300,8,3,10.5
+6010,papel de china ,150,9,4,8.5
+6011,moño mágico mediano ,450,10,5,9.23
+6012,moño magico chico  ,325,1,1,7.45
+6013,moño magico gde  ,100,2,2,1456
+6014,cinta celofan transparente  12x33,500,3,3,6.55
+6015,cinta diurex 12x10,200,4,4,4.58
+6017,papel regalo metalico ,300,5,5,10.5
+6019,papel de china picado  ,150,6,1,8.5
+6020,moño chico decorado ,450,7,2,9.23
+6021,moño mediano decorado ,325,8,3,7.45
+6022,cilindro chico  de acetato 21x24,100,9,4,1456
+6024,moño grande decorado ,500,10,5,6.55
+6029,portaretrato single s/decorar 20x15,200,1,1,4.58
+6030,portaretrato single decorado 20x15,300,2,2,10.5
+6031,cofre corrugado gde. decorado 30x20x15,150,3,3,8.5
+6032,cofre mediano single decorado 13x8x11,450,4,4,9.23
+6033,cofre grande dec single  20x12x16,325,5,5,7.45
+6037,bolsa papel kraft mini-mini  6x3.5x8,100,6,1,1456
+6043,bolsa kraft natural para botella c/ojillo 10x10x33,500,7,2,6.55
+6047,cubo corrugado decorado 30x30x30,200,8,3,4.58
+6049,corazón  pintado chico 13x8.5x11,300,9,4,10.5
+6050,corazón  pintado mediano 29x21x21,150,10,5,8.5
+6051,corazón  pintado grande 35x25x26,450,1,1,9.23
+6081,cilindro de acetato mediano  26x32,325,2,2,7.45
+6086,cilindro de acetato jumbo 40x56,100,3,3,1456
+6087,cilindro de acetato grande 30x36,500,4,4,6.55
+6088,cilindro de acetato p/corona 16x6.5,200,5,5,4.58
+6089,cilindro bolo de acetato 11.5x10,300,6,1,10.5
+6090,cilindro mini corrugado  16x20,150,7,2,8.5
+6091,cilindro chico corrugado  21x24,450,8,3,9.23
+6092,cilindro mediano corrugado     26x32,325,9,4,7.45
+6093,cilindro grande corrugado  30x36,100,10,5,1456
+6094,cilindro jumbo corrugado  40x50,500,1,1,6.55
+6095,cilindro petit micro  11.5x16,200,2,2,4.58
+6096,cilindro de acetato mini  16x20,300,3,3,10.5
+6097,cilindro joyero acetato 7.8x6.5,150,4,4,8.5
+6098,cilindro petit acetato 11.5x16,450,5,5,9.23
+6102,cilindro joyero micro 7.8x6.5,325,6,1,7.45
+6108,bolo acetato tira pintada 13.5x13,100,7,2,1456
+6110,cilindro de acetato p/ tocado 19x8,500,8,3,6.55
+6118,cilindro joyero color  7.8x6.5,200,9,4,4.58
+6119,caja sombrero med single  40x15,300,10,5,10.5
+6120,caja sombrero grande single  47x20,150,1,1,8.5
+6121,caja hexagono chico corrugado 22x16,450,2,2,9.23
+6122,caja hexagono med corrugado 29x21,325,3,3,7.45
+6123,caja hexagono gde corrugado 35x26,100,4,4,1456
+6124,caja ovalo chico corrugado 20x13x16,500,5,5,6.55
+6125,caja ovalo med corrugado 28x17x21,200,6,1,4.58
+6126,caja ovalo gde corrugado 39x23x26,300,7,2,10.5
+6127,estrella chica corrugado  17x10,150,8,3,8.5
+6128,estrella grande corrugado  30x15,450,9,4,9.23
+6129,caja hexagono chica decorado corrug 22x16,325,10,5,7.45
+6130,caja hexagono med decorado corrug 29x21,100,1,1,1456
+6131,caja hexagono gde decorado corrug  35x26,500,2,2,6.55
+6132,caja ovalo chico decorado corrugado 20x13x16,200,3,3,4.58
+6133,caja ovalo med decorado corrugado 28x17x21,300,4,4,10.5
+6134,caja ovalo gde decorado corrugado 39x23x26,150,5,5,8.5
+6135,casita decorada  17.5x14.5x11,450,6,1,9.23
+6136,estrella jumbo corrugado 48x20,325,7,2,7.45
+6137,cubo corrugado sin decorar 30x30,100,8,3,1456
+6138,cofre jumbo decorado corrugado 40x30x30,500,9,4,6.55
+6139,caja manzana chica corrugado 16x13x11,200,10,5,4.58
+6140,caja manzana grande corrugado 29.5x25x15,300,1,1,10.5
+6141,cilindro petit decorado corrugado t/o  11.5x16,150,2,2,8.5
+6142,cilindro mini decorado corrugado t/o  16x20,450,3,3,9.23
+6143,cilindro chico decorado corrugado t/o  21x24,325,4,4,7.45
+6144,cilindro mediano decorado corrugado t/o  26x32,100,5,5,1456
+6145,cilindro grande decorado corrugado t/o  30x36,500,6,1,6.55
+6146,cilindro jumbo decorado corrugado t/o  40x50,200,7,2,4.58
+6147,cilindro de acetato botella decorada 11.5x35,300,8,3,10.5
+6148,cilindro corrugado botella decorada 11.5x35,150,9,4,8.5
+6149,caja chocolatera decorada t/o 14.5x14.5x8,450,10,5,9.23
+6150,cilindro sorpresa corrugado decorado 16x10.5,325,1,1,7.45
+6151,caja domino corrugado 20.5x10.5x5,100,2,2,1456
+6152,caja carta baraja corrugado 20.5x10.5x5,500,3,3,6.55
+6153,caja dado chico corrugado 10x10x10,200,4,4,4.58
+6154,caja dado grande corrugado 15x15x15,300,5,5,10.5
+6155,caja mariposa grande corrugado decorado 44x16,150,6,1,8.5
+6156,caja mariposa chica corrugado decorado 27x11,450,7,2,9.23
+6157,caja flor grande corrugado decorado 39x15,325,8,3,7.45
+6158,caja flor chica corrugado decorado 19x10,100,9,4,1456
+6163,corazon grande 15 cm de altura ,500,10,5,6.55
+6165,corazon corrugado con ventana 29x21x6,200,1,1,4.58
+6166,cilindro grande de 15 cm de altura 14 feb ,300,2,2,10.5
+6203,contenedor chico  dc 48 ect 40x40x47,150,3,3,8.5
+6204,contenedor grande dc 48 ect 40x40x92,450,4,4,9.23
+6205,caja cuadro chico 29 ect 45.5x38x4.5,325,5,5,7.45
+6206,caja cuadro grande 29 ect 62x55x5,100,6,1,1456
+6207,juguetero impreso niño/niña dc 48 ect 40x40x47,500,7,2,6.55
+6209,casita blanca corrugada 1.14x.84x1.28,200,8,3,4.58
+6210,avion  1.00x.50,300,9,4,10.5
+6211,estufa en corrug kraft  45x30x56,150,10,5,8.5
+6212,carrito en corrug kraft  100x35x60,450,1,1,9.23
+6213,cohete en corrug kraft  80x70x130,325,2,2,7.45
+6214,juego de vinil para estufa  60x55,100,3,3,1456
+6215,juego de vinil para carrito  90x57,500,4,4,6.55
+6216,juego de vinil para cohete  87x65,200,5,5,4.58
+6301,exhibidor de carton 44 ect 1.02x31x1.49,300,6,1,10.5
+6307,pino corrugado ensamblable medida 54x61 ,150,7,2,8.5
+6308,pino corrugado con estrella ensamblable medida 45x68 ,450,8,3,9.23
+6309,cilindro bastones chico  ,325,9,4,7.45
+6310,centro de mesa chico single reno ,100,10,5,1456
+6311,centro de mesa grande single reno ,500,1,1,6.55
+6312,centro de mesa chico plano single reno ,200,2,2,4.58
+6313,centro de mesa grande plano single reno ,300,3,3,10.5
+6314,caja pingüino corrugado  ,150,4,4,8.5
+6315,caja campana corrugado ,450,5,5,9.23
+6316,caja galleta jengibre corrugado ,325,6,1,7.45
+6317,caja pino chico micro navideña ,100,7,2,1456
+6318,caja corrugado decorado navideño 30x30x20,500,8,3,6.55
+6319,caja pino grande decorado micro navideña ,200,9,4,4.58
+6320,caja mono de nieve micro navideña ,300,10,5,10.5
+6321,caja bota micro navideña ,150,1,1,8.5
+6322,caja baston micro navideña ,450,2,2,9.23
+6323,cofre jumbo corrugado decorado navideño ,325,3,3,7.45
+6324,cilindro de acetato botella decorado nav 11x37,100,4,4,1456
+6325,cilindro corrugado botella decorado nav 11x.5x35,500,5,5,6.55
+6326,caja chocolatera decorada navideña y moño 14.5x14.5x8,200,6,1,4.58
+6327,cilindro sorpresa corrugado decorado nav 16x17,300,7,2,10.5
+6328,cilindro corrugado cara de reno nav ,150,8,3,8.5
+6329,cilindro corrugado vela navideña ,450,9,4,9.23
+6330,caja hexagono chica dec navideña corrug 22x16,325,10,5,7.45
+6331,caja hexagono mediano dec navideña corrug 29x21,100,1,1,1456
+6332,caja hexagono grande dec navideña corrug 35x26,500,2,2,6.55
+6333,caja ovalo chica dec navideña corrug 20x13x16,200,3,3,4.58
+6334,caja ovalo med dec navideña corrug 28x17x21,300,4,4,10.5
+6335,caja ovalo gde dec navideña corrug 39x23x26,150,5,5,8.5
+6336,cofre grande dec navideño single 30x20x15,450,6,1,9.23
+6350,cilindro mediano pintado navideño santa claus ,325,7,2,7.45
+6351,cilindro grande pintado navideño santa claus ,100,8,3,1456
+6352,cilindro jumbo pintado navideño santa claus ,500,9,4,6.55
+6360,casita dec navideña 17.5x14.5x11,200,10,5,4.58
+6384,cofre jumbo dec navideño corrugado 40x30x30,300,1,1,10.5
+6385,cofre med dec navideño single 13x8x11,150,2,2,8.5
+6386,cofre grande dec navideño corrugado 30x20x15,450,3,3,9.23
+6387,portaretrato dec navideño single 20x15,325,4,4,7.45
+6408,bolsa para botella kraft y satinada navideña ,100,5,5,1456
+6409,papel de china impreso navideño ,500,6,1,6.55
+6414,bolsa satinada chica navideña ,200,7,2,4.58
+6415,bolsa satinada mediana navideña ,300,8,3,10.5
+6416,bolsa satinada grande navideña ,150,9,4,8.5
+6417,bolsa satinada jumbo navideña ,450,10,5,9.23
+6425,papel couche navideño ,325,1,1,7.45
+6426,papel disney navideño ,100,2,2,1456
+6429,papel holograma ,500,3,3,6.55
+6430,papel gofrado ,200,4,4,4.58
+6431,caja vizcaino navidad 33x23.5x7.5,300,5,5,10.5
+6433,dulcera casita navideña ,150,6,1,8.5
+6435,cubo contraencolado 30x30 copos 30x30,450,7,2,9.23
+6438,moño mini metalico ,325,8,3,7.45
+6439,er 11 especial renos ,100,9,4,1456
+6440,er 06 navideña 25.5x20x6.5,500,10,5,6.55
+6441,er 13 navideña 36x22.5x5.5,200,1,1,4.58
+6442,caja happy day navidad ,300,2,2,10.5
+6443,caja multiusos navideña 27x14.5x20.5,150,3,3,8.5
+6444,lonchera mini navidad 14x11x10,450,4,4,9.23
+6445,"lonchera mediana renos,dulce y santa 17x11.5x13",325,5,5,7.45
+6448,dulcera med. navideña 16x10x9.5,100,6,1,1456
+6449,"dulcera bota, pino y baston 8.7x5x13.7",500,7,2,6.55
+6450,moño med. decorado navideño ,200,8,3,4.58
+6451,moño gde. decorado navideño ,300,9,4,10.5
+6452,almohada ho ho ho gde navideña 31.5x22.5x6,150,10,5,8.5
+6454,peluchera mediana caple navideña 20x13x28,450,1,1,9.23
+6455,peluchera mediana reno navideña 20x13x28,325,2,2,7.45
+6456,caja tipo vizcaino reno 34x24.5x8,100,3,3,1456
+6457,caja 13 oh chrisma tree 30x23x5.5,500,4,4,6.55
+6458,caja tipo bolsa con asa  32x26x7.5,200,5,5,4.58
+6459, cubo esferas 15x15x15,300,6,1,10.5
+6460,caja tipo almohada santa 26.5x23x6,150,7,2,8.5
+6461,alcancia reno  ,450,8,3,9.23
+6462,alcancia santa ,325,9,4,7.45
+6463,lonchera mediana renos feliz navidad ,100,10,5,1456
+6464,casita kraft navideña ,500,1,1,6.55
+6474,cubo 30x30 merry chrismas ,200,2,2,4.58
+6475,cubo surprice navideño ,300,3,3,10.5
+6482,lonchera copos de nieve ,150,4,4,8.5
+6486,lonchera extra mini santa navideña ,450,5,5,9.23
+6487,caja palomitas navideña grande ,325,6,1,7.45
+6488,caja palomitas navideña mediana ,100,7,2,1456
+6489,caja palomitas navideña chica ,500,8,3,6.55
+6490,bolsa europa arbol navidad mediana ,200,9,4,4.58
+6491,bolsa europa navideña chica ,300,10,5,10.5
+6494,dulcero renos ,150,1,1,8.5
+6495,caja muñeca grande santa ,450,2,2,9.23
+6496,dulcera especial esferas y reno ,325,3,3,7.45
+6497,lonchera eco navideña ,100,4,4,1456
+6498,peluchera grande jengibre ,500,5,5,6.55
+6499,lonchera grande reno y esfera  ,200,6,1,4.58
+6501,bolsa satinada mini  ,300,7,2,10.5
+6502,bolsa satinada chica    ,150,8,3,8.5
+6503,bolsa satinada mediana  ,450,9,4,9.23
+6504,bolsa satinada grande  ,325,10,5,7.45
+6505,bolsa satinada jumbo  ,100,1,1,1456
+6520,bolsa kraft color hor y ver mini ,500,2,2,6.55
+6521,bolsa kraft color hor y ver chica ,200,3,3,4.58
+6522,bolsa kraft color hor y ver mediana ,300,4,4,10.5
+6523,bolsa kraft color hor y ver grande  ,150,5,5,8.5
+6524,bolsa kraft color hor y ver jumbo ,450,6,1,9.23
+6525,bolsa kraft natural hor y ver mini ,325,7,2,7.45
+6526,bolsa kraft natural hor y ver chica ,100,8,3,1456
+6527,bolsa kraft natural hor y ver mediana ,500,9,4,6.55
+6528,bolsa kraft natural hor y ver grande ,200,10,5,4.58
+6529,bolsa kraft natural hor y ver jumbo ,300,1,1,10.5
+6530,bolsa para botella  kraft pintada ,150,2,2,8.5
+6531,bolsa para botella  kraft natural sin ojillo ,450,3,3,9.23
+6594,bolsa bond mini horizontal y vertical blanca  ,325,4,4,7.45
+6595,bolsa bond chica horizontal y vertical blanca  ,100,5,5,1456
+6596,bolsa bond mediana horizontal y vertical blanca  ,500,6,1,6.55
+6597,bolsa bond grande horizontal y vertical blanca ,200,7,2,4.58
+6598,bolsa bond jumbo horizontal y vertical blanca ,300,8,3,10.5
+6613,bolsa de estrasa #   6 14.5x9.5x31.5,150,9,4,8.5
+6614,bolsa de estrasa # 10 16.5x9x38,450,10,5,9.23
+6615,bolsa de estrasa # 20 20x10.5x47,325,1,1,7.45
+6620,bolsa estrasa despensa 30.5x18x41,100,2,2,1456
