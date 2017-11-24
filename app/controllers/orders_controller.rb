@@ -91,7 +91,6 @@ class OrdersController < ApplicationController
     @order = Order.create(store: current_user.store,
                           category: 'de línea',
                           delivery_address: current_user.store.delivery_address,
-                          status: 'mercancía asignada',
                           prospect: Prospect.find_by_store_prospect_id(current_user.store)
                           )
     @order.users << current_user
@@ -133,6 +132,13 @@ class OrdersController < ApplicationController
       end
       unassigned_pr.each do |pr|
         ProductRequest.find(pr.id).update(order: @new_order)
+      end
+      @order.update(status: 'mercancía asignada')
+    else
+      if status.first == ['asignado']
+        @order.update(status: 'mercancía asignada')
+      else
+        @order.update(status: 'en espera')
       end
     end
     @orders = []

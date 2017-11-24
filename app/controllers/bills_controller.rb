@@ -65,6 +65,7 @@ class BillsController < ApplicationController
     end
     @folio = ''
     @series = ''
+    @time = Time.now.strftime('%FT%T')
     if prospect.billing_address == nil
       redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
     else
@@ -376,6 +377,7 @@ class BillsController < ApplicationController
         @store = @objects.first.movements.first.product.business_unit.stores.first
       end
     end
+    @time = Time.now.strftime('%FT%T')
     if params[:cfdi_type] == 'global'
       @general_bill = true
       store = @store
@@ -520,6 +522,7 @@ class BillsController < ApplicationController
     generate_digital_stamp
     get_stamp_from_pac
     qrcode_print
+    generate_pdf
     save_to_db
     if @incidents_hash == nil
       redirect_to root_path, notice: 'Su factura se ha guardado con éxito.'
@@ -532,7 +535,6 @@ class BillsController < ApplicationController
     # Detalla las variables necesarias para los directorios
     @store
     @p_rfc = @prospect_rfc
-    @time = Time.now.strftime('%FT%T')
     @base = Rails.root.join('public', 'uploads')
 
     # Crea los directorios
@@ -727,7 +729,6 @@ class BillsController < ApplicationController
     @sat_seal = hash[:sat_seal]
     @sat_certificate = hash[:no_certificado_sat]
     @incidents_hash = hash[:incidencias]
-    debugger
     #Separa la parte del timbre fiscal digital para generar cadena original (y quita la parte que genera error)
     doc = Nokogiri::XML(xml_response)
     extract = doc.xpath('//cfdi:Complemento').children.to_xml.gsub('xsi:', '')
@@ -742,6 +743,8 @@ class BillsController < ApplicationController
     ###### CAMBIAR ESTE MÉTODO POR UN NOMBRE DISTITNO DE FACTURA
     stamped_xml = File.open(File.join(@final_dir, 'stamped.xml'), 'w'){ |file| file.write(xml_response) }
 
+    @stamped_xml = File.open(File.join(@final_dir, 'stamped.xml'), 'r')
+
     xml_url = @xml_path + 'stamped.xml' ###### CAMBIAR ESTE MÉTODO POR UN NOMBRE DISTITNO DE FACTURA
 
     #Guarda el extracto del timbre fiscal digital en un XML
@@ -754,53 +757,63 @@ class BillsController < ApplicationController
   end
 
   def save_to_db
-    bill = Bill.new.tap do |bill|
-      bill.status = 'timbrada'
-      # bill.pdf =
-      # bill.xml =
-      bill.issuing_company = @s_billing
-      bill.receiving_company = @p_billing
-      bill.store = @store
-      bill.sequence = @series
-      bill.folio = @folio
-      bill.payment_conditions = @payment_form
-      bill.payment_method = @method
-      bill.payment_form = @greatest_payment
-      bill.subtotal = @subtotal
-      bill.taxes = @total_taxes
-      bill.total = @total
-      bill.discount_applied = @total_discount
-      # bill.automatic_discount_applied =
-      bill.manual_discount_applied = @total_discount
-      bill.tax = Tax.find(2)
-      bill.tax_regime = @regime
-      bill.taxes_transferred = @total_taxes
-      # bill.taxes_witheld =
-      bill.cfdi_use = @use
-      # bill.pac =
-      bill.relation_type = @relation
-      # bill.references_field = ''
-      bill.type_of_bill = @bill_type
-      bill.currency = Currency.find_by_name('MXN')
-      # bill.id_trib_reg_num = ''
-      # bill.confirmation_key =
-      bill.exchange_rate = 1.0
-      bill.country = Country.find_by_name('México')
-      bill.sat_certificate_number = @sat_certificate
-      bill.certificate_number = @store.certificate_number
-      bill.qr_string = @qr_string
-      bill.original_chain = @stamp_original_chain
-      bill.sat_stamp = @sat_seal
-      bill.digital_stamp = @cfd_stamp
-      bill.sat_zipcode_id = @store.zip_code
-      bill.date_signed = @date
-      bill.leyend = ''
-      bill.uuid = @uuid
-      bill.payed = @payed
-      # bill.parent = ''
-      # bill.children = (este es cuando sean NC o ND o DEV)
+    @error = false
+    if @incidents_hash == nil
+
+      @pdf_file = File.open(File.join(@final_dir, 'factura.pdf'), 'r')
+
+      bill = Bill.new.tap do |bill|
+        bill.status = 'timbrada'
+        bill.issuing_company = @s_billing
+        bill.receiving_company = @p_billing
+        bill.store = @store
+        bill.sequence = @series
+        bill.folio = @folio
+        bill.payment_conditions = @payment_form
+        bill.payment_method = @method
+        bill.payment_form = @greatest_payment
+        bill.subtotal = @subtotal
+        bill.taxes = @total_taxes
+        bill.total = @total
+        bill.discount_applied = @total_discount
+        # bill.automatic_discount_applied =
+        bill.manual_discount_applied = @total_discount
+        bill.tax = Tax.find(2)
+        bill.tax_regime = @regime
+        bill.taxes_transferred = @total_taxes
+        # bill.taxes_witheld =
+        bill.cfdi_use = @use
+        # bill.pac =
+        bill.relation_type = @relation
+        # bill.references_field = ''
+        bill.type_of_bill = @bill_type
+        bill.currency = Currency.find_by_name('MXN')
+        # bill.id_trib_reg_num = ''
+        # bill.confirmation_key =
+        bill.exchange_rate = 1.0
+        bill.country = Country.find_by_name('México')
+        bill.sat_certificate_number = @sat_certificate
+        bill.certificate_number = @store.certificate_number
+        bill.qr_string = @qr_string
+        bill.original_chain = @stamp_original_chain
+        bill.sat_stamp = @sat_seal
+        bill.digital_stamp = @cfd_stamp
+        bill.sat_zipcode_id = @store.zip_code
+        bill.date_signed = @date
+        bill.leyend = ''
+        bill.uuid = @uuid
+        bill.payed = @payed
+        # bill.parent = ''
+        # bill.children = (este es cuando sean NC o ND o DEV)
+      end
+      bill.save
+      bill.update(xml: @stamped_xml, pdf: @pdf_file)
+      @objects.each do |object|
+        object.update(bill: bill)
+      end
+    else
+      @error = true
     end
-    bill.save
   end
 
   def rows(general_bill, objects)
@@ -1133,6 +1146,17 @@ class BillsController < ApplicationController
   #  7. NoCertificadoSAT
 
 # Ó también generarla a través de xslt, ejemplo:  ||1.1|ad662d33-6934-459c-a128-bdf0393e0f44|2001-12-17T09:30:47|AAA010802QT9|ValorDelAtributoLeyenda|iYyIk1MtEPzTxY3h57kYJnEXNae9lvLMgAq3jGMePsDtEOF6XLWbrV2GL/2TX00vP2+YsPN+5UmyRdzMLZGEfESiNQF9fotNbtA487dWnCf5pUu0ikVpgHvpY7YoA4Lb1D/JWc+zntkgW+Ig49WnlKyXi0LOlBOVuxckDb7Eax4=|12345678901234567890||
+
+  def generate_pdf
+    if @general_bill
+      pdf = render_to_string pdf: "factura", template: 'bills/global_doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
+    else
+      pdf = render_to_string pdf: "factura", template: 'bills/doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
+    end
+      save_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}_final", 'factura.pdf')
+      pdf_bill = File.open(save_path, 'wb'){ |file| file << pdf }
+      @pdf = pdf_bill
+  end
 
   def doc
     preview
