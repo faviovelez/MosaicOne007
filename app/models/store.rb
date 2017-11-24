@@ -16,7 +16,7 @@ class Store < ActiveRecord::Base
   has_many :suppliers
   has_many :bills
   has_many :discount_rules
-  has_many :store_prospect, class_name: "Prospect", foreign_key: 'store_prospect_id'
+  has_one  :store_prospect, class_name: "Prospect", foreign_key: 'store_prospect_id'
   has_many :suppliers, through: :stores_suppliers
   has_many :stores_suppliers
   has_many :prospects

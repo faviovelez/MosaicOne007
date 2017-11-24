@@ -501,7 +501,6 @@ private
   end
 
   def get_certificate_number
-    debugger
     file = File.join(Rails.root, "public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer")
     serial = `openssl x509 -inform DER -in #{file} -noout -serial`
     n = serial.slice(7..46)

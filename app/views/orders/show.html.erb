@@ -6,23 +6,27 @@
       <th>Imagen</th>
       <th>Cantidad</th>
       <th>Total</th>
-      <th>Urgencia</th>
-      <th>Entregar</th>
     </tr>
   </thead>
   <tbody>
     <% get_orders %>
-    <% @product_requests.each do |product_request| %>
-      <tr id="trForProduct<%= product_request.product.id %>">
-        <td><%= product_request.product.unique_code %></td>
-        <td><%= product_request.product.exterior_color_or_design %></td>
-        <td><%= image_tag image(product_request), alt: product_request.product.description %></td>
-        <td><%= number_with_delimiter(product_request.quantity) %></td>
-        <td><%= number_to_currency(product_request.quantity * product_request.movements.first.final_price * 1.16) %></td>
-        <td><%= product_request.urgency_level %></td>
-        <td><%= get_maximum_date(product_request.maximum_date) %></td>
+    <% @movements.each do |movement| %>
+      <tr id="trForProduct<%= movement.product_id %>">
+        <td><%= movement.product.unique_code %></td>
+        <td><%= movement.product.exterior_color_or_design %></td>
+        <td><%= image_tag image(movement), alt: movement.product.description %></td>
+        <td><%= number_with_delimiter(movement.quantity) %></td>
+        <td><%= number_to_currency(movement.total) %></td>
       </tr>
-    <% end %>
+      <% end %>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td> <strong> Total: </strong> </td>
+        <td> <strong> <%= number_to_currency(get_total) %> </strong> </td>
+        <td></td>
+      </tr>
   </tbody>
 </table>
 <%= link_to 'Confirmar', orders_confirm_path(@orders), class: 'btn btn-primary', method: 'post' %>

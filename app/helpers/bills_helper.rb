@@ -228,28 +228,48 @@ module BillsHelper
   end
 
   def select_tickets
-    tickets = []
-    @tickets.each do |ticket|
-      tickets << ticket
+    if params[:tickets] != nil
+      tickets = []
+      @tickets.each do |ticket|
+        tickets << ticket
+      end
+      @tickets = tickets
+      @tickets
     end
-    @tickets = tickets
-    @tickets
   end
 
   def select_orders
-    orders = []
-    @orders.each do |order|
-      orders << order
+    if params[:orders] != nil
+      orders = []
+      @orders.each do |order|
+        orders << order
+      end
+      @orders = orders
+      @orders
     end
-    @orders = orders
-    @orders
   end
 
-  def select_prospect(store = current_user.store)
-    prospects = store.prospects
+  def select_prospect(role = current_user.role.name)
+    store = current_user.store
     @prospects = []
-    prospects.each do |prospect|
-      @prospects << [prospect.legal_or_business_name, prospect.id]
+    if (role == 'store' || role == 'store-admin')
+      prospects = store.prospects
+      prospects.each do |prospect|
+        @prospects << [prospect.legal_or_business_name, prospect.id]
+      end
+    else
+      b_us = BusinessUnit.find_by_name(['Comercializadora de Cartón y Diseño', 'Diseños de Cartón'])
+      if b_us.is_a?(BusinessUnit)
+        b_us.prospects.each do |prospect|
+          @prospects << [prospect.legal_or_business_name, prospect.id]
+        end
+      else
+        b_us.each do |bu|
+          bu.prospects.each do |prospect|
+            @prospects << [prospect.legal_or_business_name, prospect.id]
+          end
+        end
+      end
     end
     @prospects
   end
@@ -335,7 +355,7 @@ module BillsHelper
     else
       @pending = number_to_currency(@ticket_total - payments).to_s
     end
-      @pending
+    @pending
   end
 
   def store_name

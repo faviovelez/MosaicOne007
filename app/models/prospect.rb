@@ -17,18 +17,19 @@ class Prospect < ActiveRecord::Base
   has_many :tickets
   has_many :estimate_docs
 
-  validates :legal_or_business_name, presence: { message: 'Debe especificar el nombre del prospecto.'}
+#  validates :legal_or_business_name, presence: { message: 'Debe especificar el nombre del prospecto.'}
 
-  validates :prospect_type, presence: { message: 'Debe especificar el giro comercial.'}
+#  validates :prospect_type, presence: { message: 'Debe especificar el giro comercial.'}
 
-  validates :contact_first_name, presence: { message: 'Es necesario especificar por lo menos el primer nombre del contacto.'}
+#  validates :contact_first_name, presence: { message: 'Es necesario especificar por lo menos el primer nombre del contacto.'}
 
-  validates :contact_last_name, presence: { message: 'Es necesario especificar por lo menos el apellido paterno del contacto.'}
+#  validates :contact_last_name, presence: { message: 'Es necesario especificar por lo menos el apellido paterno del contacto.'}
 
-  validates :direct_phone, numericality: true
+#  validates :direct_phone, numericality: true
 
-  validates :direct_phone, length: {is: 10, message: 'Por favor anote el número telefónico completo a 10 dígitos (incluyendo clave LADA) solo números.'}
+#  validates :direct_phone, length: {is: 10, message: 'Por favor anote el número telefónico completo a 10 dígitos (incluyendo clave LADA) solo números.'}
 
-  # validates :cell_phone, length: {is: 10, message: 'Por favor anote el celular completo a 10 dígitos sin 044 O 045.'}
-  # Que pida solo un teléfono, o cel o fijo
+#  validates :cell_phone, length: {is: 10, message: 'Por favor anote el celular completo a 10 dígitos sin 044 O 045.'}
+
+#  Que pida solo un teléfono, o cel o fijo
 end

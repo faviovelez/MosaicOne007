@@ -144,6 +144,15 @@ $(function(){
         });
 
         $('#addNew' + id).click(function(){
+
+          // Código añadido para sumar //
+          var result = 0;
+          $.each($('input[id^=totalProduct]'), function(){
+            result += parseFloat($(this).val());
+          });
+          $('#sumTotalOrder').html(result.toFixed(2));
+          // Código añadido para sumar //
+
           var tr = "<tr id='trForProduct"+ inc +"'>" +
             "<td class='select'>" +
             "<select id='selectForProduct"+ inc +"'></select>" +
