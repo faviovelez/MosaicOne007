@@ -10,7 +10,7 @@
 
     <div class="form-inside-style">
       <%= user_form.label :archivo_de_clientes %>
-      <%= user_form.file_field :prospects, accept: '.csv' %>
+      <%= user_form.file_field :prospects_file, accept: '.csv' %>
     </div>
 
     <% if @store.initial_inventory.blank? %>

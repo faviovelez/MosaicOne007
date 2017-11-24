@@ -2,8 +2,9 @@ class BillingAddress < ActiveRecord::Base
   # Este modelo debe guardar todas las entradas de datos de facturación de prospects o stores
   has_many :prospects
   has_many :business_units
-  has_many :issuing_companies, class_name: 'BillingAddress', foreign_key: 'issuing_company_id'
-  has_many :receiving_companies, class_name: 'BillingAddress', foreign_key: 'receiving_company_id'
+  has_many :bills
+  has_many :issuing_companies, foreign_key: 'issuing_company_id'
+  has_many :receiving_companies, foreign_key: 'receiving_company_id'
   belongs_to :tax_regime
 
   validates :business_name, presence: { message: 'Debe escribir la razón social.'}

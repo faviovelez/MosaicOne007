@@ -106,19 +106,23 @@ Rails.application.routes.draw do
 
   get 'bills/select_orders'
 
+  get 'bills/preview'
+
+  post 'bills/preview'
+
+  get 'bills/cfdi_process'
+
+  get 'bills/global_preview'
+
+  get 'bills/process_info'
+
+  get 'bills/process_data'
+
   get 'bills/bill_doc_/:id', to: 'bills#bill_doc', as: 'bills_doc'
 
   get 'bills/doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#doc', as: 'bill_doc'
 
   get 'bills/global_doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#global_doc', as: 'bill_global_doc'
-
-  get 'bills/preview'
-
-  get 'bills/global_preview'
-
-  post 'bills/process_info'
-
-  get 'bills/process_data'
 
   get 'bills/cfdi/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#cfdi', as: 'bill_cfdi'
 

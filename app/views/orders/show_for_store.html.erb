@@ -21,10 +21,16 @@
         </td>
         <td><%= product_request.product.exterior_color_or_design %></td>
         <td><%= number_with_delimiter(product_request.quantity) %></td>
-        <td><%= number_to_currency(product_request.quantity * product_request.movements.first.final_price * 1.16) %></td>
-        <td> <%= product_request.status%> </td>
+        <td><%= number_to_currency(get_total_from_movements(product_request)) %></td>
+        <td><%= product_request.status%></td>
       </tr>
-    <% end %>
+      <% end %>
+      <tr>
+        <td colspan="2"></td>
+        <td colspan="1"> <strong> Total: </strong>  </td>
+        <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
+        <td colspan="1"></td>
+      </tr>
   </tbody>
 </table>
 <br /> <br /> <br />

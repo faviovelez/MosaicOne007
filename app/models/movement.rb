@@ -180,6 +180,8 @@ class Movement < ActiveRecord::Base
         movement.product_request.update(
           status: 'asignado'
         )
+        #Revisar con qué atributos está creándose (precio y costo)
+        # y si se va a respetar precio de cuando se creó el pending_movement
         return true
       end
     end
@@ -246,7 +248,7 @@ class Movement < ActiveRecord::Base
         c = entry.movement.fix_cost
 
         if Movement.last.quantity == nil
-          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2))
+          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2), initial_price: Movement.last.initial_price.round(2), final_price: Movement.last.final_price.round(2))
         end
 
         total_quantity -= Movement.last.quantity
@@ -261,7 +263,7 @@ class Movement < ActiveRecord::Base
         c = entry.movement.fix_cost
 
         if Movement.last.quantity == nil
-          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2))
+          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2), initial_price: Movement.last.initial_price.round(2), final_price: Movement.last.final_price.round(2))
         end
 
         temp_quantity = total_quantity

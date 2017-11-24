@@ -19,7 +19,6 @@
           <th class="col-md-1">No.</th>
           <th>Fecha</th>
           <th>Cliente</th>
-          <th>Atendió</th>
           <th>Subtotal</th>
           <th>Dev / Cambios</th>
           <th>Total</th>
@@ -34,7 +33,6 @@
               <td> <%= ticket.ticket_number %> </td>
               <td> <%= l ticket.created_at.to_date %> </td>
               <td> <%= show_non_blank_field(ticket.prospect&.legal_or_business_name) %> </td>
-              <td> <%= ticket_user(ticket) %> </td>
               <td> <%= number_to_currency(ticket.total) %> </td>
               <td> <%= number_to_currency(get_returns_or_changes(ticket)) %> </td>
               <td> <%= number_to_currency(get_total_with_returns_or_changes(ticket)) %> </td>
