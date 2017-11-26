@@ -16,7 +16,138 @@ class BillsController < ApplicationController
   def show
   end
 
-  def select_tickets(user_role = current_user.role.name)
+  def download_pdf
+    @pdf = Bill.last
+    redirect_to @pdf.pdf_url
+  end
+
+  def download_xml
+    @xml = Bill.last
+    redirect_to @xml.xml_url
+  end
+
+  def select_store(user = current_user)
+    @user = user
+    @role = @user.role.name
+    store = @user.store
+    @store = ''
+    # Este método es solo para los formularios en Bills
+    if (@role == 'store' || @role == 'store-admin')
+      @stores = store
+      @store = store.id
+    else
+      @stores = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'})
+    end
+  end
+
+  def select_type_of_bill
+    if params[:type_of_bill] == nil
+      type_of_bill = TypeOfBill.find_by_key('I')
+    else
+      type_of_bill = TypeOfBill.find(params[:type_of_bill])
+    end
+    @bill_type = type_of_bill
+    @type_of_bill_key = type_of_bill.key
+    @type_of_bill = type_of_bill.description
+  end
+
+  def select_stores_info
+    @store_series = [['seleccione']]
+    @store_folio = [['seleccione']]
+    @store_zipcodes = [['seleccione']]
+    @store_legal_names = [['seleccione']]
+    @store_rfcs = [['seleccione']]
+    @store_tax_regimes = [['seleccione']]
+    @stores.each do |store|
+      billing = store.business_unit.billing_address
+      @store_series << [store.series, store.id]
+      @store_folio << [store.bill_last_folio.to_i.next, store.id]
+      @store_zipcodes << [store.zip_code, store.id]
+      @store_legal_names << [billing.business_name, store.id]
+      @store_rfcs << [billing.rfc, store.id]
+      regime_string = billing.tax_regime.tax_id.to_s + ' - ' + billing.tax_regime.description.to_s
+      @store_tax_regimes << [regime_string, store.id]
+    end
+  end
+
+  def select_prospects_info
+    @prospects_names = [['seleccione']]
+    @prospects_rfcs = [['seleccione']]
+    if (@user.role.name == 'store' || @user.role.name == 'store-admin')
+      prospects = @stores.prospects
+    else
+      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
+    end
+    prospects.each do |prospect|
+      @prospects_names << [prospect.billing_address.business_name, prospect.id]
+      @prospects_rfcs << [prospect.billing_address.rfc, prospect.id]
+    end
+
+    global = Prospect.find_by_legal_or_business_name('Público en General')
+    @global_id = global.id
+    @global_rfc = global.billing_address.rfc
+
+    @prospects_rfcs << [global.billing_address.rfc, global.id]
+    @prospects_names << [global.billing_address.business_name, global.id]
+  end
+
+  def select_payment_forms
+    @payment_forms = [['seleccione']]
+    PaymentForm.all.each do |pf|
+      string = pf.payment_key + ' - ' + pf.description
+      @payment_forms << [string, pf.id]
+    end
+    @global_payment_form = PaymentForm.find_by_description('Por definir').id
+  end
+
+  def select_payment_conditions
+    @payment_conditions = [['seleccione'], ['Contado'], ['Crédito']]
+  end
+
+  def select_payment_methods
+    @payment_methods = [['seleccione']]
+    PaymentMethod.all.each do |pm|
+      string = pm.method + ' - ' + pm.description
+      @payment_methods << [string, pm.id]
+    end
+    @global_method = PaymentMethod.find_by_method('PUE').id
+  end
+
+  def select_cfdi_use
+    @cfdi_use = [['seleccione']]
+    CfdiUse.all.each do |use|
+      cfdi_string = use.key + ' - ' + use.description
+      @cfdi_use << [cfdi_string, use.id]
+    end
+    @cfdi_global = CfdiUse.find_by_description('Por definir').id
+  end
+
+  def get_time
+    @time = Time.now.strftime('%FT%T')
+  end
+
+  def get_info_for_form
+    select_store
+    select_type_of_bill
+    select_stores_info
+    select_prospects_info
+    select_payment_forms
+    select_payment_conditions
+    select_payment_methods
+    select_cfdi_use
+    get_time
+  end
+
+  def form
+    get_info_for_form
+  end
+
+  def global_form
+    get_info_for_form
+  end
+
+  def select_tickets
+    user_role = current_user.role.name
     permitted_roles = ['store', 'store-admin']
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless permitted_roles.include?(user_role)
 
@@ -54,6 +185,7 @@ class BillsController < ApplicationController
     params[:orders] == nil ? orders = nil : orders = Order.find(params[:orders])
     tickets == nil ? @objects = orders : @objects = tickets
     prospect = Prospect.find(params[:prospect]).first
+    select_store
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       @store = current_user.store
     else
@@ -365,6 +497,7 @@ class BillsController < ApplicationController
   end
 
   def cfdi_process
+    debugger
     params[:tickets] == nil ? tickets = nil : tickets = Ticket.find(params[:tickets])
     params[:orders] == nil ? orders = nil : orders = Order.find(params[:orders])
     tickets == nil ? @objects = orders : @objects = tickets
@@ -807,7 +940,8 @@ class BillsController < ApplicationController
         # bill.children = (este es cuando sean NC o ND o DEV)
       end
       bill.save
-      bill.update(xml: @stamped_xml, pdf: @pdf_file)
+      # El update de folio solo sirve para las facturas normales por el momento
+      bill.update(xml: @stamped_xml, pdf: @pdf_file, bill_last_folio: bill.bill_last_folio.to_i.next)
       @objects.each do |object|
         object.update(bill: bill)
       end

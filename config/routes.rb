@@ -42,6 +42,48 @@ Rails.application.routes.draw do
 
   get 'products/special'
 
+  get 'bills/download_pdf', to: 'bills#download_pdf', as: 'download_pdf'
+
+  get 'bills/download_xml', to: 'bills#download_xml', as: 'download_xml'
+
+  get 'bills/select_info'
+
+  post 'bills/select_info'
+
+  get 'bills/select_data'
+
+  get 'bills/select_tickets'
+
+  get 'bills/select_orders'
+
+  get 'bills/preview'
+
+  post 'bills/preview'
+
+  get 'bills/cfdi_process'
+
+  get 'bills/global_preview'
+
+  get 'bills/process_info'
+
+  get 'bills/process_data'
+
+  get 'bills/bill_doc_/:id', to: 'bills#bill_doc', as: 'bills_doc'
+
+  get 'bills/doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#doc', as: 'bill_doc'
+
+  get 'bills/global_doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#global_doc', as: 'bill_global_doc'
+
+  get 'bills/cfdi/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#cfdi', as: 'bill_cfdi'
+
+  get 'bills/form'
+
+  get 'bills/global_form'
+
+  get 'inventories/index'
+
+  get 'inventories/order_suggestions'
+
   devise_for :users
 
   scope "/admin" do
@@ -92,40 +134,6 @@ Rails.application.routes.draw do
     resources :delivery_addresses
   end
 
-  get 'inventories/index'
-
-  get 'inventories/order_suggestions'
-
-  get 'bills/select_info'
-
-  post 'bills/select_info'
-
-  get 'bills/select_data'
-
-  get 'bills/select_tickets'
-
-  get 'bills/select_orders'
-
-  get 'bills/preview'
-
-  post 'bills/preview'
-
-  get 'bills/cfdi_process'
-
-  get 'bills/global_preview'
-
-  get 'bills/process_info'
-
-  get 'bills/process_data'
-
-  get 'bills/bill_doc_/:id', to: 'bills#bill_doc', as: 'bills_doc'
-
-  get 'bills/doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#doc', as: 'bill_doc'
-
-  get 'bills/global_doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#global_doc', as: 'bill_global_doc'
-
-  get 'bills/cfdi/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#cfdi', as: 'bill_cfdi'
-
   resources :bills
 
   get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc', as: 'request_authorisation'
@@ -152,11 +160,14 @@ Rails.application.routes.draw do
 
   get 'design_requests/designer/:id', to: 'design_requests#designer', as: 'designer_requests'
 
+  post '/api/get_all_products',    to: 'api#get_all_products'
+
   get 'warehouse/new_own_entry'
 
   get 'warehouse/remove_inventory'
-  post '/api/get_all_products',    to: 'api#get_all_products'
+
   post 'warehouse/remove_product', to: 'warehouse#remove_product', as: 'warehouse_remove_product'
+
   get 'warehouse/show_remove', to: 'warehouse#show_removeds', as: 'warehouse_show_remove'
 
   post 'warehouse/confirm/:entry_codes', to: 'warehouse#confirm', as: 'warehouse_confirm'
@@ -185,8 +196,6 @@ Rails.application.routes.draw do
 
   get 'warehouse/waiting_products/:id', to: 'warehouse#waiting_products', as: 'warehouse_waiting_products'
 
-  patch 'orders/change_delivery_address/:id', to: 'orders#change_delivery_address', as: 'change_delivery_address'
-
   get 'warehouse/pending_products/:id', to: 'warehouse#pending_products', as: 'warehouse_pending_products'
 
   patch 'warehouse/assign_warehouse_staff/:id', to: 'warehouse#assign_warehouse_staff', as: 'assign_warehouse_staff', controller: 'orders'
@@ -200,6 +209,8 @@ Rails.application.routes.draw do
   get 'warehouse/pending_orders'
 
   get 'warehouse/prepare_order/:id', to: 'warehouse#prepare_order', as: 'warehouse_prepare_order'
+
+  patch 'orders/change_delivery_address/:id', to: 'orders#change_delivery_address', as: 'change_delivery_address'
 
   get 'orders/get/:product', to: 'orders#get_product', as: 'orders_get_product'
 

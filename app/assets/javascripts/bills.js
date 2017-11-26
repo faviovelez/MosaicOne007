@@ -1,6 +1,20 @@
 $(document).ready(function() {
 
 
+  $('.select2-prospect-form').select2({
+     placeholder: 'Cliente',
+     language: "es",
+     maximumSelectionLength: 1,
+     width: '100%'
+  });
+
+  $('.select2-store-form').select2({
+     placeholder: 'Empresa',
+     language: "es",
+     maximumSelectionLength: 1,
+     width: '100%'
+  });
+
   $('.select2-tickets').select2({
      placeholder: 'Tickets a facturar',
      language: "es"
@@ -30,6 +44,23 @@ $(document).ready(function() {
 
   $("#cfdi_type_global").click(function () {
     $(".select_prospect").addClass('hidden');
+  });
+
+  $('#prospect_name').bind('change', function() {
+    $('#prospect_rfc').children().each(function() {
+      if ($(this).val().toString() == $('#prospect_name').val()) {
+        $(this).attr("selected","selected");
+      };
+    });
+  });
+
+  $('#store_name').bind('change', function() {
+    store_values = ['#store_rfc', '#tax_regime', '#series', '#folio', '#zipcode'];
+    $(`${store_values}`).children().each(function() {
+      if ($(this).val().toString() == $('#store_name').val()) {
+        $(this).attr("selected","selected");
+      };
+    });
   });
 
 });

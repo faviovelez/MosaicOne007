@@ -44,6 +44,29 @@ button#btn-notice {
   margin-left: 50%;
 }
 
+.download-icon {
+  width: 2.5%;
+  height: auto;
+}
+
+span.next_line {
+    display: block;
+    padding-bottom: 1.3rem;
+}
+
+.align-center {
+  vertical-align: middle;
+}
+
+input.center-input {
+  text-align: center;
+}
+
+.extra-margin {
+  margin-top: 1.8rem;
+  margin-bottom: 1.8rem;
+}
+
 #notice {
 background-color: #3BE524;
 opacity: .70;

@@ -249,6 +249,10 @@ module BillsHelper
     end
   end
 
+  def select_series
+    @stores.bill_last_folio.to_i.next
+  end
+
   def select_prospect(role = current_user.role.name)
     store = current_user.store
     @prospects = []
