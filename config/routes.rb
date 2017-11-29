@@ -46,6 +46,8 @@ Rails.application.routes.draw do
 
   get 'bills/download_xml', to: 'bills#download_xml', as: 'download_xml'
 
+  get 'bills/download_xml_receipt', to: 'bills#download_xml_receipt', as: 'download_xml_receipt'
+
   get 'bills/select_info'
 
   post 'bills/select_info'
@@ -78,11 +80,27 @@ Rails.application.routes.draw do
 
   get 'bills/form'
 
+  get 'bills/billed_tickets'
+
+  get 'bills/select_bills'
+
+  post 'bills/modify'
+
+  get 'bills/ticket_details/:id', to: 'bills#ticket_details', as: 'ticket_details'
+
   get 'bills/global_form'
 
   get 'inventories/index'
 
   get 'inventories/order_suggestions'
+
+  get 'tickets/index'
+
+  get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
+
+  get 'orders/delete_product_from_order/:id', to: 'orders#delete_product_from_order', as: 'delete_product_from_order'
+
+  get 'orders/delete_order/:id', to: 'orders#delete_order', as: 'delete_order'
 
   devise_for :users
 
@@ -223,6 +241,8 @@ Rails.application.routes.draw do
   post 'orders/confirm/:ids', to: 'orders#confirm', as: 'orders_confirm'
 
   get 'orders/history'
+
+
 
   # Agregar la ruta para descargar los archivos, el link para descargarlos y el link en el navbar
   # Agregar un proceso para crear un archivo de productos csv en las carpetas de stores

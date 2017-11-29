@@ -79,8 +79,111 @@ class OrdersController < ApplicationController
     end
   end
 
-  def _modal_product_details
-    @product = params[:product]
+  def _product_details
+    @product = Product.find(params[:product])
+  end
+
+  def delete_product_from_order
+    # Este método es solo si no se ha facturado
+    request = ProductRequest.find(params[:id])
+    product = request.product
+    order = request.order
+    @id = order.id
+    total = order.total
+    subtotal = order.subtotal
+    taxes = order.taxes
+    discount_applied = order.discount_applied
+    order.movements.each do |mov|
+      # Falta el proceso que los quita de los reportes
+      if mov.product == product
+        number = product.warehouse_entries.order(:id).last.entry_number
+        entry_mov = mov.entry_movement
+        entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number)
+        inventory = Inventory.find_by_product_id(product.id)
+        inventory_quantity = inventory.quantity
+        new_quantity = inventory_quantity + mov.quantity
+        inventory.update(quantity: new_quantity)
+        total -= mov.total
+        subtotal -= mov.subtotal
+        taxes -= mov.taxes
+        discount_applied -= mov.discount_applied
+        mov.update()
+        mov.delete
+      end
+    end
+    order.pending_movements.each do |mov|
+      if mov.product == product
+        total -= mov.total
+        subtotal -= mov.subtotal
+        taxes -= mov.taxes
+        discount_applied -= mov.discount_applied
+        mov.delete
+      end
+    end
+    request.delete
+    if order.product_requests.count < 1
+      order.delete
+      redirect_to root_path, notice: 'Se eliminó por completo el pedido.'
+    else
+      order.update(total: total, subtotal: subtotal, taxes: taxes, discount_applied: discount_applied)
+      redirect_to orders_show_for_store_path(order), notice: 'Se eliminó este producto de su pedido.'
+    end
+  end
+
+  def delete_product_requests(request)
+    # Este método es solo si no se ha facturado
+    product = request.product
+    order = request.order
+    total = order.total
+    subtotal = order.subtotal
+    taxes = order.taxes
+    discount_applied = order.discount_applied
+    order.movements.each do |mov|
+      # Falta el proceso que los quita de los reportes
+      if mov.product == product
+        number = product.warehouse_entries.order(:id).last.entry_number
+        entry_mov = mov.entry_movement
+        entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number)
+        inventory = Inventory.find_by_product_id(product.id)
+        inventory_quantity = inventory.quantity
+        new_quantity = inventory_quantity + mov.quantity
+        inventory.update(quantity: new_quantity)
+        total -= mov.total
+        subtotal -= mov.subtotal
+        taxes -= mov.taxes
+        discount_applied -= mov.discount_applied
+        mov.delete
+      end
+    end
+    order.pending_movements.each do |mov|
+      total -= mov.total
+      subtotal -= mov.subtotal
+      taxes -= mov.taxes
+      discount_applied -= mov.discount_applied
+      mov.delete if mov.product == product
+    end
+    request.delete
+    if order.product_requests.count < 1
+      orders_users = OrdersUser.find_by_order_id(order.id)
+      orders_users.delete
+      order.delete
+      redirect_to root_path, notice: 'Se eliminó por completo el pedido.'
+    else
+      order.update(total: total, subtotal: subtotal, taxes: taxes, discount_applied: discount_applied)
+      redirect_to orders_show_for_store_path(@id), notice: 'Se eliminó este producto de su pedido.'
+    end
+  end
+
+  def delete_order
+    # Este método es solo si no se ha facturado
+    order = Order.find(params[:id])
+    order.product_requests.each do |request|
+      delete_product_requests(request)
+    end
+    orders_users = OrdersUser.find_by_order_id(order.id)
+    orders_users.delete
+    order.delete
+    redirect_to root_path, notice: 'Se eliminó por completo el pedido.'
   end
 
   def save_products
@@ -261,6 +364,7 @@ class OrdersController < ApplicationController
       initial_price: product.price,
       automatic_discount: disc_app,
       discount_applied: disc_app,
+      supplier: product.supplier,
       final_price: unit_price,
       movement_type: 'venta',
       user: current_user,

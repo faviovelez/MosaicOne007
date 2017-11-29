@@ -50,14 +50,11 @@ module OrdersHelper
         prod_req_result = pr.product_id
       end
     end
-    if @order.pending_movements == []
-      @order.movements.each do |mov|
-        total << mov if (prod_req_result == mov.product_id && (total.include?(mov) == false))
-      end
-    else
-      @order.pending_movements.each do |pm|
-        total << pm if (prod_req_result == pm.product_id && (total.include?(pm) == false))
-      end
+    @order.movements.each do |mov|
+      total << mov if (prod_req_result == mov.product_id && (total.include?(mov) == false))
+    end
+    @order.pending_movements.each do |pm|
+      total << pm if (prod_req_result == pm.product_id && (total.include?(pm) == false))
     end
     total.each do |mov|
       @total += mov.total

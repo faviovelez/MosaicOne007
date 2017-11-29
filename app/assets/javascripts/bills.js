@@ -1,6 +1,5 @@
 $(document).ready(function() {
 
-
   $('.select2-prospect-form').select2({
      placeholder: 'Cliente',
      language: "es",
@@ -62,5 +61,5 @@ $(document).ready(function() {
       };
     });
   });
-
+  
 });

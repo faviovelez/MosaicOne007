@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171123204808) do
+ActiveRecord::Schema.define(version: 20171128032515) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,6 +138,8 @@ ActiveRecord::Schema.define(version: 20171123204808) do
     t.integer  "parent_id"
     t.string   "sat_stamp"
     t.string   "payment_conditions"
+    t.string   "from"
+    t.string   "cancel_receipt"
   end
 
   add_index "bills", ["cfdi_use_id"], name: "index_bills_on_cfdi_use_id", using: :btree

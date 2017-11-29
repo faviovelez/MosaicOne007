@@ -1,0 +1,81 @@
+.ticket-selected {
+  margin-top: 2rem;
+}
+
+.ticket-selected > thead > tr > th,
+.ticket-selected > tbody > tr > td {
+  text-align: center;
+  padding: 0.5rem 0.5rem;
+  font-size: 1.5rem;
+}
+
+.head-blue {
+  background-color: #00B3D3;
+  color: #fff;
+  border-radius: 5px;
+  opacity: .7;
+}
+
+.edge-right {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.edge-left {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.quantity-width {
+  width: 90px;
+}
+
+.close-icon {
+  margin-left: 4px;
+  margin-right: 4px;
+  border-radius:50%;
+  width: 16px;
+  height: 16px;
+  background-color: #FF7474;
+  display: flex;
+  align-items: center;
+  vertical-align: middle;
+  z-index: 0;
+}
+
+.close-icon:hover,
+.close-icon:focus {
+  background-color: #D72638;
+}
+
+.center-close {
+  margin: 0 auto;
+  padding: 0 auto;
+  font-size: 12px !important;
+  opacity: 1 !important;
+  color: #fff;
+}
+
+.white-light {
+  color: #fff;
+  font-weight: normal;
+}
+
+.left {
+  text-align: left !important;
+}
+
+.right {
+  text-align: right !important;
+}
+
+.ticket-results {
+  margin-top: 2rem;
+}
+
+.ticket-results > thead > tr > th,
+.ticket-results > tbody > tr > td {
+  text-align: center;
+  padding: 0.5rem 2.9rem;
+  font-size: 1.5rem;
+}

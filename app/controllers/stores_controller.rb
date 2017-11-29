@@ -530,12 +530,21 @@ private
   end
 
   def save_pem_certificate
-    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.pem"), "w") do |file|
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer.pem"), "w") do |file|
       file.write('')
     end
 
-    cer_pem = Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.pem")
+    cer_pem = Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer.pem")
     `openssl x509 -inform DER -outform PEM -in #{@cer_file} -pubkey -out #{cer_pem}`
+  end
+
+  def save_base64_encrypted_cer
+    file = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer.pem"))
+    cer_b64 = Base64.encode64(file)
+
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cerb64.cer.pem"), "w") do |file|
+      file.write(cer_b64)
+    end
   end
 
   def save_der_certificate
@@ -564,13 +573,22 @@ private
     file = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.pem")
     password = ENV['password_pac']
 
-    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key"), "w") do |file|
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.pem"), "w") do |file|
       file.write('')
     end
 
     enc = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key")
 
     `openssl rsa -in #{file} -des3 -out #{enc} -passout pass:"#{password}"`
+  end
+
+  def save_base64_encrypted_key
+    file = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key"))
+    key_b64 = Base64.encode64(file)
+
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "keyb64.enc.key"), "w") do |file|
+      file.write(key_b64)
+    end
   end
 
   def save_unencrypted_key
