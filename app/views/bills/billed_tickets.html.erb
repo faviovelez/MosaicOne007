@@ -10,11 +10,9 @@
 <% end %>
 
 <% if @tickets.count >= 1 %>
-  <%= form_tag({ controller: 'bills', action: 'select_info' }, method: 'post') do %>
     <table id="tickets">
       <thead>
         <tr class="table-titles">
-          <th></th>
           <th class="col-md-1">Caja</th>
           <th class="col-md-1">No.</th>
           <th>Fecha</th>
@@ -29,7 +27,6 @@
       <tbody>
           <% @tickets.each do |ticket| %>
             <tr>
-              <td> <%= check_box_tag "tickets[]", "#{ticket.id}", false, { multiple: true, id: "tickets[#{ticket.id}]" }%> </td>
               <td> <%= ticket.cash_register.name %> </td>
               <td> <%= ticket.ticket_number %> </td>
               <td> <%= l ticket.created_at.to_date, format: :short %> </td>
@@ -49,12 +46,6 @@
       </tbody>
     </table>
 
-    <div class="actions">
-      <%= submit_tag 'Seleccionar datos', class: 'main-button' %>
-    </div><br /><br />
-
-  <% end %>
-
 <% else %>
-  <p class="individual-font">No hay tickets pendientes por facturar </p>
+  <p class="individual-font">No hay tickets facturados </p>
 <% end %>

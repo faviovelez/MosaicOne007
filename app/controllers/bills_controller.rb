@@ -1,5 +1,5 @@
 class BillsController < ApplicationController
-  before_action :set_bill, only: [:show, :edit, :bill, :bill_doc, :update, :destroy]
+  before_action :set_bill, only: [:show, :edit, :bill, :bill_doc, :update, :destroy, :download_pdf, :download_xml, :download_xml_receipt]
 
   require 'rqrcode'
   require 'savon'
@@ -16,7 +16,244 @@ class BillsController < ApplicationController
   def show
   end
 
-  def select_tickets(user_role = current_user.role.name)
+  def download_pdf
+    redirect_to @bill.pdf_url
+  end
+
+  def download_xml
+    redirect_to @bill.xml_url
+  end
+
+  def download_xml_receipt
+    redirect_to @bill.cancel_receipt
+  end
+
+  def filter_tickets
+  end
+
+  def select_bills
+    store = current_user.store
+    @bills = store.bills.where(status: 'timbrada').where.not(receiving_company: nil).where.not(total: nil)
+  end
+
+  def ticket_details
+    @ticket = Ticket.find(params[:id])
+    @number = @ticket.ticket_number
+    @date = @ticket.created_at.to_date
+    @prospect = @ticket&.prospect&.legal_or_business_name
+    @register = 'Caja ' + @ticket.cash_register.name
+    rows_for_ticket_show
+    payments_for_ticket_show
+  end
+
+  def payments_for_ticket_show
+    @payments_ticket = []
+    @ticket.payments.each do |payment|
+      @payments_ticket << payment unless payment.payment_type == 'crédito'
+    end
+    @ticket.children.each do |ticket|
+      ticket.payments.each do |payment|
+        @payments_ticket << payment unless payment.payment_type == 'crédito'
+      end
+    end
+    total = []
+    @payments_ticket.each do |pay|
+      total << pay.total
+    end
+    @total_payments_ticket = total.inject(&:+)
+    @total_payments_ticket
+  end
+
+  def rows_for_ticket_show
+    @rows = []
+    @ticket.store_movements.each do |movement|
+      hash = Hash.new.tap do |hash|
+        hash["ticket"] = movement.ticket.id
+        hash["type"] = movement.movement_type
+        hash["date"] = movement.created_at.to_date
+        hash["unique_code"] = movement.product.unique_code
+        hash["description"] = movement.product.description
+        hash["color"] = movement.product.exterior_color_or_design
+        hash["unit_value"] = movement.initial_price
+        hash["quantity"] = movement.quantity
+        hash["discount"] = movement.discount_applied
+        hash["total"] = movement.total
+      end
+      @rows << hash
+    end
+    @ticket.service_offereds.each do |service|
+      hash = Hash.new.tap do |hash|
+        hash["ticket"] = service.ticket.id
+        hash["type"] = service.service_type
+        hash["date"] = service.created_at.to_date
+        hash["unique_code"] = service.service.unique_code
+        hash["description"] = service.service.description
+        hash["unit_value"] = service.initial_price
+        hash["quantity"] = service.quantity
+        hash["discount"] = service.discount_applied
+        hash["total"] = service.total
+      end
+      @rows << hash
+    end
+    @ticket.children.each do |ticket|
+      ticket.store_movements.each do |movement|
+        hash = Hash.new.tap do |hash|
+          hash["ticket"] = movement.ticket.id
+          hash["type"] = movement.movement_type
+          hash["date"] = movement.created_at.to_date
+          hash["unique_code"] = movement.product.unique_code
+          hash["description"] = movement.product.description
+          hash["color"] = movement.product.exterior_color_or_design
+          hash["unit_value"] = movement.initial_price
+          hash["quantity"] = movement.quantity
+          hash["discount"] = movement.discount_applied
+          hash["total"] = movement.total
+        end
+        @rows << hash
+      end
+      ticket.service_offereds.each do |service|
+        hash = Hash.new.tap do |hash|
+          hash["ticket"] = service.ticket.id
+          hash["type"] = service.service_type
+          hash["date"] = service.created_at.to_date
+          hash["unique_code"] = service.service.unique_code
+          hash["description"] = service.service.description
+          hash["unit_value"] = service.initial_price
+          hash["quantity"] = service.quantity
+          hash["discount"] = service.discount_applied
+          hash["total"] = service.total
+        end
+        @rows << hash
+      end
+    end
+    @rows
+  end
+
+  def billed_tickets
+    store = current_user.store
+    @tickets = store.tickets.where(parent:nil).where.not(bill: nil)
+  end
+
+  def select_store(user = current_user)
+    @user = user
+    @role = @user.role.name
+    store = @user.store
+    # Este método es solo para los formularios en Bills
+    if (@role == 'store' || @role == 'store-admin')
+      @stores = store
+    else
+      @stores = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'})
+    end
+  end
+
+  def select_type_of_bill
+    if params[:type_of_bill] == nil
+      type_of_bill = TypeOfBill.find_by_key('I')
+    else
+      type_of_bill = TypeOfBill.find(params[:type_of_bill])
+    end
+    @bill_type = type_of_bill
+    @type_of_bill_key = type_of_bill.key
+    @type_of_bill = type_of_bill.description
+  end
+
+  def select_stores_info
+    @store_series = [['seleccione']]
+    @store_folio = [['seleccione']]
+    @store_zipcodes = [['seleccione']]
+    @store_legal_names = [['seleccione']]
+    @store_rfcs = [['seleccione']]
+    @store_tax_regimes = [['seleccione']]
+    @stores.each do |store|
+      billing = store.business_unit.billing_address
+      @store_series << [store.series, store.id]
+      @store_folio << [store.bill_last_folio.to_i.next, store.id]
+      @store_zipcodes << [store.zip_code, store.id]
+      @store_legal_names << [billing.business_name, store.id]
+      @store_rfcs << [billing.rfc, store.id]
+      regime_string = billing.tax_regime.tax_id.to_s + ' - ' + billing.tax_regime.description.to_s
+      @store_tax_regimes << [regime_string, store.id]
+    end
+  end
+
+  def select_prospects_info
+    @prospects_names = [['seleccione']]
+    @prospects_rfcs = [['seleccione']]
+    if (@user.role.name == 'store' || @user.role.name == 'store-admin')
+      prospects = @stores.prospects
+    else
+      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
+    end
+    prospects.each do |prospect|
+      @prospects_names << [prospect.billing_address.business_name, prospect.id]
+      @prospects_rfcs << [prospect.billing_address.rfc, prospect.id]
+    end
+
+    global = Prospect.find_by_legal_or_business_name('Público en General')
+    @global_id = global.id
+    @global_rfc = global.billing_address.rfc
+
+    @prospects_rfcs << [global.billing_address.rfc, global.id]
+    @prospects_names << [global.billing_address.business_name, global.id]
+  end
+
+  def select_payment_forms
+    @payment_forms = [['seleccione']]
+    PaymentForm.all.each do |pf|
+      string = pf.payment_key + ' - ' + pf.description
+      @payment_forms << [string, pf.id]
+    end
+    @global_payment_form = PaymentForm.find_by_description('Por definir').id
+  end
+
+  def select_payment_conditions
+    @payment_conditions = [['seleccione'], ['Contado'], ['Crédito']]
+  end
+
+  def select_payment_methods
+    @payment_methods = [['seleccione']]
+    PaymentMethod.all.each do |pm|
+      string = pm.method + ' - ' + pm.description
+      @payment_methods << [string, pm.id]
+    end
+     @global_method = PaymentMethod.find_by_method('PUE').id
+  end
+
+  def select_cfdi_use
+    @cfdi_use = [['seleccione']]
+    CfdiUse.all.each do |use|
+      cfdi_string = use.key + ' - ' + use.description
+      @cfdi_use << [cfdi_string, use.id]
+    end
+    @cfdi_global = CfdiUse.find_by_description('Por definir').id
+  end
+
+  def get_time
+    @time = Time.now.strftime('%FT%T')
+  end
+
+  def get_info_for_form
+    select_store
+    select_type_of_bill
+    select_stores_info
+    select_prospects_info
+    select_payment_forms
+    select_payment_conditions
+    select_payment_methods
+    select_cfdi_use
+    get_time
+  end
+
+  def form
+    get_info_for_form
+  end
+
+  def global_form
+    get_info_for_form
+  end
+
+  def select_tickets
+    user_role = current_user.role.name
     permitted_roles = ['store', 'store-admin']
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless permitted_roles.include?(user_role)
 
@@ -34,16 +271,30 @@ class BillsController < ApplicationController
   def select_info
     params[:tickets] == nil ? @tickets = nil : @tickets = Ticket.find(params[:tickets])
     params[:orders] == nil ? @orders = nil : @orders = Order.find(params[:orders])
-    @tickets == nil ? objects = @orders : objects = @tickets
+    params[:bills] == nil ? @bills = nil : @bills = Bill.find(params[:bills])
+    if (@tickets == nil  && @orders == nil)
+      objects = @bills
+    elsif (@tickets == nil  && @bills == nil)
+      objects = @orders
+    elsif (@bills == nil  && @orders == nil)
+      objects = @tickets
+    end
     if objects.first.is_a?(Ticket)
       get_cfdi_use_from_tickets(@tickets)
-    else
+    elsif objects.first.is_a?(Order)
       @cfdi_use = CfdiUse.first
+    else
+      @cfdi_use = nil
     end
+
     get_prospect_from_objects(objects)
     @type_of_bill = TypeOfBill.first
     @tickets = params[:tickets] unless params[:tickets] == nil
     @orders = params[:orders] unless params[:orders] == nil
+  end
+
+  def modify
+    # Revisar bien cómo haré el proceso para incluir (Dev Pag NC ND Sust Canc)
   end
 
   def global_preview
@@ -54,6 +305,7 @@ class BillsController < ApplicationController
     params[:orders] == nil ? orders = nil : orders = Order.find(params[:orders])
     tickets == nil ? @objects = orders : @objects = tickets
     prospect = Prospect.find(params[:prospect]).first
+    select_store
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       @store = current_user.store
     else
@@ -65,6 +317,7 @@ class BillsController < ApplicationController
     end
     @folio = ''
     @series = ''
+    @time = Time.now.strftime('%FT%T')
     if prospect.billing_address == nil
       redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
     else
@@ -234,12 +487,12 @@ class BillsController < ApplicationController
     if objects.first.is_a?(Ticket)
       objects.each do |object|
         object.payments.each do |payment|
-          payments << [payment.payment_form.description, payment.total]
+          payments << [payment.payment_form.description, payment.total] unless payment.payment_type == 'crédito'
           real_payments << payment
         end
         object.children.each do |children|
           children.payments.each do |pay|
-            payments << [pay.payment_form.description, pay.total]
+            payments << [pay.payment_form.description, pay.total] unless pay.payment_type == 'crédito'
             real_payments << pay
           end
         end
@@ -247,7 +500,7 @@ class BillsController < ApplicationController
     else
       objects.each do |object|
         object.payments.each do |payment|
-          payments << [payment.payment_form.description, payment.total]
+          payments << [payment.payment_form.description, payment.total] unless payment.payment_type == 'crédito'
           real_payments << payment
         end
       end
@@ -376,6 +629,7 @@ class BillsController < ApplicationController
         @store = @objects.first.movements.first.product.business_unit.stores.first
       end
     end
+    @time = Time.now.strftime('%FT%T')
     if params[:cfdi_type] == 'global'
       @general_bill = true
       store = @store
@@ -485,7 +739,7 @@ class BillsController < ApplicationController
         @method_key = @method.method
         @payment_form
       else
-        @payment_key = @greatest_payment._payment.payment_key
+        @payment_key = @greatest_payment.payment_key
         @payment_description = @payments.first.first
         payment_method_(@objects, @total_payment, @list_of_real_payments)
         @method_description = @method.description
@@ -520,6 +774,7 @@ class BillsController < ApplicationController
     generate_digital_stamp
     get_stamp_from_pac
     qrcode_print
+    generate_pdf
     save_to_db
     if @incidents_hash == nil
       redirect_to root_path, notice: 'Su factura se ha guardado con éxito.'
@@ -532,7 +787,6 @@ class BillsController < ApplicationController
     # Detalla las variables necesarias para los directorios
     @store
     @p_rfc = @prospect_rfc
-    @time = Time.now.strftime('%FT%T')
     @base = Rails.root.join('public', 'uploads')
 
     # Crea los directorios
@@ -614,7 +868,7 @@ class BillsController < ApplicationController
       xml['cfdi'].Comprobante(document) do
         unless (@relation_type == '' || @relation_type == 4 )
           xml['cfdi'].CfdiRelacionados('TipoRelacion' => @relation_type ) do
-            xml['cfdi'].CfdiRelacionado('UUID' => '') #revisar quévoy a poner aquí
+            xml['cfdi'].CfdiRelacionado('UUID' => '') #revisar qué voy a poner aquí
           end
         end
         xml['cfdi'].Emisor(issuer)
@@ -694,6 +948,59 @@ class BillsController < ApplicationController
     unstamped = File.open(File.join(@working_dir, 'unstamped.xml'), 'w'){ |file| file.write(xml.to_xml) }
   end
 
+  def cancel_uuid
+    #Crea un cliente SOAP con Savon
+    client = Savon.client(wsdl: 'https://demo-facturacion.finkok.com/servicios/soap/cancel.wsdl')
+
+    username = ENV['username_pac'] # Usuario de Finkok
+    password = ENV['password_pac'] # Password de Finkok
+    taxpayer_id = @bill.issuing_company.rfc #RFC Emisor
+    invoices = @bill.uuid #UUID a cancelar
+
+    # Lee el archivo Cer en formato Pem ".cer"
+    cer_pem_b64 = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cerb64.cer.pem"))
+
+    key_des3_b64 = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "keyb64.enc.key"))
+
+    uuid = [invoices]
+    uuid.map! do |uuid|
+      uuid = "<tns:string>#{uuid}</tns:string>"
+    end
+
+xml = <<XML
+  <tns:UUIDS>
+    <tns:uuids>
+      #{uuid.join "\n"}
+    </tns:uuids>
+  </tns:UUIDS>
+  <tns:username>#{username}</tns:username>
+  <tns:password>#{password}</tns:password>
+  <tns:taxpayer_id>#{taxpayer_id}</tns:taxpayer_id>
+  <tns:cer>#{cer_pem_b64}</tns:cer>
+  <tns:key>#{key_des3_b64}</tns:key>
+XML
+
+    #Obtiene el SOAP Request y lo guarda en un archivo
+    ops = client.operation(:cancel)
+    request = ops.build(message: xml)
+
+    #Envia la peticion al webservice de cancelacion
+    response = client.call(:cancel, message: xml)
+
+    response_hash = response.hash
+    receipt = response_hash[:envelope][:body][:cancel_response][:cancel_result][:acuse]
+
+    xml_receipt = Nokogiri::XML(receipt)
+
+    receipt_extract = xml_receipt.document.children.children.children
+
+    receipt_file = File.open(File.join(@final_dir, 'acuse.xml'), 'w'){ |file| file.write(xml_receipt) }
+
+    @bill.update(cancel_receipt: receipt_file)
+
+    redirect_to root_path, notice: "Se ha cancelado exitosamente la factura con Folio #{@bill.folio}."
+  end
+
   #### ESTE MÉTODO ES PARA BILL ### ##CAMBIAR POR MÉTODO PARA SOLO TIMBRE FISCAL SIN SELLO#
   def get_stamp_from_pac
     #Crea un cliente SOAP con Savon
@@ -727,7 +1034,6 @@ class BillsController < ApplicationController
     @sat_seal = hash[:sat_seal]
     @sat_certificate = hash[:no_certificado_sat]
     @incidents_hash = hash[:incidencias]
-    debugger
     #Separa la parte del timbre fiscal digital para generar cadena original (y quita la parte que genera error)
     doc = Nokogiri::XML(xml_response)
     extract = doc.xpath('//cfdi:Complemento').children.to_xml.gsub('xsi:', '')
@@ -742,6 +1048,8 @@ class BillsController < ApplicationController
     ###### CAMBIAR ESTE MÉTODO POR UN NOMBRE DISTITNO DE FACTURA
     stamped_xml = File.open(File.join(@final_dir, 'stamped.xml'), 'w'){ |file| file.write(xml_response) }
 
+    @stamped_xml = File.open(File.join(@final_dir, 'stamped.xml'), 'r')
+
     xml_url = @xml_path + 'stamped.xml' ###### CAMBIAR ESTE MÉTODO POR UN NOMBRE DISTITNO DE FACTURA
 
     #Guarda el extracto del timbre fiscal digital en un XML
@@ -754,53 +1062,77 @@ class BillsController < ApplicationController
   end
 
   def save_to_db
-    bill = Bill.new.tap do |bill|
-      bill.status = 'timbrada'
-      # bill.pdf =
-      # bill.xml =
-      bill.issuing_company = @s_billing
-      bill.receiving_company = @p_billing
-      bill.store = @store
-      bill.sequence = @series
-      bill.folio = @folio
-      bill.payment_conditions = @payment_form
-      bill.payment_method = @method
-      bill.payment_form = @greatest_payment
-      bill.subtotal = @subtotal
-      bill.taxes = @total_taxes
-      bill.total = @total
-      bill.discount_applied = @total_discount
-      # bill.automatic_discount_applied =
-      bill.manual_discount_applied = @total_discount
-      bill.tax = Tax.find(2)
-      bill.tax_regime = @regime
-      bill.taxes_transferred = @total_taxes
-      # bill.taxes_witheld =
-      bill.cfdi_use = @use
-      # bill.pac =
-      bill.relation_type = @relation
-      # bill.references_field = ''
-      bill.type_of_bill = @bill_type
-      bill.currency = Currency.find_by_name('MXN')
-      # bill.id_trib_reg_num = ''
-      # bill.confirmation_key =
-      bill.exchange_rate = 1.0
-      bill.country = Country.find_by_name('México')
-      bill.sat_certificate_number = @sat_certificate
-      bill.certificate_number = @store.certificate_number
-      bill.qr_string = @qr_string
-      bill.original_chain = @stamp_original_chain
-      bill.sat_stamp = @sat_seal
-      bill.digital_stamp = @cfd_stamp
-      bill.sat_zipcode_id = @store.zip_code
-      bill.date_signed = @date
-      bill.leyend = ''
-      bill.uuid = @uuid
-      bill.payed = @payed
-      # bill.parent = ''
-      # bill.children = (este es cuando sean NC o ND o DEV)
+    @error = false
+    if @incidents_hash == nil
+
+      @pdf_file = File.open(File.join(@final_dir, 'factura.pdf'), 'r')
+
+      bill = Bill.new.tap do |bill|
+        bill.status = 'timbrada'
+        bill.issuing_company = @s_billing
+        bill.receiving_company = @p_billing
+        bill.store = @store
+        bill.sequence = @series
+        bill.folio = @folio
+        bill.payment_conditions = @payment_form
+        bill.payment_method = @method
+        bill.payment_form = @greatest_payment
+        bill.subtotal = @subtotal
+        bill.taxes = @total_taxes
+        bill.total = @total
+        bill.discount_applied = @total_discount
+        # bill.automatic_discount_applied =
+        bill.manual_discount_applied = @total_discount
+        bill.tax = Tax.find(2)
+        bill.tax_regime = @regime
+        bill.taxes_transferred = @total_taxes
+        # bill.taxes_witheld =
+        bill.cfdi_use = @use
+        # bill.pac =
+        bill.relation_type = @relation
+        # bill.references_field = ''
+        bill.type_of_bill = @bill_type
+        bill.currency = Currency.find_by_name('MXN')
+        # bill.id_trib_reg_num = ''
+        # bill.confirmation_key =
+        bill.exchange_rate = 1.0
+        bill.country = Country.find_by_name('México')
+        bill.sat_certificate_number = @sat_certificate
+        bill.certificate_number = @store.certificate_number
+        bill.qr_string = @qr_string
+        bill.original_chain = @stamp_original_chain
+        bill.sat_stamp = @sat_seal
+        bill.digital_stamp = @cfd_stamp
+        bill.sat_zipcode_id = @store.zip_code
+        bill.date_signed = @date
+        bill.leyend = ''
+        bill.uuid = @uuid
+        bill.payed = @payed
+        # bill.parent = ''
+        # bill.children = (este es cuando sean NC o ND o DEV)
+      end
+      bill.save
+      # El update de folio solo sirve para las facturas normales por el momento
+      bill.update(xml: @stamped_xml, pdf: @pdf_file)
+      @store.update(bill_last_folio: @folio)
+      @objects.each do |object|
+        object.update(bill: bill)
+        if object.is_a?(Ticket)
+          object.children.each do |ticket|
+            ticket.update(bill: bill)
+          end
+        elsif object.is_a?(Order)
+          object.movements.each do |mov|
+            mov.update(bill: bill)
+          end
+          object.pending_movements.each do |mov|
+            mov.update(bill: bill)
+          end
+        end
+      end
+    else
+      @error = true
     end
-    bill.save
   end
 
   def rows(general_bill, objects)
@@ -1084,11 +1416,17 @@ class BillsController < ApplicationController
 
   def get_prospect_from_objects(object)
     object_prospect = []
-    object.each do |object|
-      object_prospect << object.prospect unless object.prospect == nil
+    if object.first.is_a?(Bill)
+      object.each do |object|
+        object_prospect << object.receiving_company unless object.receiving_company == nil
+      end
+    else
+      object.each do |object|
+        object_prospect << object.prospect unless object.prospect == nil
+      end
+      object_prospect.uniq.length == 1 ? @prospect = object_prospect.first : @prospect = nil
+      @prospect
     end
-    object_prospect.uniq.length == 1 ? @prospect = object_prospect.first : @prospect = nil
-    @prospect
   end
 
   def get_cfdi_use_from_tickets(tickets)
@@ -1133,6 +1471,17 @@ class BillsController < ApplicationController
   #  7. NoCertificadoSAT
 
 # Ó también generarla a través de xslt, ejemplo:  ||1.1|ad662d33-6934-459c-a128-bdf0393e0f44|2001-12-17T09:30:47|AAA010802QT9|ValorDelAtributoLeyenda|iYyIk1MtEPzTxY3h57kYJnEXNae9lvLMgAq3jGMePsDtEOF6XLWbrV2GL/2TX00vP2+YsPN+5UmyRdzMLZGEfESiNQF9fotNbtA487dWnCf5pUu0ikVpgHvpY7YoA4Lb1D/JWc+zntkgW+Ig49WnlKyXi0LOlBOVuxckDb7Eax4=|12345678901234567890||
+
+  def generate_pdf
+    if @general_bill
+      pdf = render_to_string pdf: "factura", template: 'bills/global_doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
+    else
+      pdf = render_to_string pdf: "factura", template: 'bills/doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
+    end
+    save_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}_final", 'factura.pdf')
+    pdf_bill = File.open(save_path, 'wb'){ |file| file << pdf }
+    @pdf = pdf_bill
+  end
 
   def doc
     preview
@@ -1247,6 +1596,7 @@ class BillsController < ApplicationController
       :quantity,
       :pdf,
       :xml,
+      :cancel_receipt,
       :issuing_company_id,
       :receiving_company_id,
       :store_id,

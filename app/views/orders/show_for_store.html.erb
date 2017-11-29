@@ -1,7 +1,7 @@
 <table class="table">
   <thead>
     <tr class="table-titles">
-      <th class="hidden"> Código </th>
+      <th> Código </th>
       <th> Descripción </th>
       <th> Color </th>
       <th> Cantidad </th>
@@ -12,21 +12,27 @@
   <tbody>
     <% @order.product_requests.each do |product_request| %>
       <tr>
-        <td class="hidden"><%= product_request.product.unique_code %></td>
+        <td><%= product_request.product.unique_code %></td>
         <td>
-          <% @product = product_request.product %>
-          <%= link_to '#productShow', product: @product, 'data-toggle' => 'modal' do %>
+          <%# link_to product_details_path(product: product_request.product.id), {:remote => true,  :id => product_request.product.id, 'data-toggle' =>  "modal", 'data-target' => '#productShow'} do %>
             <%= product_request.product.description %>
-          <% end %>
+          <%# end %>
         </td>
         <td><%= product_request.product.exterior_color_or_design %></td>
         <td><%= number_with_delimiter(product_request.quantity) %></td>
         <td><%= number_to_currency(get_total_from_movements(product_request)) %></td>
         <td><%= product_request.status%></td>
+        <% if (@order.status == 'en espera' || @order.status == 'mercancía asignada' && (@order.bill == nil)) %>
+          <td class="col-md-1">
+            <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+              <i class="fa fa-minus-square link-to-price" aria-hidden="true"></i>
+            <% end %>
+          </td>
+        <% end %>
       </tr>
       <% end %>
       <tr>
-        <td colspan="2"></td>
+        <td colspan="3"></td>
         <td colspan="1"> <strong> Total: </strong>  </td>
         <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
         <td colspan="1"></td>
@@ -35,4 +41,4 @@
 </table>
 <br /> <br /> <br />
 <%= render 'modal_delivery_address' %>
-<%= render partial: 'modal_product_details' %>
+<%= render partial: 'product_details' %>

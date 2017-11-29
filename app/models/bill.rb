@@ -10,6 +10,7 @@ class Bill < ActiveRecord::Base
   belongs_to :receiving_company, class_name: 'BillingAddress'
   mount_uploader :pdf, BillUploader
   mount_uploader :xml, BillUploader
+  mount_uploader :cancel_receipt, BillUploader
   belongs_to :expedition_zip
   belongs_to :payment_method
   belongs_to :payment_form

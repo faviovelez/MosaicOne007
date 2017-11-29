@@ -1,0 +1,175 @@
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'bills' %>
+<% end %>
+
+<%= image_tag 'logo-disenos-decarton.png', class: 'img-bill-preview' %>
+
+<%= form_tag({ controller: 'bills', action: 'cfdi_process' }, method: 'get') do %>
+
+  <div class="top-right-preview">
+    <h3 id="top-title"> FACTURA </h3>
+    <p>
+      Serie: <%= select_tag :series, options_for_select(@store_series, selected: @store), class: 'form-control' %>
+    </p>
+    <p>
+      Folio: <%= select_tag :folio, options_for_select(@store_folio, selected: @store), class: 'form-control' %>
+    </p>
+    <p> Fecha y hora de timbrado: <span> <%= @time %> </span> </p>
+    <p> Lugar de expedición: <%= select_tag :zipcode, options_for_select(@store_zipcodes, selected: @store),  class: 'form-control' %> </p>
+    <p class="extra-margin"> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill %> </span> </p>
+  </div>
+
+  <table id="issuing-receiving-table-preview">
+    <thead>
+      <tr class="ligth-bg-preview">
+        <th class="half header"> EMISOR</th>
+        <th class="half header"> RECEPTOR </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="half first"> RFC: <%= select_tag :store_rfc, options_for_select(@store_rfcs, selected: @store), class: 'form-control' %> </td>
+        <td class="half"> RFC: <%= select_tag :prospect_rfc, options_for_select(@prospects_rfcs, selected: @global_id), class: 'form-control' %> </td>
+      </tr>
+      <tr>
+        <td class="half first"> <span class="next_line"> Nombre: </span> <%= select_tag :store_name, options_for_select(@store_legal_names, selected: @store), {include_blank: true, multiple: true, class: 'select2-store-form'} %> </td>
+        <td class="half hidden"> <span class="next_line"> Nombre: </span> <%= select_tag :prospect_name, options_for_select(@prospects_names, selected: @global_id), {include_blank: true, multiple: true, class: 'select2-prospect-form'} %> </td>
+      </tr>
+      <tr>
+        <td class="half first"> Régimen Fiscal: <%= select_tag :tax_regime, options_for_select(@store_tax_regimes, selected: @store), class: 'form-control' %> </td>
+        <td class="half"> Uso CFDI: <%= select_tag :cfdi_use, options_for_select(@cfdi_use, selected: @cfdi_global), class: 'form-control' %> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="second-table-preview">
+    <thead>
+      <tr class="ligth-bg-preview">
+        <th class="all header main-header" colspan="2"> FORMA DE PAGO </th>
+      </tr>
+    </thead>
+    <tbody class="border-around">
+      <tr>
+        <td class="half first align-center"> Moneda: <span> <strong> MXN </strong> - Peso Mexicano </span> </td>
+        <td class="half"> Forma de pago: <%= select_tag :payment, options_for_select(@payment_forms, selected: @global_payment_form), class: 'form-control' %> </td>
+      </tr>
+      <tr>
+        <td class="half first"> Método de pago: <%= select_tag :method, options_for_select(@payment_methods, selected: @global_method), class: 'form-control' %> </td>
+        <td class="half hidden"> Condiciones de pago: </td>
+      </tr>
+      <tr class="hidden">
+        <td class="half first"> Tipo de cambio: <span> 1.000000 </span> </td>
+        <td class="half"> Clave de confirmación: <span> </span> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="quantities-table payments-margin">
+    <thead>
+      <tr class="header-main-preview">
+        <th class="space-preview"> Ticket </th>
+        <th class="space-preview"> Clave Prod / Serv </th>
+        <th class="space-preview"> Cantidad </th>
+        <th class="space-preview"> Clave Unidad </th>
+        <%# ESTE CAMPO DEBE SER EDITABLE%>
+        <th class="space-preview"> Descripción </th>
+        <th class="space-preview"> Valor Unitario </th>
+        <th class="space-preview"> Descuento </th>
+        <th class="space-preview"> Impuesto </th>
+        <th class="space-preview"> Importe </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr id="fields_for_product">
+          <% if (@role == 'store' || @role == 'store-admin' ) %>
+            <td class="space-preview"> <%= text_field_tag :tickets, nil, {placeholder: 'No. de ticket', class: 'form-control center-input'} %> </td>
+          <% else %>
+            <td class="space-preview"> <%= text_field_tag :orders, nil, {placeholder: 'No. de pedido', class: 'form-control center-input'} %> </td>
+          <% end %>
+          <td class="space-preview"> 01010101 </td>
+          <td class="space-preview"> 1 </td>
+          <td class="space-preview"> <strong> ACT </strong> </td>
+          <td class="space-preview"> Venta </td>
+          <td class="space-preview"> <%= text_field_tag :unit_value, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+          <td class="space-preview"> <%= text_field_tag :discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+          <td class="space-preview"> <%= text_field_tag :taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+          <td class="space-preview"> <%= text_field_tag :subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+        </tr>
+      <tr>
+        <td colspan="3 letter" class="center"> </td>
+        <td></td>
+        <td></td>
+        <td colspan="5"></td>
+      </tr>
+      <tr>
+        <td colspan="3" class="center"> </td>
+        <td></td>
+        <td></td>
+        <td colspan="3" class="final-total left"> SubTotal </td>
+        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+      </tr>
+      <tr>
+        <td colspan="5"></td>
+        <td colspan="3" class="final-total left"> Descuento </td>
+        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="letter"> </td>
+        <td colspan="3" class="final-total left"> Total Impuestos Trasladados </td>
+        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'}  %> </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="letter">  </td>
+        <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
+        <td colspan="2" class="final-total border-top right"> <strong> <%= text_field_tag :bill_total, nil, {placeholder: '$ 0.00', class: 'form-control center-input'}  %> </strong> </td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>
+
+<table class="payments-summary hidden">
+  <thead>
+      <tr>
+        <th colspan="5"> Resumen de pagos </th>
+      </tr>
+      <tr class="header-main-preview">
+      <th> Ticket </th>
+      <th> Fecha </th>
+      <th> Forma de pago </th>
+      <th> Monto </th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr class="center">
+        <td>  </td>
+        <td>  </td>
+        <td>  </td>
+        <td>  </td>
+      </tr>
+      <tr>
+        <td>  </td>
+        <td colspan="2" class="left"> <strong> Total pagos: </strong> </td>
+        <td colspan="2" class="right"> <strong> </strong> </td>
+      </tr>
+      <tr>
+        <td>  </td>
+        <td colspan="2" class="left"> <strong> Total tickets: </strong> </td>
+        <td colspan="2" class="right"> <strong> </strong> </td>
+      </tr>
+      <tr>
+        <td>  </td>
+        <td colspan="2" class="left"> <strong> Saldo pendiente: </strong> </td>
+        <td colspan="2" class="right"> <strong> </strong> </td>
+      </tr>
+  </tbody>
+</table>
+
+<%= link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
+
+<br /><br /><br /><br />

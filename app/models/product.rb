@@ -9,6 +9,7 @@ class Product < ActiveRecord::Base
   has_many :bills, through: :products_bills, dependent: :destroy
   has_many :product_requests, dependent: :destroy
   has_many :product_sales, dependent: :destroy
+  has_many :warehouse_entries
   belongs_to :business_unit
   has_many :production_requests, dependent: :destroy
   has_one :request, dependent: :destroy

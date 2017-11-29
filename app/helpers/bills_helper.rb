@@ -249,6 +249,10 @@ module BillsHelper
     end
   end
 
+  def select_series
+    @stores.bill_last_folio.to_i.next
+  end
+
   def select_prospect(role = current_user.role.name)
     store = current_user.store
     @prospects = []
@@ -337,7 +341,18 @@ module BillsHelper
     end
     payments = payments.inject(&:+)
     payments == nil ? @payments = 0 : @payments = payments
-    @ticket_total == @payments ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(@ticket_total - payments).to_s
+    @ticket_total <= @payments ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency((@ticket_total - payments).round(2)).to_s
+    @pending
+  end
+
+  def get_payments_from_bill(bill)
+    payments = []
+    bill.payments.each do |payment|
+      payments << payment
+    end
+    payments = payments.inject(&:+)
+    payments == nil ? @payments = 0 : @payments = payments
+    bill.total <= @payments ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency((bill.total - @payments).round(2)).to_s
     @pending
   end
 
@@ -353,7 +368,7 @@ module BillsHelper
     elsif @order_total == @payments
       @pending = content_tag(:span, 'pagado', class: 'label label-success')
     else
-      @pending = number_to_currency(@ticket_total - payments).to_s
+      @pending = number_to_currency(@ticket_total - @payments).to_s
     end
     @pending
   end
@@ -447,7 +462,7 @@ module BillsHelper
     @all_payments = []
     @objects.each do |object|
       object.payments.each do |payment|
-        @all_payments << payment
+        @all_payments << payment unless payment.payment_type == 'crédito'
       end
     end
     @all_payments

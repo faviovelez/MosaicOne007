@@ -23,6 +23,14 @@
               <span>Ver</span>
             <% end %>
           </td>
+          <td class="col-md-1">
+            <% if (order.status == 'en espera' || order.status == 'mercancía asignada' && (order.bill == nil)) %>
+              <%= link_to delete_order_path(order), data: { confirm: "Desa cancelar el pedido #{order.id}?. Esta acción no se puede deshacer." } do %>
+                <i class="fa fa-minus-square link-to-price" aria-hidden="true"></i>
+                <span class="link-to-price">Borrar</span>
+              <% end %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>

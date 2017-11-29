@@ -24,7 +24,7 @@
   </div>
 
   <div class="field form-inside-style prospect-list margin-select select_prospect">
-    <%= label_tag :seleccione_cliente %>
+    <%= label_tag :seleccione_cliente, class: 'next-line' %>
     <%= select_tag :prospect, options_for_select(select_prospect), {include_blank: true, multiple: true, class: 'select2-prospect'} %>
   </div>
 

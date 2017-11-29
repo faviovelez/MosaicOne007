@@ -4,11 +4,11 @@
 
   <div class="top-right">
     <h3 id="top-title"> FACTURA </h3>
-    <p> Serie: <span> <%= current_user.store.series %> </span> </p>
-    <p> Folio: <span> <%= current_user.store.last_bill.next %> </span> </p>
-    <p> Fecha:  <span> <%= l Date.today %> </span> </p>
-    <p> Lugar de expedición: <span> <%= current_user.store.zip_code %> </span> </p>
-    <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> <%= @type_of_bill %> </span> </p>
+    <p> Serie: <span> <%= @series %> </span> </p>
+    <p> Folio: <span> <%= @folio %> </span> </p>
+    <p> Fecha y hora de timbrado: <span> <%= @time.slice(0..18) %> </span> </p>
+    <p> Lugar de expedición: <span> <span> <%= @zipcode %> </span> </span> </p>
+    <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill %> </span> </p>
   </div>
 
   <table id="issuing-receiving-table">
@@ -20,16 +20,16 @@
     </thead>
     <tbody>
       <tr>
-        <td class="grow half first center"> RFC: <span> <%= store_rfc %> </span> </td>
-        <td class="grow half center"> RFC: <span> <%= prospect_rfc %> </span> </td>
+        <td class="grow half first center"> RFC: <span> <%= @store_rfc %> </span> </td>
+        <td class="grow half center"> RFC: <span> <%= @prospect_rfc %> </span> </td>
       </tr>
       <tr>
-        <td class="grow half first center"> Nombre: <span> <%= store_name %> </span> </td>
-        <td class="grow half center"> Nombre: <span> <%= prospect_name %> </span> </td>
+        <td class="grow half first center"> Nombre: <span> <%= @store_name %> </span> </td>
+        <td class="grow half center hidden"> Nombre: <span> <%= @prospect_name %> </span> </td>
       </tr>
       <tr>
-        <td class="grow half first center"> Régimen Fiscal: <span> <strong> <%= tax_regime_key %> </strong> - <%= tax_regime %> </td>
-        <td class="grow half center"> Uso CFDI: <span> <strong> <%= @cfdi_use_key %> </strong> - <%= @cfdi_use %> </span> </td>
+        <td class="grow half first center"> Régimen Fiscal: <span> <strong> <%= @tax_regime_key %> </strong> - <%= @tax_regime %> </td>
+        <td class="grow half center"> Uso CFDI: <span> <strong> <%= @cfdi_use_key %> </strong> - <%= @cfdi_use %> </span> </span> </td>
       </tr>
     </tbody>
   </table>
@@ -43,27 +43,26 @@
     <tbody class="border-around">
       <tr>
         <td class="grow half first center"> Moneda: <span> <strong> MXN </strong> - Peso Mexicano </span> </td>
-        <td class="grow half center"> Forma de pago: <span> <strong> <%= greatest_payment_key %> </strong> - <%= greatest_payment %> </span> </td>
+        <td class="grow half center"> Forma de pago: <span> <strong> <%= @payment_key %> </strong> - <%= @payment_description %> </span> </td>
       </tr>
       <tr>
-        <td class="grow half first center"> Método de pago:  <span> <strong> <%= payment_method_key %> </strong> - Pago en una sola exhibición </span> </td>
-        <td class="grow half center"> Condiciones de pago: <span> <%= payment_form %> </span> </td>
+        <td class="grow half first center"> Método de pago:  <span> <strong> <%= @method_key %> </strong> - <%= @method_description %> </span> </td>
+        <td class="grow half center"> Condiciones de pago: <span> <%= @payment_form %> </span> </td>
       </tr>
       <tr class="hidden">
         <td class="grow half first center"> Tipo de cambio: <span> 1.000000 </span> </td>
-        <td class="grow half center"> Clave de confirmación: <span> A403b </span> </td>
+        <td class="grow half center"> Clave de confirmación: <span> </span> </td>
       </tr>
     </tbody>
   </table>
 
-  <table>
+  <table class="global-rows">
     <thead>
       <tr class="header-main">
+        <th class="grow space"> Ticket </th>
         <th class="grow space"> Clave Prod / Serv </th>
-        <th class="grow space"> No. Identificación </th>
         <th class="grow space"> Cantidad </th>
         <th class="grow space"> Clave Unidad </th>
-        <th class="grow space"> Unidad </th>
         <%# ESTE CAMPO DEBE SER EDITABLE%>
         <th class="grow space"> Descripción </th>
         <th class="grow space"> Valor Unitario </th>
@@ -73,40 +72,33 @@
       </tr>
     </thead>
     <tbody>
-      <% rows %>
       <% @rows.each do |row|%>
         <tr>
-          <% if row.is_a?(StoreMovement) %>
-            <% offering = row.product %>
-          <% else %>
-            <% offering = row.service %>
-          <% end %>
-          <td class="grow space"> <%= offering.sat_key.sat_key %> </td>
-          <td class="grow space"> <%= offering.unique_code %> </td>
-          <td class="grow space"> <%= row.quantity %> </td>
-          <td class="grow space"> <strong> <%= offering.sat_unit_key.unit %> </strong> </td>
-          <td class="grow space"> <%= offering.sat_unit_key.description %> </td>
-          <td class="grow space"> <%= offering.description %> </td>
-          <td class="grow space"> <%= number_to_currency(row.initial_price) %> </td>
-          <td class="grow space"> <%= number_to_currency(row.discount_applied) %> </td>
-          <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
-          <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
+          <td class="grow space"> <%= row["ticket"] %> </td>
+          <td class="grow space"> <%= row["sat_key"] %> </td>
+          <td class="grow space"> 1 </td>
+          <td class="grow space"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
+          <td class="grow space"> Venta </td>
+          <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <td class="grow space"> <%= number_to_currency(row["discount"]) %> </td>
+          <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
+          <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
         </tr>
       <% end %>
       <tr>
         <td>
-          <br /><br /><br />
+          <br />
         </td>
       </tr>
       <tr>
         <td></td>
-        <td colspan="3 letter" class="grow center"> __________________________ </td>
+        <td colspan="3 letter" class="grow center"> </td>
         <td></td>
         <td colspan="5"></td>
       </tr>
       <tr>
         <td></td>
-        <td colspan="3" class="grow center"> Firma de conformidad </td>
+        <td colspan="3" class="grow center"> </td>
         <td></td>
         <td colspan="3" class="final-total grow"> SubTotal </td>
         <td colspan="2" class="final-total grow right"> <%= number_to_currency(subtotal) %> </td>
@@ -122,9 +114,9 @@
         <td colspan="2" class="final-total grow right"> <%= number_to_currency(total_taxes) %> </td>
       </tr>
       <tr>
-        <td colspan="5" class="grow letter"> <%= number_to_letters(total) %> <%= decimals(total) %> </td>
+        <td colspan="5" class="grow letter"> <%= number_to_letters(@total_all_objects) %> <%= decimals(@total_all_objects) %> </td>
         <td colspan="3" class="final-total grow border-top"> <strong> Total </strong> </td>
-        <td colspan="2" class="final-total grow border-top right"> <strong> <%= number_to_currency(total) %> </strong> </td>
+        <td colspan="2" class="final-total grow border-top right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
       </tr>
     </tbody>
   </table>
@@ -148,10 +140,10 @@
   <div class="bill-first-footer">
 
     <table id="qr-table">
-      <% @qr.modules.each_index do |x| -%>
+      <% @qr_print.modules.each_index do |x| -%>
       <tr>
-        <% @qr.modules.each_index do |y| -%>
-        <% if @qr.dark?(x,y) -%>
+        <% @qr_print.modules.each_index do |y| -%>
+        <% if @qr_print.dark?(x,y) -%>
         <td class="black"/>
         <% else -%>
         <td class="white"/>
@@ -165,17 +157,17 @@
       <p class="title-cfdi"> Folio Fiscal - UUID: </p>
       <p class="grow"> <%= @uuid %> </p>
       <p class="title-cfdi"> Número de Serie del Certificado </p>
-      <p class="grow"> <%= current_user.store.business_unit.billing_address.certificate_number %> </p>
+      <p class="grow"> <%= @store.certificate_number %> </p>
       <p class="title-cfdi"> Número de Serie del Certificado SAT </p>
       <p class="grow"> <%= @sat_certificate %> </p>
       <p class="title-cfdi"> Fecha y hora de Certificación </p>
-      <p class="grow"> <%= @date %> </p>
+      <p class="grow"> <%= @date.strftime('%FT%T') %> </p>
     </div>
 
   <div class="fiscal-folio">
     <p class="title-cfdi with-bg"> Sello Digital:</p>
     <p class="grow break">
-      OG1WMyOQV8FM2apga08cfaQ+fB6cV3/zLQE0K975NSNJXtFpRG9OmiUoAU6KljUZyRHKH/7TWi98bMW2Gd7kR6992SyYCG17ZpgpqGX4RtbzZDu+d4oD54bEK4dRNeK2z6OAyCY/dkqIjpeybo4WnbJpUhjDRAhP/xQRDZ5VK2k=
+      <%= @cfd_stamp %>
     </p>
   </div>
 </div>
@@ -204,9 +196,15 @@
 
   <div class="center bottom">
       <p class="grow"> <strong> Diseños de Cartón, más que cajas... soluciones. </strong> </p>
-      <p> Sucursal <%= current_user.store.store_name.split.map(&:capitalize)*' ' %> </p>
+      <% if @store.store_type.store_type == 'tienda propia' %>
+        <p> Sucursal <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+      <% elsif @store.store_type.store_type == 'franquicia' %>
+        <p> Tienda <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+      <% elsif @store.store_type.store_type == 'corporativo' %>
+        <p> <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+      <% end %>
       <p> <%= address %> </p>
-      <p> Tel. <%= number_to_phone(current_user.store.direct_phone, area_code: true) %> </p>
-      <p> <%= current_user.store.email %> </p>
+      <p> Tel. <%= number_to_phone(@store.direct_phone, area_code: true) %> </p>
+      <p> <%= @store.email %> </p>
       <p> www.disenosdecarton.com.mx </p>
   </div>

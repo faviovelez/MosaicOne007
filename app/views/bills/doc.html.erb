@@ -1,0 +1,212 @@
+<div id=bill>
+
+  <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'img-bill' %>
+
+  <div class="top-right">
+    <h3 id="top-title"> FACTURA </h3>
+    <p> Serie: <span> <%= @series %> </span> </p>
+    <p> Folio: <span> <%= @folio %> </span> </p>
+    <p> Fecha y hora de timbrado: <span> <%= @time.slice(0..18) %> </span> </p>
+    <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
+    <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill %> </span> </p>
+  </div>
+
+  <table id="issuing-receiving-table">
+    <thead>
+      <tr class="ligth-bg">
+        <th class="title-cfdi half header"> EMISOR</th>
+        <th class="title-cfdi half header"> RECEPTOR </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="grow half first center"> RFC: <span> <%= @store_rfc %> </span> </td>
+        <td class="grow half center"> RFC: <span> <%= @prospect_rfc %> </span> </td>
+      </tr>
+      <tr>
+        <td class="grow half first center"> Nombre: <span> <%= @store_name %> </span> </td>
+        <td class="grow half center"> Nombre: <span> <%= @prospect_name %> </span> </td>
+      </tr>
+      <tr>
+        <td class="grow half first center"> Régimen Fiscal: <span> <strong> <%= @tax_regime_key %> </strong> - <%= @tax_regime %> </td>
+        <td class="grow half center"> Uso CFDI: <span> <strong> <%= @cfdi_use_key %> </strong> - <%= @cfdi_use %> </span> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="second-table">
+    <thead>
+      <tr class="ligth-bg">
+        <th class="title-cfdi all header main-header" colspan="2"> FORMA DE PAGO </th>
+      </tr>
+    </thead>
+    <tbody class="border-around">
+      <tr>
+        <td class="grow half first center"> Moneda: <span> <strong> MXN </strong> - Peso Mexicano </span> </td>
+        <td class="grow half center"> Forma de pago: <span> <strong> <%= @payment_key %> </strong> - <%= @payment_description %> </span> </td>
+      </tr>
+      <tr>
+        <td class="grow half first center"> Método de pago:  <span> <strong> <%= @method_key %> </strong> - <%= @method_description %> </span> </td>
+        <td class="grow half center"> Condiciones de pago: <span> <%= @payment_form %> </span> </td>
+      </tr>
+      <tr class="hidden">
+        <td class="grow half first center"> Tipo de cambio: <span> 1.000000 </span> </td>
+        <td class="grow half center"> Clave de confirmación: <span> </span> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr class="header-main">
+        <th class="grow space"> Clave Prod / Serv </th>
+        <th class="grow space"> No. Identificación </th>
+        <th class="grow space"> Cantidad </th>
+        <th class="grow space"> Clave Unidad </th>
+        <th class="grow space"> Unidad </th>
+        <%# ESTE CAMPO DEBE SER EDITABLE%>
+        <th class="grow space"> Descripción </th>
+        <th class="grow space"> Valor Unitario </th>
+        <th class="grow space"> Descuento </th>
+        <th class="grow space"> Impuesto </th>
+        <th class="grow space"> Importe </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @rows.each do |row|%>
+        <tr>
+          <td class="grow space"> <%= row["sat_key"] %> </td>
+          <td class="grow space"> <%= row["unique_code"] %> </td>
+          <td class="grow space"> <%= number_with_delimiter(row["quantity"]) %> </td>
+          <td class="grow space"> <%= row["sat_unit_key"] %> </strong> </td>
+          <td class="grow space"> <%= row["sat_unit_description"] %> </td>
+          <td class="grow space"> <%= row["description"] %> </td>
+          <td class="grow space"> <%= number_to_currency(row["unit_value"]) %> </td>
+          <td class="grow space"> <%= number_to_currency(row["discount"]) %> </td>
+          <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
+          <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+        </tr>
+      <% end %>
+      <tr>
+        <td>
+          <br /><br /><br />
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td colspan="3 letter" class="grow center"> __________________________ </td>
+        <td></td>
+        <td colspan="5"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td colspan="3" class="grow center"> Firma de conformidad </td>
+        <td></td>
+        <td colspan="3" class="final-total grow"> SubTotal </td>
+        <td colspan="2" class="final-total grow right"> <%= number_to_currency(subtotal) %> </td>
+      </tr>
+      <tr>
+        <td colspan="5"></td>
+        <td colspan="3" class="final-total grow"> Descuento </td>
+        <td colspan="2" class="final-total grow right"> <%= number_to_currency(total_discount) %> </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="grow letter"> <strong> Importe con letra </strong> </td>
+        <td colspan="3" class="final-total grow"> Total Impuestos Trasladados </td>
+        <td colspan="2" class="final-total grow right"> <%= number_to_currency(total_taxes) %> </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="grow letter"> <%= number_to_letters(@total_all_objects) %> <%= decimals(@total_all_objects) %> </td>
+        <td colspan="3" class="final-total grow border-top"> <strong> Total </strong> </td>
+        <td colspan="2" class="final-total grow border-top right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br /><br />
+
+  <table class="two-columns-one-header">
+    <thead>
+      <tr class="all">
+        <th class="title-cfdi all header" colspan="2"> CFDI RELACIONADO </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="grow half first smaller"> Tipo de Relación: <span> <strong> 04 </strong> - Sustitución de los CFDI previos </span> </td>
+        <td class="grow half smaller"> CFDI Relacionado: <span> A39DA66B-52CA-49E3-879B-FC05185B0EF7 </span> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="bill-first-footer">
+
+    <table id="qr-table">
+      <% @qr_print.modules.each_index do |x| -%>
+      <tr>
+        <% @qr_print.modules.each_index do |y| -%>
+        <% if @qr_print.dark?(x,y) -%>
+        <td class="black"/>
+        <% else -%>
+        <td class="white"/>
+        <% end -%>
+        <% end -%>
+      </tr>
+      <% end -%>
+    </table>
+
+    <div class="certificate">
+      <p class="title-cfdi"> Folio Fiscal - UUID: </p>
+      <p class="grow"> <%= @uuid %> </p>
+      <p class="title-cfdi"> Número de Serie del Certificado </p>
+      <p class="grow"> <%= @store.certificate_number %> </p>
+      <p class="title-cfdi"> Número de Serie del Certificado SAT </p>
+      <p class="grow"> <%= @sat_certificate %> </p>
+      <p class="title-cfdi"> Fecha y hora de Certificación </p>
+      <p class="grow"> <%= @date.strftime('%FT%T') %> </p>
+    </div>
+
+  <div class="fiscal-folio">
+    <p class="title-cfdi with-bg"> Sello Digital:</p>
+    <p class="grow break">
+      <%= @cfd_stamp %>
+    </p>
+  </div>
+</div>
+
+  <div class="digital-stamp first-stamp">
+    <p class="title-cfdi with-bg"> Sello del SAT: </p>
+    <p class="grow break">
+      <%= @sat_seal %>
+    </p>
+  </div>
+
+  <div class="digital-stamp">
+    <p class="title-cfdi with-bg"> Cadena Original: </p>
+    <p class="grow" id="first">
+      <%= @stamp_original_chain.slice(0..105) %>
+    </p>
+    <p id="second">
+      <%= @stamp_original_chain.slice(106..211) %>
+    </p>
+    <p id="third">
+      <%= @stamp_original_chain.slice(212..@stamp_original_chain.length) %>
+    </p>
+  </div>
+
+  <p class="grow footer"> Este documento es una representación impresa de un CFDI </p>
+
+  <div class="center bottom">
+      <p class="grow"> <strong> Diseños de Cartón, más que cajas... soluciones. </strong> </p>
+      <% if @store.store_type.store_type == 'tienda propia' %>
+        <p> Sucursal <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+      <% elsif @store.store_type.store_type == 'franquicia' %>
+        <p> Tienda <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+      <% elsif @store.store_type.store_type == 'corporativo' %>
+        <p> <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+      <% end %>
+      <p> <%= address %> </p>
+      <p> Tel. <%= number_to_phone(@store.direct_phone, area_code: true) %> </p>
+      <p> <%= @store.email %> </p>
+      <p> www.disenosdecarton.com.mx </p>
+  </div>
