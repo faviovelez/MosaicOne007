@@ -42,11 +42,11 @@ Rails.application.routes.draw do
 
   get 'products/special'
 
-  get 'bills/download_pdf', to: 'bills#download_pdf', as: 'download_pdf'
+  get 'bills/download_pdf/:id', to: 'bills#download_pdf', as: 'download_pdf'
 
-  get 'bills/download_xml', to: 'bills#download_xml', as: 'download_xml'
+  get 'bills/download_xml/:id', to: 'bills#download_xml', as: 'download_xml'
 
-  get 'bills/download_xml_receipt', to: 'bills#download_xml_receipt', as: 'download_xml_receipt'
+  get 'bills/download_xml_receipt/:id', to: 'bills#download_xml_receipt', as: 'download_xml_receipt'
 
   get 'bills/select_info'
 
@@ -101,6 +101,10 @@ Rails.application.routes.draw do
   get 'orders/delete_product_from_order/:id', to: 'orders#delete_product_from_order', as: 'delete_product_from_order'
 
   get 'orders/delete_order/:id', to: 'orders#delete_order', as: 'delete_order'
+
+  get 'tickets/sales/:store/:year/:month', to: 'tickets#sales', as: 'sales'
+
+  get 'tickets/sales_summary'
 
   devise_for :users
 
