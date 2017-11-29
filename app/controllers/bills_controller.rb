@@ -134,7 +134,6 @@ class BillsController < ApplicationController
     @tickets = store.tickets.where(parent:nil).where.not(bill: nil)
   end
 
-
   def select_store(user = current_user)
     @user = user
     @role = @user.role.name
@@ -965,7 +964,7 @@ class BillsController < ApplicationController
 
     uuid = [invoices]
     uuid.map! do |uuid|
-        uuid = "<tns:string>#{uuid}</tns:string>"
+      uuid = "<tns:string>#{uuid}</tns:string>"
     end
 
 xml = <<XML
@@ -999,7 +998,7 @@ XML
 
     @bill.update(cancel_receipt: receipt_file)
 
-    redirect_to root_path, notice: "Se ha cancelado exitosamente la factura con Folio #{@bill.folio}".
+    redirect_to root_path, notice: "Se ha cancelado exitosamente la factura con Folio #{@bill.folio}."
   end
 
   #### ESTE MÉTODO ES PARA BILL ### ##CAMBIAR POR MÉTODO PARA SOLO TIMBRE FISCAL SIN SELLO#
