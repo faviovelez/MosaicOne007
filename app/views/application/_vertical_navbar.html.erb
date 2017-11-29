@@ -177,13 +177,31 @@
           <%= link_to 'Inventario', inventories_index_path, class: 'text-link' %>
             </li>
 
-          <% if params[:controller] == 'bills' %>
+          <% if (params[:controller] == 'bills' && params[:action] == 'select_tickets') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-columns other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Tickets sin factura', bills_select_tickets_path, class: 'text-link' %>
+            </li>
+
+          <% if (params[:controller] == 'bills' && params[:action] == 'billed_tickets') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-list-alt other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Tickets facturados', bills_billed_tickets_path, class: 'text-link' %>
+            </li>
+
+          <% if (params[:controller] == 'bills' && params[:action] == 'select_bills') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
           <% end %>
           <i class="fa fa-file-pdf-o other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Facturación', bills_select_data_path, class: 'text-link' %>
+          <%= link_to 'Facturas', bills_select_bills_path, class: 'text-link' %>
             </li>
 
         <% end %>

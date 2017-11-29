@@ -170,16 +170,27 @@ class Movement < ActiveRecord::Base
     end
   end
 
-  def transform(pending, inventory)
-    if inventory.quantity > pending.quantity
+  def transform(pending, inventory, mov)
+    if inventory.quantity >= pending.quantity
       movement = Movement.create(
         remove_attributes(pending.attributes)
       )
       if movement.save
+        movement.update(cost: mov.product.cost, total_cost: mov.product.cost * movement.quantity, entry_movement: mov)
         inventory.set_quantity(pending.quantity, '-')
         movement.product_request.update(
           status: 'asignado'
         )
+        status_arr = []
+        order = movement.order
+        order.product_requests.each do |pr|
+          status_arr << pr.status
+        end
+        if status_arr.uniq.length == 1 && status_arr.first == 'asignado'
+          order.update(status:'mercancía asignada')
+        end
+        #Revisar con qué atributos está creándose (precio y costo)
+        # y si se va a respetar precio de cuando se creó el pending_movement
         return true
       end
     end
@@ -199,7 +210,9 @@ class Movement < ActiveRecord::Base
   end
 
   def convert_warehouses(order_type, local_quantity)
+    @movement = []
     related_warehouses(order_type).each do |entry|
+      @movement << entry.movement unless @movement.include?(entry.movement)
       if local_quantity > entry.fix_quantity
         local_quantity -= entry.fix_quantity
         entry.destroy
@@ -211,7 +224,7 @@ class Movement < ActiveRecord::Base
     end
   end
 
-  def process_pendings(order_type, quantity)
+  def process_pendings(order_type, quantity, mov)
     inventories = {
       actual:       actual_inventory - quantity,
       to_processed: quantity
@@ -222,7 +235,7 @@ class Movement < ActiveRecord::Base
     ).order(
       "created_at #{order_type}"
     ).each do |pending|
-      if transform(pending, inventory)
+      if transform(pending, inventory, mov)
         convert_warehouses(order_type, pending.quantity)
         pending.destroy
         process_inventories(inventories, pending.quantity)
@@ -246,7 +259,7 @@ class Movement < ActiveRecord::Base
         c = entry.movement.fix_cost
 
         if Movement.last.quantity == nil
-          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2))
+          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2), initial_price: Movement.last.initial_price.round(2), final_price: Movement.last.final_price.round(2))
         end
 
         total_quantity -= Movement.last.quantity
@@ -261,7 +274,7 @@ class Movement < ActiveRecord::Base
         c = entry.movement.fix_cost
 
         if Movement.last.quantity == nil
-          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2))
+          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2), initial_price: Movement.last.initial_price.round(2), final_price: Movement.last.final_price.round(2))
         end
 
         temp_quantity = total_quantity
@@ -299,6 +312,7 @@ class Movement < ActiveRecord::Base
         final_price: unit_price,
         taxes: unit_price * 0.16,
         subtotal: product.price,
+        supplier: product.supplier,
         movement_type: type,
         user: user,
         business_unit: store.business_unit,

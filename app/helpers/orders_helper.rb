@@ -29,13 +29,46 @@ module OrdersHelper
   end
 
   def get_orders
-    @product_requests = []
+    @movements = []
     @orders.each do |order|
-      order.product_requests.each do |product_request|
-        @product_requests << product_request
+      order.movements.each do |movement|
+        @movements << movement
+      end
+      order.pending_movements.each do |movement|
+        @movements << movement
       end
     end
-    @product_requests
+    @movements
+  end
+
+  def get_total_from_movements(prod_req)
+    prod_req_result = 0
+    total = []
+    @total = 0
+    @order.product_requests.each do |pr|
+      if pr.id == prod_req.id
+        prod_req_result = pr.product_id
+      end
+    end
+    @order.movements.each do |mov|
+      total << mov if (prod_req_result == mov.product_id && (total.include?(mov) == false))
+    end
+    @order.pending_movements.each do |pm|
+      total << pm if (prod_req_result == pm.product_id && (total.include?(pm) == false))
+    end
+    total.each do |mov|
+      @total += mov.total
+    end
+    @total
+  end
+
+  def get_total
+    @total = 0
+    @orders.each do |order|
+      @total += order.total
+    end
+    @total = @total.round(2)
+    @total
   end
 
 end

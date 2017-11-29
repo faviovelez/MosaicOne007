@@ -1,0 +1,71 @@
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'bills_data_tables' %>
+<% end %>
+
+<% if @bills.count >= 1 %>
+  <%= form_tag({ controller: 'bills', action: 'modify' }, method: 'post') do %>
+    <table id="bills">
+      <thead>
+        <tr class="table-titles">
+          <th></th>
+          <th class="col-md-1"> Folio </th>
+          <th> Fecha</th>
+          <th> Cliente</th>
+          <th> Total</th>
+          <th> Saldo / Estauts </th>
+          <th> Detalles </th>
+        </tr>
+      </thead>
+      <tbody>
+          <% @bills.each do |bill| %>
+            <tr>
+              <td> <%= check_box_tag "bills[]", "#{bill.id}", false, { multiple: true, id: "bills[#{bill.id}]" }%> </td>
+              <td> <%= bill.folio %> </td>
+              <td> <%= l bill.created_at.to_date, format: :short %> </td>
+              <td> <%= show_non_blank_field(bill.receiving_company.business_name) %> </td>
+              <td> <%= number_to_currency(bill.total) %> </td>
+              <td> <%= get_payments_from_bill(bill) %> </td>
+              <td>
+                <!-- Ver Detalles -->
+                <%# link_to ticket_details_path(ticket) do %>
+              <!--    <i class="fa fa-book link-to-price" aria-hidden="true"></i> -->
+                <%# end %>
+                <!-- Ver Nota de crédito -->
+                <%# link_to ticket_details_path(ticket) do %>
+              <!--    <i class="fa fa-book link-to-price" aria-hidden="true"></i> -->
+                <%# end %>
+                <!-- Ver Nota de débito -->
+                <%# link_to ticket_details_path(ticket) do %>
+              <!--    <i class="fa fa-book link-to-price" aria-hidden="true"></i> -->
+                <%# end %>
+                <!-- Ver Devoluciones -->
+                <%# link_to ticket_details_path(ticket) do %>
+              <!--    <i class="fa fa-book link-to-price" aria-hidden="true"></i> -->
+                <%# end %>
+                <!-- Ver Pagos -->
+                <%# link_to ticket_details_path(ticket) do %>
+              <!--    <i class="fa fa-book link-to-price" aria-hidden="true"></i> -->
+                <%# end %>
+              </td>
+            </tr>
+          <% end %>
+      </tbody>
+    </table>
+
+    <!-- Este formulario es para crear NC / ND / DEV / PAGOS -->
+    <div class="actions">
+      <%= submit_tag 'Modificar / cancelar factura', class: 'main-button' %>
+    </div><br /><br />
+
+  <% end %>
+
+<% else %>
+  <p class="individual-font"> No hay facturas todavía </p>
+<% end %>

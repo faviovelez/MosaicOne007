@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171120055325) do
+ActiveRecord::Schema.define(version: 20171128032515) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -104,7 +104,6 @@ ActiveRecord::Schema.define(version: 20171120055325) do
     t.integer  "store_id"
     t.string   "sequence"
     t.string   "folio"
-    t.integer  "payment_condition_id"
     t.integer  "payment_method_id"
     t.integer  "payment_form_id"
     t.integer  "tax_regime_id"
@@ -127,7 +126,6 @@ ActiveRecord::Schema.define(version: 20171120055325) do
     t.string   "certificate_number"
     t.string   "qr_string"
     t.text     "original_chain"
-    t.text     "sat_stampl"
     t.text     "digital_stamp"
     t.float    "subtotal"
     t.float    "total"
@@ -138,6 +136,10 @@ ActiveRecord::Schema.define(version: 20171120055325) do
     t.float    "taxes"
     t.boolean  "payed",                      default: false
     t.integer  "parent_id"
+    t.string   "sat_stamp"
+    t.string   "payment_conditions"
+    t.string   "from"
+    t.string   "cancel_receipt"
   end
 
   add_index "bills", ["cfdi_use_id"], name: "index_bills_on_cfdi_use_id", using: :btree
@@ -146,7 +148,6 @@ ActiveRecord::Schema.define(version: 20171120055325) do
   add_index "bills", ["issuing_company_id"], name: "index_bills_on_issuing_company_id", using: :btree
   add_index "bills", ["pac_id"], name: "index_bills_on_pac_id", using: :btree
   add_index "bills", ["parent_id"], name: "index_bills_on_parent_id", using: :btree
-  add_index "bills", ["payment_condition_id"], name: "index_bills_on_payment_condition_id", using: :btree
   add_index "bills", ["payment_form_id"], name: "index_bills_on_payment_form_id", using: :btree
   add_index "bills", ["payment_method_id"], name: "index_bills_on_payment_method_id", using: :btree
   add_index "bills", ["prospect_id"], name: "index_bills_on_prospect_id", using: :btree
@@ -703,7 +704,7 @@ ActiveRecord::Schema.define(version: 20171120055325) do
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.string   "payment_id"
+    t.string   "payment_key"
   end
 
   create_table "payment_methods", force: :cascade do |t|
@@ -776,6 +777,7 @@ ActiveRecord::Schema.define(version: 20171120055325) do
     t.float    "total_cost"
     t.float    "total"
     t.float    "subtotal"
+    t.float    "taxes",              default: 0.0
   end
 
   add_index "pending_movements", ["bill_id"], name: "index_pending_movements_on_bill_id", using: :btree
@@ -1307,7 +1309,7 @@ ActiveRecord::Schema.define(version: 20171120055325) do
     t.integer  "advance_i_last_folio",     default: 0
     t.string   "initial_inventory"
     t.string   "current_inventory"
-    t.string   "prospects"
+    t.string   "propects_file"
   end
 
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree
@@ -1592,7 +1594,6 @@ ActiveRecord::Schema.define(version: 20171120055325) do
   add_foreign_key "bills", "countries"
   add_foreign_key "bills", "currencies"
   add_foreign_key "bills", "pacs"
-  add_foreign_key "bills", "payment_conditions"
   add_foreign_key "bills", "payment_forms"
   add_foreign_key "bills", "payment_methods"
   add_foreign_key "bills", "prospects"

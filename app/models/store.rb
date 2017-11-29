@@ -16,7 +16,7 @@ class Store < ActiveRecord::Base
   has_many :suppliers
   has_many :bills
   has_many :discount_rules
-  has_many :store_prospect, class_name: "Prospect", foreign_key: 'store_prospect_id'
+  has_one  :store_prospect, class_name: "Prospect", foreign_key: 'store_prospect_id'
   has_many :suppliers, through: :stores_suppliers
   has_many :stores_suppliers
   has_many :prospects
@@ -45,7 +45,7 @@ class Store < ActiveRecord::Base
   mount_uploader :key, SatKeyUploader
   mount_uploader :initial_inventory, InitialInventoryUploader
   mount_uploader :current_inventory, CurrentInventoryUploader
-  mount_uploader :prospects, ProspectsUploader
+  mount_uploader :prospects_file, ProspectsUploader
 
   validates :store_name, presence: { message: 'Debe especificar el nombre de la tienda.'}
 

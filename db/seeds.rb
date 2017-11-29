@@ -60,39 +60,6 @@ store_type_default = StoreType.find_by_store_type('corporativo')
 
 cost_type = CostType.find_by_warehouse_cost_type('PEPS')
 
-default_store_patria = Store.find_or_create_by(
-                                                store_name: 'Corporativo Patria',
-                                                store_code: '000',
-                                                store_type: store_type_default,
-                                                type_of_person: 'persona moral',
-                                                business_unit: patria_business_unit,
-                                                business_group: default_business_group,
-                                                cost_type: cost_type,
-                                                cost_type_selected_since: Date.today,
-                                                contact_first_name: 'Herminia',
-                                                contact_last_name: 'Diseños de Cartón',
-                                                direct_phone: '3336733339',
-                                                zip_code: '45027',
-                                                email: 'facturaspatria@disenosdecarton.com.mx'
-                                                )
-
-patria_prospect = Prospect.find_or_create_by(
-                            legal_or_business_name: default_store_patria.store_name,
-                            business_type: default_store_patria.type_of_person,
-                            prospect_type: 'comercialización de productos',
-                            contact_first_name: default_store_patria.contact_first_name,
-                            contact_last_name: default_store_patria.contact_last_name,
-                            second_last_name: default_store_patria.second_last_name,
-                            direct_phone: default_store_patria.direct_phone,
-                            email: default_store_patria.email,
-                            store_code: default_store_patria.store_code,
-                            store_type: default_store_patria.store_type,
-                            store_prospect: default_store_patria,
-                            credit_days: 0,
-                            business_unit: patria_business_unit,
-                            business_group: default_business_group
-                            )
-
 default_store_compresor = Store.find_or_create_by(
                                                   store_name: 'Corporativo Compresor',
                                                   store_code: '001',
@@ -121,6 +88,39 @@ compresor_prospect = Prospect.find_or_create_by(
                             store_code: default_store_compresor.store_code,
                             store_type: default_store_compresor.store_type,
                             store_prospect: default_store_compresor,
+                            credit_days: 0,
+                            business_unit: compresor_business_unit,
+                            business_group: default_business_group
+                            )
+
+default_store_patria = Store.find_or_create_by(
+                                                store_name: 'Corporativo Patria',
+                                                store_code: '000',
+                                                store_type: store_type_default,
+                                                type_of_person: 'persona moral',
+                                                business_unit: patria_business_unit,
+                                                business_group: default_business_group,
+                                                cost_type: cost_type,
+                                                cost_type_selected_since: Date.today,
+                                                contact_first_name: 'Herminia',
+                                                contact_last_name: 'Diseños de Cartón',
+                                                direct_phone: '3336733339',
+                                                zip_code: '45027',
+                                                email: 'facturaspatria@disenosdecarton.com.mx'
+                                                )
+
+patria_prospect = Prospect.find_or_create_by(
+                            legal_or_business_name: default_store_patria.store_name,
+                            business_type: default_store_patria.type_of_person,
+                            prospect_type: 'comercialización de productos',
+                            contact_first_name: default_store_patria.contact_first_name,
+                            contact_last_name: default_store_patria.contact_last_name,
+                            second_last_name: default_store_patria.second_last_name,
+                            direct_phone: default_store_patria.direct_phone,
+                            email: default_store_patria.email,
+                            store_code: default_store_patria.store_code,
+                            store_type: default_store_patria.store_type,
+                            store_prospect: default_store_patria,
                             credit_days: 0,
                             business_unit: compresor_business_unit,
                             business_group: default_business_group

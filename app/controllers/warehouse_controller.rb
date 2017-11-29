@@ -201,7 +201,7 @@ class WarehouseController < ApplicationController
       if movement.save
         put_inventory(movement)
         after_processed = movement.process_pendings(
-          order_type, movement.quantity
+          order_type, movement.quantity, movement
         )
         if after_processed > 0
           movement.warehouse_entry = WarehouseEntry.create(
@@ -262,12 +262,13 @@ class WarehouseController < ApplicationController
       attributes = product.second
       product = Product.find(attributes.first.second).first
       quantity = attributes[:cantidad].to_i
-      @collection << Movement.new.tap do |movement|
+      movement = Movement.new.tap do |movement|
         movement.product = product
         movement.quantity = quantity
         movement.movement_type = type
         movement.user = current_user
         movement.unique_code = product.unique_code
+        movement.supplier = product.supplier
         movement.store = current_user.store
         movement.business_unit = current_user.store.business_unit
         unless (product.cost == 0 || product.cost == nil)
@@ -275,6 +276,8 @@ class WarehouseController < ApplicationController
           movement.total_cost = (product.cost * quantity)
         end
       end
+      movement.save
+     @collection << movement unless @collection.include?(movement)
     end
   end
 

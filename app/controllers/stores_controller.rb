@@ -91,11 +91,11 @@ class StoresController < ApplicationController
     zip_code_is_in_sat_list
 ############################################################
     assign_cost_type
-    certificate_saving_process
-    key_savign_process
     @prospect = Prospect.find_by_store_code(@store.store_code) || Prospect.find_by_store_prospect_id(@store)
     respond_to do |format|
       if @store.update(store_params)
+        certificate_saving_process
+        key_savign_process
         update_prospect_from_store
         format.html { redirect_to @store, notice: 'La tienda fue modificado exitosamente.' }
         format.json { render :show, status: :ok, location: @store }
@@ -522,20 +522,29 @@ private
 
   def save_certificate_content
     unless params[:store][:certificate] == nil
-      cer_file = Rails.root.join('public', 'uploads', 'store', "#{@store.id}", 'certificate', 'cer.cer')
-      b64 = Base64.encode64(File::read(cer_file))
+      @cer_file = Rails.root.join('public', 'uploads', 'store', "#{@store.id}", 'certificate', 'cer.cer')
+      b64 = Base64.encode64(File::read(@cer_file))
       clean = b64.gsub("\n",'')
       @store.update(certificate_content: clean)
     end
   end
 
   def save_pem_certificate
-    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.pem"), "w") do |file|
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer.pem"), "w") do |file|
       file.write('')
     end
 
-    cer_pem = Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.pem")
-    `openssl x509 -inform DER -outform PEM -in #{cer_file} -pubkey -out #{cer_pem}`
+    cer_pem = Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer.pem")
+    `openssl x509 -inform DER -outform PEM -in #{@cer_file} -pubkey -out #{cer_pem}`
+  end
+
+  def save_base64_encrypted_cer
+    file = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer.pem"))
+    cer_b64 = Base64.encode64(file)
+
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cerb64.cer.pem"), "w") do |file|
+      file.write(cer_b64)
+    end
   end
 
   def save_der_certificate
@@ -564,13 +573,22 @@ private
     file = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.pem")
     password = ENV['password_pac']
 
-    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key"), "w") do |file|
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.pem"), "w") do |file|
       file.write('')
     end
 
     enc = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key")
 
     `openssl rsa -in #{file} -des3 -out #{enc} -passout pass:"#{password}"`
+  end
+
+  def save_base64_encrypted_key
+    file = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key"))
+    key_b64 = Base64.encode64(file)
+
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "keyb64.enc.key"), "w") do |file|
+      file.write(key_b64)
+    end
   end
 
   def save_unencrypted_key
@@ -678,7 +696,7 @@ private
                                   :advance_i_last_folio,
                                   :initial_inventory,
                                   :current_inventory,
-                                  :prospects
+                                  :prospects_file
                                   )
   end
 

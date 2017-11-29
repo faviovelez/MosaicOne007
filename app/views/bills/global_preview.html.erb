@@ -2,9 +2,9 @@
 
 <div class="top-right-preview">
   <h3 id="top-title"> FACTURA </h3>
-  <p> Serie: <span> <%= @series %> </span> </p>
-  <p> Folio: <span> <%= @folio %> </span> </p>
-  <p> Fecha:  <span> <%= @date %> </span> </p>
+  <p> Serie: <span> <strong> <%= @series %> </strong>  </span> </p>
+  <p> Folio: <span> <strong> <%= @folio %> </strong>  </span> </p>
+  <p> Fecha y hora de timbrado: <span> <%= @time %> </span> </p>
   <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
   <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill %> </span> </p>
 </div>
@@ -23,7 +23,7 @@
     </tr>
     <tr>
       <td class="half first"> Nombre: <span> <%= @store_name %> </span> </td>
-      <td class="half hidden"> Nombre: <span> <%= @prospect_name %> </span> </td>
+      <td class="half hidden"> <span> <%= @prospect_name %> </span> </td>
     </tr>
     <tr>
       <td class="half first"> Régimen Fiscal: <span> <strong> <%= @tax_regime_key %> </strong> - <%= @tax_regime %> </td>
@@ -70,23 +70,17 @@
     </tr>
   </thead>
   <tbody>
-    <% rows %>
     <% @rows.each do |row|%>
       <tr>
-        <% if row.is_a?(StoreMovement) %>
-          <% offering = row.product %>
-        <% else %>
-          <% offering = row.service %>
-        <% end %>
-        <td class="space-preview"> <%= row.ticket.ticket_number %> </td>
-        <td class="space-preview"> <%= global_sat_key %> </td>
+        <td class="space-preview"> <%= row["ticket"] %> </td>
+        <td class="space-preview"> <%= row["sat_key"] %> </td>
         <td class="space-preview"> 1 </td>
-        <td class="space-preview"> <strong> <%= global_unit_key %> </strong> </td>
+        <td class="space-preview"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
         <td class="space-preview"> Venta </td>
-        <td class="space-preview"> <%= number_to_currency(row.subtotal) %> </td>
-        <td class="space-preview"> <%= number_to_currency(row.discount_applied) %> </td>
-        <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
-        <td class="space-preview"> <%= number_to_currency(row.subtotal) %> </td>
+        <td class="space-preview"> <%= number_to_currency(row["subtotal"]) %> </td>
+        <td class="space-preview"> <%= number_to_currency(row["discount"]) %> </td>
+        <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
+        <td class="space-preview"> <%= number_to_currency(row["subtotal"]) %> </td>
       </tr>
     <% end %>
     <tr>
@@ -113,9 +107,9 @@
       <td colspan="2" class="final-total right"> <%= number_to_currency(total_taxes) %> </td>
     </tr>
     <tr>
-      <td colspan="5" class="letter"> <%= number_to_letters(total) %> <%= decimals(total) %> </td>
+      <td colspan="5" class="letter"> <%= number_to_letters(@total_all_objects) %> <%= decimals(@total_all_objects) %> </td>
       <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
-      <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(total) %> </strong> </td>
+      <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
     </tr>
   </tbody>
 </table>
@@ -130,42 +124,36 @@
       <th> Fecha </th>
       <th> Forma de pago </th>
       <th> Monto </th>
-      <th> Recibió </th>
     </tr>
   </thead>
   <tbody>
     <% list_of_payments %>
-    <% @all_payments.each do |payment| %>
+    <% @list_of_real_payments.each do |payment| %>
       <tr class="center">
         <td> <%= payment.ticket.ticket_number %> </td>
         <td> <%= payment.payment_date %> </td>
         <td> <%= payment.payment_form.description %> </td>
         <td> <%= number_to_currency(payment.total) %> </td>
-        <td> <%= payment.ticket.user.first_name.capitalize %> <%= payment.ticket.user.last_name.capitalize %> </td>
       </tr>
       <tr>
         <td>  </td>
         <td colspan="2" class="left"> <strong> Total pagos: </strong> </td>
-        <td colspan="2" class="right"> <strong> <%= number_to_currency(get_payments) %> </strong> </td>
+        <td colspan="2" class="right"> <strong> <%= number_to_currency(@total_payment) %> </strong> </td>
       </tr>
       <tr>
         <td>  </td>
         <td colspan="2" class="left"> <strong> Total tickets: </strong> </td>
-        <td colspan="2" class="right"> <strong> <%= number_to_currency(total) %> </strong> </td>
+        <td colspan="2" class="right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
       </tr>
       <tr>
         <td>  </td>
         <td colspan="2" class="left"> <strong> Saldo pendiente: </strong> </td>
-        <td colspan="2" class="right"> <strong> <%= number_to_currency(total.round(2) - get_payments.round(2))%> </strong> </td>
+        <td colspan="2" class="right"> <strong> <%= number_to_currency(@total_all_objects.round(2) - @total_payment.round(2))%> </strong> </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<%= link_to 'Generar factura', bill_global_doc_path(format: :pdf, tickets: params[:tickets].split('/').flatten, prospect: params[:prospect], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]), target: '_blank' %>
+<%= link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
 
 <br /><br /><br /><br />
-
-<p class="hidden">
-  <%= Time.now.strftime('%FT%T') %>
-</p>
