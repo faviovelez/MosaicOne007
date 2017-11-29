@@ -49,6 +49,11 @@ button#btn-notice {
   height: auto;
 }
 
+.download-icon-table {
+  width: 30%;
+  height: auto;
+}
+
 span.next_line {
     display: block;
     padding-bottom: 1.3rem;

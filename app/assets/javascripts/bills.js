@@ -55,11 +55,11 @@ $(document).ready(function() {
 
   $('#store_name').bind('change', function() {
     store_values = ['#store_rfc', '#tax_regime', '#series', '#folio', '#zipcode'];
-    $(`${store_values}`).children().each(function() {
+    $(store_values).children().each(function() {
       if ($(this).val().toString() == $('#store_name').val()) {
         $(this).attr("selected","selected");
       };
     });
   });
-  
+
 });

@@ -32,7 +32,25 @@
               <td> <%= show_non_blank_field(bill.receiving_company.business_name) %> </td>
               <td> <%= number_to_currency(bill.total) %> </td>
               <td> <%= get_payments_from_bill(bill) %> </td>
-              <td>
+              <td style="width: 100px">
+                <% unless bill.pdf_url == nil %>
+                  <%= link_to download_pdf_path(bill), download: "Factura.pdf" do %>
+                    <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon-table' %>
+                  <% end %>
+                <% end %>
+
+                <% unless bill.xml_url == nil %>
+                  <%= link_to download_xml_path(bill), download: "Factura.xml" do %>
+                    <%= image_tag '/assets/xml_icon.png', alt: 'Logo XML', class: 'download-icon-table' %>
+                  <% end %>
+                <% end %>
+
+                <% unless bill.cancel_receipt_url == nil %>
+                  <%= link_to download_xml_receipt_path(bill), download: "Acuse.xml" do %>
+                    <%= image_tag '/assets/xml_icon.png', alt: 'Logo XML', class: 'download-icon-table' %>
+                  <% end %>
+                <% end %>
+              </td>
                 <!-- Ver Detalles -->
                 <%# link_to ticket_details_path(ticket) do %>
               <!--    <i class="fa fa-book link-to-price" aria-hidden="true"></i> -->
@@ -53,7 +71,6 @@
                 <%# link_to ticket_details_path(ticket) do %>
               <!--    <i class="fa fa-book link-to-price" aria-hidden="true"></i> -->
                 <%# end %>
-              </td>
             </tr>
           <% end %>
       </tbody>
