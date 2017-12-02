@@ -215,9 +215,6 @@ img.img-bill-preview {
 
 .fiscal-folio {
   width: 655px;
-  margin-top: -280px;
-  margin-left: 820px;
-  margin-bottom: 40px;
 }
 
 .fiscal-folio > p {
@@ -239,16 +236,17 @@ img.img-bill-preview {
 }
 
 .certificate {
-  margin-top: -280px;
-  margin-left: 320px;
   width: 500px;
-  margin-bottom: 40px;
 }
 
 .certificate > p {
   text-align: left;
   line-height: 1.4;
   font-size: 2.3rem;
+}
+
+.bill-first-footer {
+  vertical-align: middle;
 }
 
 .digital-stamp > p {

@@ -216,6 +216,7 @@ module BillsHelper
     else
       @quantity_in_letters << 'pesos '
     end
+    @quantity_in_letters.gsub!('y pesos', 'pesos')
     @quantity_in_letters.capitalize
   end
 
@@ -225,6 +226,15 @@ module BillsHelper
     @address += 'Col. ' + user.store.delivery_address.neighborhood + '.' + ' ' + user.store.delivery_address.city + ',' + ' ' + user.store.delivery_address.state
     @address = @address.split.map(&:capitalize)*' '
     @address
+  end
+
+  def quantity_options(row)
+    @quantity_options = []
+    (row.quantity + 1).times do |i|
+      @quantity_options << i
+      i += 1
+    end
+    @quantity_options
   end
 
   def select_tickets
@@ -348,7 +358,7 @@ module BillsHelper
   def get_payments_from_bill(bill)
     payments = []
     bill.payments.each do |payment|
-      payments << payment
+      payments << payment.total.to_f
     end
     payments = payments.inject(&:+)
     payments == nil ? @payments = 0 : @payments = payments

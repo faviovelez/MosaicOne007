@@ -41,13 +41,13 @@
 
                 <% unless bill.xml_url == nil %>
                   <%= link_to download_xml_path(bill), download: "Factura.xml" do %>
-                    <%= image_tag '/assets/xml_icon.png', alt: 'Logo XML', class: 'download-icon-table' %>
+                    <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
                   <% end %>
                 <% end %>
 
                 <% unless bill.cancel_receipt_url == nil %>
                   <%= link_to download_xml_receipt_path(bill), download: "Acuse.xml" do %>
-                    <%= image_tag '/assets/xml_icon.png', alt: 'Logo XML', class: 'download-icon-table' %>
+                    <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
                   <% end %>
                 <% end %>
               </td>

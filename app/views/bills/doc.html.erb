@@ -125,54 +125,63 @@
 
   <br /><br />
 
-  <table class="two-columns-one-header">
-    <thead>
-      <tr class="all">
-        <th class="title-cfdi all header" colspan="2"> CFDI RELACIONADO </th>
-      </tr>
-    </thead>
+  <% if @relation_type != '' %>
+    <table class="two-columns-one-header">
+      <thead>
+        <tr class="all">
+          <th class="title-cfdi all header" colspan="2"> CFDI RELACIONADO </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="grow half first smaller"> Tipo de Relación: <span> <strong> 04 </strong> - Sustitución de los CFDI previos </span> </td>
+          <td class="grow half smaller"> CFDI Relacionado: <span> A39DA66B-52CA-49E3-879B-FC05185B0EF7 </span> </td>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+
+  <table class="bill-first-footer">
     <tbody>
       <tr>
-        <td class="grow half first smaller"> Tipo de Relación: <span> <strong> 04 </strong> - Sustitución de los CFDI previos </span> </td>
-        <td class="grow half smaller"> CFDI Relacionado: <span> A39DA66B-52CA-49E3-879B-FC05185B0EF7 </span> </td>
+        <td>
+          <table id="qr-table">
+            <% @qr_print.modules.each_index do |x| -%>
+              <tr>
+                <% @qr_print.modules.each_index do |y| -%>
+                <% if @qr_print.dark?(x,y) -%>
+                  <td class="black"/>
+                <% else -%>
+                  <td class="white"/>
+                <% end -%>
+              <% end -%>
+              </tr>
+            <% end -%>
+          </table>
+        </td>
+        <td>
+          <div class="certificate">
+            <p class="title-cfdi"> Folio Fiscal - UUID: </p>
+            <p class="grow"> <%= @uuid %> </p>
+            <p class="title-cfdi"> Número de Serie del Certificado </p>
+            <p class="grow"> <%= @store.certificate_number %> </p>
+            <p class="title-cfdi"> Número de Serie del Certificado SAT </p>
+            <p class="grow"> <%= @sat_certificate %> </p>
+            <p class="title-cfdi"> Fecha y hora de Certificación </p>
+            <p class="grow"> <%= @date.strftime('%FT%T') %> </p>
+          </div>
+        </td>
+        <td>
+          <div class="fiscal-folio">
+            <p class="title-cfdi with-bg"> Sello Digital:</p>
+            <p class="grow break">
+              <%= @cfd_stamp %>
+            </p>
+          </div>
+        </td>
       </tr>
     </tbody>
   </table>
-
-  <div class="bill-first-footer">
-
-    <table id="qr-table">
-      <% @qr_print.modules.each_index do |x| -%>
-      <tr>
-        <% @qr_print.modules.each_index do |y| -%>
-        <% if @qr_print.dark?(x,y) -%>
-        <td class="black"/>
-        <% else -%>
-        <td class="white"/>
-        <% end -%>
-        <% end -%>
-      </tr>
-      <% end -%>
-    </table>
-
-    <div class="certificate">
-      <p class="title-cfdi"> Folio Fiscal - UUID: </p>
-      <p class="grow"> <%= @uuid %> </p>
-      <p class="title-cfdi"> Número de Serie del Certificado </p>
-      <p class="grow"> <%= @store.certificate_number %> </p>
-      <p class="title-cfdi"> Número de Serie del Certificado SAT </p>
-      <p class="grow"> <%= @sat_certificate %> </p>
-      <p class="title-cfdi"> Fecha y hora de Certificación </p>
-      <p class="grow"> <%= @date.strftime('%FT%T') %> </p>
-    </div>
-
-  <div class="fiscal-folio">
-    <p class="title-cfdi with-bg"> Sello Digital:</p>
-    <p class="grow break">
-      <%= @cfd_stamp %>
-    </p>
-  </div>
-</div>
 
   <div class="digital-stamp first-stamp">
     <p class="title-cfdi with-bg"> Sello del SAT: </p>

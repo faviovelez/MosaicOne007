@@ -84,7 +84,7 @@ class OrdersController < ApplicationController
   end
 
   def delete_product_from_order
-    # Este método es solo si no se ha facturado
+    # Este método funciona independientemente de si ya se facturó
     request = ProductRequest.find(params[:id])
     product = request.product
     order = request.order
@@ -94,7 +94,6 @@ class OrdersController < ApplicationController
     taxes = order.taxes
     discount_applied = order.discount_applied
     order.movements.each do |mov|
-      # Falta el proceso que los quita de los reportes
       if mov.product == product
         number = product.warehouse_entries.order(:id).last.entry_number
         entry_mov = mov.entry_movement
@@ -107,8 +106,17 @@ class OrdersController < ApplicationController
         subtotal -= mov.subtotal
         taxes -= mov.taxes
         discount_applied -= mov.discount_applied
-        mov.update()
-        mov.delete
+        down_mov = mov.dup
+        down_mov.update_attributes(
+          quantity: mov.quantity * (-1),
+          cost: mov.cost * (-1),
+          discount_applied: mov.discount_applied * (-1),
+          automatic_discount: mov.automatic_discount * (-1),
+          taxes: mov.taxes * (-1),
+          total_cost: mov.total_cost * (-1),
+          total: mov.total * (-1),
+          subtotal: mom.subtotal * (-1)
+        )
       end
     end
     order.pending_movements.each do |mov|
@@ -120,7 +128,11 @@ class OrdersController < ApplicationController
         mov.delete
       end
     end
-    request.delete
+    if request.order.bill == nil
+      request.delete
+    else
+      request.update(status: 'cancelada')
+    end
     if order.product_requests.count < 1
       order.delete
       redirect_to root_path, notice: 'Se eliminó por completo el pedido.'
@@ -131,7 +143,7 @@ class OrdersController < ApplicationController
   end
 
   def delete_product_requests(request)
-    # Este método es solo si no se ha facturado
+    # Este método es casi igual al anterior pero acepta un parámetro (para cuando se eliminan toda la order), solo si no se ha procesado
     product = request.product
     order = request.order
     total = order.total
@@ -152,7 +164,17 @@ class OrdersController < ApplicationController
         subtotal -= mov.subtotal
         taxes -= mov.taxes
         discount_applied -= mov.discount_applied
-        mov.delete
+        down_mov = mov.dup
+        down_mov.update_attributes(
+          quantity: mov.quantity * (-1),
+          cost: mov.cost * (-1),
+          discount_applied: mov.discount_applied * (-1),
+          automatic_discount: mov.automatic_discount * (-1),
+          taxes: mov.taxes * (-1),
+          total_cost: mov.total_cost * (-1),
+          total: mov.total * (-1),
+          subtotal: mom.subtotal * (-1)
+        )
       end
     end
     order.pending_movements.each do |mov|
@@ -175,7 +197,7 @@ class OrdersController < ApplicationController
   end
 
   def delete_order
-    # Este método es solo si no se ha facturado
+    # Este método es solo si no se ha facturado o procesado
     order = Order.find(params[:id])
     order.product_requests.each do |request|
       delete_product_requests(request)
@@ -351,8 +373,8 @@ class OrdersController < ApplicationController
 
   def create_movement(object)
     product = @product_request.product
-    store = current_user.store
-    prospect = Prospect.find_by_store_prospect_id(store)
+    store = Store.find_by_store_name('Corporativo Compresor')
+    prospect = Prospect.find_by_store_prospect_id(current_user.store)
     discount = 0.35
     disc_app = product.price * discount
     unit_price = product.price * (1 - discount)
@@ -374,7 +396,7 @@ class OrdersController < ApplicationController
       business_unit: store.business_unit,
       product_request: @product_request,
       maximum_date: @product_request.maximum_date,
-      prospect: Prospect.find_by_store_prospect_id(current_user.store)
+      prospect: prospect
     )
     movement
   end

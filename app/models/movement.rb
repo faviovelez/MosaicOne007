@@ -4,7 +4,6 @@ class Movement < ActiveRecord::Base
   belongs_to :order
   belongs_to :store
   belongs_to :supplier
-  # Ya que se modifique, quitaré la línea de movements
   belongs_to :user
   belongs_to :business_unit
   belongs_to :prospect
@@ -24,93 +23,115 @@ class Movement < ActiveRecord::Base
   has_many :sales_movements
   belongs_to :entry_movement, class_name: 'Movement', foreign_key: 'entry_movement_id'
 
-  before_save :create_update_summary, if: :is_sales?
+  after_create :create_update_summary
 
   def create_update_summary
-    if dont_exist_record_month
-      create_new_summary
+    if dont_exist_prospect_sale
+      create_prospect_report
     else
-      update_summary
+      update_prospect_report
+    end
+    if dont_exist_product_sale
+      create_product_report
+    else
+      update_product_report
+    end
+    if dont_exist_store_sale
+      create_store_report
+    else
+      update_store_report
     end
   end
 
-  def dont_exist_record_month
-    !!(ProspectSale.where(month: Date.today.month).first.nil?)
+  def dont_exist_product_sale
+    !!(ProductSale.where(month: Date.today.month, year: Date.today.year, store: store.id, product: product.id).first.nil?)
   end
 
-  def update_summary
-    update_reports_data(
-      ProspectSale.find_by_month(Date.today.month)
+  def dont_exist_prospect_sale
+    !!(ProspectSale.where(month: Date.today.month, year: Date.today.year, store: store.id, prospect: prospect.id).first.nil?)
+  end
+
+  def dont_exist_store_sale
+    !!(StoreSale.where(month: Date.today.month, year: Date.today.year, store: store.id).first.nil?)
+  end
+
+  def create_store_report
+    create_reports_data(
+      StoreSale
     ).update(
-      prospect_id: store.id,
+      store_id: store.id
     )
-    update_reports_data(
-      ProductSale.find_by_month(Date.today.month)
-    )
-    .update(
+  end
+
+  def create_product_report
+    create_reports_data(
+      ProductSale
+    ).update(
       product_id: product.id,
     )
-    update_reports_data(
-      BusinessUnitSale.find_by_month(Date.today.month)
-    ).update(
-      business_unit_id: business_unit.id
-    )
-    update_reports_data(
-      BusinessGroupSale.find_by_month(Date.today.month)
-    ).update(
-      business_group_id: business_unit.business_group_id,
-    )
   end
 
-  def create_new_summary
+  def create_prospect_report
     create_reports_data(
       ProspectSale
     ).update(
       prospect_id: prospect.id
     )
-    create_reports_data(
-      ProductSale)
-    .update(
-      product_id: product.id,
+  end
+
+  def update_store_report
+    update_reports_data(
+      StoreSale.where(month: Date.today.month, year: Date.today.year, store: store).first
     )
-    create_reports_data(
-      BusinessUnitSale
-    ).update(
-      business_unit_id: business_unit.id
+  end
+
+  def update_prospect_report
+    update_reports_data(
+      ProspectSale.where(month: Date.today.month, year: Date.today.year, prospect: prospect.id, store: store.id).first
     )
-    create_reports_data(
-      BusinessGroupSale
-    ).update(
-      business_group_id: business_unit.business_group_id,
+  end
+
+  def update_product_report
+    update_reports_data(
+      ProductSale.where(month: Date.today.month, year: Date.today.year, product: product.id, store: store.id).first
     )
   end
 
   def update_reports_data(object)
-    sales_amount = fix_quantity * fix_final_price
-    sales_quantity = fix_quantity
-    cost = fix_cost * fix_quantity
-    month = Date.today.month
-    year  = Date.today.year
+    subtotal = self.subtotal
+    discount = self.discount_applied
+    taxes = self.taxes
+    total = self.total
+    quantity = self.quantity
+    cost = self.total_cost
     object.update_attributes(
-      sales_amount: sales_amount,
-      sales_quantity: sales_quantity,
-      cost: cost,
-      month: month,
-      year: year
+      subtotal: object.subtotal + subtotal,
+      discount: object.discount + discount,
+      taxes: object.taxes + taxes,
+      total: object.total + total,
+      cost: object.cost + cost,
+      quantity: object.quantity + quantity,
     )
     object
   end
 
-  def create_reports_data(type)
-    sales_amount = fix_quantity * fix_final_price
-    sales_quantity = fix_quantity
-    cost = fix_cost * fix_quantity
+  def create_reports_data(object)
+    subtotal = self.subtotal
+    discount = self.discount_applied
+    taxes = self.taxes
+    total = self.total
+    quantity = self.quantity
+    cost = self.total_cost
     month = Date.today.month
     year  = Date.today.year
-    type.create(
-      sales_amount: sales_amount,
-      sales_quantity: sales_quantity,
+    store = self.store
+    object.create(
+      subtotal: subtotal,
+      discount: discount,
+      taxes: taxes,
+      total: total,
       cost: cost,
+      quantity: quantity,
       month: month,
       year: year
     )
@@ -120,10 +141,6 @@ class Movement < ActiveRecord::Base
      BusinessUnit.find(
        self.store.business_unit_id
      )
-  end
-
-  def is_sales?
-    !!(movement_type == 'venta')
   end
 
   def fix_cost
@@ -235,11 +252,14 @@ class Movement < ActiveRecord::Base
     ).order(
       "created_at #{order_type}"
     ).each do |pending|
-      if transform(pending, inventory, mov)
-        convert_warehouses(order_type, pending.quantity)
-        pending.destroy
-        process_inventories(inventories, pending.quantity)
-        inventories[:actual] = actual_inventory
+      # Para ignorar los movimientos negativos creados al devolver productos facturados
+      unless pending.quantity <= 0
+        if transform(pending, inventory, mov)
+          convert_warehouses(order_type, pending.quantity)
+          pending.destroy
+          process_inventories(inventories, pending.quantity)
+          inventories[:actual] = actual_inventory
+        end
       end
     end
     inventories[:to_processed]
@@ -297,9 +317,9 @@ class Movement < ActiveRecord::Base
 
     def initialize_with(object, user ,type)
       product = object.product
-      store   = user.store
+      store   = Store.find_by_store_name('Corporativo Compresor')
       discount = 0.35
-      prospect = Prospect.find_by_store_prospect_id(store)
+      prospect = Prospect.find_by_store_prospect_id(user.store)
       disc_app = product.price * discount
       unit_price = product.price * (1 - discount)
       create(

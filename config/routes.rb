@@ -84,7 +84,37 @@ Rails.application.routes.draw do
 
   get 'bills/select_bills'
 
-  post 'bills/modify'
+  get 'bills/modify'
+
+  get 'bills/payment/:bill', to: 'bills#payment', as: 'payment'
+
+  get 'bills/credit_note/:bill', to: 'bills#credit_note', as: 'credit_note'
+
+  get 'bills/credit_note_global/:bill', to: 'bills#credit_note_global', as: 'credit_note_global'
+
+  get 'bills/generate_credit_note'
+
+  get 'bills/generate_debit_note'
+
+  get 'bills/generate_devolution'
+
+  get 'bills/generate_payment'
+
+  get 'bills/generate_advance_e'
+
+  get 'bills/generate_advance_i'
+
+  get 'bills/debit_note/:bill', to: 'bills#debit_note', as: 'debit_note'
+
+  get 'bills/devolution/:bill', to: 'bills#devolution', as: 'devolution'
+
+  get 'bills/devolution_global/:bill', to: 'bills#devolution_global', as: 'devolution_global'
+
+  get 'bills/advance_e', as: 'advance_e'
+
+  get 'bills/advance_i', as: 'advance_i'
+
+  post 'bills/modify/:bill', to: 'bills#modify', as: 'modify_bill'
 
   get 'bills/ticket_details/:id', to: 'bills#ticket_details', as: 'ticket_details'
 
@@ -104,7 +134,11 @@ Rails.application.routes.draw do
 
   get 'tickets/sales/:store/:year/:month', to: 'tickets#sales', as: 'sales'
 
+  get 'bills/issued/:store/:year/:month', to: 'bills#issued', as: 'bills_issued'
+
   get 'tickets/sales_summary'
+
+  get 'tikets/process_incomming_data'
 
   devise_for :users
 

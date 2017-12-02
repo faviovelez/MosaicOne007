@@ -5,26 +5,41 @@
       <th> Subtotal </th>
       <th> Descuento $ </th>
       <th> Descuento % </th>
+      <th> Pagos recibidos </th>
       <th> Total </th>
       <th> Costo </th>
       <th> Margen $ </th>
       <th> Margen % </th>
-      <th> Pagos recibidos </th>
-      <th> Detalles </th>
+      <th colspan="2"> Detalles </th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td> 11 / 2017 </td>
-      <td> <%= number_to_currency(@subtotal) %> </td>
-      <td> <%= number_to_currency(@discount_currency) %> </td>
-      <td> <%= number_to_percentage(@discount_percentage, precision: 1) %> </td>
-      <td> <%= number_to_currency(@total) %> </td>
-      <td> <%= number_to_currency(@cost) %> </td>
-      <td> <%= number_to_currency(@margin_currency) %> </td>
-      <td> <%= number_to_percentage(@margin_percentage, precision: 1) %> </td>
-      <td> <%= number_to_currency(@payments) %> </td>
-      <td> <%= link_to 'Detalles', sales_path(year: 2017, month: 11, store: current_user.store) %> </td>
-    </tr>
+    <% @summaries.each do |summary| %>
+      <tr>
+        <td> <%= summary.month %> / <%= summary.year %> </td>
+        <td> <%= number_to_currency(summary.subtotal) %> </td>
+        <td> <%= number_to_currency(summary.discount) %> </td>
+        <td> <%= number_to_percentage(discount_percentage(summary), precision: 1) %> </td>
+        <td> <%= number_to_currency(summary.payments) %> </td>
+        <td> <%= number_to_currency(summary.total) %> </td>
+        <td> <%= number_to_currency(summary.cost) %> </td>
+        <td> <%= number_to_currency(margin_currency(summary)) %> </td>
+        <td> <%= number_to_percentage(margin_percentage(summary), precision: 1) %> </td>
+        <td>
+          <% unless tickets_exists(summary.month, summary.year) %>
+            <%= link_to sales_path(year: summary.year, month: summary.month, store: current_user.store) do %>
+              <%= image_tag '/assets/ticket_main.png', alt: 'Ticket icon', class: 'sales-summary-icon' %>
+            <% end %>
+          <% end %>
+        </td>
+        <td>
+          <% unless bills_exists(summary.month, summary.year) %>
+            <%= link_to bills_issued_path(year: summary.year, month: summary.month, store: current_user.store) do %>
+              <%= image_tag '/assets/pdf_alter.png', alt: 'Alternative icon PDF', class: 'sales-summary-icon' %>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
   </tbody>
 </table>

@@ -273,7 +273,7 @@ class ProductsController < ApplicationController
       :cost,
       :rack,
       :level,
-      :unit_id,
+      :unit,
       :current,
       :product_dependents,
       :wholesale_id,

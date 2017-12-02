@@ -25,6 +25,12 @@ button#btn-notice {
   justify-content: center;
 }
 
+.blue-background {
+  background-color: #009CB7;
+  border: solid 1px #009CB7;
+  color: #fff;
+}
+
 .extra-padding {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -33,6 +39,11 @@ button#btn-notice {
 
 .extra-margin-top {
   margin-top: 4rem;
+}
+
+.sales-summary-icon {
+  height: 30px;
+  width: auto;
 }
 
 .payments-summary > thead > tr > th,

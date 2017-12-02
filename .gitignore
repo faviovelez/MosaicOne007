@@ -18,9 +18,9 @@
 
 /public/assets
 /public/uploads
-/.env
 /.env.production
 /.env.local
+/.env
 /config/database_local.yml
 Gemfile.lock
 .ruby-version
