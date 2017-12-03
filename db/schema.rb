@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171202222052) do
+ActiveRecord::Schema.define(version: 20171203015451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1405,7 +1405,7 @@ ActiveRecord::Schema.define(version: 20171202222052) do
     t.integer  "advance_i_last_folio",     default: 0
     t.string   "initial_inventory"
     t.string   "current_inventory"
-    t.string   "propects_file"
+    t.string   "prospects_file"
   end
 
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree
