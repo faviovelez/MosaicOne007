@@ -86,6 +86,13 @@ class BillsController < ApplicationController
   def generate_advance_i
   end
 
+  def details
+    @bill = Bill.find(params[:bill])
+  end
+
+  def details_global
+    @bill = Bill.find(params[:bill])
+  end
 
   def issued
     store = Store.find(params[:store]) || current_user.store

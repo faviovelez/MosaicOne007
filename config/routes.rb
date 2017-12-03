@@ -70,6 +70,10 @@ Rails.application.routes.draw do
 
   get 'bills/process_data'
 
+  get 'bills/details/:bill', to: 'bills#details', as: 'details'
+
+  get 'bills/details_global/:bill', to: 'bills#details_global', as: 'details_global'
+
   get 'bills/bill_doc_/:id', to: 'bills#bill_doc', as: 'bills_doc'
 
   get 'bills/doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#doc', as: 'bill_doc'
