@@ -31,6 +31,76 @@ class BillsController < ApplicationController
   def filter_tickets
   end
 
+  def modify
+    @bill = Bill.find(params[:bill])
+    # Revisar bien cómo haré el proceso para incluir (Dev Pag NC ND Sust Canc)
+  end
+
+  def payment
+    @bill = Bill.find(params[:bill])
+  end
+
+  def credit_note
+    @bill = Bill.find(params[:bill])
+  end
+
+  def credit_note_global
+    @bill = Bill.find(params[:bill])
+  end
+
+  def debit_note
+    @bill = Bill.find(params[:bill])
+  end
+
+  def devolution
+    @bill = Bill.find(params[:bill])
+  end
+
+  def devolution_global
+    @bill = Bill.find(params[:bill])
+  end
+
+  def advance_e
+    @bill = Bill.find(params[:bill])
+  end
+
+  def advance_i
+    @bill = Bill.find(params[:bill])
+  end
+
+  def generate_credit_note
+  end
+
+  def generate_debit_note
+  end
+
+  def generate_devolution
+  end
+
+  def generate_payment
+  end
+
+  def generate_advance_e
+  end
+
+  def generate_advance_i
+  end
+
+  def details
+    @bill = Bill.find(params[:bill])
+  end
+
+  def details_global
+    @bill = Bill.find(params[:bill])
+  end
+
+  def issued
+    store = Store.find(params[:store]) || current_user.store
+    month = params[:month]
+    year = params[:year]
+    @bills = store.bills.where('extract(month from created_at) = ? and extract(year from created_at) = ?', month, year).where(relation_type: nil).where.not(pdf: nil, xml: nil)
+  end
+
   def select_bills
     store = current_user.store
     @bills = store.bills.where(status: 'timbrada').where.not(receiving_company: nil).where.not(total: nil)
@@ -188,8 +258,7 @@ class BillsController < ApplicationController
       @prospects_names << [prospect.billing_address.business_name, prospect.id]
       @prospects_rfcs << [prospect.billing_address.rfc, prospect.id]
     end
-
-    global = Prospect.find_by_legal_or_business_name('Público en General')
+    global = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno').first
     @global_id = global.id
     @global_rfc = global.billing_address.rfc
 
@@ -286,15 +355,10 @@ class BillsController < ApplicationController
     else
       @cfdi_use = nil
     end
-
     get_prospect_from_objects(objects)
     @type_of_bill = TypeOfBill.first
     @tickets = params[:tickets] unless params[:tickets] == nil
     @orders = params[:orders] unless params[:orders] == nil
-  end
-
-  def modify
-    # Revisar bien cómo haré el proceso para incluir (Dev Pag NC ND Sust Canc)
   end
 
   def global_preview
@@ -304,8 +368,13 @@ class BillsController < ApplicationController
     params[:tickets] == nil ? tickets = nil : tickets = Ticket.find(params[:tickets])
     params[:orders] == nil ? orders = nil : orders = Order.find(params[:orders])
     tickets == nil ? @objects = orders : @objects = tickets
-    prospect = Prospect.find(params[:prospect]).first
+    if params[:cfdi_type] == 'global'
+      @prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno').first
+    else
+      get_prospect_from_objects(@objects)
+    end
     select_store
+    prospect = @prospect || Prospect.find(params[:prospect]).first
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       @store = current_user.store
     else
@@ -324,10 +393,8 @@ class BillsController < ApplicationController
       if params[:cfdi_type] == 'global'
         @general_bill = true
         store = @store
-        s_billing = store.business_unit.billing_address
-        prospect = Prospect.find_by_legal_or_business_name('Público en General')
-        @prospect = prospect
         p_billing = prospect.billing_address
+        s_billing = store.business_unit.billing_address
         @date = Time.now.strftime('%FT%T')
         @zipcode = store.zip_code
         type_of_bill = TypeOfBill.find(params[:type_of_bill])
@@ -336,7 +403,7 @@ class BillsController < ApplicationController
         @type_of_bill = type_of_bill.description
         @store_rfc = s_billing.rfc.upcase
         @prospect_rfc = p_billing.rfc.upcase
-        @store_name = s_billing.business_name.split.map(&:capitalize)*' '
+        @store_name = s_billing.business_name
         @prospect_name = ''
         regime = s_billing.tax_regime
         @regime = regime
@@ -403,8 +470,8 @@ class BillsController < ApplicationController
         @type_of_bill = type_of_bill.description
         @store_rfc = s_billing.rfc.upcase
         @prospect_rfc = p_billing.rfc.upcase
-        @store_name = s_billing.business_name.split.map(&:capitalize)*' '
-        @prospect_name = p_billing.business_name.split.map(&:capitalize)*' '
+        @store_name = s_billing.business_name
+        @prospect_name = p_billing.business_name
         regime = s_billing.tax_regime
         @regime = regime
         @tax_regime_key = s_billing.tax_regime.tax_id
@@ -636,7 +703,7 @@ class BillsController < ApplicationController
       s_billing = store.business_unit.billing_address
       @s_billing = s_billing
       # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL prospect = Prospect.find_by_legal_or_business_name('Público en General')
-      prospect = Prospect.find_by_legal_or_business_name('Público en General')
+      prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno').first
       @prospect = prospect
       p_billing = prospect.billing_address
       @p_billing = p_billing
@@ -648,7 +715,7 @@ class BillsController < ApplicationController
       @type_of_bill = type_of_bill.description
       @store_rfc = s_billing.rfc.upcase
       @prospect_rfc = p_billing.rfc.upcase
-      @store_name = s_billing.business_name.split.map(&:capitalize)*' '
+      @store_name = s_billing.business_name
       @prospect_name = ''
       regime = s_billing.tax_regime
       @regime = regime
@@ -716,9 +783,9 @@ class BillsController < ApplicationController
       @type_of_bill = type_of_bill.description
       @store_rfc = s_billing.rfc.upcase
       @prospect_rfc = p_billing.rfc.upcase
-      @store_name = s_billing.business_name.split.map(&:capitalize)*' '
+      @store_name = s_billing.business_name
       # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL NO DEBE SALIR
-      @prospect_name = p_billing.business_name.split.map(&:capitalize)*' '
+      @prospect_name = p_billing.business_name
       regime = s_billing.tax_regime
       @regime = regime
       @tax_regime_key = s_billing.tax_regime.tax_id
@@ -1081,8 +1148,8 @@ XML
         bill.taxes = @total_taxes
         bill.total = @total
         bill.discount_applied = @total_discount
-        # bill.automatic_discount_applied =
-        bill.manual_discount_applied = @total_discount
+        # bill.automatic_discount_applied = @total_discount
+        # bill.manual_discount_applied = @total_discount
         bill.tax = Tax.find(2)
         bill.tax_regime = @regime
         bill.taxes_transferred = @total_taxes
@@ -1108,18 +1175,58 @@ XML
         bill.leyend = ''
         bill.uuid = @uuid
         bill.payed = @payed
+        bill.from = @objects.first.class.to_s
+        @general_bill == true ? bill.bill_type = 'global' : bill.bill_type = 'cliente'
         # bill.parent = ''
         # bill.children = (este es cuando sean NC o ND o DEV)
       end
       bill.save
+      @rows.each do |row|
+        row_for_bill = Row.new.tap do |r|
+          r.bill = bill
+          r.product = row["product_id"]
+          r.service = row["service_id"]
+          r.unique_code = row["unique_code"]
+          r.quantity = row["quantity"]
+          r.description = row["description"]
+          r.unit_value = row["unit_value"]
+          r.sat_unit_key = row["sat_unit_key"]
+          r.sat_unit_description = row["sat_unit_description"]
+          r.sat_key = row["sat_key"]
+          r.ticket = row["ticket"]
+          r.total = row["total"]
+          r.subtotal = row["subtotal"]
+          r.discount = row["discount"]
+          r.taxes = row["taxes"]
+        end
+        row_for_bill.save
+      end
       # El update de folio solo sirve para las facturas normales por el momento
       bill.update(xml: @stamped_xml, pdf: @pdf_file)
       @store.update(bill_last_folio: @folio)
       @objects.each do |object|
         object.update(bill: bill)
+        object.payments.each do |payment|
+          payment.update(bill: bill)
+        end
         if object.is_a?(Ticket)
+          object.store_movements.each do |mov|
+            mov.update(bill: bill)
+          end
+          object.service_offereds.each do |serv|
+            serv.update(bill: bill)
+          end
           object.children.each do |ticket|
+            ticket.payments.each do |payment|
+              payment.update(bill: bill)
+            end
             ticket.update(bill: bill)
+            ticket.store_movements.each do |mov|
+              mov.update(bill: bill)
+            end
+            ticket.service_offereds.each do |serv|
+              serv.update(bill: bill)
+            end
           end
         elsif object.is_a?(Order)
           object.movements.each do |mov|
@@ -1127,6 +1234,9 @@ XML
           end
           object.pending_movements.each do |mov|
             mov.update(bill: bill)
+          end
+          object.service_offereds.each do |serv|
+            serv.update(bill: bill)
           end
         end
       end

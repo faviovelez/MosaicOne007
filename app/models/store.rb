@@ -41,6 +41,11 @@ class Store < ActiveRecord::Base
   has_many :temporal_numbers
   has_many :cash_registers
   has_many :store_movements
+  has_many :prospect_sales
+  has_many :product_sales
+  has_many :store_sales
+  has_many :business_unit_sales
+  has_many :business_group_sales
   mount_uploader :certificate, SatCertificateUploader
   mount_uploader :key, SatKeyUploader
   mount_uploader :initial_inventory, InitialInventoryUploader

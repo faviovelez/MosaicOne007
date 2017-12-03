@@ -10,4 +10,5 @@ class StoreMovement < ActiveRecord::Base
   belongs_to :product_request
   belongs_to :ticket
   has_many :stores_warehouse_entries
+  belongs_to :bill
 end

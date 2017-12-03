@@ -19,9 +19,8 @@ end
 
 # Deben existir por lo menos dos Business Groups: Uno para tiendas propias y otro para tiendas externas
 BusinessGroup.find_or_create_by(
-                                  { name: "Diseños de Cartón", business_group_type: 'main' },
+                                  { name: "Diseños de Cartón", business_group_type: 'main' }
                                 )
-end
 
 # Se establece por default la configuración de tipo de costeo a PEPS en la tabla CostType
 [
@@ -129,17 +128,25 @@ patria_prospect = Prospect.find_or_create_by(
 # Se crean almacenes default
 Warehouse.find_or_create_by(
                             warehouse_code: 'AG000',
-                            name: 'Almacén General Patria',
-                            business_unit: patria_business_unit,
+                            name: 'Corrugado',
+                            business_unit: compresor_business_unit,
                             business_group: default_business_group
                             )
 
 Warehouse.find_or_create_by(
                             warehouse_code: 'AG001',
-                            name: 'Almacén General Compresor',
+                            name: 'Caple',
                             business_unit: compresor_business_unit,
                             business_group: default_business_group
                             )
+
+Warehouse.find_or_create_by(
+                            warehouse_code: 'AG002',
+                            name: 'Hechas a mano',
+                            business_unit: compresor_business_unit,
+                            business_group: default_business_group
+                            )
+
 
 dc = {
       type_of_person: 'persona moral',
@@ -641,27 +648,39 @@ unless stores == nil
   end
 end
 
+def unit(sat_unit)
+  if sat_unit == 'H87'
+    unit = 'Piezas'
+  elsif sat_unit == '58'
+    unit = 'Kilogramos'
+  elsif sat_unit == 'MTR'
+    unit = 'Metros'
+  else
+    unit = SatUnitKey.find_by_unit(unit).description
+  end
+end
+
 # Agrega el catálogo de Productos de Diseños de Cartón
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'products_trial.csv'))
 csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
 csv.each do |row|
-  product = Product.find_or_create_by(
-                                        {
-                                          unique_code: row['cod'],
-                                          description: row['desc'],
-                                          business_unit: BusinessUnit.find_by_name(row['bu']),
-                                          supplier: Supplier.find_by_name(row['bu']),
-                                          line: Classification.find_by_name(row['line']).name,
-                                          classification: row['class'],
-                                          product_type: row['type'],
-                                          current: true,
-                                          price: row['price'],
-                                          sat_unit_key: SatUnitKey.find_by_description(row['unit']),
-                                          sat_key: SatKey.find_by_sat_key(row['sat_key']),
-                                          warehouse: Warehouse.where(business_unit: BusinessUnit.find_by_name(row['bu'])).first,
-                                          exterior_color_or_design: row['color']
-                                        }
-                                      )
+#  product = Product.find_or_create_by(
+#                                        {
+#                                          unique_code: row['cod'],
+#                                          description: row['desc'],
+#                                          business_unit: BusinessUnit.find_by_name(row['bu']),
+#                                          supplier: Supplier.find_by_name(row['bu']),
+#                                          line: Classification.find_by_name(row['line']).name,
+#                                          classification: row['class'],
+#                                          product_type: row['type'],
+#                                          current: true,
+#                                          price: row['price'],
+#                                          sat_unit_key: SatUnitKey.find_by_description(row['unit']),
+#                                          sat_key: SatKey.find_by_sat_key(row['sat_key']),
+#                                          warehouse: Warehouse.where(business_unit: BusinessUnit.find_by_name(row['bu'])).first,
+#                                          exterior_color_or_design: row['color']
+#                                        }
+#                                      )
 
   puts "#{product.id}, #{product.unique_code} saved"
   i = Inventory.find_or_create_by(
