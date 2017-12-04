@@ -118,7 +118,7 @@ Rails.application.routes.draw do
 
   get 'bills/advance_i', as: 'advance_i'
 
-  post 'bills/modify/:bill', to: 'bills#modify', as: 'modify_bill'
+  get 'bills/modify/:bill', to: 'bills#modify', as: 'modify_bill'
 
   get 'bills/ticket_details/:id', to: 'bills#ticket_details', as: 'ticket_details'
 

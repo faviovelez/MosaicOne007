@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171203015451) do
+ActiveRecord::Schema.define(version: 20171203163249) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1162,7 +1162,7 @@ ActiveRecord::Schema.define(version: 20171203015451) do
     t.integer  "ticket"
     t.string   "sat_key"
     t.string   "sat_unit_key"
-    t.string   "description"
+    t.text     "description"
     t.float    "total"
     t.float    "subtotal"
     t.float    "taxes"

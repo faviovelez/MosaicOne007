@@ -1,64 +1,48 @@
-<table>
-  <thead>
-    <tr>
-      <th colspan="10"> Detalles de la factura con Serie: <%=@bill.sequence %> Folio:<%= @bill.folio%> </th>
-    </tr>
-    <tr class="header-main-preview">
-      <th class="space-preview"> Clave Prod / Serv </th>
-      <th class="space-preview"> No. Identificación </th>
-      <th class="space-preview"> Cantidad </th>
-      <th class="space-preview"> Clave Unidad </th>
-      <th class="space-preview"> Unidad </th>
-      <%# ESTE CAMPO DEBE SER EDITABLE%>
-      <th class="space-preview"> Descripción </th>
-      <th class="space-preview"> Valor Unitario </th>
-      <th class="space-preview"> Descuento </th>
-      <th class="space-preview"> Impuesto </th>
-      <th class="space-preview"> Importe </th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @bill.rows.each do |row|%>
-      <tr>
-        <td class="space-preview"> <%= row.sat_key %> </td>
-        <td class="space-preview"> <%= row.unique_code %> </td>
-        <td class="space-preview"> <%= row.quantity %> </td>
-        <td class="space-preview"> <%= row.sat_unit_key %> </strong> </td>
-        <td class="space-preview"> <%= row.sat_unit_description %> </td>
-        <td class="space-preview"> <%= row.description %> </td>
-        <td class="space-preview"> <%= row.unit_value %> </td>
-        <td class="space-preview"> <%= number_to_currency(row.discount) %> </td>
-        <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
-        <td class="space-preview"> <%= number_to_currency(row.subtotal) %> </td>
-      </tr>
-    <% end %>
-    <tr>
-      <td></td>
-      <td colspan="3 letter" class="center"></td>
-      <td></td>
-      <td colspan="5"></td>
-    </tr>
-    <tr>
-      <td></td>
-      <td colspan="3" class="center"></td>
-      <td></td>
-      <td colspan="3" class="final-total"> SubTotal </td>
-      <td colspan="2" class="final-total right"> <%= number_to_currency(@bill.subtotal) %> </td>
-    </tr>
-    <tr>
-      <td colspan="5"></td>
-      <td colspan="3" class="final-total "> Descuento </td>
-      <td colspan="2" class="final-total right"> <%= number_to_currency(@bill.discount_applied) %> </td>
-    </tr>
-    <tr>
-      <td colspan="5" class="letter"></td>
-      <td colspan="3" class="final-total"> Total Impuestos Trasladados </td>
-      <td colspan="2" class="final-total right"> <%= number_to_currency(@bill.taxes) %> </td>
-    </tr>
-    <tr>
-      <td colspan="5" class="letter"></td>
-      <td colspan="3" class="final-total border-top"> <strong> Total </strong> </td>
-      <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
-    </tr>
-  </tbody>
-</table>
+<h2> Seleccione qué tipo de modificación desea aplicar en la factura </h2><br /><br />
+
+<div class="form-container">
+
+  <%= form_tag({ controller: 'bills', action: 'preview' }, method: 'get') do %>
+
+    <div class="form-inside-style">
+      <%= label_tag :nota_de_crédito %>
+      <%= radio_button_tag(:relation_type, '01') %> <br /><br />
+    </div>
+
+    <div class="form-inside-style">
+      <% unless @bill.bill_type == 'global' %>
+        <%= label_tag :devolución %>
+        <%= radio_button_tag(:relation_type, '03') %> <br /><br />
+      <% end %>
+    </div>
+
+    <div class="form-inside-style">
+      <% if @bill.sequence.include?('PA') %>
+        <%= label_tag :sustitución_de_factura %>
+        <%= radio_button_tag(:relation_type, '04') %> <br /><br />
+      <% end %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= label_tag :cancelación %>
+      <%= radio_button_tag(:relation_type, '00') %> <br /><br />
+    </div>
+
+    <div class="form-inside-style">
+      <% if @bill.tickets.first.ticket_type == 'anticipo' %>
+        <%= label_tag :factura_con_aplicacion_de_anticipo %>
+        <%= radio_button_tag(:relation_type, '07') %> <br /><br />
+      <% end %>
+    </div>
+
+    <div class="hidden">
+      <%= label_tag :factura %>
+      <%= radio_button_tag :bill, params[:bill], checked: true %> <br /><br />
+    </div>
+
+    <div class="actions">
+      <%= submit_tag :confirmar, class: 'main-button' %>
+    </div>
+
+  <% end %>
+</div>

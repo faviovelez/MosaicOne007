@@ -9,6 +9,7 @@ class Prospect < ActiveRecord::Base
   has_many :movements
   has_many :pending_movements
   has_many :prospect_sales
+  has_many :bills
   belongs_to :store
   belongs_to :business_unit
   belongs_to :business_group

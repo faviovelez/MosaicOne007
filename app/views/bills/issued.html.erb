@@ -1,16 +1,5 @@
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'datatables.min' %>
-<% end %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'pdfmake.min' %>
-  <%= javascript_include_tag 'vfs_fonts.js' %>
-  <%= javascript_include_tag 'datatables.min.js' %>
-  <%= javascript_include_tag 'bills_data_tables' %>
-<% end %>
-
 <% if @bills.count >= 1 %>
-  <%= form_tag({ controller: 'bills', action: 'modify' }, method: 'post') do %>
+  <%= form_tag({ controller: 'bills', action: 'modify' }, method: 'get') do %>
     <table id="bills">
       <thead>
         <tr class="table-titles">
@@ -95,4 +84,15 @@
 
 <% else %>
   <p class="individual-font"> No hay facturas todavía </p>
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'bills_data_tables' %>
 <% end %>

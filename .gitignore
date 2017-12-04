@@ -21,6 +21,7 @@
 /.env.production
 /.env.local
 /.env
+/.env.prod
 /config/database_local.yml
 Gemfile.lock
 .ruby-version
