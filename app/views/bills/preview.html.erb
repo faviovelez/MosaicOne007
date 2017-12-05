@@ -1,12 +1,29 @@
 <%= image_tag 'logo-disenos-decarton.png', class: 'img-bill-preview' %>
 
 <div class="top-right-preview">
-  <h3 id="top-title"> FACTURA </h3>
+  <% if @bill == nil %>
+    <h3 id="top-title"> FACTURA </h3>
+  <% elsif (@bill != nil && @relation_type == '01') %>
+    <h3 id="top-title"> NOTA DE CRÉDITO </h3>
+  <% elsif (@bill != nil && @relation_type == '03') %>
+    <h3 id="top-title"> DEVOLUCIÓN </h3>
+  <% elsif (@bill != nil && @relation_type == '02') %>
+    <h3 id="top-title"> NOTA DE DÉBITO </h3>
+  <% end %>
+
+  <% if @relation_type == '01' %>
+    <% type = 'Nota de crédito' %>
+  <% elsif @relation_type == '02' %>
+    <% type = 'Nota de débito' %>
+  <% elsif @relation_type == '03' %>
+    <% type = 'Devolución' %>
+  <% end %>
+
   <p> Serie: <span> <strong> <%= @series %> </strong>  </span> </p>
   <p> Folio: <span> <strong> <%= @folio %> </strong>  </span> </p>
-  <p> Fecha y hora de timbrado:  <span> <%= @time %> </span> </p>
+  <p> Fecha y hora de timbrado: <span> <%= @time %> </span> </p>
   <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
-  <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill %> </span> </p>
+  <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill_description %> </span> </p>
 </div>
 
 <table id="issuing-receiving-table-preview">
@@ -56,6 +73,11 @@
 
 <table class="quantities-table">
   <thead>
+    <% if @bill != nil %>
+      <tr>
+        <td colspan="10"> <strong> La siguiente tabla contiene información de la factura original, no se mostrarán en su Factura de egresos </strong></td>
+      </tr>
+    <% end %>
     <tr class="header-main-preview">
       <th class="space-preview"> Clave Prod / Serv </th>
       <th class="space-preview"> No. Identificación </th>
@@ -68,98 +90,185 @@
       <th class="space-preview"> Descuento </th>
       <th class="space-preview"> Impuesto </th>
       <th class="space-preview"> Importe </th>
+      <th class="hidden"></th>
     </tr>
   </thead>
   <tbody>
-    <% @rows.each do |row|%>
+    <% if (@bill == nil || @relation_type == '01') %>
+      <% @rows.each do |row|%>
+        <tr>
+          <td class="space-preview"> <%= row["sat_key"] %> </td>
+          <td class="space-preview"> <%= row["unique_code"] %> </td>
+          <td class="space-preview"> <%= number_with_delimiter(row["quantity"]) %> </td>
+          <td class="space-preview"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
+          <td class="space-preview"> <%= row["sat_unit_description"] %> </td>
+          <td class="space-preview"> <%= row["description"] %> </td>
+          <td class="space-preview"> <%= number_to_currency(row["unit_value"]) %> </td>
+          <td class="space-preview"> <%= number_to_currency(row["discount"]) %> </td>
+          <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
+          <td class="space-preview"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <td class="hidden"></td>
+        </tr>
+      <% end %>
+    <% else %>
+      <%= form_tag({ controller: 'bills', action: 'cfdi_process' }, method: 'get') do %>
+        <% @rows.each do |row|%>
+          <tr>
+            <td class="space-preview"> <%= row.sat_key %> </td>
+            <td class="space-preview"> <%= row.unique_code %> </td>
+            <td class="space-preview"> <%= select_tag "quantities[]", options_for_select(quantity_options(row)), { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
+            <td class="space-preview"> <%= row.sat_unit_key %> </strong> </td>
+            <td class="space-preview"> <%= row.sat_unit_description %> </td>
+            <td class="space-preview"> <%= row.description %> </td>
+            <td class="space-preview"> <%= row.unit_value %> </td>
+            <td class="space-preview"> <%= number_to_currency(row.discount) %> </td>
+            <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
+            <td class="space-preview"> <%= number_to_currency(row.subtotal) %> </td>
+            <td class="hidden"> <%= text_field_tag "products[]", Product.find_by_unique_code(row.unique_code).id, { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
+          </tr>
+        <% end %>
+        <tr>
+          <td>
+            <br /><br />
+          </td>
+        </tr>
+        <tr>
+          <td><br /></td>
+          <td class="hidden">
+            <%= text_field_tag :prospect, @bill.prospect.id %>
+            <%= text_field_tag :cfdi_type, '' %>
+            <%= text_field_tag :cfdi_use, CfdiUse.find_by_key('G02').id %>
+            <%= text_field_tag :type_of_bill, TypeOfBill.find_by_key(@type_of_bill_key).id %>
+            <%= text_field_tag :relation_type, @relation_type %>
+            <%= text_field_tag :bill, @bill.id %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="10">
+            <%= submit_tag "Generar #{type}", class: 'main-button' %>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+
+    <% unless @relation_type == '03' %>
       <tr>
-        <td class="space-preview"> <%= row["sat_key"] %> </td>
-        <td class="space-preview"> <%= row["unique_code"] %> </td>
-        <td class="space-preview"> <%= number_with_delimiter(row["quantity"]) %> </td>
-        <td class="space-preview"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
-        <td class="space-preview"> <%= row["sat_unit_description"] %> </td>
-        <td class="space-preview"> <%= row["description"] %> </td>
-        <td class="space-preview"> <%= number_to_currency(row["unit_value"]) %> </td>
-        <td class="space-preview"> <%= number_to_currency(row["discount"]) %> </td>
-        <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
-        <td class="space-preview"> <%= number_to_currency(row["subtotal"]) %> </td>
+        <td colspan="3 letter" class="center"> __________________________ </td>
+        <td></td>
+        <td></td>
+        <td colspan="5"></td>
+      </tr>
+      <tr>
+        <td colspan="3" class="center"> Firma de conformidad </td>
+        <td></td>
+        <td></td>
+        <td colspan="3" class="final-total left"> SubTotal </td>
+        <td colspan="2" class="final-total right"> <%= number_to_currency(subtotal) %> </td>
+      </tr>
+      <tr>
+        <td colspan="5"></td>
+        <td colspan="3" class="final-total left"> Descuento </td>
+        <td colspan="2" class="final-total right"> <%= number_to_currency(total_discount) %> </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="letter"> <strong> Importe con letra </strong> </td>
+        <td colspan="3" class="final-total left"> Total Impuestos Trasladados </td>
+        <td colspan="2" class="final-total right"> <%= number_to_currency(total_taxes) %> </td>
+      </tr>
+      <tr>
+        <% if @bill == nil %>
+          <td colspan="5" class="letter"> <%= number_to_letters(@total_all_objects) %> <%= decimals(@total_all_objects) %> </td>
+        <% else %>
+          <td colspan="5" class="letter"> <%= number_to_letters(@bill.total) %> <%= decimals(@bill.total) %> </td>
+        <% end %>
+        <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
+        <% if @bill == nil %>
+          <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
+        <% else %>
+          <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
+        <% end %>
       </tr>
     <% end %>
-    <tr>
-      <td>
-        <br /><br />
-      </td>
-    </tr>
-    <tr>
-      <td colspan="3 letter" class="center"> __________________________ </td>
-      <td></td>
-      <td></td>
-      <td colspan="5"></td>
-    </tr>
-    <tr>
-      <td colspan="3" class="center"> Firma de conformidad </td>
-      <td></td>
-      <td></td>
-      <td colspan="3" class="final-total left"> SubTotal </td>
-      <td colspan="2" class="final-total right"> <%= number_to_currency(subtotal) %> </td>
-    </tr>
-    <tr>
-      <td colspan="5"></td>
-      <td colspan="3" class="final-total left"> Descuento </td>
-      <td colspan="2" class="final-total right"> <%= number_to_currency(total_discount) %> </td>
-    </tr>
-    <tr>
-      <td colspan="5" class="letter"> <strong> Importe con letra </strong> </td>
-      <td colspan="3" class="final-total left"> Total Impuestos Trasladados </td>
-      <td colspan="2" class="final-total right"> <%= number_to_currency(total_taxes) %> </td>
-    </tr>
-    <tr>
-      <td colspan="5" class="letter"> <%= number_to_letters(@total_all_objects) %> <%= decimals(@total_all_objects) %> </td>
-      <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
-      <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
-    </tr>
+    <% if @relation_type == '01' %>
+      <tr>
+        <td colspan="5" class="letter"></td>
+        <td colspan="3" class="final-total border-top"> <strong> Nota de crédito </strong> </td>
+        <td colspan="2" class="final-total border-top right">
+          <%= form_tag({ controller: 'bills', action: 'cfdi_process'}, method: 'get', class: 'form-inline') do %>
+            <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-addon blue-background">$</div>
+                  <strong>
+                    <%= text_field_tag :amount, nil, class: 'form-control', placeholder: 'Monto (con IVA)' %>
+                  </strong>
+              </div>
+            </div>
+        </td>
+      </tr>
+      <tr>
+        <td><br /></td>
+        <td class="hidden">
+          <%= text_field_tag :prospect, @bill.prospect.id %>
+          <%= text_field_tag :cfdi_type, '' %>
+          <%= text_field_tag :cfdi_use, CfdiUse.find_by_key('G02').id %>
+          <%= text_field_tag :type_of_bill, TypeOfBill.find_by_key(@type_of_bill_key).id %>
+          <%= text_field_tag :relation_type, @relation_type %>
+          <%= text_field_tag :bill, @bill.id %>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="10">
+          <%= submit_tag "Generar #{type}", class: 'main-button' %>
+        </td>
+      </tr>
+      <% end %>
+    <% end %>
   </tbody>
 </table>
 
-<table class="payments-summary">
-  <thead>
-      <tr>
-        <th colspan="5"> Resumen de pagos </th>
+<% unless @bill != nil %>
+  <table class="payments-summary">
+    <thead>
+        <tr>
+          <th colspan="5"> Resumen de pagos </th>
+        </tr>
+        <tr class="header-main-preview">
+        <th> Ticket </th>
+        <th> Fecha </th>
+        <th> Forma de pago </th>
+        <th> Monto </th>
       </tr>
-      <tr class="header-main-preview">
-      <th> Ticket </th>
-      <th> Fecha </th>
-      <th> Forma de pago </th>
-      <th> Monto </th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @list_of_real_payments.each do |payment| %>
-      <tr class="center">
-        <td> <%= payment.ticket.ticket_number %> </td>
-        <td> <%= payment.payment_date %> </td>
-        <td> <%= payment.payment_form.description %> </td>
-        <td> <%= number_to_currency(payment.total) %> </td>
-      </tr>
-      <tr>
-        <td>  </td>
-        <td colspan="2" class="left"> <strong> Total pagos: </strong> </td>
-        <td colspan="2" class="right"> <strong> <%= number_to_currency(@total_payment) %> </strong> </td>
-      </tr>
-      <tr>
-        <td>  </td>
-        <td colspan="2" class="left"> <strong> Total tickets: </strong> </td>
-        <td colspan="2" class="right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
-      </tr>
-      <tr>
-        <td>  </td>
-        <td colspan="2" class="left"> <strong> Saldo pendiente: </strong> </td>
-        <td colspan="2" class="right"> <strong> <%= number_to_currency(@total_all_objects.round(2) - @total_payment.round(2))%> </strong> </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @list_of_real_payments.each do |payment| %>
+        <tr class="center">
+          <td> <%= payment.ticket.ticket_number %> </td>
+          <td> <%= payment.payment_date %> </td>
+          <td> <%= payment.payment_form.description %> </td>
+          <td> <%= number_to_currency(payment.total) %> </td>
+        </tr>
+        <tr>
+          <td>  </td>
+          <td colspan="2" class="left"> <strong> Total pagos: </strong> </td>
+          <td colspan="2" class="right"> <strong> <%= number_to_currency(@total_payment) %> </strong> </td>
+        </tr>
+        <tr>
+          <td>  </td>
+          <td colspan="2" class="left"> <strong> Total tickets: </strong> </td>
+          <td colspan="2" class="right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
+        </tr>
+        <tr>
+          <td>  </td>
+          <td colspan="2" class="left"> <strong> Saldo pendiente: </strong> </td>
+          <td colspan="2" class="right"> <strong> <%= number_to_currency(@total_all_objects.round(2) - @total_payment.round(2))%> </strong> </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
 
-<%= link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
+<% if @bill == nil%>
+  <%= link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
+<% end %>
 
 <br /><br /><br /><br />

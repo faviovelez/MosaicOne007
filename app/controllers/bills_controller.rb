@@ -5,7 +5,7 @@ class BillsController < ApplicationController
   require 'savon'
   require 'base64'
 
-  # GET /bills
+  # GET /bills@type_of_bill
   # GET /bills.json
   def index
     @bills = Bill.all
@@ -92,6 +92,9 @@ class BillsController < ApplicationController
 
   def details_global
     @bill = Bill.find(params[:bill])
+  end
+
+  def select_action
   end
 
   def issued
@@ -365,185 +368,283 @@ class BillsController < ApplicationController
   end
 
   def preview
+    @relation_type = params[:relation_type]
+    params[:bill] == nil ? @bill = nil : @bill = Bill.find(params[:bill])
     params[:tickets] == nil ? tickets = nil : tickets = Ticket.find(params[:tickets])
     params[:orders] == nil ? orders = nil : orders = Order.find(params[:orders])
-    tickets == nil ? @objects = orders : @objects = tickets
-    if params[:cfdi_type] == 'global'
-      @prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno').first
-    else
-      get_prospect_from_objects(@objects)
+    if @bill != nil
+      @store = @bill.store
+      @bill.bill_type == 'global' ? @cfdi_type = 'global' : @cfdi_type = nil
+      @relation_type = params[:relation_type]
+      get_series_and_folio
     end
-    select_store
-    prospect = @prospect || Prospect.find(params[:prospect]).first
-    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
-      @store = current_user.store
+    # @relation_type == '01' es Nota de crédito, @relation_type == '03' es Devolución
+    # @relation_type == '04' # Sustitución de factura
+    # @relation_type == '07' # Aplicación de anticipo
+    # Si es cancelación no, sustitución hay que revisar
+    if @relation_type == '00' # Cancelación
+      @time = Time.now.strftime('%FT%T')
+      create_directories
+      cancel_uuid
     else
-      if @objects.first.movements == []
-        @store = @objects.first.pending_movements.first.product.business_unit.stores.first
+      if tickets == nil && @bill == nil
+        @objects = orders
+      elsif orders == nil && @bill == nil
+        @objects = tickets
       else
-        @store = @objects.first.movements.first.product.business_unit.stores.first
+        @objects = @bill
       end
-    end
-    @folio = ''
-    @series = ''
-    @time = Time.now.strftime('%FT%T')
-    if prospect.billing_address == nil
-      redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
-    else
-      if params[:cfdi_type] == 'global'
-        @general_bill = true
-        store = @store
-        p_billing = prospect.billing_address
-        s_billing = store.business_unit.billing_address
-        @date = Time.now.strftime('%FT%T')
-        @zipcode = store.zip_code
-        type_of_bill = TypeOfBill.find(params[:type_of_bill])
-        @bill_type = type_of_bill
-        @type_of_bill_key = type_of_bill.key
-        @type_of_bill = type_of_bill.description
-        @store_rfc = s_billing.rfc.upcase
-        @prospect_rfc = p_billing.rfc.upcase
-        @store_name = s_billing.business_name
-        @prospect_name = ''
-        regime = s_billing.tax_regime
-        @regime = regime
-        @tax_regime_key = s_billing.tax_regime.tax_id
-        @tax_regime = s_billing.tax_regime.description
-        cfdi_use = CfdiUse.find_by_key('P01')
-        @cfdi_use_key = cfdi_use.key
-        @cfdi_use = cfdi_use.description
-        greatest_payment_key
-        if @greatest_payment == nil
-          @greatest_payment = PaymentForm.find_by_payment_key('99')
-          # aquí revisar los pagos para orders
-          @payment_key = @greatest_payment.payment_key
-          @payment_description = @greatest_payment.description
-          payment_method_(@objects, @total_payment, @list_of_real_payments)
-          @method_description = @method.description
-          @method_key = @method.method
-          @payment_form
-        else
-          @payment_key = @greatest_payment.payment_key
-          @payment_description = @payments.first.first
-          payment_method_(@objects, @total_payment, @list_of_real_payments)
-          @method_description = @method.description
-          @method_key = @method.method
-          @payment_form
-        end
-        rows(@general_bill, @objects)
-        @rows
-        subtotal
-        total_taxes
-        total
-        total_discount
-        if @total_discount.to_f > 0
-          @discount_any = true
-        else
-          @discount_any = false
-        end
-        @relation_type = ''
-        unless params[:relation_type] == nil
-          relation_type = RelationType.find(params[:relation_type])&.first
-          @relation = relation_type
-          @relation_type = relation_type.key
-        end
-        @credit_note = false
-        if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
-          @relation_type = ''
-          get_series_and_folio
-        end
-        @series
-        @folio
-        render 'global_preview'
+      if (params[:cfdi_type] == 'global' || @cfdi_type == 'global')
+        @prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno').first
       else
-        prospect = Prospect.find(params[:prospect]).first
-        @prospect = prospect
-        @general_bill = false
-        store = @store
-        s_billing = store.business_unit.billing_address
-        p_billing = prospect.billing_address
-        @date = Time.now.strftime('%FT%T')
-        @zipcode = store.zip_code
-        type_of_bill = TypeOfBill.find(params[:type_of_bill])
-        @bill_type = type_of_bill
-        @type_of_bill_key = type_of_bill.key
-        @type_of_bill = type_of_bill.description
-        @store_rfc = s_billing.rfc.upcase
-        @prospect_rfc = p_billing.rfc.upcase
-        @store_name = s_billing.business_name
-        @prospect_name = p_billing.business_name
-        regime = s_billing.tax_regime
-        @regime = regime
-        @tax_regime_key = s_billing.tax_regime.tax_id
-        @tax_regime = s_billing.tax_regime.description
-        # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL CfdiUse.find_by_key('P01')
-        cfdi_use = CfdiUse.find(params[:cfdi_use]).first
-        @cfdi_use_key = cfdi_use.key
-        @cfdi_use = cfdi_use.description
-        greatest_payment_key
-        if @greatest_payment == nil
-          @greatest_payment = PaymentForm.find_by_payment_key('99')
-          # aquí revisar los pagos para orders
-          @payment_key = @greatest_payment.payment_key
-          @payment_description = @greatest_payment.description
-          payment_method_(@objects, @total_payment, @list_of_real_payments)
-          @method_description = @method.description
-          @method_key = @method.method
-          @payment_form
+        if @bill == nil
+          get_prospect_from_objects(@objects)
         else
-          @payment_key = @greatest_payment.payment_key
-          @payment_description = @payments.first.first
-          payment_method_(@objects, @total_payment, @list_of_real_payments)
-          @method_description = @method.description
-          @method_key = @method.method
-          @payment_form
+          @prospect = @bill.prospect
         end
-        rows(@general_bill, @objects)
-        @rows
-        subtotal
-        total_taxes
-        total
-        total_discount
-        if @total_discount.to_f > 0
-          @discount_any = true
+      end
+      ####pendiente####
+      select_store if @bill == nil
+      ####pendiente####
+
+      prospect = @prospect || Prospect.find(params[:prospect]).first
+
+      ####pendiente####
+      if @bill == nil
+        if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+          @store = current_user.store
         else
-          @discount_any = false
+          if @objects.first.pending_movements != []
+            @store = @objects.first.pending_movements.first.product.business_unit.stores.first
+          elsif @objects.first.movements != []
+            @store = @objects.first.movements.first.product.business_unit.stores.first
+          elsif @objects.first.service_offereds != []
+            @store = @objects.first.service_offereds.first.service.business_unit.stores.first
+          end
         end
-        @relation_type = ''
-        unless params[:relation_type] == nil
-          relation_type = RelationType.find(params[:relation_type])&.first
-          @relation = relation_type
-          @relation_type = relation_type.key
-        end
-        @credit_note = false
-        if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
-          @relation_type = ''
-          get_series_and_folio
+      else
+        @store = @bill.store
+      end
+      ####pendiente####
+
+      @time = Time.now.strftime('%FT%T')
+      if prospect.billing_address == nil
+        redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
+      else
+        if (params[:cfdi_type] == 'global' || @cfdi_type == 'global')
+          @general_bill = true
+          store = @store
+          p_billing = prospect.billing_address
+          s_billing = store.business_unit.billing_address
+          @date = Time.now.strftime('%FT%T')
+          @zipcode = store.zip_code
+          if params[:type_of_bill].present?
+            type_of_bill = TypeOfBill.find(params[:type_of_bill])
+          else
+            type_of_bill = @type_of_bill
+          end
+          @bill_type = type_of_bill
+          @type_of_bill_key = type_of_bill.key
+          @type_of_bill_description = type_of_bill.description
+          @store_rfc = s_billing.rfc.upcase
+          @prospect_rfc = p_billing.rfc.upcase
+          @store_name = s_billing.business_name
+          @prospect_name = ''
+          regime = s_billing.tax_regime
+          @regime = regime
+          @tax_regime_key = s_billing.tax_regime.tax_id
+          @tax_regime = s_billing.tax_regime.description
+          cfdi_use = CfdiUse.find_by_key('P01')
+          @cfdi_use_key = cfdi_use.key
+          @cfdi_use = cfdi_use.description
+
+          if @bill != nil
+            @payment_key  = @bill.payment_form.payment_key # Forma de pago
+            @payment_description = @bill.payment_form.description # Forma de pago
+            @method_key = PaymentMethod.find_by_method('PUE').method # Método de pago
+            @method_description = PaymentMethod.find_by_method('PUE').description # método de pago
+            @payment_form = @bill.payment_conditions # Condiciones de pago
+            @rows = @bill.rows
+          else
+            greatest_payment_key
+            if @greatest_payment == nil
+              @greatest_payment = PaymentForm.find_by_payment_key('99')
+              # aquí revisar los pagos para orders
+              @payment_key = @greatest_payment.payment_key
+              @payment_description = @greatest_payment.description
+              payment_method_(@objects, @total_payment, @list_of_real_payments)
+              @method_description = @method.description
+              @method_key = @method.method
+              @payment_form
+            else
+              @payment_key = @greatest_payment.payment_key
+              @payment_description = @payments.first.first
+              payment_method_(@objects, @total_payment, @list_of_real_payments)
+              @method_description = @method.description
+              @method_key = @method.method
+              @payment_form
+              rows(@general_bill, @objects)
+              @rows
+            end
+          end
+          subtotal
+          total_taxes
+          total
+          total_discount
+          if @total_discount.to_f > 0
+            @discount_any = true
+          else
+            @discount_any = false
+          end
+          if params[:relation_type] != nil
+            relation_type = RelationType.find_by_key(params[:relation_type])
+            @relation = relation_type
+            @relation_type = relation_type.key
+          elsif @relation_type != nil
+            relation_type = RelationType.find(@relation_type)&.first
+            @relation = relation_type
+            @relation_type = relation_type.key
+          end
+          @relation_type == '01' ? @credit_note = true : @credit_note = false
+
+          unless @objects.class == Bill
+            if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
+              @relation_type = ''
+              get_series_and_folio
+            end
+          end
+          @series
+          @folio
+          render 'global_preview'
+        else
+          if params[:prospect].present?
+            prospect = Prospect.find(params[:prospect]).first
+          else
+            prospect = @bill.prospect
+          end
+          @prospect = prospect
+          @general_bill = false
+          store = @store
+          s_billing = store.business_unit.billing_address
+          p_billing = prospect.billing_address
+          @date = Time.now.strftime('%FT%T')
+          @zipcode = store.zip_code
+          if params[:type_of_bill].present?
+            type_of_bill = TypeOfBill.find(params[:type_of_bill])
+          else
+            type_of_bill = @type_of_bill
+          end
+          @bill_type = type_of_bill
+          @type_of_bill_key = type_of_bill.key
+          @type_of_bill_description = type_of_bill.description
+          @store_rfc = s_billing.rfc.upcase
+          @prospect_rfc = p_billing.rfc.upcase
+          @store_name = s_billing.business_name
+          @prospect_name = p_billing.business_name
+          regime = s_billing.tax_regime
+          @regime = regime
+          @tax_regime_key = s_billing.tax_regime.tax_id
+          @tax_regime = s_billing.tax_regime.description
+          # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL CfdiUse.find_by_key('P01')
+
+          ### AQUÍ TENGO QUE CAMBIAR
+          if @bill == nil
+            cfdi_use = CfdiUse.find(params[:cfdi_use]).first
+          elsif (@bill != nil && (@relation_type == '01' || @relation_type == '03') )
+            cfdi_use = CfdiUse.find_by_key('G02')
+          end
+          @cfdi_use_key = cfdi_use.key
+          @cfdi_use = cfdi_use.description
+
+          if @bill != nil
+            @payment_key  = @bill.payment_form.payment_key # Forma de pago
+            @payment_description = @bill.payment_form.description # Forma de pago
+            @method_key = PaymentMethod.find_by_method('PUE').method # Método de pago
+            @method_description = PaymentMethod.find_by_method('PUE').description # método de pago
+            @payment_form = @bill.payment_conditions # Condiciones de pago
+            @rows = @bill.rows
+          else
+            greatest_payment_key
+            if @greatest_payment == nil
+              @greatest_payment = PaymentForm.find_by_payment_key('99')
+              # aquí revisar los pagos para orders
+              @payment_key = @greatest_payment.payment_key
+              @payment_description = @greatest_payment.description
+              payment_method_(@objects, @total_payment, @list_of_real_payments)
+              @method_description = @method.description
+              @method_key = @method.method
+              @payment_form
+            else
+              @payment_key = @greatest_payment.payment_key
+              @payment_description = @payments.first.first
+              payment_method_(@objects, @total_payment, @list_of_real_payments)
+              @method_description = @method.description
+              @method_key = @method.method
+              @payment_form
+              rows(@general_bill, @objects)
+              @rows
+            end
+          end
+          subtotal
+          total_taxes
+          total
+          total_discount
+          if @total_discount.to_f > 0
+            @discount_any = true
+          else
+            @discount_any = false
+          end
+          if params[:relation_type] != nil
+            relation_type = RelationType.find_by_key(params[:relation_type])
+            @relation = relation_type
+            @relation_type = relation_type.key
+          elsif @relation_type != nil
+            relation_type = RelationType.find(@relation_type)&.first
+            @relation = relation_type
+            @relation_type = relation_type.key
+          end
+          @relation_type == '01' ? @credit_note = true : @credit_note = false
+
+          unless @objects.class == Bill
+            if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
+              @relation_type = ''
+              get_series_and_folio
+            end
+          end
         end
       end
     end
   end
 
   def get_series_and_folio
-    if (@relation_type == '' || @relation_type == '04')
+    if (@relation_type == '' || @relation_type == '04' || @relation_type == nil)
       @series = @store.series
       @folio = @store.bill_last_folio.to_i.next
+      @type_of_bill = TypeOfBill.find_by_key('I')
     elsif @relation_type == '01'
       @series = 'NC'+ @store.store_code
       @folio = @store.credit_note_last_folio.to_i.next
       @credit_note = true
+      @type_of_bill = TypeOfBill.find_by_key('E')
     elsif @relation_type == '02'
       @series = 'ND'+ @store.store_code
       @folio = @store.debit_note_last_folio.to_i.next
+      @type_of_bill = TypeOfBill.find_by_key('I')
     elsif @relation_type == '03'
       @series = 'DE'+ @store.store_code
       @folio = @store.return_last_folio.to_i.next
+      @type_of_bill = TypeOfBill.find_by_key('E')
     elsif (@relation_type == '07' && @type_of_bill_key == 'I')
       @series = 'AI'+ @store.store_code
       @folio = @store.advance_e_last_folio.to_i.next
+      @type_of_bill = TypeOfBill.find_by_key('I')
     elsif (@relation_type == '07' && @type_of_bill_key == 'E')
       @series = 'AE'+ @store.store_code
       @folio = @store.advance_i_last_folio.to_i.next
+      @type_of_bill = TypeOfBill.find_by_key('E')
+    else
+      @series = nil
+      @folio = nil
     end
   end
 
@@ -647,7 +748,11 @@ class BillsController < ApplicationController
   def subtotal
     amounts = []
     @rows.each do |row|
-      amounts << row["subtotal"]
+      if @bill != nil
+        amounts << row.subtotal
+      else
+        amounts << row["subtotal"]
+      end
     end
     subtotal = amounts.inject(&:+)
     @subtotal = subtotal.round(2)
@@ -657,7 +762,11 @@ class BillsController < ApplicationController
   def total_taxes
     amounts = []
     @rows.each do |row|
-      amounts << row["taxes"]
+      if @bill != nil
+        amounts << row.taxes
+      else
+        amounts << row["taxes"]
+      end
     end
     total_taxes = amounts.inject(&:+)
     @total_taxes = total_taxes.round(2)
@@ -667,7 +776,11 @@ class BillsController < ApplicationController
   def total
     amounts = []
     @rows.each do |row|
-      amounts << row["total"]
+      if @bill != nil
+        amounts << row.total
+      else
+        amounts << row["total"]
+      end
     end
     total = amounts.inject(&:+)
     @total = total.round(2)
@@ -677,24 +790,105 @@ class BillsController < ApplicationController
   def total_discount
     amounts = []
     @rows.each do |row|
-      amounts << row["discount"]
+      if @bill != nil
+        amounts << row.discount
+      else
+        amounts << row["discount"]
+      end
+    end
+    @total_discount = amounts.inject(&:+)
+    @total_discount
+  end
+
+  def new_subtotal
+    amounts = []
+    @rows.each do |row|
+      if @bill != nil
+        amounts << row.subtotal
+      else
+        amounts << row["subtotal"]
+      end
+    end
+    subtotal = amounts.inject(&:+)
+    @subtotal = subtotal.round(2)
+    @subtotal
+  end
+
+  def new_total_taxes
+    amounts = []
+    @rows.each do |row|
+      if @bill != nil
+        amounts << row.taxes
+      else
+        amounts << row["taxes"]
+      end
+    end
+    total_taxes = amounts.inject(&:+)
+    @total_taxes = total_taxes.round(2)
+    @total_taxes
+  end
+
+  def new_total
+    amounts = []
+    @rows.each do |row|
+      if @bill != nil
+        amounts << row.total
+      else
+        amounts << row["total"]
+      end
+    end
+    total = amounts.inject(&:+)
+    @total = total.round(2)
+    @total
+  end
+
+  def new_total_discount
+    amounts = []
+    @rows.each do |row|
+      if @bill != nil
+        amounts << row.discount
+      else
+        amounts << row["discount"]
+      end
     end
     @total_discount = amounts.inject(&:+)
     @total_discount
   end
 
   def cfdi_process
+    @bill = Bill.find(params[:bill])
     params[:tickets] == nil ? tickets = nil : tickets = Ticket.find(params[:tickets])
     params[:orders] == nil ? orders = nil : orders = Order.find(params[:orders])
     tickets == nil ? @objects = orders : @objects = tickets
-    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
-      @store = current_user.store
+    if tickets == nil && @bill == nil
+      @objects = orders
+    elsif orders == nil && @bill == nil
+      @objects = tickets
     else
-      if @objects.first.movements == []
-        @store = @objects.first.pending_movements.first.product.business_unit.stores.first
+      @objects = @bill
+    end
+
+    if @bill != nil
+      @store = @bill.store
+      @bill.bill_type == 'global' ? @cfdi_type == 'global' : @cfdi_type == nil
+      @relation_type = params[:relation_type]
+      get_series_and_folio
+    end
+
+    if @bill == nil
+      if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+        @store = current_user.store
       else
-        @store = @objects.first.movements.first.product.business_unit.stores.first
+        if @objects.first.pending_movements != []
+          @store = @objects.first.pending_movements.first.product.business_unit.stores.first
+        elsif @objects.first.movements != []
+          @store = @objects.first.movements.first.product.business_unit.stores.first
+        elsif @objects.first.service_offereds != []
+          @store = @objects.first.service_offereds.first.service.business_unit.stores.first
+        end
       end
+    else
+      @store = @bill.store
     end
     @time = Time.now.strftime('%FT%T')
     if params[:cfdi_type] == 'global'
@@ -709,10 +903,15 @@ class BillsController < ApplicationController
       @p_billing = p_billing
       @date = Time.now.strftime('%FT%T')
       @zipcode = store.zip_code
-      type_of_bill = TypeOfBill.find(params[:type_of_bill])
+      if params[:type_of_bill].present?
+        type_of_bill = TypeOfBill.find(params[:type_of_bill])
+      else
+        type_of_bill = @type_of_bill
+      end
       @bill_type = type_of_bill
       @type_of_bill_key = type_of_bill.key
       @type_of_bill = type_of_bill.description
+      @type_of_bill_description = type_of_bill.description
       @store_rfc = s_billing.rfc.upcase
       @prospect_rfc = p_billing.rfc.upcase
       @store_name = s_billing.business_name
@@ -725,115 +924,227 @@ class BillsController < ApplicationController
       @use = cfdi_use
       @cfdi_use_key = cfdi_use.key
       @cfdi_use = cfdi_use.description
-      greatest_payment_key
-      if @greatest_payment == nil
-        @greatest_payment = PaymentForm.find_by_payment_key('99')
-        # aquí revisar los pagos para orders
-        @payment_key = @greatest_payment.payment_key
-        @payment_description = @greatest_payment.description
-        payment_method_(@objects, @total_payment, @list_of_real_payments)
-        @method_description = @method.description
-        @method_key = @method.method
-        @payment_form
+      if @bill != nil
+        @payment_key  = @bill.payment_form.payment_key # Forma de pago
+        @payment_description = @bill.payment_form.description # Forma de pago
+        @method_key = PaymentMethod.find_by_method('PUE').method # Método de pago
+        @method_description = PaymentMethod.find_by_method('PUE').description # método de pago
+        @payment_form = @bill.payment_conditions # Condiciones de pago
+        if @relation_type == '01'
+          @rows = []
+          total = params[:amount].to_f.round(2)
+          subtotal = (total / 1.16).round(2)
+          taxes = total - subtotal
+          percentage = ((total / @bill.total) * 100).round(2).to_s
+          @new_row = Row.new.tap do |r|
+            r.quantity = 1
+            r.description = "Descuento del #{percentage}%"
+            r.unit_value = subtotal
+            r.sat_unit_key = SatUnitKey.find_by_unit('ACT').unit
+            r.sat_unit_description = SatUnitKey.find_by_unit('ACT').description
+            r.sat_key = SatKey.find_by_description('Servicios de facturación').sat_key
+            r.total = total
+            r.subtotal = subtotal
+            r.discount = 0
+            r.taxes = taxes
+          end
+          @rows << @new_row
+        end
       else
-        @payment_key = @greatest_payment.payment_key
-        @payment_description = @payments.first.first
-        payment_method_(@objects, @total_payment, @list_of_real_payments)
-        @method_description = @method.description
-        @method_key = @method.method
-        @payment_form
+        greatest_payment_key
+        if @greatest_payment == nil
+          @greatest_payment = PaymentForm.find_by_payment_key('99')
+          # aquí revisar los pagos para orders
+          @payment_key = @greatest_payment.payment_key
+          @payment_description = @greatest_payment.description
+          payment_method_(@objects, @total_payment, @list_of_real_payments)
+          @method_description = @method.description
+          @method_key = @method.method
+          @payment_form
+        else
+          @payment_key = @greatest_payment.payment_key
+          @payment_description = @payments.first.first
+          payment_method_(@objects, @total_payment, @list_of_real_payments)
+          @method_description = @method.description
+          @method_key = @method.method
+          @payment_form
+          rows(@general_bill, @objects)
+          @rows
+        end
       end
-      rows(@general_bill, @objects)
-      @rows
-      subtotal
-      total_taxes
-      total
-      total_discount
+      new_subtotal
+      new_total_taxes
+      new_total
+      new_total_discount
       if @total_discount.to_f > 0
         @discount_any = true
       else
         @discount_any = false
       end
-      @relation_type = ''
-      unless params[:relation_type] == nil
-        relation_type = RelationType.find(params[:relation_type])&.first
+
+      if params[:relation_type] != nil
+        relation_type = RelationType.find_by_key(params[:relation_type])
+        @relation = relation_type
+        @relation_type = relation_type.key
+        @relation_type_description = relation_type.description
+      elsif @relation_type != nil
+        relation_type = RelationType.find(@relation_type)&.first
         @relation = relation_type
         @relation_type = relation_type.key
       end
-      @credit_note = false
-      if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
-        @relation_type = ''
-        get_series_and_folio
+      @relation_type == '01' ? @credit_note = true : @credit_note = false
+
+      unless @objects.class == Bill
+        if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
+          @relation_type = ''
+          get_series_and_folio
+        end
       end
     else
       @general_bill = false
       store = @store
       s_billing = store.business_unit.billing_address
       @s_billing = s_billing
-      prospect = Prospect.find(params[:prospect]).first
+      if params[:prospect].present?
+        prospect = Prospect.find(params[:prospect])
+      else
+        prospect = @bill.prospect
+      end
       @prospect = prospect
-      # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL prospect = Prospect.find_by_legal_or_business_name('Público en General')
       p_billing = prospect.billing_address
       @p_billing = p_billing
       @date = Time.now.strftime('%FT%T')
       @zipcode = store.zip_code
-      type_of_bill = TypeOfBill.find(params[:type_of_bill])
+      if params[:type_of_bill].present?
+        type_of_bill = TypeOfBill.find(params[:type_of_bill])
+      else
+        type_of_bill = @type_of_bill
+      end
       @bill_type = type_of_bill
       @type_of_bill_key = type_of_bill.key
       @type_of_bill = type_of_bill.description
+      @type_of_bill_description = type_of_bill.description
       @store_rfc = s_billing.rfc.upcase
       @prospect_rfc = p_billing.rfc.upcase
       @store_name = s_billing.business_name
-      # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL NO DEBE SALIR
       @prospect_name = p_billing.business_name
       regime = s_billing.tax_regime
       @regime = regime
       @tax_regime_key = s_billing.tax_regime.tax_id
       @tax_regime = s_billing.tax_regime.description
-      # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL CfdiUse.find_by_key('P01')
-      cfdi_use = CfdiUse.find(params[:cfdi_use]).first
+
+      if @bill == nil
+        cfdi_use = CfdiUse.find(params[:cfdi_use])
+      elsif (@bill != nil && (@relation_type == '01' || @relation_type == '03') )
+        cfdi_use = CfdiUse.find_by_key('G02')
+      end
       @use = cfdi_use
       @cfdi_use_key = cfdi_use.key
       @cfdi_use = cfdi_use.description
-      greatest_payment_key
-      if @greatest_payment == nil
-        @greatest_payment = PaymentForm.find_by_payment_key('99')
-        # aquí revisar los pagos para orders
-        @payment_key = @greatest_payment.payment_key
-        @payment_description = @greatest_payment.description
-        payment_method_(@objects, @total_payment, @list_of_real_payments)
-        @method_description = @method.description
-        @method_key = @method.method
-        @payment_form
+
+      if @bill != nil
+        @payment_key  = @bill.payment_form.payment_key # Forma de pago
+        @payment_description = @bill.payment_form.description # Forma de pago
+        @method_key = PaymentMethod.find_by_method('PUE').method # Método de pago
+        @method_description = PaymentMethod.find_by_method('PUE').description # método de pago
+        @payment_form = @bill.payment_conditions # Condiciones de pago
+        if @relation_type == '03'
+          @rows = []
+          n = 0
+          quantities_unfiltered = params[:quantities]
+          products_unfiltered = params[:products]
+          zeroes = quantities_unfiltered.each_index.select{|i| quantities_unfiltered[i] == '0'}
+          quantities_filtered = quantities_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) }
+          products_filtered = products_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) }
+          quantities_filtered.count.times do
+            product = Product.find(products_filtered[n])
+            id = product.id
+            row = @bill.rows.select{|row| row.product == id}.first
+            new_row = Row.new.tap do |r|
+              r.unique_code = row.unique_code
+              r.quantity = quantities_filtered[n]
+              r.description = product.description
+              r.unit_value = row.unit_value
+              r.sat_unit_key = row.sat_unit_key
+              r.sat_unit_description = row.sat_unit_description
+              r.sat_key = row.sat_key
+              r.total = row.total
+              r.subtotal = row.subtotal
+              r.discount = row.discount
+              r.taxes = row.taxes
+            end
+            n += 1
+            @rows << new_row
+          end
+        elsif @relation_type == '01'
+          @rows = []
+          total = params[:amount].to_f.round(2)
+          subtotal = (total / 1.16).round(2)
+          taxes = total - subtotal
+          percentage = ((total / @bill.total) * 100).round(2).to_s
+          @new_row = Row.new.tap do |r|
+            r.quantity = 1
+            r.description = "Descuento del #{percentage}%"
+            r.unit_value = subtotal
+            r.sat_unit_key = SatUnitKey.find_by_unit('ACT').unit
+            r.sat_unit_description = SatUnitKey.find_by_unit('ACT').description
+            r.sat_key = SatKey.find_by_description('Servicios de facturación').sat_key
+            r.total = total
+            r.subtotal = subtotal
+            r.discount = 0
+            r.taxes = taxes
+          end
+          @rows << @new_row
+        end
       else
-        @payment_key = @greatest_payment.payment_key
-        @payment_description = @payments.first.first
-        payment_method_(@objects, @total_payment, @list_of_real_payments)
-        @method_description = @method.description
-        @method_key = @method.method
-        @payment_form
+        greatest_payment_key
+        if @greatest_payment == nil
+          @greatest_payment = PaymentForm.find_by_payment_key('99')
+          # aquí revisar los pagos para orders
+          @payment_key = @greatest_payment.payment_key
+          @payment_description = @greatest_payment.description
+          payment_method_(@objects, @total_payment, @list_of_real_payments)
+          @method_description = @method.description
+          @method_key = @method.method
+          @payment_form
+        else
+          @payment_key = @greatest_payment.payment_key
+          @payment_description = @payments.first.first
+          payment_method_(@objects, @total_payment, @list_of_real_payments)
+          @method_description = @method.description
+          @method_key = @method.method
+          @payment_form
+        end
+        rows(@general_bill, @objects)
+        @rows
       end
-      rows(@general_bill, @objects)
-      @rows
-      subtotal
-      total_taxes
-      total
-      total_discount
+      new_subtotal
+      new_total_taxes
+      new_total
+      new_total_discount
       if @total_discount.to_f > 0
         @discount_any = true
       else
         @discount_any = false
       end
-      @relation_type = ''
-      unless params[:relation_type] == nil
-        relation_type = RelationType.find(params[:relation_type])&.first
+
+      if params[:relation_type] != nil
+        relation_type = RelationType.find_by_key(params[:relation_type])
+        @relation = relation_type
+        @relation_type = relation_type.key
+        @relation_type_description = relation_type.description
+      elsif (@relation_type != nil && params[:relation_type] == nil)
+        relation_type = RelationType.find_by_key(@relation_type)
         @relation = relation_type
         @relation_type = relation_type.key
       end
-      @credit_note = false
-      if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
-        @relation_type = ''
-        get_series_and_folio
+      @relation_type == '01' ? @credit_note = true : @credit_note = false
+
+      unless @objects.class == Bill
+        if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
+          @relation_type = ''
+          get_series_and_folio
+        end
       end
     end
     create_directories
@@ -935,7 +1246,7 @@ class BillsController < ApplicationController
       xml['cfdi'].Comprobante(document) do
         unless (@relation_type == '' || @relation_type == 4 )
           xml['cfdi'].CfdiRelacionados('TipoRelacion' => @relation_type ) do
-            xml['cfdi'].CfdiRelacionado('UUID' => '') #revisar qué voy a poner aquí
+            xml['cfdi'].CfdiRelacionado('UUID' => @bill.uuid)
           end
         end
         xml['cfdi'].Emisor(issuer)
@@ -945,7 +1256,11 @@ class BillsController < ApplicationController
             ## Aquí debo agregar descuento en concepto
             concept = Hash.new.tap do |hash|
               @general_bill ? hash["ClaveProdServ"] = "01010101" : hash["ClaveProdServ"] = row["sat_key"]
-              @general_bill ? hash["NoIdentificacion"] = row["ticket"] : hash["NoIdentificacion"] = row["unique_code"]
+              if (@general_bill == true && @relation_type == '')
+                hash["NoIdentificacion"] = row["ticket"]
+              elsif (@general_bill == false && @relation_type == '')
+                hash["NoIdentificacion"] = row["unique_code"]
+              end
               @general_bill ? hash["Cantidad"] = "1" : hash["Cantidad"] = row["quantity"]
               @general_bill ? hash["ClaveUnidad"] = "ACT" : hash["ClaveUnidad"] = row["sat_unit_key"]
               hash["Unidad"] = row["sat_unit_description"] unless @general_bill
@@ -1017,7 +1332,7 @@ class BillsController < ApplicationController
 
   def cancel_uuid
     #Crea un cliente SOAP con Savon
-    client = Savon.client(wsdl: 'https://demo-facturacion.finkok.com/servicios/soap/cancel.wsdl')
+    client = Savon.client(wsdl: ENV['cancel_dir'])
 
     username = ENV['username_pac'] # Usuario de Finkok
     password = ENV['password_pac'] # Password de Finkok
@@ -1053,7 +1368,6 @@ XML
 
     #Envia la peticion al webservice de cancelacion
     response = client.call(:cancel, message: xml)
-
     response_hash = response.hash
     receipt = response_hash[:envelope][:body][:cancel_response][:cancel_result][:acuse]
 
@@ -1063,7 +1377,9 @@ XML
 
     receipt_file = File.open(File.join(@final_dir, 'acuse.xml'), 'w'){ |file| file.write(xml_receipt) }
 
-    @bill.update(cancel_receipt: receipt_file)
+    @receipt_file = File.open(File.join(@final_dir, 'acuse.xml'), 'r')
+
+    @bill.update(cancel_receipt: @receipt_file)
 
     redirect_to root_path, notice: "Se ha cancelado exitosamente la factura con Folio #{@bill.folio}."
   end
@@ -1071,7 +1387,7 @@ XML
   #### ESTE MÉTODO ES PARA BILL ### ##CAMBIAR POR MÉTODO PARA SOLO TIMBRE FISCAL SIN SELLO#
   def get_stamp_from_pac
     #Crea un cliente SOAP con Savon
-    client = Savon.client(wsdl: "https://demo-facturacion.finkok.com/servicios/soap/stamp.wsdl")
+    client = Savon.client(wsdl: ENV['stamp_dir'])
 
     #Carga el XML para ser timbrado
     file = File.read(@working_path.join('unsigned.xml')) ## CAMBIAR A UNSTAMPED CUANDO SEAN EXITOSAS LAS PRUEBAS
@@ -1101,6 +1417,7 @@ XML
     @sat_seal = hash[:sat_seal]
     @sat_certificate = hash[:no_certificado_sat]
     @incidents_hash = hash[:incidencias]
+
     #Separa la parte del timbre fiscal digital para generar cadena original (y quita la parte que genera error)
     doc = Nokogiri::XML(xml_response)
     extract = doc.xpath('//cfdi:Complemento').children.to_xml.gsub('xsi:', '')
@@ -1138,6 +1455,7 @@ XML
         bill.status = 'timbrada'
         bill.issuing_company = @s_billing
         bill.receiving_company = @p_billing
+        bill.prospect = @prospect
         bill.store = @store
         bill.sequence = @series
         bill.folio = @folio
@@ -1175,68 +1493,89 @@ XML
         bill.leyend = ''
         bill.uuid = @uuid
         bill.payed = @payed
-        bill.from = @objects.first.class.to_s
+        @objects.class == Bill ? bill.from = @bill.class.to_s : bill.from = @objects.first.class.to_s
         @general_bill == true ? bill.bill_type = 'global' : bill.bill_type = 'cliente'
-        # bill.parent = ''
-        # bill.children = (este es cuando sean NC o ND o DEV)
+        bill.parent = @bill
       end
       bill.save
-      @rows.each do |row|
-        row_for_bill = Row.new.tap do |r|
-          r.bill = bill
-          r.product = row["product_id"]
-          r.service = row["service_id"]
-          r.unique_code = row["unique_code"]
-          r.quantity = row["quantity"]
-          r.description = row["description"]
-          r.unit_value = row["unit_value"]
-          r.sat_unit_key = row["sat_unit_key"]
-          r.sat_unit_description = row["sat_unit_description"]
-          r.sat_key = row["sat_key"]
-          r.ticket = row["ticket"]
-          r.total = row["total"]
-          r.subtotal = row["subtotal"]
-          r.discount = row["discount"]
-          r.taxes = row["taxes"]
+      @bill.children << bill
+      if @bill == nil
+        @rows.each do |row|
+          row_for_bill = Row.new.tap do |r|
+            r.bill = bill
+            r.product = row["product_id"]
+            r.service = row["service_id"]
+            r.unique_code = row["unique_code"]
+            r.quantity = row["quantity"]
+            r.description = row["description"]
+            r.unit_value = row["unit_value"]
+            r.sat_unit_key = row["sat_unit_key"]
+            r.sat_unit_description = row["sat_unit_description"]
+            r.sat_key = row["sat_key"]
+            r.ticket = row["ticket"]
+            r.total = row["total"]
+            r.subtotal = row["subtotal"]
+            r.discount = row["discount"]
+            r.taxes = row["taxes"]
+          end
+          row_for_bill.save
         end
-        row_for_bill.save
+      else
+        @rows.each do |row|
+          row.update(bill: bill)
+        end
       end
       # El update de folio solo sirve para las facturas normales por el momento
       bill.update(xml: @stamped_xml, pdf: @pdf_file)
-      @store.update(bill_last_folio: @folio)
-      @objects.each do |object|
-        object.update(bill: bill)
-        object.payments.each do |payment|
-          payment.update(bill: bill)
+      if @bill == nil
+        @store.update(bill_last_folio: @folio)
+      else
+        if @relation_type == '01'
+          @store.update(credit_note_last_folio: @folio)
+        elsif @relation_type == '02'
+          @store.update(debit_note_last_folio: @folio)
+        elsif @relation_type == '03'
+          @store.update(return_last_folio: @folio)
+        elsif @relation_type == '07'
+          @store.update(advance_e_last_folio: @folio)
         end
-        if object.is_a?(Ticket)
-          object.store_movements.each do |mov|
-            mov.update(bill: bill)
+      end
+
+      unless @objects.class == Bill
+        @objects.each do |object|
+          object.update(bill: bill)
+          object.payments.each do |payment|
+            payment.update(bill: bill)
           end
-          object.service_offereds.each do |serv|
-            serv.update(bill: bill)
-          end
-          object.children.each do |ticket|
-            ticket.payments.each do |payment|
-              payment.update(bill: bill)
-            end
-            ticket.update(bill: bill)
-            ticket.store_movements.each do |mov|
+          if object.is_a?(Ticket)
+            object.store_movements.each do |mov|
               mov.update(bill: bill)
             end
-            ticket.service_offereds.each do |serv|
+            object.service_offereds.each do |serv|
               serv.update(bill: bill)
             end
-          end
-        elsif object.is_a?(Order)
-          object.movements.each do |mov|
-            mov.update(bill: bill)
-          end
-          object.pending_movements.each do |mov|
-            mov.update(bill: bill)
-          end
-          object.service_offereds.each do |serv|
-            serv.update(bill: bill)
+            object.children.each do |ticket|
+              ticket.payments.each do |payment|
+                payment.update(bill: bill)
+              end
+              ticket.update(bill: bill)
+              ticket.store_movements.each do |mov|
+                mov.update(bill: bill)
+              end
+              ticket.service_offereds.each do |serv|
+                serv.update(bill: bill)
+              end
+            end
+          elsif object.is_a?(Order)
+            object.movements.each do |mov|
+              mov.update(bill: bill)
+            end
+            object.pending_movements.each do |mov|
+              mov.update(bill: bill)
+            end
+            object.service_offereds.each do |serv|
+              serv.update(bill: bill)
+            end
           end
         end
       end
@@ -1344,7 +1683,7 @@ XML
             ticket = sm.ticket.parent.id
             i = ''
             @rows.each_with_index do |key, index|
-              i = index if (key["unique_code"] == product && key["ticket"] == ticket)
+              i = index if (key["unique_code"] == product)
             end
             if i == ''
               new_hash = Hash.new.tap do |hash|
@@ -1388,7 +1727,7 @@ XML
             ticket = so.ticket.parent.id
             i = ''
             @rows.each_with_index do |key, index |
-              i = index if (key["unique_code"] == serv && key["ticket"] == ticket)
+              i = index if (key["unique_code"] == serv)
             end
             if i == ''
               new_hash = Hash.new.tap do |hash|

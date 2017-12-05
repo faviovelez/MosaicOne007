@@ -6,6 +6,7 @@ class Bill < ActiveRecord::Base
   has_many :movements
   has_many :pending_movements
   belongs_to :store
+  belongs_to :prospect
   belongs_to :issuing_company, class_name: 'BillingAddress'
   belongs_to :receiving_company, class_name: 'BillingAddress'
   mount_uploader :pdf, BillUploader

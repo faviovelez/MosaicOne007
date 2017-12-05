@@ -7,9 +7,13 @@
 .top-right {
   margin-top: -285px;
   margin-bottom: 40px;
-  width: 400px;
+  width: 650px;
   text-align: left;
-  margin-left: 1000px;
+  margin-left: 850px;
+}
+
+.no-break {
+  display: inline !important;
 }
 
 .top-right-preview {
@@ -17,6 +21,10 @@
   width: 400px;
   text-align: left;
   margin-left: 700px;
+}
+
+.left {
+  text-align: left !important;
 }
 
 .img-bill {

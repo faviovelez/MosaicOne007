@@ -3,12 +3,22 @@
   <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'img-bill' %>
 
   <div class="top-right">
-    <h3 id="top-title"> FACTURA </h3>
-    <p> Serie: <span> <%= @series %> </span> </p>
-    <p> Folio: <span> <%= @folio %> </span> </p>
-    <p> Fecha y hora de timbrado: <span> <%= @time.slice(0..18) %> </span> </p>
-    <p> Lugar de expedición: <span> <span> <%= @zipcode %> </span> </span> </p>
-    <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill %> </span> </p>
+
+    <% if @bill == nil %>
+      <h3 id="top-title"> FACTURA </h3>
+    <% elsif (@bill != nil && @relation_type == '01') %>
+      <h3 id="top-title"> NOTA DE CRÉDITO </h3>
+    <% elsif (@bill != nil && @relation_type == '03') %>
+      <h3 id="top-title"> DEVOLUCIÓN </h3>
+    <% elsif (@bill != nil && @relation_type == '02') %>
+      <h3 id="top-title"> NOTA DE DÉBITO </h3>
+    <% end %>
+
+    <p> <strong> Serie: </strong> <span> <%= @series %> </span> </p>
+    <p> <strong> Folio: </strong> <span> <%= @folio %> </span> </p>
+    <p class="no-break"> <strong> Fecha y hora de timbrado: </strong> <%= @time.slice(0..18) %> </p>
+    <p> <strong> Lugar de expedición: </strong> <span> <%= @zipcode %> </span> </p>
+    <p> <strong> Tipo de comprobante: </strong> <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill_description %> </span> </p>
   </div>
 
   <table id="issuing-receiving-table">
@@ -47,7 +57,9 @@
       </tr>
       <tr>
         <td class="grow half first center"> Método de pago:  <span> <strong> <%= @method_key %> </strong> - <%= @method_description %> </span> </td>
-        <td class="grow half center"> Condiciones de pago: <span> <%= @payment_form %> </span> </td>
+        <% if @bill == nil%>
+          <td class="grow half center"> Condiciones de pago: <span> <%= @payment_form %> </span> </td>
+        <% end %>
       </tr>
       <tr class="hidden">
         <td class="grow half first center"> Tipo de cambio: <span> 1.000000 </span> </td>
@@ -59,8 +71,10 @@
   <table class="global-rows">
     <thead>
       <tr class="header-main">
-        <th class="grow space"> Ticket </th>
         <th class="grow space"> Clave Prod / Serv </th>
+        <% if (@bill == nil || @relation_type == '03') %>
+          <th class="grow space"> Ticket </th>
+        <% end %>
         <th class="grow space"> Cantidad </th>
         <th class="grow space"> Clave Unidad </th>
         <%# ESTE CAMPO DEBE SER EDITABLE%>
@@ -72,18 +86,37 @@
       </tr>
     </thead>
     <tbody>
-      <% @rows.each do |row|%>
-        <tr>
-          <td class="grow space"> <%= row["ticket"] %> </td>
-          <td class="grow space"> <%= row["sat_key"] %> </td>
-          <td class="grow space"> 1 </td>
-          <td class="grow space"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
-          <td class="grow space"> Venta </td>
-          <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
-          <td class="grow space"> <%= number_to_currency(row["discount"]) %> </td>
-          <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
-          <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
-        </tr>
+        <% @rows.each do |row|%>
+          <tr>
+            <td class="grow space"> <%= row["sat_key"] %> </td>
+            <% if @relation_type == '03' %>
+              <td class="grow space"> <%= row["ticket"] %> </td>
+            <% end %>
+            <td class="grow space"> 1 </td>
+            <td class="grow space"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
+            <td class="grow space"> Venta </td>
+            <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+            <td class="grow space"> <%= number_to_currency(row["discount"]) %> </td>
+            <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
+            <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+          </tr>
+        <% end %>
+        <% if (@bill != nil || @relation_type == '03') %>
+        <% @rows.each do |row|%>
+          <tr>
+            <td class="grow space"> <%= row.sat_key %> </td>
+            <% if @bill == nil || @relation_type == '03'%>
+              <td class="grow space"> <%= row.ticket %> </td>
+            <% end %>
+            <td class="grow space"> <%= row.quantity %> </td>
+            <td class="grow space"> <%= row.sat_unit_key %> </strong> </td>
+            <td class="grow space"> <%= row.description %> </td>
+            <td class="grow space"> <%= row.unit_value %> </td>
+            <td class="grow space"> <%= number_to_currency(row.discount) %> </td>
+            <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
+            <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
+          </tr>
+        <% end %>
       <% end %>
       <tr>
         <td>
@@ -114,9 +147,9 @@
         <td colspan="2" class="final-total grow right"> <%= number_to_currency(total_taxes) %> </td>
       </tr>
       <tr>
-        <td colspan="5" class="grow letter"> <%= number_to_letters(@total_all_objects) %> <%= decimals(@total_all_objects) %> </td>
+        <td colspan="5" class="grow letter"> <%= number_to_letters(total) %> <%= decimals(total) %> </td>
         <td colspan="3" class="final-total grow border-top"> <strong> Total </strong> </td>
-        <td colspan="2" class="final-total grow border-top right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
+        <td colspan="2" class="final-total grow border-top right"> <strong> <%= number_to_currency(total) %> </strong> </td>
       </tr>
     </tbody>
   </table>
@@ -132,8 +165,8 @@
       </thead>
       <tbody>
         <tr>
-          <td class="grow half first smaller"> Tipo de Relación: <span> <strong> 04 </strong> - Sustitución de los CFDI previos </span> </td>
-          <td class="grow half smaller"> CFDI Relacionado: <span> A39DA66B-52CA-49E3-879B-FC05185B0EF7 </span> </td>
+          <td class="grow half first smaller left"> <strong> Tipo de Relación: </strong> <span> <strong> <%= @relation_type %> </strong> - <%= @relation_type_description %> </span> </td>
+          <td class="grow half smaller left"> <strong> CFDI Relacionado: </strong> <span> <%= @bill.uuid %> </span> </td>
         </tr>
       </tbody>
     </table>
