@@ -1,0 +1,30 @@
+sat_key,former_code,unique_code,description,business_unit,delivery_company,line,classification,sat_unit_key,price,current,shared
+14121500,4206,4206,Servicio de empaque,Comercializadora de Cartón y Diseño,,empaque y embalaje,,E48,4.31,true,true
+80141628,9301,9301,UPS sob ww express ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9302,9302,UPS paq ww express ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9303,9303,UPS sob ww saver ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9304,9304,UPS paq ww saver ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9305,9305,UPS paq ww standard ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9306,9306,UPS sob nac saver ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9307,9307,UPS paq nac saver ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9308,9308,UPS sob nac express ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9309,9309,UPS paq nac express ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9310,9310,UPS sob nac express plus ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9311,9311,UPS paq nac express plus ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9312,9312,UPS paq nac standard ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9313,9313,Redpack express,Comercializadora de Cartón y Diseño,Redpack,mensajería,,E48,1,true,true
+80141628,9314,9314,Redpack ecoexpress,Comercializadora de Cartón y Diseño,Redpack,mensajería,,E48,1,true,true
+80141628,9315,9315,Seguro,Comercializadora de Cartón y Diseño,,mensajería,,E48,1,true,true
+80141628,9316,9316,Estafeta 11:30 am,Comercializadora de Cartón y Diseño,Estafeta,mensajería,,E48,1,true,true
+80141628,9317,9317,Estafeta dia siguiente,Comercializadora de Cartón y Diseño,Estafeta,mensajería,,E48,1,true,true
+80141628,9318,9318,Estafeta dos dias,Comercializadora de Cartón y Diseño,Estafeta,mensajería,,E48,1,true,true
+80141628,9319,9319,Estafeta terrestre,Comercializadora de Cartón y Diseño,Estafeta,mensajería,,E48,1,true,true
+80141628,9320,9320,Estafeta global express,Comercializadora de Cartón y Diseño,Estafeta,mensajería,,E48,1,true,true
+80141628,9321,9321,Estafeta usa economico,Comercializadora de Cartón y Diseño,Estafeta,mensajería,,E48,1,true,true
+80141628,9322,9322,Cargo irregular / fragil,Comercializadora de Cartón y Diseño,,mensajería,,E48,1,true,true
+80141628,9323,9323,UPS sob ww express plus ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9324,9324,UPS paq ww express plus ,Comercializadora de Cartón y Diseño,UPS,mensajería,,E48,1,true,true
+80141628,9325,9325,Paquete retornado,Comercializadora de Cartón y Diseño,,mensajería,,E48,1,true,true
+80141628,9326,9326,No acepta seguro,Comercializadora de Cartón y Diseño,,mensajería,,E48,1,true,true
+80141628,9327,9327,Cobertura con costo /especial / área extendida,Comercializadora de Cartón y Diseño,,mensajería,,E48,1,true,true
+80141628,9328,9328,Reexpedición,Comercializadora de Cartón y Diseño,,mensajería,,E48,1,true,true

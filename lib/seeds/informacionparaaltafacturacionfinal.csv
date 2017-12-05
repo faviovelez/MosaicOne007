@@ -1,0 +1,33 @@
+store,legal_name,regime,tipo_de_persona,rfc,calle,num_ext,num_int,colonia,zipcode,ciudad,estado,country
+Aguascalientes,Favio Velez Morales,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,VEMF8310119M7,Av. Universidad,701,local 2,centro,20130,Aguascalientes,Aguascalientes,México
+Cruz del sur,Pardo Villanueva Sol Beatriz,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,PAVS950821MTA,Cruz del sur ,2634,2,jardines de la cruz,44950,Guadalajara,Jalisco,México
+Cuautitlán,Curiel Ortiz Jose Eduardo,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,CUOE660611LN0,Av Miguel Hidalgo,28,Local 1,Granjas Lomas de Guadalupe,54767,Cuautitlan Izcalli,Estado de México,México
+Culiacán,Tellaeche Inukai Cristina Yukiko,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,TEIC990314B50,Doctor Mora ,1300,7,Las quintas,80060,Culiacan,Sinaloa,México
+Ensenada,Mendez Gonzalez Renne Edmundo,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,MEGR8003218S4,Av. Juarez,1750,,Centro,22800,Ensenada,Baja California,México
+Galerías,Uribe Maeda Leonardo Miguel,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,UIML731120TW5,Rafael Sanzio,230,,La Estancia Residencial,45030,Zapopan,Jalisco,México
+Hermosillo,Beltran Barrientos Barbara,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,BEBB8708054I6,Blvd. Navarrete,262,Local 1,Villa Satelite,83200,Hermosillo ,Sonora,México
+Morelia,Siete Color Mágico SA de CV,General de Ley Personas Morales,Persona Moral,SCM110712ME6,Iretiticateme,897,1,Felix Ireta,58070,Morelia ,Michoacán,México
+Olímpica,Alvarez Cisneros Diana Laura,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,AACD960806HG7,Calzada Olimpica,1293,,Atlas,44870,Guadalajara,Jalisco,México
+Gallegos,Siete Color Mágico SA de CV,General de Ley Personas Morales,Persona Moral,SCM110712M46,Fray Sebastian de Gallegos,89,1,El Pueblito,76900,Corregidora,Querétaro,México
+Tecnológico,Siete Color Mágico SA de CV,General de Ley Personas Morales,Persona Moral,SCM110712M46,Av. Tecnologico Sur,4,C,Niños Heroes,76000,Querétaro,Querétaro,México
+Tlalnepantla,Rodriguez Villanueva Miguel,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,ROVM781120F18,Blvd Adolfo Lopez Mateos,49,,Francisco Villa,54059,Tlalnepántla,Estado de México,México
+Ávila Camacho,Vicajas SA de CV,General de Ley Personas Morales,Persona Moral,VIC091027N14,Av. Manuel Avila Camacho,3017,3,Jacarandas,45160,Zapopan,Jalisco,México
+Avenida México,Etcheverria Gutierrez Claudio Marcelo,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,EEGC6802051X2,Av. México,2455,6,Ladron de Guevara,44600,Guadalajara,Jalisco,México
+Bugambilias,Scheib Palacios Brenda Lizeth,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,SEPB780216E39,Callejon del Iris,444,Local 4,Bugambilias Country,45238,Zapopan,Jalisco,México
+Circunvalación,Arevalo Becerra Luis Alejandro,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,AEBL860806HK1,Av. Circunvalacion,1081,,Country Club,44610,Guadalajara,Jalisco,México
+México,Garcia Romo Arturo,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,GARA641212I48,Av. San Antonio ,223,Local 2,San Pedro de los Pinos,3800,Del. Benito Juarez,Ciudad de México,México
+Durango,Martinez Vazquez Gabriela Guadalupe,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,MAVG591003II0,Cienega,83,A,Cienega,34090,Durango,Durango,México
+León,Vazquez Garcia Tapia Maria Teresa,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física, VATT491015F96,Pradera,801,Local 6,Azteca,37520,León,Guanajuato,México
+Los Mochis,Sanchez Acosta Elda Gisela,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física, SAAE760124AU8,Benito Juarez Poniente,252,,Centro,81200,Los Mochis,Sinaloa,México
+Mazatlán,Sahagun Guadarrama Francisco Javier,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,SAGF670211BJ9,Juan Carrazco,1012,,Shimizu,82036,Mazatlan,Sinaloa,México
+Monterrey,Arronte Torres Maria Enriqueta,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,AOTE5906086F0,Sendero Sur ,214,Local 2,Country  ,64860,Monterrey,Nuevo León,México
+Colima,Alvarado Campillo Carmen Esperanza,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,AACC421231BH1,Av. San Fernando,513,Local 4,Centro,28010,Colima,Colima,México
+Tepatitlán,Martin Franco Ana Rosa,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,MAFA661117F72,Pedro Medina,65,,Centro,47600,Tepatitlan ,Jalisco,México
+Tepic,Flores Hernandez Salvador,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,FOHS650908DM8,Av. Ignacio Allende,173,A,Centro,63000,Tepic,Nayarit,México
+Tuxtla,Grajales Corzo Adriana Guadalupe,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,GACA7208164M9,1ra Sur Esquina 11 poniente,1173,Servi plaza Local 4,Centro,29000,Tuxtla Gutierrez,Chiapas,México
+Zacatecas,Belmontes Ramirez Maria Elena,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,BERE451212UR7,Elias Amador,101,Local A,Centro,98000,Zacatecas,Zacatecas,México
+Toluca,Castro Muñoz Eugenia Leticia,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,CAME810905HJ1,Heriberto Enriquez ,904,Local 34,Azteca,50180,Toluca,Estado de México,México
+Corporativo Compresor,Comercializadora de Cartón y Diseño SA de CV,General de Ley Personas Morales,Persona Moral,CCD000517IF0,Roble,1297-A,,Del Fresno,44900,Guadalajara,Jalisco,México
+Corporativo Patria,Diseños de Cartón SA de CV,General de Ley Personas Morales,Persona Moral,DCA8603175G2,Av de la Patria,124,,Jardines Vallarta,45027,Zapopan,Jalisco,México
+Tlaxcala,Santiago Cruz Fernando Javier,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,SACF690705UZ1,Boulevard Antonio Diaz Varela,127,Local 9A,Centro,90800,Santa Ana Chihuatempan,Tlaxcala,Mexico
+Guadalupe NL,Lopez Salinas Jair Fabian,Personas Físicas con Actividades Empresariales y Profesionales,Persona Física,LOSJ910814EG6,Carretera a Miguel Alemán Km 8.4,6345,,Riberas de la Purísima,67139,Guadalupe,Nuevo Leon,Mexico
