@@ -23,7 +23,9 @@ class TicketsController < ApplicationController
   end
 
   def process_incomming_data
+    # Confirmar si va a entrar tienda por tienda
     @tickets = Ticket.where(saved: [nil, false])
+    store = @tickets.first.store
     @tickets.each do |ticket|
       ticket.store_movements.each do |mov|
         @mov = mov
@@ -43,8 +45,69 @@ class TicketsController < ApplicationController
           end
         end
       end
-      ticket.update(saved: true)
+      ticket.update(saved: true) # pos: false ?? Validar si puede actualizarse en 2 vías
     end
+    inventories = store.stores_inventories
+    inventories.each do |inventory|
+      process_store_inventories(inventory)
+    end
+  end
+
+  def process_store_inventories(inventory)
+    # Usar una lógica similar para inventories (de diseños de cartón)
+    get_desired_inventory(inventory)
+    alert(inventory, @actual_stock, @desired_inventory, @reorder_quantity, @critical_quantity)
+    send_mail_to_alert(inventory)
+  end
+
+  def get_desired_inventory(inventory)
+    product = inventory.product
+    store = inventory.store
+    months = store.months_in_inventory
+    date = Date.today
+    reorder = store.reorder_point / 100
+    critical = store.critical_point / 100
+    @actual_stock = inventory.quantity
+
+    @desired_inventory = 0
+    for i in 1..months
+      quantity = ProductSale.where(
+        product: product,
+        store: store,
+        month: date.month,
+        year: date.year
+      ).quantity
+      @desired_inventory += quantity
+      date -= 1.month
+    end
+    @desired_inventory
+    @reorder_quantity = (@desired_inventory * reorder).to_i
+    @critical_quantity = (@desired_inventory * critical).to_i
+  end
+
+  def alert(inventory, stock, desired, reorder, critical)
+    @alert = false
+    if (stock <= reorder && stock > critical)
+      alert_changed_to_true(inventory)
+      inventory.update(alert: true, alert_type: 'bajo')
+    elsif stock <= critical
+      alert_changed_to_true(inventory)
+      inventory.update(alert: true, alert_type: 'crítico')
+    else
+      inventory.update(alert: false, alert_type: nil)
+    end
+  end
+
+  def alert_changed_to_true(inventory)
+    @changed = false
+    if inventory.alert == false
+      @changed = true
+    end
+    @changed
+  end
+
+  def send_mail_to_alert(inventory)
+    # if @changed == true
   end
 
   def validate_if_summary_exists(mov)
