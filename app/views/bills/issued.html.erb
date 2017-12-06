@@ -8,8 +8,8 @@
           <th> Fecha</th>
           <th> Cliente</th>
           <th> Total</th>
-          <th> Saldo / Estauts </th>
-          <th> Detalles </th>
+          <th> Saldo </th>
+          <th class="col-md-2"> Detalles </th>
         </tr>
       </thead>
       <tbody>
@@ -36,7 +36,7 @@
 
               <% unless bill.cancel_receipt_url == nil %>
                 <%= link_to download_xml_receipt_path(bill), download: "Acuse.xml" do %>
-                  <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
+                  <%= image_tag '/assets/xml_cancel.png', alt: 'Icon XML', class: 'download-icon-table' %>
                 <% end %>
               <% end %>
 

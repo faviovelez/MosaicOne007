@@ -9,7 +9,7 @@ class BillingAddress < ActiveRecord::Base
 
   validates :business_name, presence: { message: 'Debe escribir la razón social.'}
 
-  validates :rfc, presence: { message: 'Debe escribir la razón social.'}
+  validates :rfc, presence: { message: 'Debe escribir el RFC.'}
 
 #  validates :street, presence: { message: 'Debe escribir la calle.'}
 
@@ -21,8 +21,8 @@ class BillingAddress < ActiveRecord::Base
 
 #  validates :state, presence: { message: 'Debe escribir el estado.'}
 
-  #validates :country, presence: { message: 'Debe seleccionar el país.'}
-
+#  validates :country, presence: { message: 'Debe seleccionar el país.'}
+  
   validates :rfc, length: { maximum: 13, message: 'El RFC no puede contener más de 13 caracteres.'}
 
 #  validates :zipcode, length: { is: 5, message: 'El código postal debe contener 5 caracteres.'}

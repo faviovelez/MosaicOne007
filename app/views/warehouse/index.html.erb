@@ -1,12 +1,3 @@
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'jquery.dataTables.min' %>
-<% end %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'underscore.min' %>
-  <%= javascript_include_tag 'jquery.dataTables.min' %>
-  <%= javascript_include_tag 'warehouse' %>
-<% end %>
 <% if @entries.count > 0 %>
   <table class='datatables'>
     <thead>
@@ -40,4 +31,14 @@
   </table>
 <% else %>
   <p> No hay entradas de mercancía pendientes de asignar costo. </p>
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'jquery.dataTables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'underscore.min' %>
+  <%= javascript_include_tag 'jquery.dataTables.min' %>
+  <%= javascript_include_tag 'warehouse' %>
 <% end %>

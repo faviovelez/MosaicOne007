@@ -41,9 +41,11 @@
         <%= link_to 'Crear nuevo producto', new_product_path, class: 'bottom-link' %>
       <% end %>
 
-      <% if (params[:controller] == 'products' && params[:action] == 'show') %>
-        <%= link_to 'Modificar producto', edit_product_path(@product), class: 'bottom-link' %>
-      <% end %>
+        <% if (params[:controller] == 'products' && params[:action] == 'show') %>
+          <% if @product.store == current_user.store %>
+            <%= link_to 'Modificar producto', edit_product_path(@product), class: 'bottom-link' %>
+          <% end %>
+        <% end %>
 
     <% end %>
 

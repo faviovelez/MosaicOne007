@@ -1,0 +1,44 @@
+nombre_de_la_tienda,tipo_de_persona (física o moral),tipo_de_tienda,primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,correo,tel_fijo,extension,celular,zipcode,empresa,grupo_de_negocios,sobreprecio
+Calzada,persona moral,tienda propia,Gabriela,,Nuño,Carmona,calzada@disenosdecarton.com.mx,36183770,,,44340,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Guadalupe,persona moral,tienda propia,Gabriela,Nataly,Vargas,Flores,guadalupe@disenosdecarton.com.mx,31256716,,,45030,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Lapizlázuli,persona moral,tienda propia,Luis,Daniel,Cerda,Suarez,lapizlazuli@disenosdecarton.com.mx,31221635,,,45000,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Lopez Mateos,persona moral,tienda propia,Viridiana,Elizabeth,Guerrero,Reyes,lopezmateos@disenosdecarton.com.mx,33447474,,,45070,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Patria,persona moral,tienda propia,Maria,Elena,Gutierrez,Rendon,patria@disenosdecarton.com.mx,36733211,,,45027,Diseños de Cartón,Diseños De Cartón,0
+Puerto Vallarta,persona moral,tienda propia,Alma,Clarisa,Isiordia,Monreal,ptovallarta@disenosdecarton.com.mx,22222820,,,48330,Comercializadora de Cartón y Diseño,Diseños De Cartón,20
+Río Nilo,persona moral,tienda propia,Sara,Yazmin,Paz,Ramirez,rionilo@disenosdecarton.com.mx,36396597,,,44860,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Roble,persona moral,tienda propia,Monica,Anayeli,Landeros,Perez,roble@disenosdecarton.com.mx,38126814,,,44900,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Santa Tere,persona moral,tienda propia,Juana,Iveth,Padilla,Rodriguez,santateresita@disenosdecarton.com.mx,38260928,,,44600,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Clouthier,persona moral,tienda propia,Miriam,Vanessa,Rizo,Fajardo,clouthier@disenosdecarton.com,31250059,,,45050,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Valle Real,persona moral,tienda propia,Erika,Vanesa,Martinez,Mercado,vallereal@disenosdecarton.com.mx,36855571,,,45136,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+San Juan Bosco,persona moral,tienda propia,Laura,Maribel,Flores,Lopez,snjuanbosco@disenosdecarton.com,36653677,,,44730,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Tonalá,persona moral,tienda propia,Teresa,de Jesus del Milagro,Camarena,Avila,tonala@disenosdecarton.com.mx,36832509,,,45400,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
+Aguascalientes,persona física,franquicia,Favio,,Velez,Moralez,aguascalientes@disenosdecarton.com.mx,449153590,,3338143330,20130,Favio Velez Morales,Aguascalientes,0
+Cruz del sur,persona física,franquicia,Sol,Beatriz,Pardo,Villanueva,cruzdelsur@disenosdecarton.com.mx,3331621382,,3315769173,44950,Sol beatriz Pardo Villanueva ,Cruz Del Sur,0
+Cuautitlán,persona física,franquicia,Jose,Eduardo,Curiel,Ortiz,cuautitlan@disenosdecarton.com.mx,5591309777,,5523036869,54767,Jose Eduardo Curiel Ortiz,Cuautitlán,0
+Culiacán,persona física,franquicia,Cristina ,Yukiko,Tellaeche ,Inukai,culiacan@disenosdecarton.com.mx,6677126282,,,80060,Cristina Yukiko Tellaeche Inukai,Culiacán,0
+Ensenada,persona física,franquicia,Renne ,Edmundo,Mendez ,Gonzalez,ensenada@disenosdecarton.com.mx,6462053329,,,22800,Renne Edmundo Mendez Gonzalez ,Ensenada,0
+Galerías,persona física,franquicia,Leonardo ,Miguel,Uribe ,Maeda ,galerias@disenosdecarton.com.mx,3320059075,,,45030,Leonardo Miguel Uribe Maeda ,Galerías,0
+Hermosillo,persona física,franquicia,Barbara,,Beltran ,Barrientos ,hermosillo@disenosdecarton.com.mx,6622620138,,6622250945,83200,Barbara Beltran Barrientos ,Hermosillo,0
+Morelia,persona moral,franquicia,Adriana,,Alvarez,Romero,morelia@disenosdecarton.com.mx,4433145943,,4422010460,58070,Siete Color Mágico,Siete Color Mágico  SA de CV,0
+Olímpica,persona física,franquicia,Diana,Laura,Alvarez,Cisneros,olimpica@disenosdecarton.com.mx,3331095110,,3314319204,44870,Diana Laura Alvarez Cisneros ,Olímpica,0
+Gallegos,persona moral,franquicia,Adriana,,Alvarez,Romero,queretaro2@disenosdecarton.com.mx,4422251686,,442 201 0460,76900,Siete Color Mágico,Siete Color Mágico  SA de CV,0
+Tecnológico,persona moral,franquicia,Adriana,,Alvarez,Romero,queretarotec@disenosdecarton.com.mx,4422428155,,442 201 0460,76000,Siete Color Mágico,Siete Color Mágico  SA de CV,0
+Tlalnepantla,persona física,franquicia,Miguel,,Rodriguez,Villanueva,tlalnepantla@disenosdecarton.com.mx,5568374036,,5524027187,54059,Miguel Rodriguez Villanueva,Tlanepantla,0
+Ávila Camacho,persona moral,franquicia,Eustolia,,Carmona,Hernandez,avilacamacho@disenosdecarton.com,3336368743,,3312885957,45160,Vicajas,Vicajas SA De CV,0
+Avenida México,persona física,franquicia,Claudio,Marcelo,Etcheverria,Gutierrez,avmexico@disenosdecarton.com,3336168808,,3338213319,44600,Claudio Marcelo Etcheverria Gutierrez,Avenida México,0
+Bugambilias,persona física,franquicia,Brenda,Lizeth,Scheib,Palacios,bugambilias@disenosdecarton.com,3336946215,,3339543745,45238,Brenda lizeth Scheib Palacios,Bugambilias,0
+Circunvalación,persona física,franquicia,Luis,Alejandro,Arevalo,Becerra,circunvalacion@disenosdecarton.com,3312020833,,3313604699,44610,Luis Alejandro Arevalo Becerra,Circunvalación,0
+México,persona física,franquicia,Arturo,,Garcia,Romo,dfsanantonio@disenosdecarton.com,5556111190,,5528499549,3800,Arturo Garcia Romo ,México,0
+Durango,persona física,franquicia,Gabriela,Guadalupe,Martinez,Vazquez,durango@disenosdecarton.com,6188171001,,6182452969,34090,Gabriela Guadalupe Martinez Vazquez ,Durango,0
+León,persona física,franquicia,Maria,Teresa,Vazquez,Garcia tapia,leon@disenosdecarton.com,4777117272,,4772251490,37520,Maria Teresa Vazquez Garcia Tapia ,León,0
+Los Mochis,persona física,franquicia,Elda,Gisela,Sanchez,Acosta,losmochis@disenosdecarton.com,6688159230,,6681843553,81200,Elda Gisela Sanchez Acosta,Los Mochis,0
+Mazatlán,persona física,franquicia,Francisco,Javier,Sahagun,Guadarrama,mazatlan@disenosdecarton.com,6699818657,,,82036,Francisco Javier Sahagun Guadarrama ,Mazatlán,0
+Monterrey,persona física,franquicia,Maria,Enriqueta,Arronte,Torres,monterrey@disenosdecarton.com,8183573401,,8115889482,64860,Maria Enriqueta Arronte Torres ,Monterrey,0
+Colima,persona física,franquicia,Carmen,Esperanza,Alvarado ,Campillo,colima@disenosdecarton.com.mx,3123121189,,3123171947,28010,Carmen Esperanza Alvarado Campillo,Colima,0
+Tepatitlán,persona física,franquicia,Ana,Rosa,Martinez,Franco,tepatitlan@disenosdecarton.com,3787014645,,3781275513,47600,Ana Rosa Martin Franco ,Tepatitlán,0
+Tepic,persona física,franquicia,Salvador,,Flores,Hernandez,tepic@disenosdecarton.com,3112167979,,,63000,Salvador Flores Hernandez ,Tepic,0
+Tuxtla,persona física,franquicia,Adriana,Guadalupe,Grajales,Corzo,tuxtla@disenosdecarton.com.mx,9616882727,,9616031037,29000,Adriana Guadalupe Grajales Corzo ,Tuxtla,0
+Zacatecas,persona física,franquicia,Maria,Elena,Belmontes,Ramirez,zacatecas@disenosdecarton.com.mx,4929221145,,,98000,Maria Elisa Belmontes Ramirez ,Zacatecas,0
+Toluca,persona física,franquicia,Eugenia,Leticia,Castro,Muñoz,toluca@disenosdecarton.com.mx,7222384476,,7222394433,50180,Eugenia Leticia Castro Muñoz ,Toluca,0
+Tlaxcala,persona física,franquicia,Fernando,Javier,Santiago,Cruz,tlaxcala@disenosdecarton.com.mx,2464646164,,5537911114,90800,Fernando Javier Santiago Cruz,Tlaxcala,0
+Guadalupe NL,persona física,franquicia,Jair,Fabian,Lopez,Salinas,guadalupenl@disenosdecarton.com.mx,,,8117620757,67139,Lopez Salinas Jair Fabian,Guadalupe NL,0

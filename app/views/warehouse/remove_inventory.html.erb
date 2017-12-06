@@ -1,3 +1,6 @@
+<%= render partial: 'remove_product' %>
+<%= render partial: 'product_remove_template' %>
+
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'select2.min' %>
 <% end %>
@@ -9,6 +12,3 @@
   <%= javascript_include_tag 'underscore.min' %>
   <%= javascript_include_tag 'warehouse_baja' %>
 <% end %>
-
-<%= render partial: 'remove_product' %>
-<%= render partial: 'product_remove_template' %>
