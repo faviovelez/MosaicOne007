@@ -58,13 +58,19 @@ class PosController < ApplicationController
           id = vinculate_relations(attr.first, attr.last)
           new_reg.send("#{attr.first}=", id)
         else
-          new_reg.send("#{attr.first}=", attr.last)
+          new_reg.send("#{attr.first}=", parsed_date(attr.last))
         end
       end
       add_extras(new_reg, table_name, values[:object])
       new_reg.id = klass.last.id + 1
       new_reg.web = true
       new_reg
+    end
+
+    def parsed_date(value)
+      value.to_datetime - 6.hour
+    rescue
+      value
     end
 
     def is_relation_object(attribute)
@@ -74,7 +80,6 @@ class PosController < ApplicationController
     def vinculate_relations(reference, value)
       table_name = reference.gsub(/_id/,'')
       object     = nil
-      binding.pry if table_name == 'user'
       if @ids_references[table_name.singularize].nil?
         object = table_name.singularize.camelize.constantize.find(
           value
