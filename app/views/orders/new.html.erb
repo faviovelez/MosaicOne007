@@ -1,3 +1,6 @@
+<%= render partial: 'form' %>
+<%= render partial: 'order_show_template' %>
+
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'select2.min' %>
 <% end %>
@@ -10,8 +13,5 @@
   <%= javascript_include_tag 'orders' %>
 <% end %>
 <script>
-  var waitLoader = true;
+  var waitLoader = false;
 </script>
-
-<%= render partial: 'form' %>
-<%= render partial: 'order_show_template' %>

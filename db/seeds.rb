@@ -262,8 +262,8 @@ end
   { name: 'caple' },
   { name: 'sulfatada' },
   { name: 'multicapa' },
-  { name: 'reverso blanco' },
-  { name: 'reverso gris' },
+  { name: 'reverso blanco' }, ## Revisar si se quedan
+  { name: 'reverso gris' }, ## Revisar si se quedan
   { name: 'liner' },
   { name: 'single face' },
   { name: 'microcorrugado' },
@@ -296,6 +296,7 @@ doble_corrugado = Material.where(name: 'doble corrugado')
   { name: '180 grs' },
   { name: '275 grs' },
   { name: '300 grs' },
+  { name: 'flauta e' },
   { name: '20 ECT' },
   { name: '23 ECT' },
   { name: '26 ECT' },
@@ -373,7 +374,12 @@ end
   { name: 'Lonchera'},
   { name: 'Caja regular CR'},
   { name: 'Maletín'},
-  { name: 'Cierre automático'},
+  { name: 'Fondo automático'},
+  { name: 'Fondo 123'},
+  { name: 'Tipo crema'},
+  { name: 'Tipo archivo'},
+  { name: 'Charola para pegar'},
+  { name: 'Charola armable'},
   { name: 'Medicina o perfume'},
   { name: 'Pizza'}
 
@@ -387,7 +393,10 @@ end
   { name: 'Barniz UV' },
   { name: 'Plastificado mate' },
   { name: 'Plastificado brillante' },
-  { name: 'Hot stamping' }
+  { name: 'Hot stamping' },
+  { name: 'Mikelman' },
+  { name: 'Encerado' },
+  { name: 'Antiestático' }
 
 ].each do |hash|
   Finishing.find_or_create_by(hash)
@@ -842,7 +851,8 @@ stores_with_cert = [
   'Roble',
   'San Juan Bosco',
   'Santa Tere',
-  'Tonalá'
+  'Tonalá',
+  'Aguascalientes'
 ]
 
 directories = [
@@ -866,7 +876,8 @@ directories = [
   'roble',
   'san_juan_bosco',
   'santa_tere',
-  'tonala'
+  'tonala',
+  'aguascalientes'
 ]
 
 pss = [
@@ -875,7 +886,7 @@ pss = [
   'd1234567',
   'd1234567',
   'd1234567',
-  'd12341567',
+  'd1234567',
   'Sc123456',
   'Sc123456',
   'Sc123456',
@@ -890,7 +901,8 @@ pss = [
   'd1234567',
   'd1234567',
   'd1234567',
-  'd1234567'
+  'd1234567',
+  'bafio44741'
 ]
 
 m = 0
@@ -1084,5 +1096,26 @@ general_prospect = Prospect.find_or_create_by(
                                       store: Store.find(1),
                                       store_prospect: nil,
                                       billing_address: billing_general_prospect
+                                    }
+                                  )
+
+billing_foreign_prospect = BillingAddress.find_or_create_by(
+                                                              {
+                                                                business_name: 'Residente en el extranjero',
+                                                                rfc: 'XEXX010101000',
+                                                                country: '',
+                                                              }
+                                                            )
+
+foreign_prospect = Prospect.find_or_create_by(
+                                    {
+                                      legal_or_business_name: 'Residente en el extranjero',
+                                      prospect_type: 'residente en el extranjero',
+                                      contact_first_name: 'ninguno',
+                                      contact_last_name: 'ninguno',
+                                      direct_phone: 1111111111,
+                                      store: Store.find(1),
+                                      store_prospect: nil,
+                                      billing_address: billing_foreign_prospect
                                     }
                                   )

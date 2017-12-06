@@ -25,7 +25,7 @@ class BillsController < ApplicationController
   end
 
   def download_xml_receipt
-    redirect_to @bill.cancel_receipt
+    redirect_to @bill.cancel_receipt_url
   end
 
   def filter_tickets

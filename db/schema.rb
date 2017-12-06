@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171205023208) do
+ActiveRecord::Schema.define(version: 20171206015717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -553,12 +553,9 @@ ActiveRecord::Schema.define(version: 20171205023208) do
 
   create_table "exterior_colors", force: :cascade do |t|
     t.string   "name"
-    t.integer  "material_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
-
-  add_index "exterior_colors", ["material_id"], name: "index_exterior_colors_on_material_id", using: :btree
 
   create_table "finishings", force: :cascade do |t|
     t.string   "name"
@@ -578,14 +575,17 @@ ActiveRecord::Schema.define(version: 20171205023208) do
 
   add_index "images", ["product_id"], name: "index_images_on_product_id", using: :btree
 
-  create_table "interior_colors", force: :cascade do |t|
+  create_table "impression_types", force: :cascade do |t|
     t.string   "name"
-    t.integer  "material_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "interior_colors", ["material_id"], name: "index_interior_colors_on_material_id", using: :btree
+  create_table "interior_colors", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "inventories", force: :cascade do |t|
     t.integer  "product_id"
@@ -604,6 +604,56 @@ ActiveRecord::Schema.define(version: 20171205023208) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "materials_design_likes", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "design_like_id"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "materials_design_likes", ["design_like_id"], name: "index_materials_design_likes_on_design_like_id", using: :btree
+  add_index "materials_design_likes", ["material_id"], name: "index_materials_design_likes_on_material_id", using: :btree
+
+  create_table "materials_exterior_colors", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "exterior_color_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "materials_exterior_colors", ["exterior_color_id"], name: "index_materials_exterior_colors_on_exterior_color_id", using: :btree
+  add_index "materials_exterior_colors", ["material_id"], name: "index_materials_exterior_colors_on_material_id", using: :btree
+
+  create_table "materials_finishings", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "finishing_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "materials_finishings", ["finishing_id"], name: "index_materials_finishings_on_finishing_id", using: :btree
+  add_index "materials_finishings", ["material_id"], name: "index_materials_finishings_on_material_id", using: :btree
+
+  create_table "materials_impression_types", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "impression_type_id"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
+  add_index "materials_impression_types", ["impression_type_id"], name: "index_materials_impression_types_on_impression_type_id", using: :btree
+  add_index "materials_impression_types", ["material_id"], name: "index_materials_impression_types_on_material_id", using: :btree
+
+  create_table "materials_interior_colors", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "interior_color_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "materials_interior_colors", ["interior_color_id"], name: "index_materials_interior_colors_on_interior_color_id", using: :btree
+  add_index "materials_interior_colors", ["material_id"], name: "index_materials_interior_colors_on_material_id", using: :btree
 
   create_table "materials_resistances", force: :cascade do |t|
     t.integer  "material_id"
@@ -954,6 +1004,7 @@ ActiveRecord::Schema.define(version: 20171205023208) do
     t.float    "average"
     t.float    "stores_discount"
     t.float    "franchises_discount"
+    t.boolean  "shared"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
@@ -1764,10 +1815,18 @@ ActiveRecord::Schema.define(version: 20171205023208) do
   add_foreign_key "expenses", "payments"
   add_foreign_key "expenses", "stores"
   add_foreign_key "expenses", "users"
-  add_foreign_key "exterior_colors", "materials"
   add_foreign_key "images", "products"
-  add_foreign_key "interior_colors", "materials"
   add_foreign_key "inventories", "products"
+  add_foreign_key "materials_design_likes", "design_likes"
+  add_foreign_key "materials_design_likes", "materials"
+  add_foreign_key "materials_exterior_colors", "exterior_colors"
+  add_foreign_key "materials_exterior_colors", "materials"
+  add_foreign_key "materials_finishings", "finishings"
+  add_foreign_key "materials_finishings", "materials"
+  add_foreign_key "materials_impression_types", "impression_types"
+  add_foreign_key "materials_impression_types", "materials"
+  add_foreign_key "materials_interior_colors", "interior_colors"
+  add_foreign_key "materials_interior_colors", "materials"
   add_foreign_key "materials_resistances", "materials"
   add_foreign_key "materials_resistances", "resistances"
   add_foreign_key "movements", "bills"
