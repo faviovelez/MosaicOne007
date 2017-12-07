@@ -19,7 +19,10 @@ class TicketsController < ApplicationController
     store = Store.find(params[:store])
     month = params[:month]
     year = params[:year]
-    @tickets = store.tickets.where('extract(month from created_at) = ? and extract(year from created_at) = ?', month, year).where(tickets: {parent_id: nil})
+    @tickets = store.tickets.where(
+    'extract(month from created_at) = ? and extract(year from created_at) = ?',
+    month, year
+    ).where(tickets: {parent_id: nil})
   end
 
   def process_incomming_data
@@ -47,8 +50,7 @@ class TicketsController < ApplicationController
       end
       ticket.update(saved: true) # pos: false ?? Validar si puede actualizarse en 2 vías
     end
-    inventories = store.stores_inventories
-    inventories.each do |inventory|
+    store.stores_inventories.each do |inventory|
       process_store_inventories(inventory)
     end
   end
@@ -56,7 +58,7 @@ class TicketsController < ApplicationController
   def process_store_inventories(inventory)
     # Usar una lógica similar para inventories (de diseños de cartón)
     get_desired_inventory(inventory)
-    alert(inventory, @actual_stock, @desired_inventory, @reorder_quantity, @critical_quantity)
+    change_alert(inventory, @actual_stock, @desired_inventory, @reorder_quantity, @critical_quantity)
     send_mail_to_alert(inventory)
   end
 
@@ -85,7 +87,7 @@ class TicketsController < ApplicationController
     @critical_quantity = (@desired_inventory * critical).to_i
   end
 
-  def alert(inventory, stock, desired, reorder, critical)
+  def change_alert(inventory, stock, desired, reorder, critical)
     @alert = false
     if (stock <= reorder && stock > critical)
       alert_changed_to_true(inventory)
@@ -279,6 +281,16 @@ class TicketsController < ApplicationController
   def update_only_payments(pay, object)
     payments = object.payments.to_f + pay.total
     object.update_attributes(payments: payments, store: pay.store)
+  end
+
+  def details
+    @ticket = Ticket.find(params[:id])
+    @number = @ticket.ticket_number
+    @date = @ticket.created_at.to_date
+    @prospect = @ticket&.prospect&.legal_or_business_name
+    @register = 'Caja ' + @ticket.cash_register.name
+    rows_for_ticket_show
+    payments_for_ticket_show
   end
 
 end

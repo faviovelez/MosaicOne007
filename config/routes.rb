@@ -120,7 +120,7 @@ Rails.application.routes.draw do
 
   get 'bills/modify/:bill', to: 'bills#modify', as: 'modify_bill'
 
-  get 'bills/ticket_details/:id', to: 'bills#ticket_details', as: 'ticket_details'
+  get 'bills/ticket_details/:id', to: 'bills#ticket_details', as: 'bills_ticket_details'
 
   get 'bills/global_form'
 
@@ -129,6 +129,8 @@ Rails.application.routes.draw do
   get 'inventories/order_suggestions'
 
   get 'tickets/index'
+
+  get 'tickets/details/:id', to: 'tickets#details', as: 'ticket_details'
 
   get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
 

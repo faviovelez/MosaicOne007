@@ -18,7 +18,7 @@
           <td class="col-md-2"><%= product.description %></td>
           <td class="col-md-1"><%= product.exterior_color_or_design %></td>
           <td class="col-md-2"><%= product.line %></td>
-          <td class="col-md-1"><%= number_to_currency(product.price) %></td>
+          <td class="col-md-1"><%= number_to_currency(show_price_with_overprice(product)) %></td>
           <td class="col-md-1">
             <%= link_to product do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>

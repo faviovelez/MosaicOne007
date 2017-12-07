@@ -262,8 +262,6 @@ end
   { name: 'caple' },
   { name: 'sulfatada' },
   { name: 'multicapa' },
-  { name: 'reverso blanco' }, ## Revisar si se quedan
-  { name: 'reverso gris' }, ## Revisar si se quedan
   { name: 'liner' },
   { name: 'single face' },
   { name: 'microcorrugado' },
@@ -279,7 +277,7 @@ end
   Material.find_or_create_by(hash)
 end
 
-plegadizo = Material.where(name: ['reverso gris', 'reverso blanco', 'caple', 'multicapa', 'sulfatada'])
+plegadizo = Material.where(name: ['caple', 'multicapa', 'sulfatada'])
 liner = Material.where(name: 'liner')
 corrugado = Material.where(name: 'corrugado')
 doble_corrugado = Material.where(name: 'doble corrugado')
@@ -388,6 +386,7 @@ end
 end
 
 [
+  { name: 'Barniz' },
   { name: 'Barniz a registro' },
   { name: 'Barniz de máquina' },
   { name: 'Barniz UV' },
@@ -691,6 +690,25 @@ csv.each do |row| informaciondirecciondeentrega
                                             )
 
   Store.find_by_store_name(row['store']).business_unit.update(billing_address: billing)
+  add_store_to_finkok(billing)
+
+end
+
+def add_store_to_finkok(billing)
+
+  client = Savon.client(wsdl: ENV['add_dir']) do
+    convert_request_keys_to :none
+  end
+
+  username = ENV['username_pac']
+  password = ENV['password_pac']
+  taxpayer_id = billing.rfc #RFC Emisor
+  #Envia la peticion al webservice de registro
+  response = client.call(:add, message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id  })
+
+  #Obtiene el SOAP Request y guarda la respuesta en un archivo
+  ops = client.operation(:add)
+  request = ops.build( message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id }).to_s
 
 end
 
@@ -769,6 +787,8 @@ csv.each do |row|
                                         }
                                       )
 
+  not_armed = (row['discount_when_armed'] == '' || row['discount_when_armed'] == nil)
+  product.update(armed: true, armed_discount: row['discount_when_armed']) unless not_armed
 
   puts "#{product.id}, #{product.unique_code} saved"
   i = Inventory.find_or_create_by(

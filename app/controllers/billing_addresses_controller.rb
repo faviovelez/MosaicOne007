@@ -75,11 +75,30 @@ class BillingAddressesController < ApplicationController
       prospect.update(billing_address: @owner.billing_address)
       prospect.save
       current_user.store.business_unit.billing_address = @billing
+      add_store_to_finkok
     end
     @owner.save
   end
 
 private
+
+  def add_store_to_finkok
+
+    client = Savon.client(wsdl: ENV['add_dir']) do
+      convert_request_keys_to :none
+    end
+
+    username = ENV['username_pac']
+    password = ENV['password_pac']
+    taxpayer_id = @billing.rfc #RFC Emisor
+    #Envia la peticion al webservice de registro
+    response = client.call(:add, message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id  })
+
+    #Obtiene el SOAP Request y guarda la respuesta en un archivo
+    ops = client.operation(:add)
+    request = ops.build( message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id }).to_s
+
+  end
 
   def set_billing_address
     @billing = BillingAddress.find(params[:id])

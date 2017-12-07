@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171206050627) do
+ActiveRecord::Schema.define(version: 20171207044634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1005,6 +1005,8 @@ ActiveRecord::Schema.define(version: 20171206050627) do
     t.float    "stores_discount"
     t.float    "franchises_discount"
     t.boolean  "shared"
+    t.boolean  "armed",                    default: false
+    t.float    "armed_discount",           default: 0.0
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
@@ -1483,6 +1485,7 @@ ActiveRecord::Schema.define(version: 20171206050627) do
     t.boolean  "pos",                 default: false
     t.boolean  "web",                 default: true
     t.date     "date"
+    t.float    "manual_price"
   end
 
   add_index "stores_inventories", ["product_id"], name: "index_stores_inventories_on_product_id", using: :btree

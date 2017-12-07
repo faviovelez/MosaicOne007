@@ -635,11 +635,11 @@ class BillsController < ApplicationController
       @folio = @store.return_last_folio.to_i.next
       @type_of_bill = TypeOfBill.find_by_key('E')
     elsif (@relation_type == '07' && @type_of_bill_key == 'I')
-      @series = 'AI'+ @store.store_code
+      @series = 'FA'+ @store.store_code
       @folio = @store.advance_e_last_folio.to_i.next
       @type_of_bill = TypeOfBill.find_by_key('I')
     elsif (@relation_type == '07' && @type_of_bill_key == 'E')
-      @series = 'AE'+ @store.store_code
+      @series = 'FE'+ @store.store_code
       @folio = @store.advance_i_last_folio.to_i.next
       @type_of_bill = TypeOfBill.find_by_key('E')
     else
@@ -856,18 +856,20 @@ class BillsController < ApplicationController
   end
 
   def cfdi_process
-    @bill = Bill.find(params[:bill])
+    if params[:bill] != nil
+      @bill = Bill.find(params[:bill])
+    end
     params[:tickets] == nil ? tickets = nil : tickets = Ticket.find(params[:tickets])
     params[:orders] == nil ? orders = nil : orders = Order.find(params[:orders])
     tickets == nil ? @objects = orders : @objects = tickets
-    if tickets == nil && @bill == nil
+    if (tickets == nil && @bill == nil)
       @objects = orders
-    elsif orders == nil && @bill == nil
+    elsif (orders == nil && @bill == nil)
       @objects = tickets
     else
       @objects = @bill
     end
-
+    debugger
     if @bill != nil
       @store = @bill.store
       @bill.bill_type == 'global' ? @cfdi_type == 'global' : @cfdi_type == nil
@@ -1007,6 +1009,9 @@ class BillsController < ApplicationController
       @s_billing = s_billing
       if params[:prospect].present?
         prospect = Prospect.find(params[:prospect])
+        if prospect.class == Array
+          prospect = prospect.first
+        end
       else
         prospect = @bill.prospect
       end
@@ -1038,6 +1043,7 @@ class BillsController < ApplicationController
       elsif (@bill != nil && (@relation_type == '01' || @relation_type == '03') )
         cfdi_use = CfdiUse.find_by_key('G02')
       end
+      cfdi_use = cfdi_use.first if cfdi_use.class == Array
       @use = cfdi_use
       @cfdi_use_key = cfdi_use.key
       @cfdi_use = cfdi_use.description
@@ -1154,7 +1160,7 @@ class BillsController < ApplicationController
     qrcode_print
     generate_pdf
     save_to_db
-    if @incidents_hash == nil
+    if @cod_status == "Comprobante timbrado satisfactoriamente"
       redirect_to root_path, notice: 'Su factura se ha guardado con éxito.'
     else
       redirect_to root_path, notice: 'No se pudo generar la factura, por favor intente de nuevo.'
@@ -1377,9 +1383,13 @@ XML
 
     receipt_file = File.open(File.join(@final_dir, 'acuse.xml'), 'w'){ |file| file.write(xml_receipt) }
 
+    soap_response = File.open(File.join(@working_dir, 'response.xml'), 'w'){ |file| file.write(response) }
+
+    soap_request = File.open(File.join(@working_dir, 'request.xml'), 'w'){ |file| file.write(request) }
+
     @receipt_file = File.open(File.join(@final_dir, 'acuse.xml'), 'r')
 
-    @bill.update(cancel_receipt: @receipt_file)
+    @bill.update(cancel_receipt: @receipt_file, status: 'cancelada')
 
     redirect_to root_path, notice: "Se ha cancelado exitosamente la factura con Folio #{@bill.folio}."
   end
@@ -1418,6 +1428,10 @@ XML
     @sat_certificate = hash[:no_certificado_sat]
     @incidents_hash = hash[:incidencias]
 
+    soap_response = File.open(File.join(@working_dir, 'response.xml'), 'w'){ |file| file.write(response) }
+
+    soap_request = File.open(File.join(@working_dir, 'request.xml'), 'w'){ |file| file.write(request) }
+
     #Separa la parte del timbre fiscal digital para generar cadena original (y quita la parte que genera error)
     doc = Nokogiri::XML(xml_response)
     extract = doc.xpath('//cfdi:Complemento').children.to_xml.gsub('xsi:', '')
@@ -1447,7 +1461,7 @@ XML
 
   def save_to_db
     @error = false
-    if @incidents_hash == nil
+    if @cod_status == "Comprobante timbrado satisfactoriamente"
 
       @pdf_file = File.open(File.join(@final_dir, 'factura.pdf'), 'r')
 
@@ -1498,7 +1512,9 @@ XML
         bill.parent = @bill
       end
       bill.save
-      @bill.children << bill
+      if @bill != nil
+        @bill.children << bill
+      end
       if @bill == nil
         @rows.each do |row|
           row_for_bill = Row.new.tap do |r|

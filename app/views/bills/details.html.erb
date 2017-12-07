@@ -60,5 +60,19 @@
       <td colspan="3" class="final-total border-top"> <strong> Total </strong> </td>
       <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
     </tr>
+    <tr>
+      <td colspan="10">
+        <% if @bill.bill_type == 'global'%>
+          <%= link_to details_global_path(@ticket.bill) do %>
+            <i class="fa fa-book link-to-price" aria-hidden="true"></i>
+            <span class="link-to-price"> Factura </span>
+          <% end %>
+        <% else %>
+        <%= link_to details_path(@ticket.bill) do %>
+          <i class="fa fa-book link-to-price" aria-hidden="true"></i>
+          <span class="link-to-price"> Factura </span>
+        <% end %>
+      </td>
+    </tr>
   </tbody>
 </table>

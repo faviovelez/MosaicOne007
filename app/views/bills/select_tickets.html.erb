@@ -23,14 +23,14 @@
           <th>Dev / Cambios</th>
           <th>Total</th>
           <th>Saldo / Estauts</th>
-          <th> Detalles </th>
+          <th>Detalles</th>
         </tr>
       </thead>
       <tbody>
           <% @tickets.each do |ticket| %>
             <tr>
               <td> <%= check_box_tag "tickets[]", "#{ticket.id}", false, { multiple: true, id: "tickets[#{ticket.id}]" }%> </td>
-              <td> <%= ticket.cash_register.name %> </td>
+              <td> <%= show_non_blank_field(ticket&.cash_register&.name) %> </td>
               <td> <%= ticket.ticket_number %> </td>
               <td> <%= l ticket.created_at.to_date, format: :short %> </td>
               <td> <%= show_non_blank_field(ticket.prospect&.legal_or_business_name) %> </td>

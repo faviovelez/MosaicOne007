@@ -15,13 +15,11 @@
 /log/*
 !/log/.keep
 /tmp
-
-/public/assets
-/public/uploads
-/.env.production
-/.env.local
 /.env
 /.env.prod
+/.env.production
+/public/assets
+/public/uploads
 /config/database_local.yml
 Gemfile.lock
 .ruby-version

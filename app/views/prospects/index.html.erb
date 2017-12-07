@@ -2,37 +2,50 @@
   <table id="prosp">
     <thead>
       <tr class="table-titles">
-        <th class="col-md-3">Nombre del prospecto</th>
-        <th class="col-md-1">Giro</th>
-        <th class="col-md-1">Tipo</th>
-        <th class="col-md-4"> Acciones </th>
+        <th class="col-md-3"> Nombre del prospecto</th>
+        <th class="col-md-1"> Giro</th>
+        <th class="col-md-1"> Tipo</th>
+        <th class="col-md-1"> Ventas $ </th>
+        <th class="col-md-1"> Ventas cant </th>
+        <th class="col-md-1"> Desctos </th>
+        <th class="col-md-1"> Margen % </th>
+        <th class="col-md-1"> Fecha ult. compra </th>
+        <th class="col-md-1"> Última compra $ </th>
+        <th class="col-md-1"> Acciones </th>
       </tr>
     </thead>
     <tbody>
       <% @prospects.each do |prospect| %>
       <tr>
+        <% sum_prospect_data(prospect) %>
         <td> <%= prospect.legal_or_business_name %> </td>
         <td> <%= prospect.business_type %> </td>
         <td> <%= prospect.prospect_type %> </td>
-        <td class="col-md-4 flex-table">
+        <td> <%= number_to_currency(@total) %> </td>
+        <td> <%= get_purchases_quantity(prospect) %> </td>
+        <td> <%= number_to_currency(@discount) %> </td>
+        <td> <%= number_to_currency(@margin) %> </td>
+        <td> <%= l get_last_purchase_date(prospect) %> </td>
+        <td> <%= get_last_purchase_amount(prospect) %> </td>
+        <td class="col-md-2 flex-table">
           <%= link_to prospect do %>
             <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-            <span>Ver</span>
+            <span class="hidden">Ver</span>
           <% end %>
 
           <%= link_to edit_prospect_path(prospect) do %>
             <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
-            <span class="link-to-confirm">Modificar</span>
+            <span class="link-to-confirm hidden">Modificar</span>
           <% end %>
 
           <%= link_to new_prospect_request_path(prospect) do %>
             <i class="fa fa-cart-plus link-to-price" aria-hidden="true"></i>
-            <span class="link-to-price">Cotizar</span>
+            <span class="link-to-price hidden">Cotizar</span>
           <% end %>
 
           <% if prospect.requests.count >= 1 %>
             <%= link_to prospect_requests_path(prospect) do %>
-              <i class="fa fa-book link-to-details" aria-hidden="true"></i>
+              <i class="fa fa-book link-to-details hidden" aria-hidden="true"></i>
               <span>Cotizaciones</span>
             <% end %>
           <% end %>
