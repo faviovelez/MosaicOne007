@@ -294,6 +294,7 @@ class TicketsController < ApplicationController
     @ticket = Ticket.find(params[:id])
     @number = @ticket.ticket_number
     @date = @ticket.created_at.to_date
+    @user = @ticket.user.first_name + @ticket.user.las_name
     @prospect = @ticket&.prospect&.legal_or_business_name
     @register = 'Caja ' + @ticket.cash_register.name
     rows_for_ticket_show

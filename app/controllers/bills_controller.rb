@@ -8,7 +8,8 @@ class BillsController < ApplicationController
   # GET /bills@type_of_bill
   # GET /bills.json
   def index
-    @bills = Bill.all
+    store = current_user.store
+    @bills = store.bills.where(status: 'timbrada').where.not(receiving_company: nil).where.not(total: nil)
   end
 
   # GET /bills/1

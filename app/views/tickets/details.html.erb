@@ -19,6 +19,9 @@
         <span id="ticket-prospect">
           Cliente: <%= show_non_blank_field(@prospect) %>
         </span>
+        <span id="ticket-user">
+          Atendió: <%= show_non_blank_field(@user) %>
+        </span>
       </th>
       <th class="head-blue edge-left">
         <%= get_payments_from_individual_ticket(@ticket) %>
