@@ -869,7 +869,6 @@ class BillsController < ApplicationController
     else
       @objects = @bill
     end
-    debugger
     if @bill != nil
       @store = @bill.store
       @bill.bill_type == 'global' ? @cfdi_type == 'global' : @cfdi_type == nil

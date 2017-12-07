@@ -286,6 +286,7 @@ Rails.application.routes.draw do
 
   get 'orders/history'
 
+  post 'pos/received_data', to: 'pos#received_data', as: 'received_data'
 
 
   # Agregar la ruta para descargar los archivos, el link para descargarlos y el link en el navbar

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171207044634) do
+ActiveRecord::Schema.define(version: 20171207191629) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -599,11 +599,27 @@ ActiveRecord::Schema.define(version: 20171207044634) do
 
   add_index "inventories", ["product_id"], name: "index_inventories_on_product_id", using: :btree
 
+  create_table "material_children", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "material_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "children_id"
+  end
+
+  add_index "material_children", ["children_id"], name: "index_material_children_on_children_id", using: :btree
+  add_index "material_children", ["material_id"], name: "index_material_children_on_material_id", using: :btree
+
   create_table "materials", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "parent_id"
+    t.integer  "children_id"
   end
+
+  add_index "materials", ["children_id"], name: "index_materials_on_children_id", using: :btree
+  add_index "materials", ["parent_id"], name: "index_materials_on_parent_id", using: :btree
 
   create_table "materials_design_likes", force: :cascade do |t|
     t.integer  "material_id"
@@ -1820,6 +1836,7 @@ ActiveRecord::Schema.define(version: 20171207044634) do
   add_foreign_key "expenses", "users"
   add_foreign_key "images", "products"
   add_foreign_key "inventories", "products"
+  add_foreign_key "material_children", "materials"
   add_foreign_key "materials_design_likes", "design_likes"
   add_foreign_key "materials_design_likes", "materials"
   add_foreign_key "materials_exterior_colors", "exterior_colors"

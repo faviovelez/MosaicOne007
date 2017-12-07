@@ -13,6 +13,13 @@ class TicketsController < ApplicationController
   def sales_summary
     store = current_user.store
     @summaries = store.store_sales.order(:id)
+    cash_register = store.cash_registers.first
+    @cash_register_name = cash_register.name
+    @cash_register_balance = cash_register.balance
+    last_ticket = store.tickets.last
+    @last_ticket_number = last_ticket.ticket_number
+    @last_ticket_date = last_ticket.created_at.to_date
+    @last_ticket_hour = last_ticket.created_at.strftime("%I:%M %p")
   end
 
   def sales
@@ -291,6 +298,99 @@ class TicketsController < ApplicationController
     @register = 'Caja ' + @ticket.cash_register.name
     rows_for_ticket_show
     payments_for_ticket_show
+  end
+
+  def rows_for_ticket_show
+    @rows = []
+    @ticket.store_movements.each do |movement|
+      hash = Hash.new.tap do |hash|
+        hash["ticket"] = movement.ticket.id
+        hash["type"] = movement.movement_type
+        hash["date"] = movement.created_at.to_date
+        hash["unique_code"] = movement.product.unique_code
+        hash["description"] = movement.product.description
+        hash["color"] = movement.product.exterior_color_or_design
+        hash["unit_value"] = movement.initial_price
+        hash["quantity"] = movement.quantity
+        hash["discount"] = movement.discount_applied
+        hash["total"] = movement.total
+      end
+      @rows << hash
+    end
+    @ticket.service_offereds.each do |service|
+      hash = Hash.new.tap do |hash|
+        hash["ticket"] = service.ticket.id
+        hash["type"] = service.service_type
+        hash["date"] = service.created_at.to_date
+        hash["unique_code"] = service.service.unique_code
+        hash["description"] = service.service.description
+        hash["unit_value"] = service.initial_price
+        hash["quantity"] = service.quantity
+        hash["discount"] = service.discount_applied
+        hash["total"] = service.total
+      end
+      @rows << hash
+    end
+    @ticket.children.each do |ticket|
+      ticket.store_movements.each do |movement|
+        hash = Hash.new.tap do |hash|
+          hash["ticket"] = movement.ticket.id
+          hash["type"] = movement.movement_type
+          hash["date"] = movement.created_at.to_date
+          hash["unique_code"] = movement.product.unique_code
+          hash["description"] = movement.product.description
+          hash["color"] = movement.product.exterior_color_or_design
+          hash["unit_value"] = movement.initial_price
+          hash["quantity"] = movement.quantity
+          hash["discount"] = movement.discount_applied
+          hash["total"] = movement.total
+        end
+        @rows << hash
+      end
+      ticket.service_offereds.each do |service|
+        hash = Hash.new.tap do |hash|
+          hash["ticket"] = service.ticket.id
+          hash["type"] = service.service_type
+          hash["date"] = service.created_at.to_date
+          hash["unique_code"] = service.service.unique_code
+          hash["description"] = service.service.description
+          hash["unit_value"] = service.initial_price
+          hash["quantity"] = service.quantity
+          hash["discount"] = service.discount_applied
+          hash["total"] = service.total
+        end
+        @rows << hash
+      end
+    end
+    @rows
+  end
+
+  def ticket_details
+    @ticket = Ticket.find(params[:id])
+    @number = @ticket.ticket_number
+    @date = @ticket.created_at.to_date
+    @prospect = @ticket&.prospect&.legal_or_business_name
+    @register = 'Caja ' + @ticket.cash_register.name
+    rows_for_ticket_show
+    payments_for_ticket_show
+  end
+
+  def payments_for_ticket_show
+    @payments_ticket = []
+    @ticket.payments.each do |payment|
+      @payments_ticket << payment unless payment.payment_type == 'crédito'
+    end
+    @ticket.children.each do |ticket|
+      ticket.payments.each do |payment|
+        @payments_ticket << payment unless payment.payment_type == 'crédito'
+      end
+    end
+    total = []
+    @payments_ticket.each do |pay|
+      total << pay.total
+    end
+    @total_payments_ticket = total.inject(&:+)
+    @total_payments_ticket
   end
 
 end
