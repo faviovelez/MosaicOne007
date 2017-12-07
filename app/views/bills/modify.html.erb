@@ -11,8 +11,10 @@
 
     <div class="form-inside-style">
       <% unless @bill.bill_type == 'global' %>
-        <%= label_tag :devolución %>
-        <%= radio_button_tag(:relation_type, '03') %> <br /><br />
+        <% if (!@bill.sequence.include?('NC') && !@bill.sequence.include?('DE') && !@bill.sequence.include?('PA') && !@bill.sequence.include?('FA') && !@bill.sequence.include?('FE')) %>
+          <%= label_tag :devolución %>
+          <%= radio_button_tag(:relation_type, '03') %> <br /><br />
+        <% end %>
       <% end %>
     </div>
 
@@ -29,9 +31,11 @@
     </div>
 
     <div class="form-inside-style">
-      <% if @bill.tickets.first.ticket_type == 'anticipo' %>
-        <%= label_tag :factura_con_aplicacion_de_anticipo %>
-        <%= radio_button_tag(:relation_type, '07') %> <br /><br />
+      <% if (!@bill.sequence.include?('NC') && !@bill.sequence.include?('DE') && !@bill.sequence.include?('PA') && !@bill.sequence.include?('FA') && !@bill.sequence.include?('FE')) %>
+        <% if @bill.tickets.first.ticket_type == 'anticipo' %>
+          <%= label_tag :factura_con_aplicacion_de_anticipo %>
+          <%= radio_button_tag(:relation_type, '07') %> <br /><br />
+        <% end %>
       <% end %>
     </div>
 

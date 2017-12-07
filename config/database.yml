@@ -24,7 +24,9 @@ default: &default
 development:
   <<: *default
   database: mosaicone
-  username: oscar
+  username: <%= ENV['MOSAICONE007_DATABASE_USERNAME'] %>
+  password: <%= ENV['MOSAICONE007_DATABASE_PASSWORD'] %>
+  host: localhost
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.

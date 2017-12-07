@@ -15,4 +15,7 @@ class Material < ActiveRecord::Base
   has_many :materials_interior_colors
   has_many :impression_types, through: :materials_impression_types
   has_many :materials_impression_types
+  belongs_to :parent, class_name: 'Material', foreign_key: 'parent_id'
+  has_many :children, through: :material_children, foreign_key: 'children_id'
+  has_many :material_children
 end

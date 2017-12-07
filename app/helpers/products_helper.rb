@@ -17,4 +17,14 @@ module ProductsHelper
     @suppliers
   end
 
+  def show_price_with_overprice(product)
+    store = current_user.store
+    manual_price = store.stores_inventories.where(product: product).first.manual_price
+    if (manual_price == nil || manual_price == 0)
+      @price = (product.price * (1 + (store.overprice / 100)) * 1.16).round(2)
+    else
+      @price = manual_price * 1.16
+    end
+  end
+
 end

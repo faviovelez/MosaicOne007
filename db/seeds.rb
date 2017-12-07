@@ -254,37 +254,57 @@ end
   { product_type: 'caja' },
   { product_type: 'bolsa' },
   { product_type: 'exhibidor' }
+
 ].each do |hash|
   ProductType.find_or_create_by(hash)
 end
 
-[
+impression_types = [
+  { name: '1' },
+  { name: '2' },
+  { name: '3' },
+  { name: 'selección de color' },
+  { name: 'serigrafía' },
+  { name: 'plasta' }
+]
+
+impression_types.each do |hash|
+  ImpressionType.find_or_create_by(hash)
+end
+
+materials = [
   { name: 'caple' },
   { name: 'sulfatada' },
   { name: 'multicapa' },
-  { name: 'reverso blanco' }, ## Revisar si se quedan
-  { name: 'reverso gris' }, ## Revisar si se quedan
-  { name: 'liner' },
-  { name: 'single face' },
+  { name: 'liner' }, # Este aplica para papel arroz
+  { name: 'single face' }, # Este aplica para papel arroz
   { name: 'microcorrugado' },
   { name: 'corrugado' },
   { name: 'doble corrugado' },
-  { name: 'rígido' },
-  { name: 'papel kraft' },
+  { name: 'rígido' }, # Este no para acetato y celofán
   { name: 'papel bond' },
   { name: 'papel arroz' },
   { name: 'celofán' },
   { name: 'acetato' }
-].each do |hash|
+
+]
+materials.each do |hash|
   Material.find_or_create_by(hash)
 end
 
-plegadizo = Material.where(name: ['reverso gris', 'reverso blanco', 'caple', 'multicapa', 'sulfatada'])
-liner = Material.where(name: 'liner')
-corrugado = Material.where(name: 'corrugado')
-doble_corrugado = Material.where(name: 'doble corrugado')
+[
+  { name: 'kraft' },
+  { name: 'blanco' },
+  { name: 'transparente' }
+
+].each do |hash|
+  InteriorColor.find_or_create_by(hash)
+  ExteriorColor.find_or_create_by(hash)
+end
 
 [
+  { name: 'calibre 10' },
+  { name: 'calibre 12' },
   { name: '12 pts' },
   { name: '14 pts' },
   { name: '16 pts' },
@@ -312,14 +332,117 @@ doble_corrugado = Material.where(name: 'doble corrugado')
   { name: '61 ECT DC' },
   { name: '71 ECT DC' },
   { name: '82 ECT DC' }
+
 ].each do |hash|
   Resistance.find_or_create_by(hash)
+end
+
+designs = [
+  { name: 'Muñeca'},
+  { name: 'Regalo'},
+  { name: 'Regalo con ventana'},
+  { name: 'Lonchera'},
+  { name: 'Caja regular CR'},
+  { name: 'Maletín'},
+  { name: 'Fondo automático'},
+  { name: 'Fondo 123'},
+  { name: 'Tipo crema'},
+  { name: 'Tipo archivo'},
+  { name: 'Charola para pegar'},
+  { name: 'Charola armable'},
+  { name: 'Medicina o perfume'},
+  { name: 'Pizza'},
+  { name: 'Bolsa'}
+]
+
+designs.each do |hash|
+  DesignLike.find_or_create_by(hash)
+end
+
+finshings = [
+  { name: 'Barniz' },
+  { name: 'Mikelman' },
+  { name: 'Barniz a registro' },
+  { name: 'Barniz de máquina' },
+  { name: 'Barniz UV' },
+  { name: 'Plastificado mate' },
+  { name: 'Plastificado brillante' },
+  { name: 'Hot stamping' },
+  { name: 'Encerado' },
+  { name: 'Antiestático' }
+]
+
+finshings.each do |hash|
+  Finishing.find_or_create_by(hash)
+end
+
+
+materials.each do |material|
+  unless material.name == 'rígido'
+    material.children << Material.find_by_name('celofán')
+    material.children << Material.find_by_name('acetato')
+  end
+  material.children << Material.find_by_name('papel arroz') if (matrial.name == 'liner' || matrial.name == 'single face')
+
+  material.exterior_colors << ExteriorColor.find_by_name('kraft') unless (material.name == 'papel bond' || material.name == 'acetato' || material.name == 'sulfatada' || material.name == 'multicapa' || material.name == 'caple')
+  material.exterior_colors << ExteriorColor.find_by_name('blanco') unless (material.name == 'liner' || material.name == 'acetato')
+  material.exterior_colors << ExteriorColor.find_by_name('transparente') if material.name == 'acetato'
+
+  material.interior_colors << InteriorColor.find_by_name('transparente') if material.name == 'acetato'
+  material.interior_colors << InteriorColor.find_by_name('kraft') unless (material.name == 'papel bond' || material.name == 'acetato' || material.name == 'sulfatada' || material.name == 'multicapa')
+  material.interior_colors << InteriorColor.find_by_name('blanco') unless (material.name == 'liner' || material.name == 'rígido') || material.name == 'acetato')
+  designs.each do |design|
+    unless material.name == 'rígido'
+      if (material.name == 'contraencolado' || material.name == 'corrugado' || material.name == 'doble corrugado')
+        material.design_likes << design unless design.name == 'Bolsa'
+      elsif material.name == 'papel bond'
+        material.design_likes << design if design.name == 'Bolsa'
+      elsif material.name == 'acetato'
+        material.design_likes << design if (design.name == 'Muñeca' || design.name == 'Regalo' || design.name == 'Lonchera' || design.name == 'Fondo 123')
+      else
+        material.design_likes << design
+      end
+    end
+  end
+  finishings.each do |finishing|
+    unless (material.name == 'single face' || material.name == 'rígido' || material.name == 'acetato' || material.name == 'papel bond')
+      if material.name == 'liner'
+        material.finishings << finishing if finishing.name == 'Hot stamping'
+      elsif material.name == 'microcorrugado'
+        material.finishings << finishing if (finishing.name == 'Barniz' || finishing.name == 'Mikelman')
+      elsif (material.name == 'corrugado' || material.name == 'doble corrugado')
+        material.finishings << finishing if (finishing.name == 'Barniz' || finishing.name == 'Mikelman' || finishing.name == 'Encerado' || finishing.name == 'Antiestático')
+      else
+        material.finishings << finishing unless (finishing.name == 'Barniz' || finishing.name == 'Mikelman' || finishing.name == 'Encerado' || finishing.name == 'Antiestático')
+      end
+    end
+  end
+  impression_types.each do |impression|
+    unless (impression.name == 'plasta' || impression.name == 'selección de color' || impression.name == 'serigrafía')
+      material.impression_types << impression unless material.name == 'acetato'
+    end
+  end
 end
 
 r_plegadizo = Resistance.where("name LIKE ?", "%pts%")
 r_liner = Resistance.where("name LIKE ?", "%grs%")
 r_corrugado = Resistance.where("name LIKE ? AND name NOT LIKE ?", "%ECT%", "%DC%")
 r_d_corrugado = Resistance.where("name LIKE ? AND name LIKE ?", "%ECT%", "%DC%")
+faluta_e = Resistance.find_by_name('flauta e')
+calibres = Resistance.where("name LIKE ?", "%calibre%")
+resistance_180 = Resistance.find_by_name('180 grs')
+
+plegadizo = Material.where(name: ['caple', 'multicapa', 'sulfatada'])
+liner = Material.where(name: 'liner')
+corrugado = Material.where(name: 'corrugado')
+doble_corrugado = Material.where(name: 'doble corrugado')
+bond = Material.find_by_name('papel bond')
+single = Material.find_by_name('single face')
+acetato = Material.find_by_name('acetato')
+
+bond.resistances << resistance_180
+single.resistances << faluta_e
+acetato.resistances << calibres
 
 plegadizo.each do |material|
   r_plegadizo.each do |resistance|
@@ -359,50 +482,6 @@ end
 end
 
 [
-  { name: 'kraft' },
-  { name: 'bond' }
-
-].each do |hash|
-  InteriorColor.find_or_create_by(hash)
-  ExteriorColor.find_or_create_by(hash)
-end
-
-[
-  { name: 'Muñeca'},
-  { name: 'Regalo'},
-  { name: 'Regalo con ventana'},
-  { name: 'Lonchera'},
-  { name: 'Caja regular CR'},
-  { name: 'Maletín'},
-  { name: 'Fondo automático'},
-  { name: 'Fondo 123'},
-  { name: 'Tipo crema'},
-  { name: 'Tipo archivo'},
-  { name: 'Charola para pegar'},
-  { name: 'Charola armable'},
-  { name: 'Medicina o perfume'},
-  { name: 'Pizza'}
-
-].each do |hash|
-  DesignLike.find_or_create_by(hash)
-end
-
-[
-  { name: 'Barniz a registro' },
-  { name: 'Barniz de máquina' },
-  { name: 'Barniz UV' },
-  { name: 'Plastificado mate' },
-  { name: 'Plastificado brillante' },
-  { name: 'Hot stamping' },
-  { name: 'Mikelman' },
-  { name: 'Encerado' },
-  { name: 'Antiestático' }
-
-].each do |hash|
-  Finishing.find_or_create_by(hash)
-end
-
-[
   { key: 'I', description: 'Ingreso' },
   { key: 'E', description: 'Egreso' },
   { key: 'T', description: 'Traslado' },
@@ -417,6 +496,7 @@ end
   { key: 001, description: 'ISR', retention: true, transfer: false },
   { key: 002, description: 'IVA', retention: true, transfer: true, value: 16.0 },
   { key: 003, description: 'IEPS', retention: true, transfer: true }
+
 ].each do |hash|
   Tax.find_or_create_by(hash)
 end
@@ -425,6 +505,7 @@ end
   { complexity: 'muy baja', cost: 200.00},
   { complexity: 'media', cost: 500.00},
   { complexity: 'muy alta', cost: 1000.00}
+
 ].each do |hash|
   DesignCost.find_or_create_by(hash)
 end
@@ -691,6 +772,25 @@ csv.each do |row| informaciondirecciondeentrega
                                             )
 
   Store.find_by_store_name(row['store']).business_unit.update(billing_address: billing)
+  add_store_to_finkok(billing)
+
+end
+
+def add_store_to_finkok(billing)
+
+  client = Savon.client(wsdl: ENV['add_dir']) do
+    convert_request_keys_to :none
+  end
+
+  username = ENV['username_pac']
+  password = ENV['password_pac']
+  taxpayer_id = billing.rfc #RFC Emisor
+  #Envia la peticion al webservice de registro
+  response = client.call(:add, message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id  })
+
+  #Obtiene el SOAP Request y guarda la respuesta en un archivo
+  ops = client.operation(:add)
+  request = ops.build( message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id }).to_s
 
 end
 
@@ -769,6 +869,8 @@ csv.each do |row|
                                         }
                                       )
 
+  not_armed = (row['discount_when_armed'] == '' || row['discount_when_armed'] == nil)
+  product.update(armed: true, armed_discount: row['discount_when_armed']) unless not_armed
 
   puts "#{product.id}, #{product.unique_code} saved"
   i = Inventory.find_or_create_by(

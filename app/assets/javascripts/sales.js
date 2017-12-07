@@ -29,7 +29,8 @@ $(document).ready(function(){
     dom: 'Bfrtip',
     buttons: [
       'excel', 'pdf'
-    ]
+    ],
+    order: [[ 1, "desc" ]]
   });
 
 });
