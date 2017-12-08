@@ -63,7 +63,7 @@ class PosController < ApplicationController
         end
       end
       add_extras(new_reg, table_name, values[:object])
-      new_reg.id = klass.last.id + 1
+      new_reg.id = klass.last.try(:id) + 1
       new_reg.web = true
       new_reg
     end
