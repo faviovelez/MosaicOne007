@@ -1117,24 +1117,21 @@ def save_unencrypted_key
   `openssl rsa -in #{file} -passin pass:"#{password}" -out #{new_pem}`
 end
 
-m = 0
-stores_with_cert.length.times do
-  cer = File.open(File.join(Rails.root, 'public', 'stores_cert_and_keys', "#{directories[m]}", 'cer.cer'), 'r')
-  key = File.open(File.join(Rails.root, 'public', 'stores_cert_and_keys', "#{directories[m]}", 'key.key'), 'r')
-  @store = Store.find_by_store_name(stores_with_cert[m])
-  @store.update(certificate: cer, key: key, certificate_password: pss[m])
+stores_with_cert.each_with_index do |val, index|
+  cer = File.open(File.join(Rails.root, 'public', 'stores_cert_and_keys', "#{directories[index]}", 'cer.cer'), 'r')
+  key = File.open(File.join(Rails.root, 'public', 'stores_cert_and_keys', "#{directories[index]}", 'key.key'), 'r')
+  @store = Store.find_by_store_name(stores_with_cert[index])
+  @store.update(certificate: cer, key: key, certificate_password: pss[index])
   save_certificate_number
   save_certificate_content
   save_pem_certificate
   save_pem_key
   save_encrypted_key
   save_unencrypted_key
-  m += 1
 end
 
-n = 0
-stores.length.times do
-  csv_text = File.read(Rails.root.join('public', 'prospect_files', "#{prospect_files[n]}.csv"))
+stores.each_with_index do |val, index|
+  csv_text = File.read(Rails.root.join('public', 'prospect_files', "#{prospect_files[index]}.csv"))
   csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
 
   csv.each do |row|
@@ -1164,14 +1161,13 @@ stores.length.times do
                                   extension: row['ext'],
                                   cell_phone: row['cel'],
                                   email: row['mail'],
-                                  store: Store.find_by_store_name(stores[n]),
+                                  store: Store.find_by_store_name(stores[index]),
                                   billing_address: billing
                                 }
                               )
   end
-  n += 1
-  s = Store.find_by_store_name(stores[n]).prospects.count
-  puts "There are #{s} Prospects in #{stores[n]} Store"
+  s = Store.find_by_store_name(stores[index]).prospects.count
+  puts "There are #{s} Prospects in #{stores[index]} Store"
 end
 
 puts "There are now #{Product.count} rows in the Products table"
@@ -1192,7 +1188,7 @@ billing_general_prospect = BillingAddress.find_or_create_by(
                                                               {
                                                                 business_name: 'Público en General',
                                                                 rfc: 'XAXX010101000',
-                                                                country: 'México',
+                                                                country: 'México'
                                                               }
                                                             )
 
@@ -1213,7 +1209,7 @@ billing_foreign_prospect = BillingAddress.find_or_create_by(
                                                               {
                                                                 business_name: 'Residente en el extranjero',
                                                                 rfc: 'XEXX010101000',
-                                                                country: '',
+                                                                country: ''
                                                               }
                                                             )
 

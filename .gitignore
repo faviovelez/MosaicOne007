@@ -18,6 +18,7 @@
 /.env
 /.env.prod
 /.env.production
+/.env.test
 /public/assets
 /public/uploads
 /config/database_local.yml
