@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante xmlns:cfdi="http://www.sat.gob.mx/cfd/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd" Version="3.3" Serie="AA" Folio="1" Fecha="2017-11-24T10:55:20" Sello="" FormaPago="99" NoCertificado="20001000000300022815" Certificado="" CondicionesDePago="Crédito" SubTotal="11375.00" Descuento="3981.25" Moneda="MXN" TipoCambio="1" Total="8576.75" TipoDeComprobante="I" MetodoPago="PPD" LugarExpedicion="45010">
+  <cfdi:Emisor Rfc="LAN7008173R5" Nombre="CINDEMEX SA DE CV" RegimenFiscal="601"/>
+  <cfdi:Receptor Rfc="LAN7008173R5" Nombre="CINDEMEX SA DE CV" UsoCFDI="G01"/>
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="24112500" NoIdentificacion="4935" Cantidad="150" ClaveUnidad="H87" Unidad="Pieza" Descripcion="Gobierno chico navideña 26 ect 29x24x30" ValorUnitario="15.60" Importe="2340.00" Descuento="819.00">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="1521.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="243.36"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="14121500" NoIdentificacion="1502" Cantidad="100" ClaveUnidad="H87" Unidad="Pieza" Descripcion="Archivo plástico oficio 50x38x26" ValorUnitario="90.35" Importe="9035.00" Descuento="3162.25">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="5872.75" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="939.64"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+  <cfdi:Impuestos TotalImpuestosTrasladados="1183.0">
+    <cfdi:Traslados>
+      <cfdi:Traslado Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="1183.00"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+</cfdi:Comprobante>

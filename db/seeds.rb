@@ -1,3 +1,5 @@
+require 'csv'
+
 [
   {name: "platform-admin", translation: "administrador de plataforma", description: "Crea usuarios de todos los tipos, actualiza formularios" },
   {name: "director", translation: "director", description: "Tiene acceso a todos los procesos y funciones de manager, puede crear usuarios manager" },
@@ -281,13 +283,13 @@ materials = [
   { name: 'microcorrugado' },
   { name: 'corrugado' },
   { name: 'doble corrugado' },
-  { name: 'rígido' }, # Este no para acetato y celofán
+  { name: 'cartón rígido' }, # Este no para acetato y celofán
   { name: 'papel bond' },
   { name: 'papel arroz' },
   { name: 'celofán' },
   { name: 'acetato' }
-
 ]
+
 materials.each do |hash|
   Material.find_or_create_by(hash)
 end
@@ -332,7 +334,6 @@ end
   { name: '61 ECT DC' },
   { name: '71 ECT DC' },
   { name: '82 ECT DC' }
-
 ].each do |hash|
   Resistance.find_or_create_by(hash)
 end
@@ -377,12 +378,13 @@ finshings.each do |hash|
 end
 
 
+materials = Material.all
 materials.each do |material|
-  unless material.name == 'rígido'
+  unless material.name == 'cartón rígido'
     material.children << Material.find_by_name('celofán')
     material.children << Material.find_by_name('acetato')
   end
-  material.children << Material.find_by_name('papel arroz') if (matrial.name == 'liner' || matrial.name == 'single face')
+  material.children << Material.find_by_name('papel arroz') if (material.name == 'liner' || material.name == 'single face')
 
   material.exterior_colors << ExteriorColor.find_by_name('kraft') unless (material.name == 'papel bond' || material.name == 'acetato' || material.name == 'sulfatada' || material.name == 'multicapa' || material.name == 'caple')
   material.exterior_colors << ExteriorColor.find_by_name('blanco') unless (material.name == 'liner' || material.name == 'acetato')
@@ -390,9 +392,11 @@ materials.each do |material|
 
   material.interior_colors << InteriorColor.find_by_name('transparente') if material.name == 'acetato'
   material.interior_colors << InteriorColor.find_by_name('kraft') unless (material.name == 'papel bond' || material.name == 'acetato' || material.name == 'sulfatada' || material.name == 'multicapa')
-  material.interior_colors << InteriorColor.find_by_name('blanco') unless (material.name == 'liner' || material.name == 'rígido') || material.name == 'acetato')
+  material.interior_colors << InteriorColor.find_by_name('blanco') unless (material.name == 'liner' || material.name == 'cartón rígido' || material.name == 'acetato')
+
+  designs = DesignLike.all
   designs.each do |design|
-    unless material.name == 'rígido'
+    unless material.name == 'cartón rígido'
       if (material.name == 'contraencolado' || material.name == 'corrugado' || material.name == 'doble corrugado')
         material.design_likes << design unless design.name == 'Bolsa'
       elsif material.name == 'papel bond'
@@ -404,8 +408,10 @@ materials.each do |material|
       end
     end
   end
+
+  finishings = Finishing.all
   finishings.each do |finishing|
-    unless (material.name == 'single face' || material.name == 'rígido' || material.name == 'acetato' || material.name == 'papel bond')
+    unless (material.name == 'single face' || material.name == 'cartón rígido' || material.name == 'acetato' || material.name == 'papel bond')
       if material.name == 'liner'
         material.finishings << finishing if finishing.name == 'Hot stamping'
       elsif material.name == 'microcorrugado'
@@ -417,6 +423,7 @@ materials.each do |material|
       end
     end
   end
+  impression_types = ImpressionType.all
   impression_types.each do |impression|
     unless (impression.name == 'plasta' || impression.name == 'selección de color' || impression.name == 'serigrafía')
       material.impression_types << impression unless material.name == 'acetato'
@@ -476,7 +483,6 @@ end
   { name: 'ecológica' },
   { name: 'exhibidores' },
   { name: 'diseños especiales' }
-
 ].each do |hash|
   Classification.find_or_create_by(hash)
 end
@@ -487,7 +493,6 @@ end
   { key: 'T', description: 'Traslado' },
   { key: 'N', description: 'Nómina' },
   { key: 'P', description: 'Pago' }
-
 ].each do |hash|
   TypeOfBill.find_or_create_by(hash)
 end
@@ -496,7 +501,6 @@ end
   { key: 001, description: 'ISR', retention: true, transfer: false },
   { key: 002, description: 'IVA', retention: true, transfer: true, value: 16.0 },
   { key: 003, description: 'IEPS', retention: true, transfer: true }
-
 ].each do |hash|
   Tax.find_or_create_by(hash)
 end
@@ -509,8 +513,6 @@ end
 ].each do |hash|
   DesignCost.find_or_create_by(hash)
 end
-
-require 'csv'
 
 # Agrega el catálogo de Régimen fiscal del SAT
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'tax_regime.csv'))
@@ -536,11 +538,11 @@ csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
 csv.each do |row|
   t = PaymentForm.find_or_create_by(
                                     {
-                                      payment_id: row['payment_id'],
+                                      payment_key: row['payment_id'],
                                       description: row['description']
                                     }
                                   )
-  puts "#{t.id}, #{t.payment_id}, #{t.description} saved"
+  puts "#{t.id}, #{t.payment_key}, #{t.description} saved"
 end
 
 # Agrega el catálogo de Método de pago del SAT
@@ -744,15 +746,31 @@ csv.each do |row|
                password: row['password'],
                password_confirmation: row['password'],
                role: Role.find_by_name('store-admin'),
-               store: Store.find_by_store_name(row['tienda']),
-               business_unit: BusinessUnit.find_by_name(row['empresa']),
-               business_group: BusinessGroup.find_by_name(row['grupo'])
+               store: Store.find_by_store_name(row['tienda'])
                )
 end
 
+def add_store_to_finkok(rfc)
+
+  client = Savon.client(wsdl: ENV['add_dir']) do
+    convert_request_keys_to :none
+  end
+
+  username = ENV['username_pac']
+  password = ENV['password_pac']
+  taxpayer_id = rfc #RFC Emisor
+  #Envia la peticion al webservice de registro
+  response = client.call(:add, message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id  })
+
+  #Obtiene el SOAP Request y guarda la respuesta en un archivo
+  ops = client.operation(:add)
+  request = ops.build( message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id }).to_s
+end
+
+rfcs = []
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'informacionparaaltafacturacionfinal.csv'))
 csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
-csv.each do |row| informaciondirecciondeentrega
+csv.each do |row|
 
   billing = BillingAddress.find_or_create_by(
                                               {
@@ -767,31 +785,16 @@ csv.each do |row| informaciondirecciondeentrega
                                                 city: row['ciudad'],
                                                 state: row['estado'],
                                                 country: row['country'],
-                                                regime: TaxRegime.find_by_description(row['regime'])
+                                                tax_regime: TaxRegime.find_by_description(row['regime'])
                                               }
                                             )
 
   Store.find_by_store_name(row['store']).business_unit.update(billing_address: billing)
-  add_store_to_finkok(billing)
-
+  rfcs << row['rfc']
 end
 
-def add_store_to_finkok(billing)
-
-  client = Savon.client(wsdl: ENV['add_dir']) do
-    convert_request_keys_to :none
-  end
-
-  username = ENV['username_pac']
-  password = ENV['password_pac']
-  taxpayer_id = billing.rfc #RFC Emisor
-  #Envia la peticion al webservice de registro
-  response = client.call(:add, message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id  })
-
-  #Obtiene el SOAP Request y guarda la respuesta en un archivo
-  ops = client.operation(:add)
-  request = ops.build( message: { reseller_username: username, reseller_password: password, taxpayer_id: taxpayer_id }).to_s
-
+rfcs.each do |rfc|
+  add_store_to_finkok(rfc)
 end
 
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'informaciondirecciondeentrega.csv'))
@@ -809,16 +812,17 @@ csv.each do |row|
                                                 state: row['estado'],
                                                 country: row['country'],
                                                 additional_references: row['referencias_adicionales']
-                                                store: row['tienda']
                                               }
                                             )
+  store_new = Store.find_by_store_name(row['tienda'])
+  store_new.update(delivery_address: delivery)
 end
 
 # Agrega el catálogo de Servicios de Diseños de Cartón
 csv_text = File.read(Rails.root.join('lib', 'seeds', 'services.csv'))
 csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
 csv.each do |row|
-  product = Service.find_or_create_by(
+  service = Service.find_or_create_by(
                                         {
                                           sat_key: SatKey.find_by_sat_key(row['sat_key']),
                                           unique_code: row['unique_code'],
@@ -855,7 +859,6 @@ csv.each do |row|
                                           main_material: row['main_material'],
                                           resistance_main_material: row['resistance_main_material'],
                                           design_type: row['design_type'],
-                                          impression: row['impression'],
                                           warehouse: Warehouse.find_by_name(row['warehouse']),
                                           sat_unit_key: SatUnitKey.find_by_unit(row['sat_unit_key']),
                                           outer_length: row['outer_length'],
@@ -864,10 +867,15 @@ csv.each do |row|
                                           factor: row['factor'],
                                           average: row['average'],
                                           current: true,
-                                          shared: true,
-                                          warehouse: Warehouse.where(business_unit: BusinessUnit.find_by_name(row['bu'])).first
+                                          shared: true
                                         }
                                       )
+
+  if row['impression'] == 'sí'
+    product.update(impression: true)
+  else
+    product.update(impression: false)
+  end
 
   not_armed = (row['discount_when_armed'] == '' || row['discount_when_armed'] == nil)
   product.update(armed: true, armed_discount: row['discount_when_armed']) unless not_armed
@@ -939,7 +947,7 @@ stores_with_cert = [
   'Calzada',
   'Circunvalación',
   'Clouthier',
-  'Corporatio Compresor',
+  'Corporativo Compresor',
   'Corporativo Patria',
   'Cuautitlán',
   'Guadalupe NL',
@@ -983,7 +991,7 @@ directories = [
 ]
 
 pss = [
-  'Sc123456',
+  'd1234567',
   'd1234567',
   'd1234567',
   'd1234567',
@@ -1007,19 +1015,6 @@ pss = [
   'bafio44741'
 ]
 
-m = 0
-stores_with_cert.length.times do
-  cer = File.join(Rails.root, 'public', 'prospect_files', "#{directories[m]}", 'cer.cer')
-  key = File.join(Rails.root, 'public', 'prospect_files', "#{directories[m]}", 'key.key')
-  @store = Store.find_by_store_name(stores_with_cert[m]).update(certificate: cer, key: key, certificate_password: pss[m])
-  save_certificate_number
-  save_certificate_content
-  save_pem_certificate
-  save_pem_key
-  save_encrypted_key
-  save_unencrypted_key
-end
-
 def get_certificate_number
   file = File.join(Rails.root, "public", "uploads", "store", "#{@store.id}", "certificate", "cer.cer")
   serial = `openssl x509 -inform DER -in #{file} -noout -serial`
@@ -1041,12 +1036,10 @@ def save_certificate_number
 end
 
 def save_certificate_content
-  unless params[:store][:certificate] == nil
-    @cer_file = Rails.root.join('public', 'uploads', 'store', "#{@store.id}", 'certificate', 'cer.cer')
-    b64 = Base64.encode64(File::read(@cer_file))
-    clean = b64.gsub("\n",'')
-    @store.update(certificate_content: clean)
-  end
+  @cer_file = Rails.root.join('public', 'uploads', 'store', "#{@store.id}", 'certificate', 'cer.cer')
+  b64 = Base64.encode64(File::read(@cer_file))
+  clean = b64.gsub("\n",'')
+  @store.update(certificate_content: clean)
 end
 
 def save_pem_certificate
@@ -1079,7 +1072,7 @@ end
 
 def save_pem_key
   file = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.key")
-  password = params[:store][:certificate_password]
+  password = @store.certificate_password
 
   File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.pem"), "w") do |file|
     file.write('')
@@ -1124,9 +1117,24 @@ def save_unencrypted_key
   `openssl rsa -in #{file} -passin pass:"#{password}" -out #{new_pem}`
 end
 
+m = 0
+stores_with_cert.length.times do
+  cer = File.open(File.join(Rails.root, 'public', 'stores_cert_and_keys', "#{directories[m]}", 'cer.cer'), 'r')
+  key = File.open(File.join(Rails.root, 'public', 'stores_cert_and_keys', "#{directories[m]}", 'key.key'), 'r')
+  @store = Store.find_by_store_name(stores_with_cert[m])
+  @store.update(certificate: cer, key: key, certificate_password: pss[m])
+  save_certificate_number
+  save_certificate_content
+  save_pem_certificate
+  save_pem_key
+  save_encrypted_key
+  save_unencrypted_key
+  m += 1
+end
+
 n = 0
 stores.length.times do
-  csv_text = File.read(Rails.root.join('public', 'stores_cert_and_keys', 'prospect_files', "#{prospect_files[n]}.csv"))
+  csv_text = File.read(Rails.root.join('public', 'prospect_files', "#{prospect_files[n]}.csv"))
   csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
 
   csv.each do |row|
@@ -1156,7 +1164,7 @@ stores.length.times do
                                   extension: row['ext'],
                                   cell_phone: row['cel'],
                                   email: row['mail'],
-                                  store: stores[n],
+                                  store: Store.find_by_store_name(stores[n]),
                                   billing_address: billing
                                 }
                               )

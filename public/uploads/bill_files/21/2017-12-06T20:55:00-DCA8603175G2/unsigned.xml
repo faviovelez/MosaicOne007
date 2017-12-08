@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante xmlns:cfdi="http://www.sat.gob.mx/cfd/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd" Version="3.3" Serie="AU" Folio="2" Fecha="2017-12-06T20:55:00" Sello="" FormaPago="03" NoCertificado="20001000000300022815" Certificado="" CondicionesDePago="Contado" SubTotal="2193.80" Descuento="87.59" Moneda="MXN" TipoCambio="1" Total="2443.20" TipoDeComprobante="I" MetodoPago="PUE" LugarExpedicion="45010">
+  <cfdi:Emisor Rfc="LAN7008173R5" Nombre="CINDEMEX SA DE CV" RegimenFiscal="601"/>
+  <cfdi:Receptor Rfc="DCA8603175G2" Nombre="biofase" UsoCFDI="G01"/>
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="14121500" NoIdentificacion="2003" Cantidad="10" ClaveUnidad="H87" Unidad="Pieza" Descripcion="Correcajon grande 23x23x15.5" ValorUnitario="44.20" Importe="442.00">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="442.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="70.72"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="14121500" NoIdentificacion="1905" Cantidad="10" ClaveUnidad="H87" Unidad="Pieza" Descripcion="Ecoburo combo grande 4 cajones 38x33x63" ValorUnitario="175.18" Importe="1751.80" Descuento="87.59">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="1664.21" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="266.27"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+  <cfdi:Impuestos TotalImpuestosTrasladados="336.99">
+    <cfdi:Traslados>
+      <cfdi:Traslado Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="336.99"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+</cfdi:Comprobante>
