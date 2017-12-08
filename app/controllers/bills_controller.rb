@@ -395,15 +395,6 @@ class BillsController < ApplicationController
       else
         @objects = @bill
       end
-      if (params[:cfdi_type] == 'global' || @cfdi_type == 'global')
-        @prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno').first
-      else
-        if @bill == nil
-          get_prospect_from_objects(@objects)
-        else
-          @prospect = @bill.prospect
-        end
-      end
       ####pendiente####
       select_store if @bill == nil
       ####pendiente####
@@ -427,7 +418,15 @@ class BillsController < ApplicationController
         @store = @bill.store
       end
       ####pendiente####
-
+      if (params[:cfdi_type] == 'global' || @cfdi_type == 'global')
+        @prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno', store: @store).first
+      else
+        if @bill == nil
+          get_prospect_from_objects(@objects)
+        else
+          @prospect = @bill.prospect
+        end
+      end
       @time = Time.now.strftime('%FT%T')
       if prospect.billing_address == nil
         redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
@@ -899,7 +898,7 @@ class BillsController < ApplicationController
       s_billing = store.business_unit.billing_address
       @s_billing = s_billing
       # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL prospect = Prospect.find_by_legal_or_business_name('Público en General')
-      prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno').first
+      prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno', store: @store).first
       @prospect = prospect
       p_billing = prospect.billing_address
       @p_billing = p_billing
