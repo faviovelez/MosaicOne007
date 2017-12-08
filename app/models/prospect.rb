@@ -8,6 +8,8 @@ class Prospect < ActiveRecord::Base
   has_many :orders
   has_many :movements
   has_many :pending_movements
+  has_many :service_offereds
+  has_many :store_movements
   has_many :prospect_sales
   has_many :bills
   belongs_to :store
