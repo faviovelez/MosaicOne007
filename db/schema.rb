@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171207191629) do
+ActiveRecord::Schema.define(version: 20171208191711) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1314,8 +1314,10 @@ ActiveRecord::Schema.define(version: 20171207191629) do
     t.boolean  "pos",                default: false
     t.boolean  "web",                default: true
     t.date     "date"
+    t.integer  "prospect_id"
   end
 
+  add_index "service_offereds", ["prospect_id"], name: "index_service_offereds_on_prospect_id", using: :btree
   add_index "service_offereds", ["service_id"], name: "index_service_offereds_on_service_id", using: :btree
   add_index "service_offereds", ["store_id"], name: "index_service_offereds_on_store_id", using: :btree
   add_index "service_offereds", ["tax_id"], name: "index_service_offereds_on_tax_id", using: :btree
@@ -1388,12 +1390,14 @@ ActiveRecord::Schema.define(version: 20171207191629) do
     t.boolean  "pos",                default: false
     t.boolean  "web",                default: true
     t.date     "date"
+    t.integer  "prospect_id"
   end
 
   add_index "store_movements", ["bill_id"], name: "index_store_movements_on_bill_id", using: :btree
   add_index "store_movements", ["order_id"], name: "index_store_movements_on_order_id", using: :btree
   add_index "store_movements", ["product_id"], name: "index_store_movements_on_product_id", using: :btree
   add_index "store_movements", ["product_request_id"], name: "index_store_movements_on_product_request_id", using: :btree
+  add_index "store_movements", ["prospect_id"], name: "index_store_movements_on_prospect_id", using: :btree
   add_index "store_movements", ["store_id"], name: "index_store_movements_on_store_id", using: :btree
   add_index "store_movements", ["supplier_id"], name: "index_store_movements_on_supplier_id", using: :btree
   add_index "store_movements", ["tax_id"], name: "index_store_movements_on_tax_id", using: :btree
@@ -1931,6 +1935,7 @@ ActiveRecord::Schema.define(version: 20171207191629) do
   add_foreign_key "rows", "bills"
   add_foreign_key "sales_movements", "movements"
   add_foreign_key "sales_targets", "stores"
+  add_foreign_key "service_offereds", "prospects"
   add_foreign_key "service_offereds", "services"
   add_foreign_key "service_offereds", "stores"
   add_foreign_key "service_offereds", "taxes"
@@ -1945,6 +1950,7 @@ ActiveRecord::Schema.define(version: 20171207191629) do
   add_foreign_key "store_movements", "orders"
   add_foreign_key "store_movements", "product_requests"
   add_foreign_key "store_movements", "products"
+  add_foreign_key "store_movements", "prospects"
   add_foreign_key "store_movements", "stores"
   add_foreign_key "store_movements", "suppliers"
   add_foreign_key "store_movements", "taxes"

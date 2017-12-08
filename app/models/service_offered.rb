@@ -7,6 +7,7 @@ class ServiceOffered < ActiveRecord::Base
   belongs_to :ticket
   belongs_to :tax
   belongs_to :ticket
+  belongs_to :prospect
 
   after_create :create_update_summary
 
@@ -57,11 +58,13 @@ class ServiceOffered < ActiveRecord::Base
   end
 
   def create_prospect_report
-    create_reports_data(
-      ProspectSale
-    ).update(
-      prospect_id: prospect.id
-    )
+    unless prospect == nil
+      create_reports_data(
+        ProspectSale
+      ).update(
+        prospect_id: prospect.id
+      )
+    end
   end
 
   def update_store_report
@@ -71,9 +74,11 @@ class ServiceOffered < ActiveRecord::Base
   end
 
   def update_prospect_report
-    update_reports_data(
-      ProspectSale.where(month: Date.today.month, year: Date.today.year, prospect: prospect.id, store: store.id).first
-    )
+    unless prospect == nil
+      update_reports_data(
+        ProspectSale.where(month: Date.today.month, year: Date.today.year, prospect: prospect.id, store: store.id).first
+      )
+    end
   end
 
   def update_service_report

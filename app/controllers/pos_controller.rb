@@ -41,6 +41,7 @@ class PosController < ApplicationController
 
     def fill_references(table_name, pos_id, values)
       reg = create_reg(table_name, values)
+      binding.pry
       reg.save
       @ids_references[table_name.singularize][pos_id] = reg.id
     end
@@ -63,7 +64,7 @@ class PosController < ApplicationController
         end
       end
       add_extras(new_reg, table_name, values[:object])
-      new_reg.id = klass.last.id + 1
+      new_reg.id = klass.last.try(:id).to_i + 1
       new_reg.web = true
       new_reg
     end
