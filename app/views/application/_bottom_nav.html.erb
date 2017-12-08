@@ -41,9 +41,11 @@
         <%= link_to 'Crear nuevo producto', new_product_path, class: 'bottom-link' %>
       <% end %>
 
-      <% if (params[:controller] == 'products' && params[:action] == 'show') %>
-        <%= link_to 'Modificar producto', edit_product_path(@product), class: 'bottom-link' %>
-      <% end %>
+        <% if (params[:controller] == 'products' && params[:action] == 'show') %>
+          <% if @product.store == current_user.store %>
+            <%= link_to 'Modificar producto', edit_product_path(@product), class: 'bottom-link' %>
+          <% end %>
+        <% end %>
 
     <% end %>
 
@@ -118,11 +120,13 @@
 
     <%= link_to 'Regresar', :back, class: 'bottom-link' %>
 
-    <% if params[:controller] == 'inventories' && params[:action] == 'index' %>
-      <%= link_to 'Sugerencias de pedidos', inventories_order_suggestions_path %>
-    <% elsif params[:controller] == 'inventories' && params[:action] == 'order_suggestions' %>
-      <%= link_to 'Inventario total', inventories_index_path %>
-    <% end %>
+    <div class="hidden">
+      <% if params[:controller] == 'inventories' && params[:action] == 'index' %>
+        <%= link_to 'Sugerencias de pedidos', inventories_order_suggestions_path %>
+      <% elsif params[:controller] == 'inventories' && params[:action] == 'order_suggestions' %>
+        <%= link_to 'Inventario total', inventories_index_path %>
+      <% end %>
+    </div>
 
   </div>
 

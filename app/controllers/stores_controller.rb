@@ -34,6 +34,7 @@ class StoresController < ApplicationController
   end
 
   def download_products_example
+    # Cambiar por el ejemplo que tengo en PDF y XML
     send_file(
       "/example_files/inventarios.csv",
       type: 'text/csv; charset=iso-8859-1; header=present',
@@ -43,6 +44,7 @@ class StoresController < ApplicationController
   end
 
   def download_prospects_example
+    # Cambiar por el ejemplo que tengo en PDF y XML
     send_file(
       "#{Rails.root}/public/example_files/clientes.csv",
       type: 'text/csv; charset=iso-8859-1; header=present',

@@ -1,0 +1,35 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bill_id: 
+  product: 1
+  service: 1
+  unique_code: MyString
+  quantity: 1
+  unit_value: 1.5
+  ticket: 1
+  sat_key: MyString
+  sat_unit_key: MyString
+  description: MyString
+  total: 1.5
+  subtotal: 1.5
+  taxes: 1.5
+  discount: 1.5
+  sat_unit_description: MyString
+
+two:
+  bill_id: 
+  product: 1
+  service: 1
+  unique_code: MyString
+  quantity: 1
+  unit_value: 1.5
+  ticket: 1
+  sat_key: MyString
+  sat_unit_key: MyString
+  description: MyString
+  total: 1.5
+  subtotal: 1.5
+  taxes: 1.5
+  discount: 1.5
+  sat_unit_description: MyString

@@ -1,0 +1,105 @@
+<!-- Inicia la tabla del ticket seleccionado en la búsqueda-->
+<table class="ticket-selected">
+  <thead>
+    <tr>
+      <th colspan="9" class="head-blue edge-right">
+        Ticket de venta:
+        <span id="ticket-id">
+          <%= @number %>
+        </span>
+        -
+        <span id="cash-register">
+          <%= @register %>
+        </span>
+         -
+        <span id="ticket-date">
+          <%= l @date, format: :short %>
+        </span>
+        -
+        <span id="ticket-prospect">
+          Cliente: <%= show_non_blank_field(@prospect) %>
+        </span>
+        <span id="ticket-user">
+          Atendió: <%= show_non_blank_field(@user) %>
+        </span>
+      </th>
+      <th class="head-blue edge-left">
+        <%= get_payments_from_individual_ticket(@ticket) %>
+      </th>
+    </tr>
+    <tr>
+      <th> </th>
+      <th> Fecha </th>
+      <th> Movimiento </th>
+      <th> Código </th>
+      <th> Producto o Servicio </th>
+      <th> Color/Diseño </th>
+      <th> Precio </th>
+      <th class="quantity-width"> Cantidad </th>
+      <th> Descuento </th>
+      <th> Total </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @rows.each do |row| %>
+      <tr>
+        <td>
+          <div class="close-icon invisible">
+            <button type="button" class="close center-close" aria-label="Close">
+              <span aria-hidden="true" class="white-light">&times;</span>
+            </button>
+          </div>
+        </td>
+        <td> <%= l row["date"], format: :short %> </td>
+        <td> <%= row["type"] %> </td>
+        <td> <%= row["unique_code"] %> </td>
+        <td class="left"> <%= row["description"] %> </td>
+        <td> <%= row["color"] %> </td>
+        <td> <%= number_to_currency(row["unit_value"]) %> </td>
+        <td> <%= number_with_delimiter(row["quantity"]) %> </td>
+        <td> <%= number_to_currency(row["discount"]) %> </td>
+        <td class="right"> <%= number_to_currency(row["total"]) %> </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td colspan="8"> </td>
+      <td> <strong> Total: </strong> </td>
+      <td> <strong> <%= number_to_currency(number_to_currency(get_total_with_returns_or_changes(@ticket))) %> </strong> </td>
+    </tr>
+    <tr>
+      <td colspan="5"> </td>
+      <td colspan="2" class="border-top"> <strong> Fecha </strong> </td>
+      <td colspan="2" class="border-top"> <strong> Forma de pago </strong> </td>
+      <td colspan="2" class="border-top"> <strong> Total </strong> </td>
+    </tr>
+    <% @payments_ticket.each do |payment| %>
+      <tr>
+        <td colspan="5"> </td>
+        <td colspan="2"> <%= l payment.created_at.to_date, format: :short %> </td>
+        <td colspan="2"> <%= payment.payment_form.description %> </td>
+        <td colspan="2"> <%= number_to_currency(payment.total) %> </td>
+      </tr>
+    <% end %>
+      <tr>
+        <td colspan="8"> </td>
+        <td class="border-top"> <strong> Total: </strong> </td>
+        <td class="border-top"> <strong> <%= number_to_currency(@total_payments_ticket) %> </strong> </td>
+      </tr>
+      <tr>
+        <td colspan="10">
+          <% if @ticket.bill.bill_type == 'global'%>
+            <%= link_to details_global_path(@ticket.bill) do %>
+              <i class="fa fa-book link-to-price" aria-hidden="true"></i>
+              <span class="link-to-price"> Factura </span>
+            <% end %>
+          <% else %>
+            <%= link_to details_path(@ticket.bill) do %>
+              <i class="fa fa-book link-to-price" aria-hidden="true"></i>
+              <span class="link-to-price"> Factura </span>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+  </tbody>
+</table>
+<!-- Termina la tabla del ticket seleccionado en la búsqueda-->

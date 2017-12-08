@@ -20,9 +20,26 @@ button#btn-notice {
   padding-right: 1.5rem;
 }
 
+.flex-table {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+}
+
+.flex-table > a {
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
 .img-container {
   display: flex;
   justify-content: center;
+}
+
+.blue-background {
+  background-color: #009CB7;
+  border: solid 1px #009CB7;
+  color: #fff;
 }
 
 .extra-padding {
@@ -33,6 +50,11 @@ button#btn-notice {
 
 .extra-margin-top {
   margin-top: 4rem;
+}
+
+.sales-summary-icon {
+  height: 30px;
+  width: auto;
 }
 
 .payments-summary > thead > tr > th,
@@ -50,7 +72,7 @@ button#btn-notice {
 }
 
 .download-icon-table {
-  width: 30%;
+  width: 15%;
   height: auto;
 }
 

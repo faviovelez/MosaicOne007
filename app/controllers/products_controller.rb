@@ -210,13 +210,7 @@ class ProductsController < ApplicationController
       user = current_user.role.name
       suppliers_id = []
       @store = current_user.store
-      Supplier.where(name: [
-                            'Diseños de Cartón',
-                            'Comercializadora de Cartón y Diseño'
-                            ]).each do |supplier|
-                              suppliers_id << supplier.id
-                            end
-      @dc_products = Product.where(supplier: suppliers_id)
+      @dc_products = Product.where(current: true, shared: true)
       if user == 'store-admin' || user == 'store'
         @products = @store.products + @dc_products
       else
@@ -273,7 +267,7 @@ class ProductsController < ApplicationController
       :cost,
       :rack,
       :level,
-      :unit_id,
+      :unit,
       :current,
       :product_dependents,
       :wholesale_id,

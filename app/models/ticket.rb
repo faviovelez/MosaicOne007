@@ -14,4 +14,5 @@ class Ticket < ActiveRecord::Base
   has_many :children, through: :tickets_child, foreign_key: 'children_id'
   has_many :tickets_child
   belongs_to :parent, class_name: 'Ticket', foreign_key: 'parent_id'
+
 end

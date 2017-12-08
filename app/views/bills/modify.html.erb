@@ -1,0 +1,52 @@
+<h2> Seleccione qué tipo de modificación desea aplicar en la factura </h2><br /><br />
+
+<div class="form-container">
+
+  <%= form_tag({ controller: 'bills', action: 'preview' }, method: 'get') do %>
+
+    <div class="form-inside-style">
+      <%= label_tag :nota_de_crédito %>
+      <%= radio_button_tag(:relation_type, '01') %> <br /><br />
+    </div>
+
+    <div class="form-inside-style">
+      <% unless @bill.bill_type == 'global' %>
+        <% if (!@bill.sequence.include?('NC') && !@bill.sequence.include?('DE') && !@bill.sequence.include?('PA') && !@bill.sequence.include?('FA') && !@bill.sequence.include?('FE')) %>
+          <%= label_tag :devolución %>
+          <%= radio_button_tag(:relation_type, '03') %> <br /><br />
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="form-inside-style">
+      <% if @bill.sequence.include?('PA') %>
+        <%= label_tag :sustitución_de_factura %>
+        <%= radio_button_tag(:relation_type, '04') %> <br /><br />
+      <% end %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= label_tag :cancelación %>
+      <%= radio_button_tag(:relation_type, '00') %> <br /><br />
+    </div>
+
+    <div class="form-inside-style">
+      <% if (!@bill.sequence.include?('NC') && !@bill.sequence.include?('DE') && !@bill.sequence.include?('PA') && !@bill.sequence.include?('FA') && !@bill.sequence.include?('FE')) %>
+        <% if @bill.tickets.first.ticket_type == 'anticipo' %>
+          <%= label_tag :factura_con_aplicacion_de_anticipo %>
+          <%= radio_button_tag(:relation_type, '07') %> <br /><br />
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="hidden">
+      <%= label_tag :factura %>
+      <%= radio_button_tag :bill, params[:bill], checked: true %> <br /><br />
+    </div>
+
+    <div class="actions">
+      <%= submit_tag :confirmar, class: 'main-button' %>
+    </div>
+
+  <% end %>
+</div>

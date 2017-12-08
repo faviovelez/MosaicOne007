@@ -1,5 +1,5 @@
 <% if @products.count >= 1 %>
-  <table>
+  <table id="products-table">
     <thead>
       <tr class="table-titles">
         <th>Código</th>
@@ -7,6 +7,7 @@
         <th>Color/Diseño</th>
         <th>Línea de producto</th>
         <th>Precio</th>
+        <th>Acciones</th>
       </tr>
     </thead>
 
@@ -17,23 +18,20 @@
           <td class="col-md-2"><%= product.description %></td>
           <td class="col-md-1"><%= product.exterior_color_or_design %></td>
           <td class="col-md-2"><%= product.line %></td>
-          <td class="col-md-1"><%= number_to_currency(product.price) %></td>
+          <td class="col-md-1"><%= number_to_currency(show_price_with_overprice(product)) %></td>
           <td class="col-md-1">
             <%= link_to product do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-              <span>Ver</span>
-              <% end %>
-          </td>
-          <td class="col-md-1">
-            <% role = current_user.role.name %>
-            <% user_bg = current_user.store.business_unit.business_group %>
-            <% product_bg = product.business_unit.business_group %>
-            <% if ((role == 'product-admin' || role == 'product-staff' || role == 'store-admin') && user_bg == product_bg) %>
-              <%= link_to edit_product_path(product) do %>
-                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
-                <span class="link-to-confirm">Modificar</span>
-              <% end %>
             <% end %>
+
+              <% role = current_user.role.name %>
+              <% user_bg = current_user.store.business_unit.business_group %>
+              <% product_bg = product.business_unit.business_group %>
+              <% if (((role == 'product-admin' || role == 'product-staff') && product.shared == true) || current_user.role.name == 'store-admin' && product.store == current_user.store) %>
+                <%= link_to edit_product_path(product) do %>
+                  <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
+                <% end %>
+              <% end %>
           </td>
         </tr>
     <% end %>
@@ -41,4 +39,15 @@
   </table>
 <% else %>
   <p class="individual-font">No hay productos dados de alta </p>
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'products' %>
 <% end %>

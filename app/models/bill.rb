@@ -6,6 +6,7 @@ class Bill < ActiveRecord::Base
   has_many :movements
   has_many :pending_movements
   belongs_to :store
+  belongs_to :prospect
   belongs_to :issuing_company, class_name: 'BillingAddress'
   belongs_to :receiving_company, class_name: 'BillingAddress'
   mount_uploader :pdf, BillUploader
@@ -22,10 +23,12 @@ class Bill < ActiveRecord::Base
   belongs_to :pac
   belongs_to :relation_type
   belongs_to :type_of_bill
+  has_many :store_movements
   has_many :service_offereds
   has_many :tickets
   has_many :payments
   has_many :children, through: :bills_child, foreign_key: 'children_id'
   has_many :bills_child
   belongs_to :parent, class_name: 'Bill', foreign_key: 'parent_id'
+  has_many :rows
 end

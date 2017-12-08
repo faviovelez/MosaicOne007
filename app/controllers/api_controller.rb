@@ -1,7 +1,7 @@
 class ApiController < ApplicationController
 
   def get_all_products
-    products =  Product.has_inventory(
+    products =  Product.where(classification: 'de línea').where(current: true).where(parent: nil).has_inventory(
       params[:q]
     ).collect do |p|
       words = p.description.split(' ') [0..5]

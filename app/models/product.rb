@@ -29,6 +29,8 @@ class Product < ActiveRecord::Base
   has_many :products_tickets
   has_many :tickets, through: :products_tickets
   has_many :estimates
+  belongs_to :parent, class_name: 'Product', foreign_key: 'parent_id'
+  belongs_to :child, class_name: 'Product', foreign_key: 'child_id'
 
   validates :unique_code, presence: { message: "Debe anotar un código de producto."}
 

@@ -92,7 +92,7 @@ module BillsHelper
   ]
 
   def decimals(number)
-    decimals = ((number % 1).round(2) * 100 ).to_i.to_s
+    decimals = ('%.2f' % (number % 1)).slice(2..3)
     decimals += '/100 M.N.'
     @decimals = decimals
   end
@@ -212,10 +212,12 @@ module BillsHelper
       end
     end
     if (@num_length == 1 && @unit_value)
-      @quantity_in_letters << 'peso '
+      @quantity_in_letters << ' peso '
     else
-      @quantity_in_letters << 'pesos '
+      @quantity_in_letters << ' pesos '
     end
+    @quantity_in_letters.gsub!('y pesos', ' pesos')
+    @quantity_in_letters.gsub!('  ', ' ')
     @quantity_in_letters.capitalize
   end
 
@@ -225,6 +227,15 @@ module BillsHelper
     @address += 'Col. ' + user.store.delivery_address.neighborhood + '.' + ' ' + user.store.delivery_address.city + ',' + ' ' + user.store.delivery_address.state
     @address = @address.split.map(&:capitalize)*' '
     @address
+  end
+
+  def quantity_options(row)
+    @quantity_options = []
+    (row.quantity + 1).times do |i|
+      @quantity_options << i
+      i += 1
+    end
+    @quantity_options
   end
 
   def select_tickets
@@ -348,7 +359,7 @@ module BillsHelper
   def get_payments_from_bill(bill)
     payments = []
     bill.payments.each do |payment|
-      payments << payment
+      payments << payment.total.to_f
     end
     payments = payments.inject(&:+)
     payments == nil ? @payments = 0 : @payments = payments
@@ -412,7 +423,11 @@ module BillsHelper
   def subtotal
     amounts = []
     @rows.each do |row|
-      amounts << row["subtotal"]
+      if @bill != nil
+        amounts << row.subtotal
+      else
+        amounts << row["subtotal"]
+      end
     end
     subtotal = amounts.inject(&:+)
     @subtotal = subtotal.round(2)
@@ -422,7 +437,11 @@ module BillsHelper
   def total_taxes
     amounts = []
     @rows.each do |row|
-      amounts << row["taxes"]
+      if @bill != nil
+        amounts << row.taxes
+      else
+        amounts << row["taxes"]
+      end
     end
     total_taxes = amounts.inject(&:+)
     @total_taxes = total_taxes.round(2)
@@ -432,8 +451,11 @@ module BillsHelper
   def total
     amounts = []
     @rows.each do |row|
-      total = row["total"]
-      amounts << total
+      if @bill != nil
+        amounts << row.total
+      else
+        amounts << row["total"]
+      end
     end
     total = amounts.inject(&:+)
     @total = total.round(2)
@@ -443,8 +465,24 @@ module BillsHelper
   def total_discount
     amounts = []
     @rows.each do |row|
-      total = row["discount"]
-      amounts << total
+      if @bill != nil
+        amounts << row.discount
+      else
+        amounts << row["discount"]
+      end
+    end
+    @total_discount = amounts.inject(&:+)
+    @total_discount
+  end
+
+  def total_bill
+    amounts = []
+    @rows.each do |row|
+      if @bill != nil
+        amounts << row.discount
+      else
+        amounts << row["discount"]
+      end
     end
     @total_discount = amounts.inject(&:+)
     @total_discount

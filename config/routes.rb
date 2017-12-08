@@ -70,6 +70,10 @@ Rails.application.routes.draw do
 
   get 'bills/process_data'
 
+  get 'bills/details/:bill', to: 'bills#details', as: 'details'
+
+  get 'bills/details_global/:bill', to: 'bills#details_global', as: 'details_global'
+
   get 'bills/bill_doc_/:id', to: 'bills#bill_doc', as: 'bills_doc'
 
   get 'bills/doc/:prospect/:tickets/:cfdi_use/:type_of_bill', to: 'bills#doc', as: 'bill_doc'
@@ -84,9 +88,39 @@ Rails.application.routes.draw do
 
   get 'bills/select_bills'
 
-  post 'bills/modify'
+  get 'bills/modify'
 
-  get 'bills/ticket_details/:id', to: 'bills#ticket_details', as: 'ticket_details'
+  get 'bills/payment/:bill', to: 'bills#payment', as: 'payment'
+
+  get 'bills/credit_note/:bill', to: 'bills#credit_note', as: 'credit_note'
+
+  get 'bills/credit_note_global/:bill', to: 'bills#credit_note_global', as: 'credit_note_global'
+
+  get 'bills/generate_credit_note'
+
+  get 'bills/generate_debit_note'
+
+  get 'bills/generate_devolution'
+
+  get 'bills/generate_payment'
+
+  get 'bills/generate_advance_e'
+
+  get 'bills/generate_advance_i'
+
+  get 'bills/debit_note/:bill', to: 'bills#debit_note', as: 'debit_note'
+
+  get 'bills/devolution/:bill', to: 'bills#devolution', as: 'devolution'
+
+  get 'bills/devolution_global/:bill', to: 'bills#devolution_global', as: 'devolution_global'
+
+  get 'bills/advance_e', as: 'advance_e'
+
+  get 'bills/advance_i', as: 'advance_i'
+
+  get 'bills/modify/:bill', to: 'bills#modify', as: 'modify_bill'
+
+  get 'bills/ticket_details/:id', to: 'bills#ticket_details', as: 'bills_ticket_details'
 
   get 'bills/global_form'
 
@@ -96,6 +130,8 @@ Rails.application.routes.draw do
 
   get 'tickets/index'
 
+  get 'tickets/details/:id', to: 'tickets#details', as: 'ticket_details'
+
   get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
 
   get 'orders/delete_product_from_order/:id', to: 'orders#delete_product_from_order', as: 'delete_product_from_order'
@@ -104,7 +140,11 @@ Rails.application.routes.draw do
 
   get 'tickets/sales/:store/:year/:month', to: 'tickets#sales', as: 'sales'
 
+  get 'bills/issued/:store/:year/:month', to: 'bills#issued', as: 'bills_issued'
+
   get 'tickets/sales_summary'
+
+  get 'tikets/process_incomming_data'
 
   devise_for :users
 
@@ -246,6 +286,7 @@ Rails.application.routes.draw do
 
   get 'orders/history'
 
+  post 'pos/received_data', to: 'pos#received_data', as: 'received_data'
 
 
   # Agregar la ruta para descargar los archivos, el link para descargarlos y el link en el navbar

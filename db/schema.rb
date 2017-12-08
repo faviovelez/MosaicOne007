@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171128032515) do
+ActiveRecord::Schema.define(version: 20171207191629) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,8 +30,11 @@ ActiveRecord::Schema.define(version: 20171128032515) do
   create_table "banks", force: :cascade do |t|
     t.string   "name"
     t.string   "rfc"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.boolean  "pos",        default: false
+    t.boolean  "web",        default: true
+    t.date     "date"
   end
 
   create_table "bill_receiveds", force: :cascade do |t|
@@ -84,9 +87,12 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.string   "city"
     t.string   "state"
     t.string   "country"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.integer  "tax_regime_id"
+    t.boolean  "pos",             default: false
+    t.boolean  "web",             default: true
+    t.date     "date"
   end
 
   add_index "billing_addresses", ["tax_regime_id"], name: "index_billing_addresses_on_tax_regime_id", using: :btree
@@ -140,6 +146,7 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.string   "payment_conditions"
     t.string   "from"
     t.string   "cancel_receipt"
+    t.string   "bill_type"
   end
 
   add_index "bills", ["cfdi_use_id"], name: "index_bills_on_cfdi_use_id", using: :btree
@@ -173,12 +180,14 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "business_group_id"
     t.integer  "month"
     t.integer  "year"
-    t.float    "sales_amount"
     t.float    "cost"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
-    t.integer  "sales_quantity"
     t.float    "discount"
+    t.float    "total"
+    t.float    "subtotal"
+    t.float    "taxes"
+    t.integer  "quantity"
   end
 
   add_index "business_group_sales", ["business_group_id"], name: "index_business_group_sales_on_business_group_id", using: :btree
@@ -202,14 +211,16 @@ ActiveRecord::Schema.define(version: 20171128032515) do
 
   create_table "business_unit_sales", force: :cascade do |t|
     t.integer  "business_unit_id"
-    t.float    "sales_amount"
-    t.integer  "sales_quantity"
     t.float    "cost"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.integer  "month"
     t.integer  "year"
     t.float    "discount"
+    t.float    "total"
+    t.float    "subtotal"
+    t.float    "taxes"
+    t.integer  "quantity"
   end
 
   add_index "business_unit_sales", ["business_unit_id"], name: "index_business_unit_sales_on_business_unit_id", using: :btree
@@ -250,10 +261,13 @@ ActiveRecord::Schema.define(version: 20171128032515) do
   create_table "cash_registers", force: :cascade do |t|
     t.string   "name"
     t.integer  "store_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
     t.float    "balance"
     t.integer  "cash_number"
+    t.boolean  "pos",         default: false
+    t.boolean  "web",         default: false
+    t.date     "date"
   end
 
   add_index "cash_registers", ["store_id"], name: "index_cash_registers_on_store_id", using: :btree
@@ -368,9 +382,12 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.string   "email"
     t.string   "company"
     t.integer  "service_offered_id"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.string   "receivers_zipcode"
+    t.boolean  "pos",                default: false
+    t.boolean  "web",                default: true
+    t.date     "date"
   end
 
   add_index "delivery_services", ["service_offered_id"], name: "index_delivery_services_on_service_offered_id", using: :btree
@@ -518,11 +535,14 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "month"
     t.integer  "year"
     t.date     "expense_date"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.string   "expense_type"
     t.float    "taxes"
     t.integer  "payment_id"
+    t.boolean  "pos",              default: false
+    t.boolean  "web",              default: true
+    t.date     "date"
   end
 
   add_index "expenses", ["bill_received_id"], name: "index_expenses_on_bill_received_id", using: :btree
@@ -533,12 +553,9 @@ ActiveRecord::Schema.define(version: 20171128032515) do
 
   create_table "exterior_colors", force: :cascade do |t|
     t.string   "name"
-    t.integer  "material_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
-
-  add_index "exterior_colors", ["material_id"], name: "index_exterior_colors_on_material_id", using: :btree
 
   create_table "finishings", force: :cascade do |t|
     t.string   "name"
@@ -548,21 +565,27 @@ ActiveRecord::Schema.define(version: 20171128032515) do
 
   create_table "images", force: :cascade do |t|
     t.string   "image"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.integer  "product_id"
+    t.boolean  "pos",        default: false
+    t.boolean  "web",        default: false
+    t.date     "date"
   end
 
   add_index "images", ["product_id"], name: "index_images_on_product_id", using: :btree
 
-  create_table "interior_colors", force: :cascade do |t|
+  create_table "impression_types", force: :cascade do |t|
     t.string   "name"
-    t.integer  "material_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "interior_colors", ["material_id"], name: "index_interior_colors_on_material_id", using: :btree
+  create_table "interior_colors", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "inventories", force: :cascade do |t|
     t.integer  "product_id"
@@ -576,11 +599,77 @@ ActiveRecord::Schema.define(version: 20171128032515) do
 
   add_index "inventories", ["product_id"], name: "index_inventories_on_product_id", using: :btree
 
+  create_table "material_children", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "material_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "children_id"
+  end
+
+  add_index "material_children", ["children_id"], name: "index_material_children_on_children_id", using: :btree
+  add_index "material_children", ["material_id"], name: "index_material_children_on_material_id", using: :btree
+
   create_table "materials", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "parent_id"
+    t.integer  "children_id"
   end
+
+  add_index "materials", ["children_id"], name: "index_materials_on_children_id", using: :btree
+  add_index "materials", ["parent_id"], name: "index_materials_on_parent_id", using: :btree
+
+  create_table "materials_design_likes", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "design_like_id"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "materials_design_likes", ["design_like_id"], name: "index_materials_design_likes_on_design_like_id", using: :btree
+  add_index "materials_design_likes", ["material_id"], name: "index_materials_design_likes_on_material_id", using: :btree
+
+  create_table "materials_exterior_colors", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "exterior_color_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "materials_exterior_colors", ["exterior_color_id"], name: "index_materials_exterior_colors_on_exterior_color_id", using: :btree
+  add_index "materials_exterior_colors", ["material_id"], name: "index_materials_exterior_colors_on_material_id", using: :btree
+
+  create_table "materials_finishings", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "finishing_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "materials_finishings", ["finishing_id"], name: "index_materials_finishings_on_finishing_id", using: :btree
+  add_index "materials_finishings", ["material_id"], name: "index_materials_finishings_on_material_id", using: :btree
+
+  create_table "materials_impression_types", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "impression_type_id"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
+  add_index "materials_impression_types", ["impression_type_id"], name: "index_materials_impression_types_on_impression_type_id", using: :btree
+  add_index "materials_impression_types", ["material_id"], name: "index_materials_impression_types_on_material_id", using: :btree
+
+  create_table "materials_interior_colors", force: :cascade do |t|
+    t.integer  "material_id"
+    t.integer  "interior_color_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "materials_interior_colors", ["interior_color_id"], name: "index_materials_interior_colors_on_interior_color_id", using: :btree
+  add_index "materials_interior_colors", ["material_id"], name: "index_materials_interior_colors_on_material_id", using: :btree
 
   create_table "materials_resistances", force: :cascade do |t|
     t.integer  "material_id"
@@ -718,8 +807,8 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.date     "payment_date"
     t.integer  "bill_received_id"
     t.integer  "supplier_id"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.integer  "user_id"
     t.integer  "store_id"
     t.integer  "business_unit_id"
@@ -734,6 +823,9 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "credit_days"
     t.float    "total"
     t.integer  "order_id"
+    t.boolean  "pos",              default: false
+    t.boolean  "web",              default: true
+    t.date     "date"
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
@@ -823,8 +915,6 @@ ActiveRecord::Schema.define(version: 20171128032515) do
   add_index "product_requests", ["product_id"], name: "index_product_requests_on_product_id", using: :btree
 
   create_table "product_sales", force: :cascade do |t|
-    t.float    "sales_amount"
-    t.integer  "sales_quantity"
     t.float    "cost"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
@@ -834,6 +924,10 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "store_id"
     t.integer  "business_unit_id"
     t.float    "discount"
+    t.float    "total"
+    t.float    "subtotal"
+    t.float    "taxes"
+    t.integer  "quantity"
   end
 
   add_index "product_sales", ["business_unit_id"], name: "index_product_sales_on_business_unit_id", using: :btree
@@ -914,9 +1008,26 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "supplier_id"
     t.integer  "unit_id"
     t.boolean  "group",                    default: false
+    t.integer  "child_id"
+    t.integer  "parent_id"
+    t.string   "unit"
+    t.boolean  "pos",                      default: false
+    t.boolean  "web",                      default: false
+    t.date     "date"
+    t.float    "discount_for_stores",      default: 0.0
+    t.float    "discount_for_franchises",  default: 0.0
+    t.float    "factor"
+    t.float    "average"
+    t.float    "stores_discount"
+    t.float    "franchises_discount"
+    t.boolean  "shared"
+    t.boolean  "armed",                    default: false
+    t.float    "armed_discount",           default: 0.0
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
+  add_index "products", ["child_id"], name: "index_products_on_child_id", using: :btree
+  add_index "products", ["parent_id"], name: "index_products_on_parent_id", using: :btree
   add_index "products", ["sat_key_id"], name: "index_products_on_sat_key_id", using: :btree
   add_index "products", ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id", using: :btree
   add_index "products", ["store_id"], name: "index_products_on_store_id", using: :btree
@@ -926,8 +1037,6 @@ ActiveRecord::Schema.define(version: 20171128032515) do
 
   create_table "prospect_sales", force: :cascade do |t|
     t.integer  "prospect_id"
-    t.float    "sales_amount"
-    t.integer  "sales_quantity"
     t.float    "cost"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
@@ -936,6 +1045,10 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "store_id"
     t.integer  "business_unit_id"
     t.float    "discount"
+    t.float    "total"
+    t.float    "subtotal"
+    t.float    "taxes"
+    t.integer  "quantity"
   end
 
   add_index "prospect_sales", ["business_unit_id"], name: "index_prospect_sales_on_business_unit_id", using: :btree
@@ -944,8 +1057,8 @@ ActiveRecord::Schema.define(version: 20171128032515) do
 
   create_table "prospects", force: :cascade do |t|
     t.integer  "store_id"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
     t.string   "prospect_type"
     t.string   "contact_first_name"
     t.string   "contact_middle_name"
@@ -967,6 +1080,9 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "store_type_id"
     t.integer  "store_prospect_id"
     t.integer  "credit_days"
+    t.boolean  "pos",                    default: false
+    t.boolean  "web",                    default: true
+    t.date     "date"
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
@@ -1109,6 +1225,28 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.string   "translation"
   end
 
+  create_table "rows", force: :cascade do |t|
+    t.integer  "bill_id"
+    t.integer  "product"
+    t.integer  "service"
+    t.string   "unique_code"
+    t.integer  "quantity"
+    t.float    "unit_value"
+    t.integer  "ticket"
+    t.string   "sat_key"
+    t.string   "sat_unit_key"
+    t.text     "description"
+    t.float    "total"
+    t.float    "subtotal"
+    t.float    "taxes"
+    t.float    "discount"
+    t.string   "sat_unit_description"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "rows", ["bill_id"], name: "index_rows_on_bill_id", using: :btree
+
   create_table "sales_movements", force: :cascade do |t|
     t.integer  "sales_id"
     t.integer  "movement_id"
@@ -1155,8 +1293,8 @@ ActiveRecord::Schema.define(version: 20171128032515) do
   create_table "service_offereds", force: :cascade do |t|
     t.integer  "service_id"
     t.integer  "store_id"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.float    "initial_price"
     t.float    "automatic_discount", default: 0.0
     t.float    "manual_discount",    default: 0.0
@@ -1173,12 +1311,33 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.string   "discount_reason"
     t.float    "total"
     t.float    "subtotal"
+    t.boolean  "pos",                default: false
+    t.boolean  "web",                default: true
+    t.date     "date"
   end
 
   add_index "service_offereds", ["service_id"], name: "index_service_offereds_on_service_id", using: :btree
   add_index "service_offereds", ["store_id"], name: "index_service_offereds_on_store_id", using: :btree
   add_index "service_offereds", ["tax_id"], name: "index_service_offereds_on_tax_id", using: :btree
   add_index "service_offereds", ["ticket_id"], name: "index_service_offereds_on_ticket_id", using: :btree
+
+  create_table "service_sales", force: :cascade do |t|
+    t.integer  "store_id"
+    t.integer  "year"
+    t.integer  "month"
+    t.float    "cost"
+    t.float    "total"
+    t.float    "subtotal"
+    t.float    "taxes"
+    t.float    "discount"
+    t.integer  "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "service_id"
+  end
+
+  add_index "service_sales", ["service_id"], name: "index_service_sales_on_service_id", using: :btree
+  add_index "service_sales", ["store_id"], name: "index_service_sales_on_store_id", using: :btree
 
   create_table "services", force: :cascade do |t|
     t.string   "unique_code"
@@ -1193,6 +1352,7 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.string   "delivery_company"
+    t.boolean  "current"
   end
 
   add_index "services", ["business_unit_id"], name: "index_services_on_business_unit_id", using: :btree
@@ -1218,14 +1378,19 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.float    "cost"
     t.integer  "supplier_id"
     t.integer  "product_request_id"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.float    "total_cost"
     t.string   "discount_reason"
     t.float    "total"
     t.float    "subtotal"
+    t.integer  "bill_id"
+    t.boolean  "pos",                default: false
+    t.boolean  "web",                default: true
+    t.date     "date"
   end
 
+  add_index "store_movements", ["bill_id"], name: "index_store_movements_on_bill_id", using: :btree
   add_index "store_movements", ["order_id"], name: "index_store_movements_on_order_id", using: :btree
   add_index "store_movements", ["product_id"], name: "index_store_movements_on_product_id", using: :btree
   add_index "store_movements", ["product_request_id"], name: "index_store_movements_on_product_request_id", using: :btree
@@ -1238,12 +1403,16 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "store_id"
     t.string   "month"
     t.string   "year"
-    t.float    "sales_amount"
-    t.integer  "sales_quantity"
     t.float    "cost"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.float    "discount"
+    t.float    "total"
+    t.float    "subtotal"
+    t.float    "taxes"
+    t.integer  "quantity"
+    t.float    "payments"
+    t.float    "expenses"
   end
 
   add_index "store_sales", ["store_id"], name: "index_store_sales_on_store_id", using: :btree
@@ -1309,7 +1478,7 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "advance_i_last_folio",     default: 0
     t.string   "initial_inventory"
     t.string   "current_inventory"
-    t.string   "propects_file"
+    t.string   "prospects_file"
   end
 
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree
@@ -1329,6 +1498,10 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.string   "rack"
     t.string   "level"
     t.boolean  "manual_price_update", default: false
+    t.boolean  "pos",                 default: false
+    t.boolean  "web",                 default: true
+    t.date     "date"
+    t.float    "manual_price"
   end
 
   add_index "stores_inventories", ["product_id"], name: "index_stores_inventories_on_product_id", using: :btree
@@ -1349,11 +1522,14 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "store_id"
     t.integer  "quantity",              default: 0
     t.integer  "movement_id"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
     t.integer  "retail_units_per_unit"
     t.integer  "units_used"
     t.integer  "store_movement_id"
+    t.boolean  "pos",                   default: false
+    t.boolean  "web",                   default: true
+    t.date     "date"
   end
 
   add_index "stores_warehouse_entries", ["movement_id"], name: "index_stores_warehouse_entries_on_movement_id", using: :btree
@@ -1422,10 +1598,13 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.integer  "bank_id"
     t.string   "number"
     t.integer  "store_id"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.float    "debit_comission"
     t.float    "credit_comission"
+    t.boolean  "pos",              default: false
+    t.boolean  "web",              default: false
+    t.date     "date"
   end
 
   add_index "terminals", ["bank_id"], name: "index_terminals_on_bank_id", using: :btree
@@ -1453,6 +1632,10 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.boolean  "payed",            default: false
     t.integer  "parent_id"
     t.float    "cost"
+    t.boolean  "saved"
+    t.boolean  "pos",              default: false
+    t.boolean  "web",              default: false
+    t.date     "date"
   end
 
   add_index "tickets", ["bill_id"], name: "index_tickets_on_bill_id", using: :btree
@@ -1467,8 +1650,11 @@ ActiveRecord::Schema.define(version: 20171128032515) do
   create_table "tickets_children", force: :cascade do |t|
     t.integer  "ticket_id"
     t.integer  "children_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.boolean  "pos",         default: false
+    t.boolean  "web",         default: false
+    t.date     "date"
   end
 
   add_index "tickets_children", ["children_id"], name: "index_tickets_children_on_children_id", using: :btree
@@ -1528,6 +1714,9 @@ ActiveRecord::Schema.define(version: 20171128032515) do
     t.string   "last_name"
     t.integer  "store_id"
     t.integer  "role_id"
+    t.boolean  "web"
+    t.boolean  "pos"
+    t.date     "date"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
@@ -1645,10 +1834,19 @@ ActiveRecord::Schema.define(version: 20171128032515) do
   add_foreign_key "expenses", "payments"
   add_foreign_key "expenses", "stores"
   add_foreign_key "expenses", "users"
-  add_foreign_key "exterior_colors", "materials"
   add_foreign_key "images", "products"
-  add_foreign_key "interior_colors", "materials"
   add_foreign_key "inventories", "products"
+  add_foreign_key "material_children", "materials"
+  add_foreign_key "materials_design_likes", "design_likes"
+  add_foreign_key "materials_design_likes", "materials"
+  add_foreign_key "materials_exterior_colors", "exterior_colors"
+  add_foreign_key "materials_exterior_colors", "materials"
+  add_foreign_key "materials_finishings", "finishings"
+  add_foreign_key "materials_finishings", "materials"
+  add_foreign_key "materials_impression_types", "impression_types"
+  add_foreign_key "materials_impression_types", "materials"
+  add_foreign_key "materials_interior_colors", "interior_colors"
+  add_foreign_key "materials_interior_colors", "materials"
   add_foreign_key "materials_resistances", "materials"
   add_foreign_key "materials_resistances", "resistances"
   add_foreign_key "movements", "bills"
@@ -1730,16 +1928,20 @@ ActiveRecord::Schema.define(version: 20171128032515) do
   add_foreign_key "return_tickets", "bills"
   add_foreign_key "return_tickets", "stores"
   add_foreign_key "return_tickets", "tickets"
+  add_foreign_key "rows", "bills"
   add_foreign_key "sales_movements", "movements"
   add_foreign_key "sales_targets", "stores"
   add_foreign_key "service_offereds", "services"
   add_foreign_key "service_offereds", "stores"
   add_foreign_key "service_offereds", "taxes"
   add_foreign_key "service_offereds", "tickets"
+  add_foreign_key "service_sales", "services"
+  add_foreign_key "service_sales", "stores"
   add_foreign_key "services", "business_units"
   add_foreign_key "services", "sat_keys"
   add_foreign_key "services", "sat_unit_keys"
   add_foreign_key "services", "stores"
+  add_foreign_key "store_movements", "bills"
   add_foreign_key "store_movements", "orders"
   add_foreign_key "store_movements", "product_requests"
   add_foreign_key "store_movements", "products"

@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  store_id: 
+  year: 1
+  month: 1
+  cost: 1.5
+  total: 1.5
+  subtotal: 1.5
+  taxes: 1.5
+  discount: 1.5
+  quantity: 1
+
+two:
+  store_id: 
+  year: 1
+  month: 1
+  cost: 1.5
+  total: 1.5
+  subtotal: 1.5
+  taxes: 1.5
+  discount: 1.5
+  quantity: 1
