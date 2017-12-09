@@ -128,14 +128,22 @@ class StoresController < ApplicationController
 
   def save_csv_files
     @store = current_user.store
-    if (params[:store][:initial_inventory].present? || params[:store][:current_inventory].present? || params[:store][:prospects].present?)
+    if params[:store][:initial_inventory].present?
       @store.update(
-      initial_inventory: params[:store][:initial_inventory],
-      current_inventory: params[:store][:current_inventory],
-      prospects: params[:store][:prospects]
+        initial_inventory: params[:store][:initial_inventory]
       )
-      process_csv_files
     end
+    if params[:store][:current_inventory].present?
+      @store.update(
+        current_inventory: params[:store][:current_inventory]
+      )
+    end
+    if params[:store][:prospects].present?
+      @store.update(
+        prospects: params[:store][:prospects]
+      )
+    end
+    process_csv_files
   end
 
   def process_csv_files
@@ -159,34 +167,40 @@ class StoresController < ApplicationController
           inventory = store.stores_inventories.where(product: product).first
           entries = store.stores_warehouse_entries.where(product: product)
           quantity = row['cant'].to_i
-          discount_percent = 0.35
-          cost = product.price * (1 - discount_percent)
-          discount = cost * discount_percent * quantity
-          final_price = cost * (1 - discount_percent)
-          entries.each do |entry|
-            entry.delete
+          if quantity > 0
+            if store.store_type.store_type == 'tienda propia'
+              discount_percent = product.discount_for_stores / 100
+            elsif
+              discount_percent = product.discount_for_franchises / 100
+            end
+            cost = product.price * (1 - discount_percent)
+            discount = cost * discount_percent * quantity
+            final_price = cost * (1 - discount_percent)
+            entries.each do |entry|
+              entry.delete
+            end
+            movement = StoreMovement.new(
+              movement_type: 'alta',
+              store: store,
+              product: product,
+              quantity: quantity,
+              cost: cost,
+              total_cost: (cost * quantity).round(2),
+              supplier: product.supplier,
+              discount_applied: discount.round(2),
+              automatic_discount: discount.round(2)
+            )
+            if movement.save
+              @product_counter += 1
+            end
+            StoresWarehouseEntry.create(
+              product: product,
+              store: store,
+              quantity: quantity,
+              store_movement: movement
+            )
+            inventory.update(quantity: quantity)
           end
-          movement = StoreMovement.new(
-            movement_type: 'alta',
-            store: store,
-            product: product,
-            quantity: quantity,
-            cost: cost,
-            total_cost: (cost * quantity).round(2),
-            supplier: product.supplier,
-            discount_applied: discount.round(2),
-            automatic_discount: discount.round(2)
-          )
-          if movement.save
-            @product_counter += 1
-          end
-          StoresWarehouseEntry.create(
-            product: product,
-            store: store,
-            quantity: quantity,
-            store_movement: movement
-          )
-          inventory.update(quantity: quantity)
         end
       end
       unfinded.join(", ")
