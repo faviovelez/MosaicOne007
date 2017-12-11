@@ -128,12 +128,22 @@ class StoresController < ApplicationController
 
   def save_csv_files
     @store = current_user.store
-    if (params[:store][:initial_inventory].present? || params[:store][:current_inventory].present? || params[:store][:prospects].present?)
+    if params[:store][:initial_inventory].present?
       @store.update(
-      initial_inventory: params[:store][:initial_inventory],
-      current_inventory: params[:store][:current_inventory],
-      prospects: params[:store][:prospects]
+        initial_inventory: params[:store][:initial_inventory]
       )
+    end
+    if params[:store][:current_inventory].present?
+      @store.update(
+        current_inventory: params[:store][:current_inventory]
+      )
+    end
+    if params[:store][:prospects].present?
+      @store.update(
+        prospects: params[:store][:prospects]
+      )
+    end
+    if (params[:store][:initial_inventory].present? || params[:store][:current_inventory].present? || params[:store][:prospects].present?)
       process_csv_files
     end
   end
@@ -159,7 +169,11 @@ class StoresController < ApplicationController
           inventory = store.stores_inventories.where(product: product).first
           entries = store.stores_warehouse_entries.where(product: product)
           quantity = row['cant'].to_i
-          discount_percent = 0.35
+          if store.store_type.store_type == 'franquicia'
+            discount_percent = product.discount_for_franchises
+          elsif store.store_type.store_type == 'tienda propia'
+            discount_percent = product.discount_for_stores
+          end
           cost = product.price * (1 - discount_percent)
           discount = cost * discount_percent * quantity
           final_price = cost * (1 - discount_percent)
@@ -206,7 +220,11 @@ class StoresController < ApplicationController
           inventory = store.stores_inventories.where(product: product).first
           entries = store.stores_warehouse_entries.where(product: product)
           quantity = row['cant'].to_i
-          discount_percent = 0.35
+          if store.store_type.store_type == 'franquicia'
+            discount_percent = product.discount_for_franchises
+          elsif store.store_type.store_type == 'tienda propia'
+            discount_percent = product.discount_for_stores
+          end
           cost = product.price * (1 - discount_percent)
           discount = cost * discount_percent * quantity
           final_price = cost * (1 - discount_percent)

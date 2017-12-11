@@ -11,7 +11,7 @@ class PosController < ApplicationController
           fill_references(table_name, key, values)
         end
       end
-      process_incomming_data # Cambiar después a un background job
+    #  process_incomming_data # Cambiar después a un background job
       render json: {status: "success", message: "Informacion Cargada"}
     else
       render json: {status: "error", message: "Login Error"}
@@ -41,7 +41,6 @@ class PosController < ApplicationController
 
     def fill_references(table_name, pos_id, values)
       reg = create_reg(table_name, values)
-      binding.pry
       reg.save
       @ids_references[table_name.singularize][pos_id] = reg.id
     end

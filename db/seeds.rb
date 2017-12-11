@@ -855,17 +855,21 @@ csv.each do |row|
                                           exterior_color_or_design: row['exterior_color_or_design'],
                                           product_type: row['product_type'],
                                           line: Classification.find_by_name(row['line']).name,
-                                          classification: row['class'],
+                                          classification: row['classification'],
                                           main_material: row['main_material'],
                                           resistance_main_material: row['resistance_main_material'],
                                           design_type: row['design_type'],
                                           warehouse: Warehouse.find_by_name(row['warehouse']),
                                           sat_unit_key: SatUnitKey.find_by_unit(row['sat_unit_key']),
+                                          unit: SatUnitKey.find_by_unit(row['sat_unit_key']).description,
                                           outer_length: row['outer_length'],
                                           inner_length: row['inner_length'],
                                           price: row['price'],
                                           factor: row['factor'],
                                           average: row['average'],
+                                          discount_for_franchises: row['stores_discount'],
+                                          discount_for_stores: row['retails_discount'],
+                                          armed_discount: row['discount_when_armed'],
                                           current: true,
                                           shared: true
                                         }
@@ -1145,7 +1149,8 @@ stores.each_with_index do |val, index|
                                       zipcode: row['cod_postal'],
                                       neighborhood: row['colonia'],
                                       city: row['ciudad'],
-                                      state: row['estado']
+                                      state: row['estado'],
+                                      store: Store.find_by_store_name(stores[index])
                                     }
                                   )
     prospect = Prospect.create(

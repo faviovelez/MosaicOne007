@@ -46,6 +46,8 @@ class Store < ActiveRecord::Base
   has_many :store_sales
   has_many :business_unit_sales
   has_many :business_group_sales
+  has_many :billing_addresses
+  has_many :tickets_children
   mount_uploader :certificate, SatCertificateUploader
   mount_uploader :key, SatKeyUploader
   mount_uploader :initial_inventory, InitialInventoryUploader
