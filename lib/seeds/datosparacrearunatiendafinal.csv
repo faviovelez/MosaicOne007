@@ -1,18 +1,18 @@
 nombre_de_la_tienda,tipo_de_persona (física o moral),tipo_de_tienda,primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,correo,tel_fijo,extension,celular,zipcode,empresa,grupo_de_negocios,sobreprecio
-Calzada,persona moral,tienda propia,Gabriela,,Nuño,Carmona,calzada@disenosdecarton.com.mx,36183770,,,44340,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Guadalupe,persona moral,tienda propia,Gabriela,Nataly,Vargas,Flores,guadalupe@disenosdecarton.com.mx,31256716,,,45030,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Lapizlázuli,persona moral,tienda propia,Luis,Daniel,Cerda,Suarez,lapizlazuli@disenosdecarton.com.mx,31221635,,,45000,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Lopez Mateos,persona moral,tienda propia,Viridiana,Elizabeth,Guerrero,Reyes,lopezmateos@disenosdecarton.com.mx,33447474,,,45070,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Patria,persona moral,tienda propia,Maria,Elena,Gutierrez,Rendon,patria@disenosdecarton.com.mx,36733211,,,45027,Diseños de Cartón,Diseños De Cartón,0
-Puerto Vallarta,persona moral,tienda propia,Alma,Clarisa,Isiordia,Monreal,ptovallarta@disenosdecarton.com.mx,22222820,,,48330,Comercializadora de Cartón y Diseño,Diseños De Cartón,20
-Río Nilo,persona moral,tienda propia,Sara,Yazmin,Paz,Ramirez,rionilo@disenosdecarton.com.mx,36396597,,,44860,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Roble,persona moral,tienda propia,Monica,Anayeli,Landeros,Perez,roble@disenosdecarton.com.mx,38126814,,,44900,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Santa Tere,persona moral,tienda propia,Juana,Iveth,Padilla,Rodriguez,santateresita@disenosdecarton.com.mx,38260928,,,44600,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Clouthier,persona moral,tienda propia,Miriam,Vanessa,Rizo,Fajardo,clouthier@disenosdecarton.com,31250059,,,45050,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Valle Real,persona moral,tienda propia,Erika,Vanesa,Martinez,Mercado,vallereal@disenosdecarton.com.mx,36855571,,,45136,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-San Juan Bosco,persona moral,tienda propia,Laura,Maribel,Flores,Lopez,snjuanbosco@disenosdecarton.com,36653677,,,44730,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Tonalá,persona moral,tienda propia,Teresa,de Jesus del Milagro,Camarena,Avila,tonala@disenosdecarton.com.mx,36832509,,,45400,Comercializadora de Cartón y Diseño,Diseños De Cartón,0
-Aguascalientes,persona física,franquicia,Favio,,Velez,Moralez,aguascalientes@disenosdecarton.com.mx,449153590,,3338143330,20130,Favio Velez Morales,Aguascalientes,0
+Calzada,persona moral,tienda propia,Gabriela,,Nuño,Carmona,calzada@disenosdecarton.com.mx,36183770,,,44340,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Guadalupe,persona moral,tienda propia,Gabriela,Nataly,Vargas,Flores,guadalupe@disenosdecarton.com.mx,31256716,,,45030,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Lapizlázuli,persona moral,tienda propia,Luis,Daniel,Cerda,Suarez,lapizlazuli@disenosdecarton.com.mx,31221635,,,45000,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Lopez Mateos,persona moral,tienda propia,Viridiana,Elizabeth,Guerrero,Reyes,lopezmateos@disenosdecarton.com.mx,33447474,,,45070,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Patria,persona moral,tienda propia,Maria,Elena,Gutierrez,Rendon,patria@disenosdecarton.com.mx,36733211,,,45027,Diseños de Cartón,Diseños de Cartón,0
+Puerto Vallarta,persona moral,tienda propia,Alma,Clarisa,Isiordia,Monreal,ptovallarta@disenosdecarton.com.mx,22222820,,,48330,Comercializadora de Cartón y Diseño,Diseños de Cartón,20
+Río Nilo,persona moral,tienda propia,Sara,Yazmin,Paz,Ramirez,rionilo@disenosdecarton.com.mx,36396597,,,44860,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Roble,persona moral,tienda propia,Monica,Anayeli,Landeros,Perez,roble@disenosdecarton.com.mx,38126814,,,44900,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Santa Tere,persona moral,tienda propia,Juana,Iveth,Padilla,Rodriguez,santateresita@disenosdecarton.com.mx,38260928,,,44600,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Clouthier,persona moral,tienda propia,Miriam,Vanessa,Rizo,Fajardo,clouthier@disenosdecarton.com,31250059,,,45050,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Valle Real,persona moral,tienda propia,Erika,Vanesa,Martinez,Mercado,vallereal@disenosdecarton.com.mx,36855571,,,45136,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+San Juan Bosco,persona moral,tienda propia,Laura,Maribel,Flores,Lopez,snjuanbosco@disenosdecarton.com,36653677,,,44730,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Tonalá,persona moral,tienda propia,Teresa,de Jesus del Milagro,Camarena,Avila,tonala@disenosdecarton.com.mx,36832509,,,45400,Comercializadora de Cartón y Diseño,Diseños de Cartón,0
+Aguascalientes,persona física,franquicia,Favio,,Velez,Moralez,aguascalientes@disenosdecarton.com.mx,449153590,,3338143330,20130,Favio Velez Morales,Aguascalientes,15
 Cruz del sur,persona física,franquicia,Sol,Beatriz,Pardo,Villanueva,cruzdelsur@disenosdecarton.com.mx,3331621382,,3315769173,44950,Sol beatriz Pardo Villanueva ,Cruz Del Sur,0
 Cuautitlán,persona física,franquicia,Jose,Eduardo,Curiel,Ortiz,cuautitlan@disenosdecarton.com.mx,5591309777,,5523036869,54767,Jose Eduardo Curiel Ortiz,Cuautitlán,0
 Culiacán,persona física,franquicia,Cristina ,Yukiko,Tellaeche ,Inukai,culiacan@disenosdecarton.com.mx,6677126282,,,80060,Cristina Yukiko Tellaeche Inukai,Culiacán,0
@@ -40,5 +40,5 @@ Tepic,persona física,franquicia,Salvador,,Flores,Hernandez,tepic@disenosdecarto
 Tuxtla,persona física,franquicia,Adriana,Guadalupe,Grajales,Corzo,tuxtla@disenosdecarton.com.mx,9616882727,,9616031037,29000,Adriana Guadalupe Grajales Corzo ,Tuxtla,0
 Zacatecas,persona física,franquicia,Maria,Elena,Belmontes,Ramirez,zacatecas@disenosdecarton.com.mx,4929221145,,,98000,Maria Elisa Belmontes Ramirez ,Zacatecas,0
 Toluca,persona física,franquicia,Eugenia,Leticia,Castro,Muñoz,toluca@disenosdecarton.com.mx,7222384476,,7222394433,50180,Eugenia Leticia Castro Muñoz ,Toluca,0
-Tlaxcala,persona física,franquicia,Fernando,Javier,Santiago,Cruz,tlaxcala@disenosdecarton.com.mx,2464646164,,5537911114,90800,Fernando Javier Santiago Cruz,Tlaxcala,0
-Guadalupe NL,persona física,franquicia,Jair,Fabian,Lopez,Salinas,guadalupenl@disenosdecarton.com.mx,,,8117620757,67139,Lopez Salinas Jair Fabian,Guadalupe NL,0
+Tlaxcala,persona física,franquicia,Fernando,Javier,Santiago,Cruz,tlaxcala@disenosdecarton.com.mx,2464646164,,5537911114,90800,Fernando Javier Santiago Cruz,Tlaxcala,15
+Guadalupe NL,persona física,franquicia,Jair,Fabian,Lopez,Salinas,guadalupenl@disenosdecarton.com.mx,,,8117620757,67139,Lopez Salinas Jair Fabian,Guadalupe NL,15
