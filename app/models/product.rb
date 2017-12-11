@@ -14,7 +14,6 @@ class Product < ActiveRecord::Base
   has_many :production_requests, dependent: :destroy
   has_one :request, dependent: :destroy
   belongs_to :warehouse
-  belongs_to :unit
   belongs_to :sat_key
   belongs_to :sat_unit_key
   belongs_to :supplier
@@ -36,7 +35,7 @@ class Product < ActiveRecord::Base
 
   validate :price_present, unless: :classification_is_special
 
-  validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya hay un producto con con este código."}
+  validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya existe un producto con con este código."}
 
   def price_present
       errors[:base] << "Es necesario el precio del producto." if price.blank?
