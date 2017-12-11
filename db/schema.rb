@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171208191711) do
+ActiveRecord::Schema.define(version: 20171211022312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,8 +93,10 @@ ActiveRecord::Schema.define(version: 20171208191711) do
     t.boolean  "pos",             default: false
     t.boolean  "web",             default: true
     t.date     "date"
+    t.integer  "store_id"
   end
 
+  add_index "billing_addresses", ["store_id"], name: "index_billing_addresses_on_store_id", using: :btree
   add_index "billing_addresses", ["tax_regime_id"], name: "index_billing_addresses_on_tax_regime_id", using: :btree
 
   create_table "bills", force: :cascade do |t|
@@ -1006,7 +1008,6 @@ ActiveRecord::Schema.define(version: 20171208191711) do
     t.boolean  "current"
     t.integer  "store_id"
     t.integer  "supplier_id"
-    t.integer  "unit_id"
     t.boolean  "group",                    default: false
     t.integer  "child_id"
     t.integer  "parent_id"
@@ -1023,6 +1024,7 @@ ActiveRecord::Schema.define(version: 20171208191711) do
     t.boolean  "shared"
     t.boolean  "armed",                    default: false
     t.float    "armed_discount",           default: 0.0
+    t.float    "price_was"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
@@ -1032,7 +1034,6 @@ ActiveRecord::Schema.define(version: 20171208191711) do
   add_index "products", ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id", using: :btree
   add_index "products", ["store_id"], name: "index_products_on_store_id", using: :btree
   add_index "products", ["supplier_id"], name: "index_products_on_supplier_id", using: :btree
-  add_index "products", ["unit_id"], name: "index_products_on_unit_id", using: :btree
   add_index "products", ["warehouse_id"], name: "index_products_on_warehouse_id", using: :btree
 
   create_table "prospect_sales", force: :cascade do |t|
@@ -1391,6 +1392,8 @@ ActiveRecord::Schema.define(version: 20171208191711) do
     t.boolean  "web",                default: true
     t.date     "date"
     t.integer  "prospect_id"
+    t.boolean  "temporal"
+    t.boolean  "down_applied"
   end
 
   add_index "store_movements", ["bill_id"], name: "index_store_movements_on_bill_id", using: :btree
@@ -1659,9 +1662,11 @@ ActiveRecord::Schema.define(version: 20171208191711) do
     t.boolean  "pos",         default: false
     t.boolean  "web",         default: false
     t.date     "date"
+    t.integer  "store_id"
   end
 
   add_index "tickets_children", ["children_id"], name: "index_tickets_children_on_children_id", using: :btree
+  add_index "tickets_children", ["store_id"], name: "index_tickets_children_on_store_id", using: :btree
   add_index "tickets_children", ["ticket_id"], name: "index_tickets_children_on_ticket_id", using: :btree
 
   create_table "type_of_bills", force: :cascade do |t|
@@ -1782,6 +1787,7 @@ ActiveRecord::Schema.define(version: 20171208191711) do
   add_foreign_key "bill_receiveds", "suppliers"
   add_foreign_key "bill_sales", "business_units"
   add_foreign_key "bill_sales", "stores"
+  add_foreign_key "billing_addresses", "stores"
   add_foreign_key "billing_addresses", "tax_regimes"
   add_foreign_key "bills", "cfdi_uses"
   add_foreign_key "bills", "countries"
@@ -1912,7 +1918,6 @@ ActiveRecord::Schema.define(version: 20171208191711) do
   add_foreign_key "products", "sat_unit_keys"
   add_foreign_key "products", "stores"
   add_foreign_key "products", "suppliers"
-  add_foreign_key "products", "units"
   add_foreign_key "products", "warehouses"
   add_foreign_key "prospect_sales", "business_units"
   add_foreign_key "prospect_sales", "prospects"
@@ -1984,6 +1989,7 @@ ActiveRecord::Schema.define(version: 20171208191711) do
   add_foreign_key "tickets", "stores"
   add_foreign_key "tickets", "taxes"
   add_foreign_key "tickets", "users"
+  add_foreign_key "tickets_children", "stores"
   add_foreign_key "tickets_children", "tickets"
   add_foreign_key "user_requests", "requests"
   add_foreign_key "user_requests", "users"
