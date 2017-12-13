@@ -75,6 +75,7 @@ class ProductsController < ApplicationController
   # PATCH/PUT /products/1.json
   # Este método también lo puede usar solamente 'product-admin'. Tanto en create como en update falta agregar que pueda subir imágenes (un modelo diferente de documents).
   def update
+    save_former_price
     @inventory = Inventory.find_by_product_id(@product) || StoresInventory.find_by_product_id(@product)
     save_image
     respond_to do |format|
@@ -99,6 +100,12 @@ class ProductsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to products_url, notice: 'El producto fue eliminado exitosamente.' }
       format.json { head :no_content }
+    end
+  end
+
+  def save_former_price
+    if params[:product][:price] != nil
+      @product.update(price_was: @product.price)
     end
   end
 

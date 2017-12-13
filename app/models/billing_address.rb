@@ -6,6 +6,7 @@ class BillingAddress < ActiveRecord::Base
   has_many :issuing_companies, foreign_key: 'issuing_company_id'
   has_many :receiving_companies, foreign_key: 'receiving_company_id'
   belongs_to :tax_regime
+  belongs_to :store
 
   validates :business_name, presence: { message: 'Debe escribir la razón social.'}
 
@@ -22,8 +23,8 @@ class BillingAddress < ActiveRecord::Base
 #  validates :state, presence: { message: 'Debe escribir el estado.'}
 
 #  validates :country, presence: { message: 'Debe seleccionar el país.'}
-  
-  validates :rfc, length: { maximum: 13, message: 'El RFC no puede contener más de 13 caracteres.'}
+
+#  validates :rfc, length: { maximum: 13, message: 'El RFC no puede contener más de 13 caracteres.'}
 
 #  validates :zipcode, length: { is: 5, message: 'El código postal debe contener 5 caracteres.'}
 

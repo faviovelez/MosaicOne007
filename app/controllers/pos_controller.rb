@@ -11,7 +11,7 @@ class PosController < ApplicationController
           fill_references(table_name, key, values)
         end
       end
-      process_incomming_data # Cambiar después a un background job
+    #  process_incomming_data # Cambiar después a un background job
       render json: {status: "success", message: "Informacion Cargada"}
     else
       render json: {status: "error", message: "Login Error"}
@@ -63,7 +63,7 @@ class PosController < ApplicationController
         end
       end
       add_extras(new_reg, table_name, values[:object])
-      new_reg.id = klass.last.id + 1
+      new_reg.id = klass.last.try(:id).to_i + 1
       new_reg.web = true
       new_reg
     end

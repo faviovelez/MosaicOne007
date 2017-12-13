@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171207191629) do
+ActiveRecord::Schema.define(version: 20171212172307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,8 +93,10 @@ ActiveRecord::Schema.define(version: 20171207191629) do
     t.boolean  "pos",             default: false
     t.boolean  "web",             default: true
     t.date     "date"
+    t.integer  "store_id"
   end
 
+  add_index "billing_addresses", ["store_id"], name: "index_billing_addresses_on_store_id", using: :btree
   add_index "billing_addresses", ["tax_regime_id"], name: "index_billing_addresses_on_tax_regime_id", using: :btree
 
   create_table "bills", force: :cascade do |t|
@@ -1006,7 +1008,6 @@ ActiveRecord::Schema.define(version: 20171207191629) do
     t.boolean  "current"
     t.integer  "store_id"
     t.integer  "supplier_id"
-    t.integer  "unit_id"
     t.boolean  "group",                    default: false
     t.integer  "child_id"
     t.integer  "parent_id"
@@ -1023,6 +1024,8 @@ ActiveRecord::Schema.define(version: 20171207191629) do
     t.boolean  "shared"
     t.boolean  "armed",                    default: false
     t.float    "armed_discount",           default: 0.0
+    t.float    "price_was"
+    t.string   "only_measure"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
@@ -1032,7 +1035,6 @@ ActiveRecord::Schema.define(version: 20171207191629) do
   add_index "products", ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id", using: :btree
   add_index "products", ["store_id"], name: "index_products_on_store_id", using: :btree
   add_index "products", ["supplier_id"], name: "index_products_on_supplier_id", using: :btree
-  add_index "products", ["unit_id"], name: "index_products_on_unit_id", using: :btree
   add_index "products", ["warehouse_id"], name: "index_products_on_warehouse_id", using: :btree
 
   create_table "prospect_sales", force: :cascade do |t|
@@ -1314,8 +1316,10 @@ ActiveRecord::Schema.define(version: 20171207191629) do
     t.boolean  "pos",                default: false
     t.boolean  "web",                default: true
     t.date     "date"
+    t.integer  "prospect_id"
   end
 
+  add_index "service_offereds", ["prospect_id"], name: "index_service_offereds_on_prospect_id", using: :btree
   add_index "service_offereds", ["service_id"], name: "index_service_offereds_on_service_id", using: :btree
   add_index "service_offereds", ["store_id"], name: "index_service_offereds_on_store_id", using: :btree
   add_index "service_offereds", ["tax_id"], name: "index_service_offereds_on_tax_id", using: :btree
@@ -1388,12 +1392,16 @@ ActiveRecord::Schema.define(version: 20171207191629) do
     t.boolean  "pos",                default: false
     t.boolean  "web",                default: true
     t.date     "date"
+    t.integer  "prospect_id"
+    t.boolean  "temporal"
+    t.boolean  "down_applied"
   end
 
   add_index "store_movements", ["bill_id"], name: "index_store_movements_on_bill_id", using: :btree
   add_index "store_movements", ["order_id"], name: "index_store_movements_on_order_id", using: :btree
   add_index "store_movements", ["product_id"], name: "index_store_movements_on_product_id", using: :btree
   add_index "store_movements", ["product_request_id"], name: "index_store_movements_on_product_request_id", using: :btree
+  add_index "store_movements", ["prospect_id"], name: "index_store_movements_on_prospect_id", using: :btree
   add_index "store_movements", ["store_id"], name: "index_store_movements_on_store_id", using: :btree
   add_index "store_movements", ["supplier_id"], name: "index_store_movements_on_supplier_id", using: :btree
   add_index "store_movements", ["tax_id"], name: "index_store_movements_on_tax_id", using: :btree
@@ -1655,9 +1663,11 @@ ActiveRecord::Schema.define(version: 20171207191629) do
     t.boolean  "pos",         default: false
     t.boolean  "web",         default: false
     t.date     "date"
+    t.integer  "store_id"
   end
 
   add_index "tickets_children", ["children_id"], name: "index_tickets_children_on_children_id", using: :btree
+  add_index "tickets_children", ["store_id"], name: "index_tickets_children_on_store_id", using: :btree
   add_index "tickets_children", ["ticket_id"], name: "index_tickets_children_on_ticket_id", using: :btree
 
   create_table "type_of_bills", force: :cascade do |t|
@@ -1778,6 +1788,7 @@ ActiveRecord::Schema.define(version: 20171207191629) do
   add_foreign_key "bill_receiveds", "suppliers"
   add_foreign_key "bill_sales", "business_units"
   add_foreign_key "bill_sales", "stores"
+  add_foreign_key "billing_addresses", "stores"
   add_foreign_key "billing_addresses", "tax_regimes"
   add_foreign_key "bills", "cfdi_uses"
   add_foreign_key "bills", "countries"
@@ -1908,7 +1919,6 @@ ActiveRecord::Schema.define(version: 20171207191629) do
   add_foreign_key "products", "sat_unit_keys"
   add_foreign_key "products", "stores"
   add_foreign_key "products", "suppliers"
-  add_foreign_key "products", "units"
   add_foreign_key "products", "warehouses"
   add_foreign_key "prospect_sales", "business_units"
   add_foreign_key "prospect_sales", "prospects"
@@ -1931,6 +1941,7 @@ ActiveRecord::Schema.define(version: 20171207191629) do
   add_foreign_key "rows", "bills"
   add_foreign_key "sales_movements", "movements"
   add_foreign_key "sales_targets", "stores"
+  add_foreign_key "service_offereds", "prospects"
   add_foreign_key "service_offereds", "services"
   add_foreign_key "service_offereds", "stores"
   add_foreign_key "service_offereds", "taxes"
@@ -1945,6 +1956,7 @@ ActiveRecord::Schema.define(version: 20171207191629) do
   add_foreign_key "store_movements", "orders"
   add_foreign_key "store_movements", "product_requests"
   add_foreign_key "store_movements", "products"
+  add_foreign_key "store_movements", "prospects"
   add_foreign_key "store_movements", "stores"
   add_foreign_key "store_movements", "suppliers"
   add_foreign_key "store_movements", "taxes"
@@ -1978,6 +1990,7 @@ ActiveRecord::Schema.define(version: 20171207191629) do
   add_foreign_key "tickets", "stores"
   add_foreign_key "tickets", "taxes"
   add_foreign_key "tickets", "users"
+  add_foreign_key "tickets_children", "stores"
   add_foreign_key "tickets_children", "tickets"
   add_foreign_key "user_requests", "requests"
   add_foreign_key "user_requests", "users"

@@ -855,17 +855,21 @@ csv.each do |row|
                                           exterior_color_or_design: row['exterior_color_or_design'],
                                           product_type: row['product_type'],
                                           line: Classification.find_by_name(row['line']).name,
-                                          classification: row['class'],
+                                          classification: row['classification'],
                                           main_material: row['main_material'],
                                           resistance_main_material: row['resistance_main_material'],
                                           design_type: row['design_type'],
                                           warehouse: Warehouse.find_by_name(row['warehouse']),
                                           sat_unit_key: SatUnitKey.find_by_unit(row['sat_unit_key']),
+                                          unit: SatUnitKey.find_by_unit(row['sat_unit_key']).description,
                                           outer_length: row['outer_length'],
                                           inner_length: row['inner_length'],
                                           price: row['price'],
                                           factor: row['factor'],
                                           average: row['average'],
+                                          discount_for_franchises: row['stores_discount'],
+                                          discount_for_stores: row['retails_discount'],
+                                          armed_discount: row['discount_when_armed'],
                                           current: true,
                                           shared: true
                                         }
@@ -1138,6 +1142,7 @@ stores.each_with_index do |val, index|
 
     billing = BillingAddress.create(
                                     {
+                                      business_name: row['nombre_de_empresa_o_cliente'],
                                       rfc: row['rfc'],
                                       street: row['calle'],
                                       exterior_number: row['num_ext'],
@@ -1145,10 +1150,11 @@ stores.each_with_index do |val, index|
                                       zipcode: row['cod_postal'],
                                       neighborhood: row['colonia'],
                                       city: row['ciudad'],
-                                      state: row['estado']
+                                      state: row['estado'],
+                                      store: Store.find_by_store_name(stores[index])
                                     }
                                   )
-    prospect = Prospect.create(
+    prospect = Prospect.find_or_create_by(
                                 {
                                   legal_or_business_name: row['nombre_de_empresa_o_cliente'],
                                   prospect_type: row['giro'],
@@ -1186,47 +1192,47 @@ puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
 
 
 Store.all.each do |store|
-  unless store.id == 1
-    billing_general_prospect = BillingAddress.find_or_create_by(
-                                                                  {
-                                                                    business_name: 'Público en General',
-                                                                    rfc: 'XAXX010101000',
-                                                                    country: 'México'
-                                                                  }
-                                                                )
+  billing_general_prospect = BillingAddress.find_or_create_by(
+                                                                {
+                                                                  business_name: 'Público en General',
+                                                                  rfc: 'XAXX010101000',
+                                                                  country: 'México',
+                                                                  store: store
+                                                                }
+                                                              )
 
-    general_prospect = Prospect.find_or_create_by(
-                                        {
-                                          legal_or_business_name: 'Público en General',
-                                          prospect_type: 'público en general',
-                                          contact_first_name: 'ninguno',
-                                          contact_last_name: 'ninguno',
-                                          direct_phone: 1111111111,
-                                          store: store,
-                                          store_prospect: nil,
-                                          billing_address: billing_general_prospect
-                                        }
-                                      )
+  general_prospect = Prospect.find_or_create_by(
+                                      {
+                                        legal_or_business_name: 'Público en General',
+                                        prospect_type: 'público en general',
+                                        contact_first_name: 'ninguno',
+                                        contact_last_name: 'ninguno',
+                                        direct_phone: 1111111111,
+                                        store: store,
+                                        store_prospect: nil,
+                                        billing_address: billing_general_prospect
+                                      }
+                                    )
 
-    billing_foreign_prospect = BillingAddress.find_or_create_by(
-                                                                  {
-                                                                    business_name: 'Residente en el extranjero',
-                                                                    rfc: 'XEXX010101000',
-                                                                    country: ''
-                                                                  }
-                                                                )
+  billing_foreign_prospect = BillingAddress.find_or_create_by(
+                                                                {
+                                                                  business_name: 'Residente en el extranjero',
+                                                                  rfc: 'XEXX010101000',
+                                                                  country: '',
+                                                                  store: store
+                                                                }
+                                                              )
 
-    foreign_prospect = Prospect.find_or_create_by(
-                                        {
-                                          legal_or_business_name: 'Residente en el extranjero',
-                                          prospect_type: 'residente en el extranjero',
-                                          contact_first_name: 'ninguno',
-                                          contact_last_name: 'ninguno',
-                                          direct_phone: 1111111111,
-                                          store: store,
-                                          store_prospect: nil,
-                                          billing_address: billing_foreign_prospect
-                                        }
-                                      )
-  end
+  foreign_prospect = Prospect.find_or_create_by(
+                                      {
+                                        legal_or_business_name: 'Residente en el extranjero',
+                                        prospect_type: 'residente en el extranjero',
+                                        contact_first_name: 'ninguno',
+                                        contact_last_name: 'ninguno',
+                                        direct_phone: 1111111111,
+                                        store: store,
+                                        store_prospect: nil,
+                                        billing_address: billing_foreign_prospect
+                                      }
+                                    )
 end
