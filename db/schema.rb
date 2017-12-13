@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171211022312) do
+ActiveRecord::Schema.define(version: 20171212172307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1025,6 +1025,7 @@ ActiveRecord::Schema.define(version: 20171211022312) do
     t.boolean  "armed",                    default: false
     t.float    "armed_discount",           default: 0.0
     t.float    "price_was"
+    t.string   "only_measure"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
