@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171212172307) do
+ActiveRecord::Schema.define(version: 20171215052732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -270,6 +270,7 @@ ActiveRecord::Schema.define(version: 20171212172307) do
     t.boolean  "pos",         default: false
     t.boolean  "web",         default: false
     t.date     "date"
+    t.float    "cash_alert",  default: 0.0
   end
 
   add_index "cash_registers", ["store_id"], name: "index_cash_registers_on_store_id", using: :btree
