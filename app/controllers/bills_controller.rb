@@ -1399,7 +1399,7 @@ XML
     client = Savon.client(wsdl: ENV['stamp_dir'])
 
     #Carga el XML para ser timbrado
-    file = File.read(@working_path.join('unsigned.xml')) ## CAMBIAR A UNSTAMPED CUANDO SEAN EXITOSAS LAS PRUEBAS
+    file = File.read(@working_path.join('unstamped.xml')) ## CAMBIAR A UNSTAMPED CUANDO SEAN EXITOSAS LAS PRUEBAS
 
     #Cifra el XML en Base64
     xml_file = Base64.encode64(file)
@@ -1408,15 +1408,15 @@ XML
     username = ENV['username_pac']
     password = ENV['password_pac']
     #Envia la peticion al webservice de timbrado
-    ops = client.operation(:sign_stamp) ##CAMBIAR A STAMP CUANDO SEAN EXITOSAS LAS PRUEBAS
+    ops = client.operation(:stamp) ##CAMBIAR A STAMP CUANDO SEAN EXITOSAS LAS PRUEBAS
     request = ops.build(message: { xml: xml_file, username: username , password: password })
 
     #Obtiene el SOAP Request y lo guarda en un archivo
-    response = client.call(:sign_stamp, message: { xml: xml_file, username: username , password: password })
+    response = client.call(:stamp, message: { xml: xml_file, username: username , password: password })
     response_hash = response.hash
 
     # Resume el método para llamar las distintas partes del hash del webservice
-    hash = response_hash[:envelope][:body][:sign_stamp_response][:sign_stamp_result]
+    hash = response_hash[:envelope][:body][:stamp_response][:stamp_result]
 
     #Separa los métodos según las partes que se necesitan
     xml_response = hash[:xml]
@@ -1433,6 +1433,7 @@ XML
 
     #Separa la parte del timbre fiscal digital para generar cadena original (y quita la parte que genera error)
     doc = Nokogiri::XML(xml_response)
+
     extract = doc.xpath('//cfdi:Complemento').children.to_xml.gsub('xsi:', '')
 
     #Obtiene el atributo SelloCFD

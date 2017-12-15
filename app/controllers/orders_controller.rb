@@ -95,9 +95,9 @@ class OrdersController < ApplicationController
     discount_applied = order.discount_applied
     order.movements.each do |mov|
       if mov.product == product
-        number = product.warehouse_entries.order(:id).last.entry_number
+        number = product.warehouse_entries.order(:id).last.entry_number.to_i
         entry_mov = mov.entry_movement
-        entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number)
+        entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number.next)
         inventory = Inventory.find_by_product_id(product.id)
         inventory_quantity = inventory.quantity
         new_quantity = inventory_quantity + mov.quantity
@@ -108,14 +108,7 @@ class OrdersController < ApplicationController
         discount_applied -= mov.discount_applied
         down_mov = mov.dup
         down_mov.update_attributes(
-          quantity: mov.quantity * (-1),
-          cost: mov.cost * (-1),
-          discount_applied: mov.discount_applied * (-1),
-          automatic_discount: mov.automatic_discount * (-1),
-          taxes: mov.taxes * (-1),
-          total_cost: mov.total_cost * (-1),
-          total: mov.total * (-1),
-          subtotal: mom.subtotal * (-1)
+          movement_type: 'devolución'
         )
       end
     end
@@ -153,9 +146,9 @@ class OrdersController < ApplicationController
     order.movements.each do |mov|
       # Falta el proceso que los quita de los reportes
       if mov.product == product
-        number = product.warehouse_entries.order(:id).last.entry_number
+        number = product.warehouse_entries.order(:id).last.entry_number.to_i
         entry_mov = mov.entry_movement
-        entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number)
+        entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number.next)
         inventory = Inventory.find_by_product_id(product.id)
         inventory_quantity = inventory.quantity
         new_quantity = inventory_quantity + mov.quantity
@@ -166,14 +159,7 @@ class OrdersController < ApplicationController
         discount_applied -= mov.discount_applied
         down_mov = mov.dup
         down_mov.update_attributes(
-          quantity: mov.quantity * (-1),
-          cost: mov.cost * (-1),
-          discount_applied: mov.discount_applied * (-1),
-          automatic_discount: mov.automatic_discount * (-1),
-          taxes: mov.taxes * (-1),
-          total_cost: mov.total_cost * (-1),
-          total: mov.total * (-1),
-          subtotal: mom.subtotal * (-1)
+          movement_type: 'devolución'
         )
       end
     end
@@ -213,10 +199,11 @@ class OrdersController < ApplicationController
     prod_req = []
     movs = []
     pend_movs = []
-    @order = Order.create(store: current_user.store,
-                          category: 'de línea',
-                          delivery_address: current_user.store.delivery_address,
-                          prospect: Prospect.find_by_store_prospect_id(current_user.store)
+    @order = Order.create(
+                            store: current_user.store,
+                            category: 'de línea',
+                            delivery_address: current_user.store.delivery_address,
+                            prospect: Prospect.find_by_store_prospect_id(current_user.store)
                           )
     @order.users << current_user
     @order.save
@@ -375,7 +362,11 @@ class OrdersController < ApplicationController
     product = @product_request.product
     store = Store.find_by_store_name('Corporativo Compresor')
     prospect = Prospect.find_by_store_prospect_id(current_user.store)
-    discount = 0.35
+    if prospect.store_prospect.store_type.store_type == 'tienda propia'
+      discount = product.discount_for_stores / 100
+    elsif prospect.store_prospect.store_type.store_type == 'franquicia'
+      discount = product.discount_for_franchises / 100
+    end
     disc_app = product.price * discount
     unit_price = product.price * (1 - discount)
     movement = object.create(

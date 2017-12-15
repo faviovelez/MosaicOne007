@@ -45,11 +45,17 @@ class Product < ActiveRecord::Base
     classification == 'especial'
   end
 
-  def update_inventory_quantity(quantity)
+  def update_inventory_quantity(quantity, type)
     actual_quantity = self.inventory.quantity
-    self.inventory.update(
-      quantity: actual_quantity - quantity
-    )
+    if (type == 'alta' || type == 'devolución')
+      self.inventory.update(
+        quantity: actual_quantity + quantity
+      )
+    else
+      self.inventory.update(
+        quantity: actual_quantity - quantity
+      )
+    end
   end
 
   def quantity

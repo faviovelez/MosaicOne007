@@ -24,42 +24,79 @@ class Movement < ActiveRecord::Base
   belongs_to :entry_movement, class_name: 'Movement', foreign_key: 'entry_movement_id'
 
   after_create :create_update_summary
+#  after_create :update_inventory
 
   def create_update_summary
-    if dont_exist_prospect_sale
-      create_prospect_report
-    else
-      update_prospect_report
-    end
-    if dont_exist_product_sale
-      create_product_report
-    else
-      update_product_report
-    end
-    if dont_exist_store_sale
-      create_store_report
-    else
-      update_store_report
+    if (self.movement_type == 'venta' || self.movement_type == 'devolución')
+      if dont_exist_prospect_sale
+        create_prospect_report
+      else
+        update_prospect_report
+      end
+      if dont_exist_product_sale
+        create_product_report
+      else
+        update_product_report
+      end
+      if dont_exist_store_sale
+        create_store_report
+      else
+        update_store_report
+      end
+      if dont_exist_business_unit_sale
+        create_business_unit_report
+      else
+        update_business_unit_report
+      end
+      if dont_exist_business_group_sale
+        create_business_group_report
+      else
+        update_business_group_report
+      end
     end
   end
 
   def dont_exist_product_sale
-    !!(ProductSale.where(month: Date.today.month, year: Date.today.year, store: store.id, product: product.id).first.nil?)
+    !!(ProductSale.where(month: Date.today.month, year: Date.today.year, store: store, product: product).first.nil?)
   end
 
   def dont_exist_prospect_sale
-    !!(ProspectSale.where(month: Date.today.month, year: Date.today.year, store: store.id, prospect: prospect.id).first.nil?)
+    !!(ProspectSale.where(month: Date.today.month, year: Date.today.year, store: store, prospect: prospect).first.nil?)
   end
 
   def dont_exist_store_sale
-    !!(StoreSale.where(month: Date.today.month, year: Date.today.year, store: store.id).first.nil?)
+    !!(StoreSale.where(month: Date.today.month, year: Date.today.year, store: store).first.nil?)
+  end
+
+  def dont_exist_business_unit_sale
+    !!(BusinessUnitSale.where(month: Date.today.month, year: Date.today.year, business_unit: self.store.business_unit).first.nil?)
+  end
+
+  def dont_exist_business_group_sale
+    !!(BusinessGroupSale.where(month: Date.today.month, year: Date.today.year, business_group: self.store.business_unit.business_group).first.nil?)
+  end
+
+  def create_business_group_report
+    create_reports_data(
+      BusinessGroupSale
+    ).update(
+      business_group: self.store.business_unit.business_group
+    )
+  end
+
+  def create_business_unit_report
+    create_reports_data(
+      BusinessUnitSale
+    ).update(
+      business_unit: self.store.business_unit
+    )
   end
 
   def create_store_report
     create_reports_data(
       StoreSale
     ).update(
-      store_id: store.id
+      store: store
     )
   end
 
@@ -67,7 +104,7 @@ class Movement < ActiveRecord::Base
     create_reports_data(
       ProductSale
     ).update(
-      product_id: product.id,
+      product: product
     )
   end
 
@@ -75,7 +112,19 @@ class Movement < ActiveRecord::Base
     create_reports_data(
       ProspectSale
     ).update(
-      prospect_id: prospect.id
+      prospect: prospect
+    )
+  end
+
+  def update_business_group_report
+    update_reports_data(
+      BusinessGroupSale.where(month: Date.today.month, year: Date.today.year, business_group: self.store.business_unit.business_group).first
+    )
+  end
+
+  def update_business_unit_report
+    update_reports_data(
+      BusinessUnitSale.where(month: Date.today.month, year: Date.today.year, business_unit: self.store.business_unit).first
     )
   end
 
@@ -87,54 +136,78 @@ class Movement < ActiveRecord::Base
 
   def update_prospect_report
     update_reports_data(
-      ProspectSale.where(month: Date.today.month, year: Date.today.year, prospect: prospect.id, store: store.id).first
+      ProspectSale.where(month: Date.today.month, year: Date.today.year, prospect: prospect, store: store).first
     )
   end
 
   def update_product_report
     update_reports_data(
-      ProductSale.where(month: Date.today.month, year: Date.today.year, product: product.id, store: store.id).first
+      ProductSale.where(month: Date.today.month, year: Date.today.year, product: product, store: store).first
     )
   end
 
   def update_reports_data(object)
-    subtotal = self.subtotal
-    discount = self.discount_applied
-    taxes = self.taxes
-    total = self.total
-    quantity = self.quantity
-    cost = self.total_cost
-    object.update_attributes(
-      subtotal: object.subtotal + subtotal,
-      discount: object.discount + discount,
-      taxes: object.taxes + taxes,
-      total: object.total + total,
-      cost: object.cost + cost,
-      quantity: object.quantity + quantity,
-    )
+    subtotal = self.subtotal.to_f
+    discount = self.discount_applied.to_f
+    taxes = self.taxes.to_f
+    total = self.total.to_f
+    quantity = self.quantity.to_i
+    cost = self.total_cost.to_f
+    if self.movement_type == 'venta'
+      object.update_attributes(
+        subtotal: object.subtotal.to_f + subtotal,
+        discount: object.discount.to_f + discount,
+        taxes: object.taxes.to_f + taxes,
+        total: object.total.to_f + total,
+        cost: object.cost.to_f + cost,
+        quantity: object.quantity.to_i + quantity,
+      )
+    else
+      object.update_attributes(
+        subtotal: object.subtotal.to_f - subtotal,
+        discount: object.discount.to_f - discount,
+        taxes: object.taxes.to_f - taxes,
+        total: object.total.to_f - total,
+        cost: object.cost.to_f - cost,
+        quantity: object.quantity.to_i - quantity,
+      )
+    end
     object
   end
 
   def create_reports_data(object)
-    subtotal = self.subtotal
-    discount = self.discount_applied
-    taxes = self.taxes
-    total = self.total
-    quantity = self.quantity
-    cost = self.total_cost
+    subtotal = self.subtotal.to_f
+    discount = self.discount_applied.to_f
+    taxes = self.taxes.to_f
+    total = self.total.to_f
+    quantity = self.quantity.to_i
+    cost = self.total_cost.to_f
     month = Date.today.month
     year  = Date.today.year
     store = self.store
-    object.create(
-      subtotal: subtotal,
-      discount: discount,
-      taxes: taxes,
-      total: total,
-      cost: cost,
-      quantity: quantity,
-      month: month,
-      year: year
-    )
+    if self.movement_type == 'venta'
+      object.create(
+        subtotal: subtotal,
+        discount: discount,
+        taxes: taxes,
+        total: total,
+        cost: cost,
+        quantity: quantity,
+        month: month,
+        year: year
+      )
+    else
+      object.create(
+        subtotal: - subtotal,
+        discount: - discount,
+        taxes: - taxes,
+        total: - total,
+        cost: - cost,
+        quantity: - quantity,
+        month: month,
+        year: year
+      )
+    end
   end
 
   def business_unit
@@ -252,7 +325,7 @@ class Movement < ActiveRecord::Base
     ).order(
       "created_at #{order_type}"
     ).each do |pending|
-      # Para ignorar los movimientos negativos creados al devolver productos facturados
+      # Para ignorar los PendingMovements negativos creados al devolver productos facturados
       unless pending.quantity <= 0
         if transform(pending, inventory, mov)
           convert_warehouses(order_type, pending.quantity)
@@ -305,7 +378,7 @@ class Movement < ActiveRecord::Base
         split(nil, entry.movement.fix_cost)
       end
       get_product.update_inventory_quantity(
-        temp_quantity
+        temp_quantity, self.movement_type
       )
       break if total_quantity == 0
     end
@@ -318,8 +391,12 @@ class Movement < ActiveRecord::Base
     def initialize_with(object, user ,type)
       product = object.product
       store   = Store.find_by_store_name('Corporativo Compresor')
-      discount = 0.35
       prospect = Prospect.find_by_store_prospect_id(user.store)
+      if prospect.store_prospect.store_type.store_type == 'tienda propia'
+        discount = product.discount_for_stores / 100
+      elsif prospect.store_prospect.store_type.store_type == 'franquicia'
+        discount = product.discount_for_franchises / 100
+      end
       disc_app = product.price * discount
       unit_price = product.price * (1 - discount)
       create(
@@ -348,4 +425,5 @@ class Movement < ActiveRecord::Base
     end
 
   end
+
 end
