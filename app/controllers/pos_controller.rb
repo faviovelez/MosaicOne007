@@ -6,13 +6,14 @@ class PosController < ApplicationController
       @ids_references = {}
       tables_orders.each do |table_name|
         @ids_references[table_name.singularize] = {}
-        params[:po][table_name].each do |key, values|
+        params[table_name].each do |key, values|
           next if invalid_params.include? key
           fill_references(table_name, key, values)
+          binding.pry
         end
       end
-    #  process_incomming_data # Cambiar después a un background job
-      render json: {status: "success", message: "Informacion Cargada"}
+      process_incomming_data # Cambiar después a un background job
+      render json: {status: "success", message: "Informacion Cargada", ids: {}}
     else
       render json: {status: "error", message: "Login Error"}
     end
@@ -39,10 +40,61 @@ class PosController < ApplicationController
       ]
     end
 
+
+    def params_find
+      return {
+        "CashRegister" => ['store_id'],
+        "StoresInventory" => ['store_id', 'product_id'],
+        "BillingAddress" => ['business_name'],
+        "Prospect" => ['legal_or_business_name'],
+        "Terminal" => ['store_id', 'name']
+      }
+    end
+
+    def changes_to_fields
+      return {
+        "CashRegister" => ['balance'],
+        "StoresInventory" => ['manual_price_update', 'manual_price', 'quantity'],
+        "BillingAddress" => ['type_of_person', 'business_name', 'rfc', 'street', 'exterior_number', 'interior_number', 'zipcode', 'neighborhood', 'city', 'state', 'country', 'tax_regime_id'],
+        "Prospect" => ['legal_or_business_name', 'prospect_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'contact_position', 'direct_phone', 'extension', 'cell_phone', 'business_type', 'prospect_status', 'billing_address_id', 'delivery_address_id', 'second_last_name', 'email', 'credit_days'],
+        "Terminal" => ['debit_comission', 'credit_comission']
+      }
+    end
+
+
     def fill_references(table_name, pos_id, values)
       reg = create_reg(table_name, values)
-      reg.save
+      if is_a_new_register(reg)
+        reg.save
+      end
       @ids_references[table_name.singularize][pos_id] = reg.id
+    end
+
+    def is_a_new_register(reg)
+      tables_find_parameters = params_find()
+      info = tables_find_parameters[reg.class.to_s]
+      if info.present?
+        cad = ''
+        info.each do |parameter|
+          cad << "#{parameter} = #{reg.send(parameter)}"
+        end
+        object = reg.class.where(cad).first
+        reg.id = object.id
+        return updated_reg_for(object, reg)
+      end
+      true
+    end
+
+    def updated_reg_for(object, reg)
+      updated_parameters = changes_to_fields()[reg.class.to_s]
+      if updated_parameters.present?
+        hash = {}
+        updated_parameters.each do |parameter|
+          hash["#{parameter}"] = reg.send(parameter)
+        end
+        object.update_attributes(hash)
+      end
+      return false
     end
 
     def invalid_params
@@ -113,32 +165,8 @@ class PosController < ApplicationController
       false
     end
 
-    ### ESTA SECCIÓN DEBE IR A UN BACKGROUND JOB ###
-    def process_incomming_data
-      # Confirmar si va a entrar tienda por tienda
-      @tickets = Ticket.where(saved: [nil, false])
-      store = @tickets.first.store
-      @tickets.each do |ticket|
-        ticket.store_movements.each do |mov|
-          @mov = mov
-          validate_if_summary_exists(@mov)
-        end
-        ticket.service_offereds.each do |serv|
-          @mov = serv
-          validate_if_summary_exists(@mov)
-        end
-        ticket.payments.each do |pay|
-          unless pay.payment_form.description == 'Por definir'
-            @pay = pay
-            if store_sale(@pay) == nil
-              create_only_payments(@pay)
-            else
-              update_only_payments(@pay, store_sale(@pay))
-            end
-          end
-        end
-        ticket.update(saved: true) # pos: false ?? Validar si puede actualizarse en 2 vías
-      end
+    def process_inventories
+      # Validar cómo obtener el ID de tienda
       store.stores_inventories.each do |inventory|
         process_store_inventories(inventory)
       end
@@ -167,7 +195,7 @@ class PosController < ApplicationController
           store: store,
           month: date.month,
           year: date.year
-        ).quantity
+        ).first.quantity
         @desired_inventory += quantity
         date -= 1.month
       end
@@ -199,6 +227,41 @@ class PosController < ApplicationController
 
     def send_mail_to_alert(inventory)
       # if @changed == true
+    end
+
+
+
+
+
+    ### ESTA SECCIÓN PROBABLEMENTE SE BORRE ###
+    def process_incomming_data_former
+      # Confirmar si va a entrar tienda por tienda
+      @tickets = Ticket.where(saved: [nil, false])
+      store = @tickets.first.store
+      @tickets.each do |ticket|
+        ticket.store_movements.each do |mov|
+          @mov = mov
+          validate_if_summary_exists(@mov)
+        end
+        ticket.service_offereds.each do |serv|
+          @mov = serv
+          validate_if_summary_exists(@mov)
+        end
+        ticket.payments.each do |pay|
+          unless pay.payment_type == 'crédito'
+            @pay = pay
+            if store_sale(@pay) == nil
+              create_only_payments(@pay)
+            else
+              update_only_payments(@pay, store_sale(@pay))
+            end
+          end
+        end
+        ticket.update(saved: true) # pos: false ?? Validar si puede actualizarse en 2 vías
+      end
+      store.stores_inventories.each do |inventory|
+        process_store_inventories(inventory)
+      end
     end
 
     def validate_if_summary_exists(mov)
@@ -371,6 +434,6 @@ class PosController < ApplicationController
       payments = object.payments.to_f + pay.total
       object.update_attributes(payments: payments, store: pay.store)
     end
-    ### ESTA SECCIÓN DEBE IR A UN BACKGROUND JOB ###
+    ### ESTA SECCIÓN PROBABLEMENTE SE BORRE ###
 
 end
