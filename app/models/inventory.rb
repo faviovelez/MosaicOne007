@@ -39,7 +39,7 @@ class Inventory < ActiveRecord::Base
     @actual_stock = inventory.quantity
 
     @desired_inventory = 0
-    for i in 1..months
+    months.times do
       quantity = ProductSale.where(
         product: product,
         store: store,
@@ -49,7 +49,6 @@ class Inventory < ActiveRecord::Base
       @desired_inventory += quantity
       date -= 1.month
     end
-    @desired_inventory
     @reorder_quantity = (@desired_inventory * reorder).to_i
     @critical_quantity = (@desired_inventory * critical).to_i
   end

@@ -17,10 +17,12 @@ class StoreMovement < ActiveRecord::Base
 
   def create_update_summary
     if (self.movement_type == 'venta' || self.movement_type == 'devolución')
-      if dont_exist_prospect_sale
-        create_prospect_report
-      else
-        update_prospect_report
+      unless prospect == nil
+        if dont_exist_prospect_sale
+          create_prospect_report
+        else
+          update_prospect_report
+        end
       end
       if dont_exist_product_sale
         create_product_report
@@ -177,7 +179,6 @@ class StoreMovement < ActiveRecord::Base
     cost = self.total_cost.to_f
     month = Date.today.month
     year  = Date.today.year
-    store = self.store
     if self.movement_type == 'venta'
       object.create(
         subtotal: subtotal,

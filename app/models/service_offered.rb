@@ -13,10 +13,12 @@ class ServiceOffered < ActiveRecord::Base
 
   def create_update_summary
     if (self.service_type == 'venta' || self.service_type == 'devolución')
-      if dont_exist_prospect_sale
-        create_prospect_report
-      else
-        update_prospect_report
+      unless prospect == nil
+        if dont_exist_prospect_sale
+          create_prospect_report
+        else
+          update_prospect_report
+        end
       end
       if dont_exist_service_sale
         create_service_report
@@ -94,13 +96,11 @@ class ServiceOffered < ActiveRecord::Base
   end
 
   def create_prospect_report
-    unless prospect == nil
-      create_reports_data(
-        ProspectSale
-      ).update(
-        prospect: prospect
-      )
-    end
+    create_reports_data(
+      ProspectSale
+    ).update(
+      prospect: prospect
+    )
   end
 
   def update_business_group_report
@@ -122,11 +122,9 @@ class ServiceOffered < ActiveRecord::Base
   end
 
   def update_prospect_report
-    unless prospect == nil
-      update_reports_data(
-        ProspectSale.where(month: Date.today.month, year: Date.today.year, prospect: prospect, store: store).first
-      )
-    end
+    update_reports_data(
+      ProspectSale.where(month: Date.today.month, year: Date.today.year, prospect: prospect, store: store).first
+    )
   end
 
   def update_service_report
@@ -173,7 +171,6 @@ class ServiceOffered < ActiveRecord::Base
     cost = self.total_cost.to_f
     month = Date.today.month
     year  = Date.today.year
-    store = self.store
     if self.service_type == 'venta'
       object.create(
         subtotal: subtotal,

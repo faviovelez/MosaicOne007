@@ -30,7 +30,6 @@ class Payment < ActiveRecord::Base
   end
 
   def create_only_payments
-    total = self.total
     if self.payment_type == 'pago'
       StoreSale.create(payments: self.total, store: self.store, month: self.created_at.month, year: self.created_at.year)
     else
