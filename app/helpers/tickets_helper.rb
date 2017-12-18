@@ -54,15 +54,4 @@ module TicketsHelper
     @pending
   end
 
-  def get_bill_status(ticket)
-    ticket.bill != nil ? @bill_status = content_tag(:span, 'facturado', class: 'label label-success') : @bill_status = content_tag(:span, 'sin fact', class: 'label label-warning')
-    @bill_status
-  end
-
-  def bill_has_nc
-  end
-
-  def bill_has_dev
-  end
-
 end

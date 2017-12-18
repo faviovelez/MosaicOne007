@@ -129,4 +129,13 @@ module ApplicationHelper
   end
 # Termina la sección de métodos utilizados por formularios en Products y Requests
 
+  def get_bill_status(ticket)
+    if ticket.bill != nil
+      @bill_status = content_tag(:span, 'facturado', class: 'label label-success')
+    else
+      @bill_status = content_tag(:span, 'por facturar', class: 'label label-warning')
+    end
+    @bill_status
+  end
+
 end

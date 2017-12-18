@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171215052732) do
+ActiveRecord::Schema.define(version: 20171217161237) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,6 +149,7 @@ ActiveRecord::Schema.define(version: 20171215052732) do
     t.string   "from"
     t.string   "cancel_receipt"
     t.string   "bill_type"
+    t.string   "bill_folio_type"
   end
 
   add_index "bills", ["cfdi_use_id"], name: "index_bills_on_cfdi_use_id", using: :btree
@@ -1318,8 +1319,10 @@ ActiveRecord::Schema.define(version: 20171215052732) do
     t.boolean  "web",                default: true
     t.date     "date"
     t.integer  "prospect_id"
+    t.integer  "bill_id"
   end
 
+  add_index "service_offereds", ["bill_id"], name: "index_service_offereds_on_bill_id", using: :btree
   add_index "service_offereds", ["prospect_id"], name: "index_service_offereds_on_prospect_id", using: :btree
   add_index "service_offereds", ["service_id"], name: "index_service_offereds_on_service_id", using: :btree
   add_index "service_offereds", ["store_id"], name: "index_service_offereds_on_store_id", using: :btree
@@ -1942,6 +1945,7 @@ ActiveRecord::Schema.define(version: 20171215052732) do
   add_foreign_key "rows", "bills"
   add_foreign_key "sales_movements", "movements"
   add_foreign_key "sales_targets", "stores"
+  add_foreign_key "service_offereds", "bills"
   add_foreign_key "service_offereds", "prospects"
   add_foreign_key "service_offereds", "services"
   add_foreign_key "service_offereds", "stores"

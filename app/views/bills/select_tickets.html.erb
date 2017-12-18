@@ -29,7 +29,11 @@
       <tbody>
           <% @tickets.each do |ticket| %>
             <tr>
-              <td> <%= check_box_tag "tickets[]", "#{ticket.id}", false, { multiple: true, id: "tickets[#{ticket.id}]" }%> </td>
+              <% if ticket.bill == nil %>
+                <td> <%= check_box_tag "tickets[]", "#{ticket.id}", false, { multiple: true, id: "tickets[#{ticket.id}]" }%> </td>
+              <% else %>
+              <td> </td>
+              <% end %>
               <td> <%= show_non_blank_field(ticket&.cash_register&.name) %> </td>
               <td> <%= ticket.ticket_number %> </td>
               <td> <%= l ticket.created_at.to_date, format: :short %> </td>

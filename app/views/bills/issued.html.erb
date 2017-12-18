@@ -8,18 +8,22 @@
           <th> Fecha</th>
           <th> Cliente</th>
           <th> Total</th>
-          <th> Saldo </th>
+          <th> NC / Dev </th>
+          <th> Neto </th>
+          <th> Saldo / Pagos </th>
           <th class="col-md-2"> Detalles </th>
         </tr>
       </thead>
       <tbody>
         <% @bills.each do |bill| %>
           <tr>
-            <td> <%= check_box_tag :bill, "#{bill.id}", false, { id: "bills[#{bill.id}]" }%> </td>
+            <td> <%= radio_button_tag :bill, "#{bill.id}", false, { id: "bills[#{bill.id}]" }%> </td>
             <td> <%= bill.folio %> </td>
             <td> <%= l bill.created_at.to_date, format: :short %> </td>
             <td> <%= show_non_blank_field(bill.receiving_company.business_name) %> </td>
             <td> <%= number_to_currency(bill.total) %> </td>
+            <td> <%= number_to_currency(sum_children(bill)) %> </td>
+            <td> <%= number_to_currency(real_total(bill)) %> </td>
             <td> <%= get_payments_from_bill(bill) %> </td>
             <td style="width: 100px">
               <% unless bill.pdf_url == nil %>

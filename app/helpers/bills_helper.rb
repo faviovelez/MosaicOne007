@@ -506,4 +506,17 @@ module BillsHelper
     @all_payments
   end
 
+  def sum_children(bill)
+    @sum = 0
+    bill.children.each do |child|
+      @sum += child.total unless child.status == 'cancelada'
+    end
+    @sum = -@sum
+  end
+
+  def real_total(bill)
+    sum_children(bill)
+    bill.total + @sum
+  end
+
 end
