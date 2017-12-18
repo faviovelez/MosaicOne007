@@ -63,17 +63,11 @@ button#btn-notice {
 }
 
 .payments-summary {
-  margin-left: 50%;
+  margin-left: 57%;
 }
 
-.download-icon {
-  width: 2.5%;
-  height: auto;
-}
-
-.download-icon-table {
-  width: 15%;
-  height: auto;
+.less-margin {
+  margin-left: 53% !important;  
 }
 
 span.next_line {

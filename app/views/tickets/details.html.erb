@@ -15,10 +15,12 @@
         <span id="ticket-date">
           <%= l @date, format: :short %>
         </span>
-        -
-        <span id="ticket-prospect">
-          Cliente: <%= show_non_blank_field(@prospect) %>
-        </span>
+          -
+        <% unless @prospect.blank?%>
+          <span id="ticket-prospect">
+            Cliente: <%= show_non_blank_field(@prospect) %>
+          </span>
+        <% end %>
         <span id="ticket-user">
           Atendió: <%= show_non_blank_field(@user) %>
         </span>

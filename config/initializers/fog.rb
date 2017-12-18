@@ -10,7 +10,7 @@ elsif Rails.env.production?
       :provider               => 'AWS',                         # required
       :aws_access_key_id      => ENV['aws_access_key_id'],      # required
       :aws_secret_access_key  => ENV['aws_secret_access_key'],  # required
-      :region                 => ENV['dev_region']              # optional, defaults to 'us-east-1'
+      :region                 => ENV['prod_region']              # optional, defaults to 'us-east-1'
       #:host                   => 's3.example.com',             # optional, defaults to nil
       #:endpoint               => 'https://s3.example.com:8080' # optional, defaults to nil
     }
@@ -27,7 +27,7 @@ elsif Rails.env.development?
       :provider               => 'AWS',                         # required
       :aws_access_key_id      => ENV['aws_access_key_id'],      # required
       :aws_secret_access_key  => ENV['aws_secret_access_key'],  # required
-      :region                 => ENV['prod_region']             # optional, defaults to 'us-east-1'
+      :region                 => ENV['dev_region']             # optional, defaults to 'us-east-1'
       #:host                   => 's3.example.com',             # optional, defaults to nil
       #:endpoint               => 'https://s3.example.com:8080' # optional, defaults to nil
     }

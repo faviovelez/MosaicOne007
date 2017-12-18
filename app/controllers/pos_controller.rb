@@ -2,6 +2,7 @@ class PosController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def received_data
+    debugger
     if (check_login_data)
       @ids_references = {}
       tables_orders.each do |table_name|
@@ -9,7 +10,6 @@ class PosController < ApplicationController
         params[table_name].each do |key, values|
           next if invalid_params.include? key
           fill_references(table_name, key, values)
-#          binding.pry
         end
       end
       render json: {status: "success", message: "Informacion Cargada", ids: {}}
@@ -72,11 +72,12 @@ class PosController < ApplicationController
       info = tables_find_parameters[reg.class.to_s]
       if info.present?
         cad = ''
-        info.each do |parameter|
-          cad << "#{parameter} = #{reg.send(parameter)}"
+        info.each_with_index do |value, index|
+          cad << "#{value} = '#{reg.send(value)}'"
+          cad << "AND " unless index == info.length - 1
         end
         object = reg.class.where(cad).first
-        reg.id = object.id
+        return true if object.nil?
         return updated_reg_for(object, reg)
       end
       true
@@ -113,7 +114,6 @@ class PosController < ApplicationController
         end
       end
       add_extras(new_reg, table_name, values[:object])
-      new_reg.id = klass.last.try(:id).to_i + 1
       new_reg.web = true
       new_reg
     end

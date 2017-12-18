@@ -1102,7 +1102,7 @@ def save_base64_encrypted_key
   file = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key"))
   key_b64 = Base64.encode64(file)
 
-  File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "keyb64.enc.key"), "w") do |file|
+  File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "keyb64.enc.key"), "w") do |file|
     file.write(key_b64)
   end
 end
@@ -1127,9 +1127,11 @@ stores_with_cert.each_with_index do |val, index|
   @store.update(certificate: cer, key: key, certificate_password: pss[index])
   save_certificate_number
   save_certificate_content
+  save_base64_encrypted_cer
   save_pem_certificate
   save_pem_key
   save_encrypted_key
+  save_base64_encrypted_key
   save_unencrypted_key
 end
 

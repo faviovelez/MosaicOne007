@@ -58,8 +58,6 @@ class Store < ActiveRecord::Base
 
   validates :store_code, presence: { message: 'Debe especificar un código para la tienda.'}
 
-############################################################
-#CAMBIAR TODA ESTA LÓGICA AL TENER UN BUSCADOR CON AJAX
   validate :zip_code_is_in_sat_list, :uniq_install_code
 
   before_create :gen_install_code
@@ -73,7 +71,7 @@ class Store < ActiveRecord::Base
   def zip_code_is_in_sat_list
     errors[:base] << "El código postal elegido no se encuentra en la base del SAT, por favor elija otro." if @@value == false
   end
-############################################################
+  ############################################################
 
   def gen_install_code(max = 4)
     code = gen_random(self.store_name, max) + " "
@@ -104,7 +102,9 @@ class Store < ActiveRecord::Base
 
     def uniq_install_code
       count = 3
-      if Store.where(install_code: self.install_code).first.present?
+      my_store_id = self.id
+      store_with_install_code = Store.where(install_code: self.install_code).first
+      if store_with_install_code.id != my_store_id
         gen_install_code(count+= 1)
       end
     end
