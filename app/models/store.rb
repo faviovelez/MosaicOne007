@@ -60,7 +60,7 @@ class Store < ActiveRecord::Base
 
   validate :zip_code_is_in_sat_list, :uniq_install_code
 
-  before_create :gen_install_code
+  after_create :gen_install_code
 
   @@value = true
 
@@ -104,8 +104,10 @@ class Store < ActiveRecord::Base
       count = 3
       my_store_id = self.id
       store_with_install_code = Store.where(install_code: self.install_code).first
-      if store_with_install_code.id != my_store_id
-        gen_install_code(count+= 1)
+      unless store_with_install_code == nil
+        if store_with_install_code.id != my_store_id
+          gen_install_code(count+= 1)
+        end
       end
     end
 
