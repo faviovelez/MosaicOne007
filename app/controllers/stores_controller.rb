@@ -34,23 +34,11 @@ class StoresController < ApplicationController
   end
 
   def download_products_example
-    # Cambiar por el ejemplo que tengo en PDF y XML
-    send_file(
-      "/example_files/inventarios.csv",
-      type: 'text/csv; charset=iso-8859-1; header=present',
-      disposition: "attachment",
-      filename: "inventarios_tienda_#{@store.id}.csv"
-    )
+    redirect_to "#{Rails.root}/public/example_files/inventarios.csv"
   end
 
   def download_prospects_example
-    # Cambiar por el ejemplo que tengo en PDF y XML
-    send_file(
-      "#{Rails.root}/public/example_files/clientes.csv",
-      type: 'text/csv; charset=iso-8859-1; header=present',
-      disposition: "attachment",
-      filename: "clientes_tienda_#{@store.id}.csv"
-    )
+    redirect_to "#{Rails.root}/public/example_files/clientes.csv"
   end
 
   def generate_products_example
@@ -149,6 +137,9 @@ class StoresController < ApplicationController
   end
 
   def process_csv_files
+
+    ### INICIAR LAS PRUEBAS CON ESTE
+    
     @product_counter = 0
     @prospect_create_counter = 0
     @prospect_update_counter = 0
@@ -509,6 +500,7 @@ private
       save_certificate_number
       save_certificate_content
       save_pem_certificate
+      save_base64_encrypted_cer
     end
   end
 
@@ -516,6 +508,7 @@ private
     unless params[:store][:key] == nil
       save_pem_key
       save_encrypted_key
+      save_base64_encrypted_key
       save_unencrypted_key
     end
   end
@@ -606,7 +599,7 @@ private
     file = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key"))
     key_b64 = Base64.encode64(file)
 
-    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "keyb64.enc.key"), "w") do |file|
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "keyb64.enc.key"), "w") do |file|
       file.write(key_b64)
     end
   end

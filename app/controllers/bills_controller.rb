@@ -9,7 +9,7 @@ class BillsController < ApplicationController
   # GET /bills.json
   def index
     store = current_user.store
-    @bills = store.bills.where(status: 'timbrada').where.not(receiving_company: nil).where.not(total: nil)
+    @bills = store.bills.where.not(status: 'cancelada').where.not(receiving_company: nil).where.not(total: nil).where(parent: nil)
   end
 
   # GET /bills/1
@@ -107,7 +107,7 @@ class BillsController < ApplicationController
 
   def select_bills
     store = current_user.store
-    @bills = store.bills.where(status: 'timbrada').where.not(receiving_company: nil).where.not(total: nil)
+    @bills = store.bills.where.not(status: 'cancelada').where.not(receiving_company: nil).where.not(total: nil).where(parent: nil)
   end
 
   def ticket_details
@@ -376,7 +376,6 @@ class BillsController < ApplicationController
     if @bill != nil
       @store = @bill.store
       @bill.bill_type == 'global' ? @cfdi_type = 'global' : @cfdi_type = nil
-      @relation_type = params[:relation_type]
       get_series_and_folio
     end
     # @relation_type == '01' es Nota de crédito, @relation_type == '03' es Devolución
@@ -395,13 +394,7 @@ class BillsController < ApplicationController
       else
         @objects = @bill
       end
-      ####pendiente####
       select_store if @bill == nil
-      ####pendiente####
-
-      prospect = @prospect || Prospect.find(params[:prospect]).first
-
-      ####pendiente####
       if @bill == nil
         if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
           @store = current_user.store
@@ -417,7 +410,6 @@ class BillsController < ApplicationController
       else
         @store = @bill.store
       end
-      ####pendiente####
       if (params[:cfdi_type] == 'global' || @cfdi_type == 'global')
         @prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno', store: @store).first
       else
@@ -427,6 +419,8 @@ class BillsController < ApplicationController
           @prospect = @bill.prospect
         end
       end
+      prospect = @prospect || Prospect.find(params[:prospect]).first
+
       @time = Time.now.strftime('%FT%T')
       if prospect.billing_address == nil
         redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
@@ -496,6 +490,7 @@ class BillsController < ApplicationController
           else
             @discount_any = false
           end
+
           if params[:relation_type] != nil
             relation_type = RelationType.find_by_key(params[:relation_type])
             @relation = relation_type
@@ -983,7 +978,7 @@ class BillsController < ApplicationController
         @discount_any = false
       end
 
-      if params[:relation_type] != nil
+      if (params[:relation_type] != nil && params[:relation_type] != '')
         relation_type = RelationType.find_by_key(params[:relation_type])
         @relation = relation_type
         @relation_type = relation_type.key
@@ -1073,10 +1068,10 @@ class BillsController < ApplicationController
               r.sat_unit_key = row.sat_unit_key
               r.sat_unit_description = row.sat_unit_description
               r.sat_key = row.sat_key
-              r.total = row.total
-              r.subtotal = row.subtotal
-              r.discount = row.discount
-              r.taxes = row.taxes
+              r.total = (row.total / row.quantity * quantities_filtered[n].to_i).round(2)
+              r.subtotal = (row.subtotal / row.quantity * quantities_filtered[n].to_i).round(2)
+              r.discount = (row.discount / row.quantity * quantities_filtered[n].to_i).round(2)
+              r.taxes = (row.taxes / row.quantity * quantities_filtered[n].to_i).round(2)
             end
             n += 1
             @rows << new_row
@@ -1156,13 +1151,17 @@ class BillsController < ApplicationController
     create_unsigned_xml_file
     generate_digital_stamp
     get_stamp_from_pac
-    qrcode_print
-    generate_pdf
-    save_to_db
-    if @cod_status == "Comprobante timbrado satisfactoriamente"
-      redirect_to root_path, notice: 'Su factura se ha guardado con éxito.'
+    if @cod_status == 'Comprobante timbrado satisfactoriamente'
+      qrcode_print
+      generate_pdf
+      save_to_db
+      if @error
+        redirect_to root_path, alert: 'Hubo un error con el proceso, por favor intente de nuevo.'
+      else
+        redirect_to root_path, notice: 'Su factura ha sido generada con éxito.'
+      end
     else
-      redirect_to root_path, notice: 'No se pudo generar la factura, por favor intente de nuevo.'
+      redirect_to root_path, alert: @incidents_hash[:incidencia][:mensaje_incidencia]
     end
   end
 
@@ -1345,9 +1344,10 @@ class BillsController < ApplicationController
     invoices = @bill.uuid #UUID a cancelar
 
     # Lee el archivo Cer en formato Pem ".cer"
+
     cer_pem_b64 = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "cerb64.cer.pem"))
 
-    key_des3_b64 = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "certificate", "keyb64.enc.key"))
+    key_des3_b64 = File.read(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "keyb64.enc.key"))
 
     uuid = [invoices]
     uuid.map! do |uuid|
@@ -1378,6 +1378,8 @@ XML
 
     xml_receipt = Nokogiri::XML(receipt)
 
+    @cancel_status = response_hash[:envelope][:body][:cancel_response][:cancel_result][:cod_estatus] # Si es exitoso debe ser nil
+
     receipt_extract = xml_receipt.document.children.children.children
 
     receipt_file = File.open(File.join(@final_dir, 'acuse.xml'), 'w'){ |file| file.write(xml_receipt) }
@@ -1402,12 +1404,13 @@ XML
     file = File.read(@working_path.join('unstamped.xml')) ## CAMBIAR A UNSTAMPED CUANDO SEAN EXITOSAS LAS PRUEBAS
 
     #Cifra el XML en Base64
-    xml_file = Base64.encode64(file)
+    xml_file = Base64.encode64(file.delete("\n"))
 
     #Correo y contraseña de acceso al panel de FINKOK
     username = ENV['username_pac']
     password = ENV['password_pac']
     #Envia la peticion al webservice de timbrado
+
     ops = client.operation(:stamp) ##CAMBIAR A STAMP CUANDO SEAN EXITOSAS LAS PRUEBAS
     request = ops.build(message: { xml: xml_file, username: username , password: password })
 
@@ -1427,91 +1430,105 @@ XML
     @sat_certificate = hash[:no_certificado_sat]
     @incidents_hash = hash[:incidencias]
 
-    soap_response = File.open(File.join(@working_dir, 'response.xml'), 'w'){ |file| file.write(response) }
+    if @cod_status == 'Comprobante timbrado satisfactoriamente'
+      incidents = File.open(File.join(@working_dir, 'incidencias.txt'), 'w'){ |file| file.write(@incidents_hash) }
 
-    soap_request = File.open(File.join(@working_dir, 'request.xml'), 'w'){ |file| file.write(request) }
+      #Separa la parte del timbre fiscal digital para generar cadena original (y quita la parte que genera error)
+      doc = Nokogiri::XML(xml_response)
 
-    #Separa la parte del timbre fiscal digital para generar cadena original (y quita la parte que genera error)
-    doc = Nokogiri::XML(xml_response)
+      extract = doc.xpath('//cfdi:Complemento').children.to_xml.gsub('xsi:', '')
 
-    extract = doc.xpath('//cfdi:Complemento').children.to_xml.gsub('xsi:', '')
+      #Obtiene el atributo SelloCFD
+      @cfd_stamp = doc.xpath('//cfdi:Complemento').children.attr('SelloCFD').value
 
-    #Obtiene el atributo SelloCFD
-    @cfd_stamp = doc.xpath('//cfdi:Complemento').children.attr('SelloCFD').value
+      #Obtiene los últimos 8 dígitos del atributo SelloCFD (para QR)
+      @cfd_last_8 = @cfd_stamp.slice((@cfd_stamp.length - 8)..@cfd_stamp.length)
 
-    #Obtiene los últimos 8 dígitos del atributo SelloCFD (para QR)
-    @cfd_last_8 = @cfd_stamp.slice((@cfd_stamp.length - 8)..@cfd_stamp.length)
+      #Guarda en XML el archivo timbrado del PAC
+      ###### CAMBIAR ESTE MÉTODO POR UN NOMBRE DISTITNO DE FACTURA
+      stamped_xml = File.open(File.join(@final_dir, 'stamped.xml'), 'w'){ |file| file.write(xml_response) }
 
-    #Guarda en XML el archivo timbrado del PAC
-    ###### CAMBIAR ESTE MÉTODO POR UN NOMBRE DISTITNO DE FACTURA
-    stamped_xml = File.open(File.join(@final_dir, 'stamped.xml'), 'w'){ |file| file.write(xml_response) }
+      @stamped_xml = File.open(File.join(@final_dir, 'stamped.xml'), 'r')
 
-    @stamped_xml = File.open(File.join(@final_dir, 'stamped.xml'), 'r')
+      xml_url = @xml_path + 'stamped.xml' ###### CAMBIAR ESTE MÉTODO POR UN NOMBRE DISTITNO DE FACTURA
 
-    xml_url = @xml_path + 'stamped.xml' ###### CAMBIAR ESTE MÉTODO POR UN NOMBRE DISTITNO DE FACTURA
+      #Guarda el extracto del timbre fiscal digital en un XML
+      extract_xml = File.open(File.join(@working_dir, 'tfd.xml'), 'w'){ |file| file.write(extract) }
 
-    #Guarda el extracto del timbre fiscal digital en un XML
-    extract_xml = File.open(File.join(@working_dir, 'tfd.xml'), 'w'){ |file| file.write(extract) }
+      #Transforma el XML del timbre fiscal digital en una cadena original usando el xslt del SAT
+      stamp_xml = Nokogiri::XML(File.read(@working_path.join('tfd.xml')))
+      stamp_xslt = Nokogiri::XSLT(File.read(@sat_path.join('cadenaoriginal_TFD_1_1.xslt')))
+      @stamp_original_chain = stamp_xslt.apply_to(stamp_xml)
+    end
 
-    #Transforma el XML del timbre fiscal digital en una cadena original usando el xslt del SAT
-    stamp_xml = Nokogiri::XML(File.read(@working_path.join('tfd.xml')))
-    stamp_xslt = Nokogiri::XSLT(File.read(@sat_path.join('cadenaoriginal_TFD_1_1.xslt')))
-    @stamp_original_chain = stamp_xslt.apply_to(stamp_xml)
   end
 
   def save_to_db
     @error = false
-    if @cod_status == "Comprobante timbrado satisfactoriamente"
+    @pdf_file = File.open(File.join(@final_dir, 'factura.pdf'), 'r')
 
-      @pdf_file = File.open(File.join(@final_dir, 'factura.pdf'), 'r')
-
-      bill = Bill.new.tap do |bill|
-        bill.status = 'timbrada'
-        bill.issuing_company = @s_billing
-        bill.receiving_company = @p_billing
-        bill.prospect = @prospect
-        bill.store = @store
-        bill.sequence = @series
-        bill.folio = @folio
-        bill.payment_conditions = @payment_form
-        bill.payment_method = @method
-        bill.payment_form = @greatest_payment
-        bill.subtotal = @subtotal
-        bill.taxes = @total_taxes
-        bill.total = @total
-        bill.discount_applied = @total_discount
-        # bill.automatic_discount_applied = @total_discount
-        # bill.manual_discount_applied = @total_discount
-        bill.tax = Tax.find(2)
-        bill.tax_regime = @regime
-        bill.taxes_transferred = @total_taxes
-        # bill.taxes_witheld =
-        bill.cfdi_use = @use
-        # bill.pac =
-        bill.relation_type = @relation
-        # bill.references_field = ''
-        bill.type_of_bill = @bill_type
-        bill.currency = Currency.find_by_name('MXN')
-        # bill.id_trib_reg_num = ''
-        # bill.confirmation_key =
-        bill.exchange_rate = 1.0
-        bill.country = Country.find_by_name('México')
-        bill.sat_certificate_number = @sat_certificate
-        bill.certificate_number = @store.certificate_number
-        bill.qr_string = @qr_string
-        bill.original_chain = @stamp_original_chain
-        bill.sat_stamp = @sat_seal
-        bill.digital_stamp = @cfd_stamp
-        bill.sat_zipcode_id = @store.zip_code
-        bill.date_signed = @date
-        bill.leyend = ''
-        bill.uuid = @uuid
-        bill.payed = @payed
-        @objects.class == Bill ? bill.from = @bill.class.to_s : bill.from = @objects.first.class.to_s
-        @general_bill == true ? bill.bill_type = 'global' : bill.bill_type = 'cliente'
-        bill.parent = @bill
+    bill = Bill.new.tap do |bill|
+      bill.status = 'creada'
+      bill.issuing_company = @s_billing
+      bill.receiving_company = @p_billing
+      bill.prospect = @prospect
+      bill.store = @store
+      bill.sequence = @series
+      bill.folio = @folio
+      bill.payment_conditions = @payment_form
+      bill.payment_method = @method
+      bill.payment_form = @greatest_payment
+      bill.subtotal = @subtotal
+      bill.taxes = @total_taxes
+      bill.total = @total
+      bill.discount_applied = @total_discount
+      # bill.automatic_discount_applied = @total_discount
+      # bill.manual_discount_applied = @total_discount
+      bill.tax = Tax.find(2)
+      bill.tax_regime = @regime
+      bill.taxes_transferred = @total_taxes
+      # bill.taxes_witheld =
+      bill.cfdi_use = @use
+      # bill.pac =
+      bill.relation_type = @relation
+      # bill.references_field = ''
+      bill.type_of_bill = @bill_type
+      bill.currency = Currency.find_by_name('MXN')
+      # bill.id_trib_reg_num = ''
+      # bill.confirmation_key =
+      bill.exchange_rate = 1.0
+      bill.country = Country.find_by_name('México')
+      bill.sat_certificate_number = @sat_certificate
+      bill.certificate_number = @store.certificate_number
+      bill.qr_string = @qr_string
+      bill.original_chain = @stamp_original_chain
+      bill.sat_stamp = @sat_seal
+      bill.digital_stamp = @cfd_stamp
+      bill.sat_zipcode_id = @store.zip_code
+      bill.date_signed = @date
+      bill.leyend = ''
+      bill.uuid = @uuid
+      bill.payed = @payed
+      @objects.class == Bill ? bill.from = @bill.class.to_s : bill.from = @objects.first.class.to_s
+      @general_bill == true ? bill.bill_type = 'global' : bill.bill_type = 'cliente'
+      bill.parent = @bill
+      if @relation.id == 1
+        bill.bill_folio_type = "Nota de Crédito"
+      elsif @relation.id == 2
+        bill.bill_folio_type = "Nota de Débito"
+      elsif @relation.id == 3
+        bill.bill_folio_type = "Devolución"
+      elsif @relation.id == 4
+        bill.bill_folio_type = "Sustitución"
+      elsif @relation.id == 7
+        bill.bill_folio_type = "Aplicaición de Anticipo"
+      elsif @series.include?("FA")
+        bill.bill_folio_type = "Anticipo"
+      else
+        bill.bill_folio_type = "Factura"
       end
-      bill.save
+    end
+    if bill.save
       if @bill != nil
         @bill.children << bill
       end
@@ -1557,11 +1574,11 @@ XML
         end
       end
 
-      unless @objects.class == Bill
+      if @objects.is_a?(Array)
         @objects.each do |object|
           object.update(bill: bill)
           object.payments.each do |payment|
-            payment.update(bill: bill)
+            payment.update(bill: bill) if bill.bill_folio_type == 'Factura'
           end
           if object.is_a?(Ticket)
             object.store_movements.each do |mov|
@@ -1593,6 +1610,16 @@ XML
               serv.update(bill: bill)
             end
           end
+        end
+      else
+        @objects.payments.each do |payment|
+          payment.update(bill: bill)
+        end
+        @objects.store_movements.each do |mov|
+          mov.update(bill: bill)
+        end
+        @objects.service_offereds.each do |serv|
+          serv.update(bill: bill)
         end
       end
     else
@@ -1678,7 +1705,7 @@ XML
             hash["taxes"] = 0
             hash["discount"] = 0
           end
-          new_hash["service_id"] = sm.service.id
+          new_hash["service_id"] = so.service.id
           new_hash["ticket"] = so.ticket.id
           new_hash["quantity"] = so.quantity
           new_hash["unit_value"] = so.initial_price.round(2)

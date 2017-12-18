@@ -17,10 +17,9 @@
 }
 
 .top-right-preview {
-  margin-bottom: 10px;
-  width: 400px;
+  margin: 0 auto;
   text-align: left;
-  margin-left: 600px;
+  margin-left: 200px;
 }
 
 .left {
@@ -38,6 +37,7 @@ img.img-bill-preview {
   left: 330px;
   top: 100px;
   width: 400px;
+  margin-left: 12%;
 }
 
 #bill > div > p,
@@ -60,7 +60,7 @@ img.img-bill-preview {
 }
 
 .quantities-table {
-  margin-left: 4rem;
+  margin: 0 auto;
 }
 
 .header-main-preview {
@@ -285,10 +285,26 @@ img.img-bill-preview {
   margin-bottom: 30px;
 }
 
-.payments-margin {
-  margin-left: 100px;
-}
-
 span.select2-selection.select2-selection--multiple {
   min-width: 200px;
+}
+
+.download-icon {
+  height: 30px;
+  width: auto;
+}
+
+.download-icon-table {
+  height: 30px;
+  width: auto;
+}
+
+.download-icon-table-mini {
+  width: auto;
+  height: 30px;
+  padding-right: 5px;
+}
+
+.width-minimum {
+  max-width: 200px;
 }

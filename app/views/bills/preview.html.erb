@@ -1,33 +1,37 @@
-<%= image_tag 'logo-disenos-decarton.png', class: 'img-bill-preview' %>
-
-<div class="top-right-preview">
-  <% if @bill == nil %>
-    <h3 id="top-title"> FACTURA </h3>
-  <% elsif (@bill != nil && @relation_type == '01') %>
-    <h3 id="top-title"> NOTA DE CRÉDITO </h3>
-  <% elsif (@bill != nil && @relation_type == '03') %>
-    <h3 id="top-title"> DEVOLUCIÓN </h3>
-  <% elsif (@bill != nil && @relation_type == '02') %>
-    <h3 id="top-title"> NOTA DE DÉBITO </h3>
-  <% end %>
-
-  <% if @relation_type == '01' %>
-    <% type = 'Nota de crédito' %>
-  <% elsif @relation_type == '02' %>
-    <% type = 'Nota de débito' %>
-  <% elsif @relation_type == '03' %>
-    <% type = 'Devolución' %>
-  <% end %>
-
-  <p> Serie: <span> <strong> <%= @series %> </strong>  </span> </p>
-  <p> Folio: <span> <strong> <%= @folio %> </strong>  </span> </p>
-  <p> Fecha y hora de timbrado: <span> <%= @time %> </span> </p>
-  <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
-  <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill_description %> </span> </p>
-</div>
-
 <table id="issuing-receiving-table-preview">
   <thead>
+    <tr>
+      <td>
+        <%= image_tag 'logo-disenos-decarton.png', class: 'img-bill-preview' %>
+      </td>
+      <td>
+        <div class="top-right-preview">
+          <% if @bill == nil %>
+            <h3 id="top-title"> FACTURA </h3>
+          <% elsif (@bill != nil && @relation_type == '01') %>
+            <h3 id="top-title"> NOTA DE CRÉDITO </h3>
+          <% elsif (@bill != nil && @relation_type == '03') %>
+            <h3 id="top-title"> DEVOLUCIÓN </h3>
+          <% elsif (@bill != nil && @relation_type == '02') %>
+            <h3 id="top-title"> NOTA DE DÉBITO </h3>
+          <% end %>
+
+          <% if @relation_type == '01' %>
+            <% type = 'Nota de crédito' %>
+          <% elsif @relation_type == '02' %>
+            <% type = 'Nota de débito' %>
+          <% elsif @relation_type == '03' %>
+            <% type = 'Devolución' %>
+          <% end %>
+
+          <p> Serie: <span> <strong> <%= @series %> </strong>  </span> </p>
+          <p> Folio: <span> <strong> <%= @folio %> </strong>  </span> </p>
+          <p> Fecha y hora de timbrado: <span> <%= @time %> </span> </p>
+          <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
+          <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill_description %> </span> </p>
+        </div>
+      </td>
+    </tr>
     <tr class="ligth-bg-preview">
       <th class="half header"> EMISOR</th>
       <th class="half header"> RECEPTOR </th>

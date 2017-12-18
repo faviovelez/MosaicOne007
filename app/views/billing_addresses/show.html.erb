@@ -3,7 +3,7 @@
   <h2 class="info-title">Datos de facturación </h2>
 
     <p><strong>Tipo de persona: </strong>
-      <%= show_non_blank_field(@billing.type_of_person.titleize) %>
+      <%= show_non_blank_field(@billing&.type_of_person&.titleize) %>
     </p>
 
     <p><strong>Nombre o Razón Social: </strong>
@@ -17,55 +17,55 @@
 
     <% if @billing.tax_regime.present? %>
       <p><strong>Régimen Fiscal: </strong>
-        <%= @billing.tax_regime.description %>
+        <%= @billing&.tax_regime&.description %>
       </p>
     <% end %>
 
     <% if @billing.street.present? %>
       <p><strong>Calle: </strong>
-        <%= @billing.street %>
+        <%= @billing&.street %>
       </p>
     <% end %>
 
     <% if @billing.exterior_number.present? %>
       <p><strong>Número exterior: </strong>
-        <%= @billing.exterior_number %>
+        <%= @billing&.exterior_number %>
       </p>
     <% end %>
 
     <% if @billing.interior_number.present? %>
       <p><strong>Número interior: </strong>
-        <%= @billing.interior_number %>
+        <%= @billing&.interior_number %>
       </p>
     <% end %>
 
     <% if @billing.neighborhood.present? %>
       <p><strong>Colonia: </strong>
-        <%= @billing.neighborhood %>
+        <%= @billing&.neighborhood %>
       </p>
     <% end %>
 
     <% if @billing.zipcode.present? %>
       <p><strong>Código postal: </strong>
-        <%= @billing.zipcode %>
+        <%= @billing&.zipcode %>
       </p>
     <% end %>
 
     <% if @billing.city.present? %>
       <p><strong>Ciudad: </strong>
-        <%= @billing.city %>
+        <%= @billing&.city %>
       </p>
     <% end %>
 
     <% if @billing.state.present? %>
       <p><strong>Estado: </strong>
-        <%= @billing.state %>
+        <%= @billing&.state %>
       </p>
     <% end %>
 
     <% if @billing.country.present? %>
       <p><strong>País: </strong>
-        <%= @billing.country %>
+        <%= @billing&.country %>
       </p>
     <% end %>
 
