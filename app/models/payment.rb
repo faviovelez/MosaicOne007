@@ -41,9 +41,9 @@ class Payment < ActiveRecord::Base
     sale = StoreSale.where(month: Date.today.month, year: Date.today.year, store: self.store).first
     total = self.total
     if self.payment_type == 'pago'
-      sale.update(payments: sale.payments + total)
+      sale.update(payments: sale.payments.to_f + total)
     else
-      sale.update(payments: sale.payments - total)
+      sale.update(payments: sale.payments.to_f - total)
     end
   end
 
