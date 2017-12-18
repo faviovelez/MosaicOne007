@@ -214,12 +214,16 @@ class ProductsController < ApplicationController
 
     def filter_products
       @products = []
-      user = current_user.role.name
-      suppliers_id = []
+      role = current_user.role.name
       @store = current_user.store
       @dc_products = Product.where(current: true, shared: true)
-      if user == 'store-admin' || user == 'store'
-        @products = @store.products + @dc_products
+      if role == 'store-admin' || role == 'store'
+        @store_products = Product.where(store: @store)
+        if @store_products == []
+          @products = @dc_products
+        else
+          @products = @store_products + @dc_products
+        end
       else
         @products = @dc_products
       end
