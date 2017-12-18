@@ -142,33 +142,33 @@ class ServiceOffered < ActiveRecord::Base
     cost = self.total_cost.to_f
     if self.service_type == 'venta'
       object.update_attributes(
-        subtotal: object.subtotal.to_f + subtotal,
-        discount: object.discount.to_f + discount,
-        taxes: object.taxes.to_f + taxes,
-        total: object.total.to_f + total,
-        cost: object.cost.to_f + cost,
-        quantity: object.quantity.to_i + quantity,
+        subtotal: object.subtotal + subtotal,
+        discount: object.discount + discount,
+        taxes: object.taxes + taxes,
+        total: object.total + total,
+        cost: object.cost + cost,
+        quantity: object.quantity + quantity,
       )
     else
       object.update_attributes(
-        subtotal: object.subtotal.to_f - subtotal,
-        discount: object.discount.to_f - discount,
-        taxes: object.taxes.to_f - taxes,
-        total: object.total.to_f - total,
-        cost: object.cost.to_f - cost,
-        quantity: object.quantity.to_i - quantity,
+        subtotal: object.subtotal - subtotal,
+        discount: object.discount - discount,
+        taxes: object.taxes - taxes,
+        total: object.total - total,
+        cost: object.cost - cost,
+        quantity: object.quantity - quantity,
       )
     end
     object
   end
 
   def create_reports_data(object)
-    subtotal = self.subtotal.to_f
-    discount = self.discount_applied.to_f
-    taxes = self.taxes.to_f
-    total = self.total.to_f
+    subtotal = self.subtotal
+    discount = self.discount_applied
+    taxes = self.taxes
+    total = self.total
     quantity = self.quantity.to_i
-    cost = self.total_cost.to_f
+    cost = self.total_cost
     month = Date.today.month
     year  = Date.today.year
     if self.service_type == 'venta'

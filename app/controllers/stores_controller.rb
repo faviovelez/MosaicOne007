@@ -87,6 +87,7 @@ class StoresController < ApplicationController
         certificate_saving_process
         key_savign_process
         update_prospect_from_store
+        save_csv_files
         format.html { redirect_to @store, notice: 'La tienda fue modificado exitosamente.' }
         format.json { render :show, status: :ok, location: @store }
       else
@@ -139,7 +140,7 @@ class StoresController < ApplicationController
   def process_csv_files
 
     ### INICIAR LAS PRUEBAS CON ESTE
-    
+
     @product_counter = 0
     @prospect_create_counter = 0
     @prospect_update_counter = 0
@@ -161,13 +162,13 @@ class StoresController < ApplicationController
           entries = store.stores_warehouse_entries.where(product: product)
           quantity = row['cant'].to_i
           if store.store_type.store_type == 'franquicia'
-            discount_percent = product.discount_for_franchises
+            discount_percent = product.discount_for_franchises / 100
           elsif store.store_type.store_type == 'tienda propia'
-            discount_percent = product.discount_for_stores
+            discount_percent = product.discount_for_stores / 100
           end
           cost = product.price * (1 - discount_percent)
-          discount = cost * discount_percent * quantity
-          final_price = cost * (1 - discount_percent)
+          discount = product.price * discount_percent * quantity
+          final_price = product.price * (1 - discount_percent)
           entries.each do |entry|
             entry.delete
           end
@@ -212,13 +213,13 @@ class StoresController < ApplicationController
           entries = store.stores_warehouse_entries.where(product: product)
           quantity = row['cant'].to_i
           if store.store_type.store_type == 'franquicia'
-            discount_percent = product.discount_for_franchises
+            discount_percent = product.discount_for_franchises / 100
           elsif store.store_type.store_type == 'tienda propia'
-            discount_percent = product.discount_for_stores
+            discount_percent = product.discount_for_stores / 100
           end
           cost = product.price * (1 - discount_percent)
-          discount = cost * discount_percent * quantity
-          final_price = cost * (1 - discount_percent)
+          discount = product.price * discount_percent * quantity
+          final_price = product.price * (1 - discount_percent)
           entries.each do |entry|
             entry.delete
           end

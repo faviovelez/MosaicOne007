@@ -5,7 +5,7 @@ module TicketsHelper
   end
 
   def margin_currency(summary)
-    @margin_currency = summary.total - summary.cost
+    @margin_currency = (summary.total - (summary.cost * 1.16).round(2))
   end
 
   def margin_percentage(summary)
