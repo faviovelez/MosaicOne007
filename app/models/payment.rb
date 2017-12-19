@@ -16,6 +16,7 @@ class Payment < ActiveRecord::Base
   after_create :create_update_summary
 
   def create_update_summary
+    debugger
     if (self.payment_type == 'pago' || self.payment_type == 'devolución')
       if dont_exist_store_sale
         create_only_payments

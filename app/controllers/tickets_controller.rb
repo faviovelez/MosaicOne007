@@ -12,14 +12,16 @@ class TicketsController < ApplicationController
 
   def sales_summary
     store = current_user.store
-    @summaries = store.store_sales.order(:id)
-    cash_register = store.cash_registers.first
-    @cash_register_name = cash_register.name
-    @cash_register_balance = cash_register.balance
-    last_ticket = store.tickets.last
-    @last_ticket_number = last_ticket.ticket_number
-    @last_ticket_date = last_ticket.created_at.to_date
-    @last_ticket_hour = last_ticket.created_at.strftime("%I:%M %p")
+    @summaries = store.store_sales&.order(:id)
+    unless @summaries == []
+      cash_register = store.cash_registers.first
+      @cash_register_name = cash_register.name
+      @cash_register_balance = cash_register.balance
+      last_ticket = store.tickets.last
+      @last_ticket_number = last_ticket.ticket_number
+      @last_ticket_date = last_ticket.created_at.to_date
+      @last_ticket_hour = last_ticket.created_at.strftime("%I:%M %p")
+    end
   end
 
   def sales
@@ -294,9 +296,13 @@ class TicketsController < ApplicationController
     @ticket = Ticket.find(params[:id])
     @number = @ticket.ticket_number
     @date = @ticket.created_at.to_date
-    @user = @ticket.user.first_name + ' ' + @ticket.user.last_name
+    unless @ticket.user == nil
+      @user = @ticket.user.first_name + ' ' + @ticket.user.last_name
+    end
     @prospect = @ticket&.prospect&.legal_or_business_name
-    @register = 'Caja ' + @ticket.cash_register.name
+    unless @ticket.cash_register == nil
+      @register = 'Caja ' + @ticket.cash_register.name
+    end
     rows_for_ticket_show
     payments_for_ticket_show
   end

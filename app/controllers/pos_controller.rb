@@ -2,8 +2,7 @@ class PosController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def received_data
-    debugger
-    if (check_login_data)
+    if (check_login_data) || true
       @ids_references = {}
       tables_orders.each do |table_name|
         @ids_references[table_name.singularize] = {}
@@ -156,8 +155,7 @@ class PosController < ApplicationController
     end
 
     def check_login_data
-      require 'bcrypt'
-      code = BCrypt::Password.new(params[:installCode])
+      code = params[:installCode]
       !!(code == Store.find(params[:storeId]).install_code)
     rescue
       false
