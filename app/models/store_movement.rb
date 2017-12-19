@@ -16,6 +16,7 @@ class StoreMovement < ActiveRecord::Base
   after_create :create_update_summary
 
   def create_update_summary
+    debugger
     if (self.movement_type == 'venta' || self.movement_type == 'devolución')
       unless prospect == nil
         if dont_exist_prospect_sale
@@ -150,21 +151,21 @@ class StoreMovement < ActiveRecord::Base
     cost = self.total_cost.to_f
     if self.movement_type == 'venta'
       object.update_attributes(
-        subtotal: object.subtotal + subtotal,
-        discount: object.discount + discount,
-        taxes: object.taxes + taxes,
-        total: object.total + total,
-        cost: object.cost + cost,
-        quantity: object.quantity + quantity,
+        subtotal: object.subtotal.to_f + subtotal,
+        discount: object.discount.to_f + discount,
+        taxes: object.taxes.to_f + taxes,
+        total: object.total.to_f + total,
+        cost: object.cost.to_f + cost,
+        quantity: object.quantity.to_i + quantity,
       )
     else
       object.update_attributes(
-        subtotal: object.subtotal - subtotal,
-        discount: object.discount - discount,
-        taxes: object.taxes - taxes,
-        total: object.total - total,
-        cost: object.cost - cost,
-        quantity: object.quantity - quantity,
+        subtotal: object.subtotal.to_f - subtotal,
+        discount: object.discount.to_f - discount,
+        taxes: object.taxes.to_f - taxes,
+        total: object.total.to_f - total,
+        cost: object.cost.to_f - cost,
+        quantity: object.quantity.to_i - quantity,
       )
     end
     object

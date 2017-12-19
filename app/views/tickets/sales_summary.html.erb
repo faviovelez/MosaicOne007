@@ -1,50 +1,54 @@
-<table id="sales">
-  <thead>
-    <tr>
-      <th colspan="10"> Saldo de caja <%= @cash_register_name %>: <%= number_to_currency(@cash_register_balance) %>. Último ticket No. <%= @last_ticket_number %>, el <%= l @last_ticket_date, format: :short %> a las <%= @last_ticket_hour %> </th>
-    </tr>
-    <tr class="table-titles">
-      <th class="col-md-1"> Mes / Año </th>
-      <th> Subtotal </th>
-      <th> Descuento $ </th>
-      <th> Descuento % </th>
-      <th> Pagos </th>
-      <th> Total </th>
-      <th> Costo </th>
-      <th> Margen $ </th>
-      <th> Margen % </th>
-      <th class="col-md-2"> Detalles </th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @summaries.each do |summary| %>
+<% if @summaries.count >= 1 %>
+  <table id="sales">
+    <thead>
       <tr>
-        <td> <%= summary.month %> / <%= summary.year %> </td>
-        <td> <%= number_to_currency(summary.subtotal) %> </td>
-        <td> <%= number_to_currency(summary.discount) %> </td>
-        <td> <%= number_to_percentage(discount_percentage(summary), precision: 1) %> </td>
-        <td> <%= number_to_currency(summary.payments) %> </td>
-        <td> <%= number_to_currency(summary.total) %> </td>
-        <td> <%= number_to_currency(summary.cost * 1.6) %> </td>
-        <td> <%= number_to_currency(margin_currency(summary)) %> </td>
-        <td> <%= number_to_percentage(margin_percentage(summary), precision: 1) %> </td>
-        <td>
-          <% if tickets_exists(summary.month, summary.year) %>
-            <%= link_to sales_path(year: summary.year, month: summary.month, store: current_user.store) do %>
-              <%= image_tag '/assets/ticket_main.png', alt: 'Ticket icon', class: 'sales-summary-icon' %>
-            <% end %>
-          <% end %>
-
-          <% if bills_exists(summary.month, summary.year) %>
-            <%= link_to bills_issued_path(year: summary.year, month: summary.month, store: current_user.store) do %>
-              <%= image_tag '/assets/pdf_alter.png', alt: 'Alternative icon PDF', class: 'sales-summary-icon' %>
-            <% end %>
-          <% end %>
-        </td>
+        <th colspan="10"> Saldo de caja <%= @cash_register_name %>: <%= number_to_currency(@cash_register_balance) %>. Último ticket No. <%= @last_ticket_number %>, el <%= l @last_ticket_date, format: :short %> a las <%= @last_ticket_hour %> </th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+      <tr class="table-titles">
+        <th class="col-md-1"> Mes / Año </th>
+        <th> Subtotal </th>
+        <th> Descuento $ </th>
+        <th> Descuento % </th>
+        <th> Pagos </th>
+        <th> Total </th>
+        <th> Costo </th>
+        <th> Margen $ </th>
+        <th> Margen % </th>
+        <th class="col-md-2"> Detalles </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @summaries.each do |summary| %>
+        <tr>
+          <td> <%= summary.month %> / <%= summary.year %> </td>
+          <td> <%= number_to_currency(summary.subtotal) %> </td>
+          <td> <%= number_to_currency(summary.discount) %> </td>
+          <td> <%= number_to_percentage(discount_percentage(summary), precision: 1) %> </td>
+          <td> <%= number_to_currency(summary.payments) %> </td>
+          <td> <%= number_to_currency(summary.total) %> </td>
+          <td> <%= number_to_currency(summary.cost * 1.16) %> </td>
+          <td> <%= number_to_currency(margin_currency(summary)) %> </td>
+          <td> <%= number_to_percentage(margin_percentage(summary), precision: 1) %> </td>
+          <td>
+            <% if tickets_exists(summary.month, summary.year) %>
+              <%= link_to sales_path(year: summary.year, month: summary.month, store: current_user.store) do %>
+                <%= image_tag '/assets/ticket_main.png', alt: 'Ticket icon', class: 'sales-summary-icon' %>
+              <% end %>
+            <% end %>
+
+            <% if bills_exists(summary.month, summary.year) %>
+              <%= link_to bills_issued_path(year: summary.year, month: summary.month, store: current_user.store) do %>
+                <%= image_tag '/assets/pdf_alter.png', alt: 'Alternative icon PDF', class: 'sales-summary-icon' %>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font"> No hay ventas registradas </p>
+<% end %>
 
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'datatables.min' %>
