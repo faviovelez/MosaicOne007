@@ -21,9 +21,12 @@
             Cliente: <%= show_non_blank_field(@prospect) %>
           </span>
         <% end %>
-        <span id="ticket-user">
-          Atendió: <%= show_non_blank_field(@user) %>
-        </span>
+
+        <% unless @user.blank?%>
+          <span id="ticket-user">
+            Atendió: <%= show_non_blank_field(@user) %>
+          </span>
+        <% end %>
       </th>
       <th class="head-blue edge-left">
         <%= get_payments_from_individual_ticket(@ticket) %>
@@ -66,7 +69,7 @@
     <tr>
       <td colspan="8"> </td>
       <td> <strong> Total: </strong> </td>
-      <td> <strong> <%= number_to_currency(number_to_currency(get_total_with_returns_or_changes(@ticket))) %> </strong> </td>
+      <td> <strong> <%= number_to_currency(get_total_with_returns_or_changes(@ticket)) %> </strong> </td>
     </tr>
     <tr>
       <td colspan="5"> </td>
@@ -85,7 +88,7 @@
       <tr>
         <td colspan="8"> </td>
         <td class="border-top"> <strong> Total: </strong> </td>
-        <td class="border-top"> <strong> <%= number_to_currency(@total_payments_ticket) %> </strong> </td>
+        <td class="border-top"> <strong> <%= number_to_currency(@total_payments_ticket) %></strong> </td>
       </tr>
       <tr>
         <td colspan="10">

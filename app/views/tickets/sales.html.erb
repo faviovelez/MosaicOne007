@@ -3,7 +3,7 @@
     <thead>
       <tr class="table-titles">
         <th> </th>
-        <th class="col-md-1">Caja</th>
+        <th class="col-md-1 hidden">Caja</th>
         <th class="col-md-1">No.</th>
         <th> Fecha </th>
         <th> Cliente </th>
@@ -23,7 +23,7 @@
             <% else %>
             <td> </td>
             <% end %>
-            <td> <%= ticket.cash_register.name %> </td>
+            <td class="hidden"> <%# ticket.cash_register.name %> </td>
             <td> <%= ticket.ticket_number %> </td>
             <td> <%= l ticket.created_at.to_date, format: :short %> </td>
             <td> <%= show_non_blank_field(ticket.prospect&.legal_or_business_name) %> </td>

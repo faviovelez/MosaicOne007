@@ -50,7 +50,7 @@ module TicketsHelper
     end
     payments = payments.inject(&:+)
     payments == nil ? @payments = 0 : @payments = payments
-    @ticket_total <= @payments ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency((@ticket_total - payments).round(2)).to_s
+    @ticket_total <= @payments ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(@ticket_total - payments)
     @pending
   end
 

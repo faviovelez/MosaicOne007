@@ -238,15 +238,17 @@ class BillsController < ApplicationController
     @store_legal_names = [['seleccione']]
     @store_rfcs = [['seleccione']]
     @store_tax_regimes = [['seleccione']]
-    @stores.each do |store|
-      billing = store.business_unit.billing_address
-      @store_series << [store.series, store.id]
-      @store_folio << [store.bill_last_folio.to_i.next, store.id]
-      @store_zipcodes << [store.zip_code, store.id]
-      @store_legal_names << [billing.business_name, store.id]
-      @store_rfcs << [billing.rfc, store.id]
-      regime_string = billing.tax_regime.tax_id.to_s + ' - ' + billing.tax_regime.description.to_s
-      @store_tax_regimes << [regime_string, store.id]
+    unless (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+      @stores.each do |store|
+        billing = store.business_unit.billing_address
+        @store_series << [store.series, store.id]
+        @store_folio << [store.bill_last_folio.to_i.next, store.id]
+        @store_zipcodes << [store.zip_code, store.id]
+        @store_legal_names << [billing.business_name, store.id]
+        @store_rfcs << [billing.rfc, store.id]
+        regime_string = billing.tax_regime.tax_id.to_s + ' - ' + billing.tax_regime.description.to_s
+        @store_tax_regimes << [regime_string, store.id]
+      end
     end
   end
 
