@@ -522,6 +522,7 @@ class BillsController < ApplicationController
               @method_description = @method.description
               @method_key = @method.method
               @payment_form
+              rows(@general_bill, @objects)
             else
               @payment_key = @greatest_payment.payment_key
               @payment_description = @payments.first.first
@@ -621,6 +622,7 @@ class BillsController < ApplicationController
               @method_description = @method.description
               @method_key = @method.method
               @payment_form
+              rows(@general_bill, @objects)
             else
               @payment_key = @greatest_payment.payment_key
               @payment_description = @payments.first.first
