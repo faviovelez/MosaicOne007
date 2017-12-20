@@ -3,9 +3,38 @@
     <thead>
       <tr>
         <td>
-          <%= image_tag 'logo-disenos-decarton.png', class: 'img-bill-preview' %>
+          <%= image_tag 'logo-disenos-decarton.png' %>
         </td>
         <td>
+          <div>
+          </div>
+          <div class="top-right-preview">
+            <% if @bill == nil %>
+              <h3 id="top-title"> FACTURA </h3>
+            <% elsif (@bill != nil && @relation_type == '01') %>
+              <h3 id="top-title"> NOTA DE CRÉDITO </h3>
+            <% elsif (@bill != nil && @relation_type == '03') %>
+              <h3 id="top-title"> DEVOLUCIÓN </h3>
+            <% elsif (@bill != nil && @relation_type == '02') %>
+              <h3 id="top-title"> NOTA DE DÉBITO </h3>
+            <% end %>
+
+            <% if @relation_type == '01' %>
+              <% type = 'Nota de crédito' %>
+            <% elsif @relation_type == '02' %>
+              <% type = 'Nota de débito' %>
+            <% elsif @relation_type == '03' %>
+              <% type = 'Devolución' %>
+            <% end %>
+
+            <p> Serie: <span> <strong> <%= @series %> </strong>  </span> </p>
+            <p> Folio: <span> <strong> <%= @folio %> </strong>  </span> </p>
+            <p> Fecha y hora de timbrado: <span> <%= @time %> </span> </p>
+            <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
+            <p> Tipo de comprobante:
+              <%= select_tag :type_of_bill, options_for_select(@byll_types), class: 'form-control' %>
+            </p>
+          </div>
         </td>
       </tr>
       <tr class="ligth-bg-preview">
@@ -54,6 +83,7 @@
   <table class="quantities-table">
     <thead>
       <tr class="header-main-preview">
+        <th class="hidden"> IDs</th>
         <th class="space-preview"> Clave Prod / Serv </th>
         <th class="space-preview"> No. Identificación </th>
         <th class="space-preview"> Cantidad </th>
@@ -68,17 +98,18 @@
       </tr>
     </thead>
     <tbody>
-        <tr id="fields_for_product">
-          <td class="space-preview"> <%= select_tag :sat_key, options_for_select(@sat_key), class: 'form-control' %> </td>
-          <td class="space-preview"> <%= select_tag :unique_code, options_for_select(@unique_codes), class: 'form-control' %> </td> </td>
-          <td class="space-preview"> <%= text_field_tag :quantity, nil, {placeholder: '100', class: 'form-control center-input'} %> </td>
-          <td class="space-preview"> <%= select_tag :sat_unit_key, options_for_select(@sat_unit_keys), class: 'form-control' %> </strong> </td>
-          <td class="space-preview"> <%= select_tag :sat_unit_description, options_for_select(@sat_unit_descriptions), class: 'form-control' %> </td>
-          <td class="space-preview"> <%= select_tag :product_description, options_for_select(@product_descriptions), class: 'form-control' %> </td>
-          <td class="space-preview"> <%= text_field_tag :unit_value, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-          <td class="space-preview"> <%= text_field_tag :discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-          <td class="space-preview"> <%= text_field_tag :taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-          <td class="space-preview"> <%= text_field_tag :subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+      <tr id="fields_for_product">
+        <td class="space-preview hidden"> <%= select_tag :product_id, options_for_select(@products_ids), class: 'form-control select-margin' %> </td>
+        <td class="space-preview"> <%= select_tag :sat_key, options_for_select(@products_sat_keys), class: 'form-control select-margin' %> </td>
+        <td class="space-preview" style="width: 5%"> <%= select_tag :unique_code, options_for_select(@products_codes), {include_blank: true, multiple: true, class: 'select2-product form-control'} %> </td>
+        <td class="space-preview"> <%= text_field_tag :quantity, nil, {placeholder: '100', class: 'form-control center-input'} %> </td>
+        <td class="space-preview"> <%= select_tag :sat_unit_key, options_for_select(@products_sat_unit_keys), class: 'form-control select-margin' %> </td>
+        <td class="space-preview"> <%= select_tag :sat_unit_description, options_for_select(@products_units), class: 'form-control select-margin' %> </td>
+        <td class="space-preview"> <%= select_tag :product_description, options_for_select(@products_description), class: 'form-control select-margin' %> </td>
+        <td class="space-preview"> <%= select_tag :unit_value, options_for_select(@products_prices), class: 'form-control select-margin' %> </td>
+        <td class="space-preview"> <%= text_field_tag :discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+        <td class="space-preview"> <%= text_field_tag :taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+        <td class="space-preview"> <%= text_field_tag :subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
         </tr>
       <tr>
         <td>
@@ -166,5 +197,6 @@
 <%= content_for :javascript do %>
   <%= javascript_include_tag 'select2.min' %>
   <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'jquery.autocomplete.min' %>
   <%= javascript_include_tag 'bills' %>
 <% end %>

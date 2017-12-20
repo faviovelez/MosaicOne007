@@ -31,6 +31,12 @@ $(document).ready(function() {
      maximumSelectionLength: 1
   });
 
+  $('.select2-product').select2({
+     placeholder: 'Producto',
+     language: "es",
+     maximumSelectionLength: 1
+  });
+
   $('.select2-cfdi_type').select2({
      placeholder: 'Tipo de factura',
      language: "es",
@@ -61,5 +67,13 @@ $(document).ready(function() {
       };
     });
   });
+
+
+//  $('#productsForm').autocomplete({
+//    serviceUrl: '/api/get_all_products_for_bill',
+//    onSelect: function (suggestion) {
+//        alert('Seleccionaste ' + suggestion.value + ', ' + suggestion.data);
+//    }
+//  });
 
 });
