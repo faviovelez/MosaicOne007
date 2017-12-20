@@ -60,7 +60,8 @@ class PosController < ApplicationController
 
     def fill_references(table_name, pos_id, values)
       reg = create_reg(table_name, values)
-      if is_a_new_register(reg)
+      reg = is_a_new_register(reg)
+      if reg.id.nil?
         reg.save
       end
       @ids_references[table_name.singularize][pos_id] = reg.id
@@ -76,10 +77,11 @@ class PosController < ApplicationController
           cad << "AND " unless index == info.length - 1
         end
         object = reg.class.where(cad).first
-        return true if object.nil?
-        return updated_reg_for(object, reg)
+        return reg if object.nil?
+        updated_reg_for(object, reg)
+        return object
       end
-      true
+      reg
     end
 
     def updated_reg_for(object, reg)
@@ -130,15 +132,12 @@ class PosController < ApplicationController
     def vinculate_relations(reference, value)
       table_name = reference.gsub(/_id/,'')
       object     = nil
-      if @ids_references[table_name.singularize].nil?
-        object = table_name.singularize.camelize.constantize.find(
-          value
-        )
-        return object.id
+      if @ids_references[table_name.singularize][value].nil?
+        return value
       end
       @ids_references[table_name.singularize][value.to_s]
     rescue
-      nil
+      value
     end
 
     def add_extras(reg, table_name, values)

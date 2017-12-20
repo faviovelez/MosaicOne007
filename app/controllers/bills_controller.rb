@@ -238,7 +238,17 @@ class BillsController < ApplicationController
     @store_legal_names = [['seleccione']]
     @store_rfcs = [['seleccione']]
     @store_tax_regimes = [['seleccione']]
-    unless (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+      store = @stores
+      billing = store.business_unit.billing_address
+      @store_series << [store.series, store.id]
+      @store_folio << [store.bill_last_folio.to_i.next, store.id]
+      @store_zipcodes << [store.zip_code, store.id]
+      @store_legal_names << [billing.business_name, store.id]
+      @store_rfcs << [billing.rfc, store.id]
+      regime_string = billing.tax_regime.tax_id.to_s + ' - ' + billing.tax_regime.description.to_s
+      @store_tax_regimes << [regime_string, store.id]
+    else
       @stores.each do |store|
         billing = store.business_unit.billing_address
         @store_series << [store.series, store.id]
@@ -261,8 +271,10 @@ class BillsController < ApplicationController
       prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
     end
     prospects.each do |prospect|
-      @prospects_names << [prospect.billing_address.business_name, prospect.id]
-      @prospects_rfcs << [prospect.billing_address.rfc, prospect.id]
+      if prospect.billing_address != nil
+        @prospects_names << [prospect.billing_address.business_name, prospect.id]
+        @prospects_rfcs << [prospect.billing_address.rfc, prospect.id]
+      end
     end
     global = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno').first
     @global_id = global.id
@@ -309,7 +321,6 @@ class BillsController < ApplicationController
 
   def get_info_for_form
     select_store
-    select_type_of_bill
     select_stores_info
     select_prospects_info
     select_payment_forms
@@ -319,12 +330,51 @@ class BillsController < ApplicationController
     get_time
   end
 
+  def filter_product_options
+    @products_ids = []
+    @products_codes = []
+    @products_description = []
+    @products_sat_keys = []
+    @products_sat_unit_keys = []
+    @products_units = []
+    @products_prices = []
+    @byll_types = []
+    TypeOfBill.all.each do |tb|
+      string = tb.key + ' ' + '-' + tb.description
+      @byll_types << [string, tb.id]
+    end
+    @products = Product.where(classification: 'de línea').where(current: true)
+    @products.each do |product|
+      @products_ids << [product.id]
+      @products_codes << [product.unique_code]
+      @products_description << [product.description]
+      @products_sat_keys << [product.sat_key.sat_key]
+      @products_sat_unit_keys << [product.sat_unit_key.unit]
+      @products_units << [product.sat_unit_key.description]
+      @products_prices << [(product.price * (1 + @stores.overprice / 100)).round(2)]
+    end
+  end
+
+  def filter_sat_keys
+  end
+
+  def filter_sat_unit_keys
+  end
+
+  def filter_sat_unit
+  end
+
+  def filter_description
+  end
+
   def form
     get_info_for_form
+    filter_product_options
   end
 
   def global_form
     get_info_for_form
+    filter_product_options
   end
 
   def select_tickets

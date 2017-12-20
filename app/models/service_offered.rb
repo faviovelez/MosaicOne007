@@ -12,7 +12,6 @@ class ServiceOffered < ActiveRecord::Base
   after_create :create_update_summary
 
   def create_update_summary
-    debugger
     if (self.service_type == 'venta' || self.service_type == 'devolución')
       unless prospect == nil
         if dont_exist_prospect_sale
