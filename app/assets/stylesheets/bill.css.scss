@@ -1,3 +1,17 @@
+td {
+  vertical-align: middle !important;
+  padding: 0 auto !important;
+  margin: 0 auto !important;
+}
+
+.select-margin {
+  margin-top: 0 !important;
+}
+
+span.select2-selection.select2-selection--multiple {
+    min-width: 50px !important;
+}
+
 #top-title {
   font-size: 3.5rem;
   font-weight: bold;

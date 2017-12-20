@@ -16,7 +16,6 @@ class StoreMovement < ActiveRecord::Base
   after_create :create_update_summary
 
   def create_update_summary
-    debugger
     if (self.movement_type == 'venta' || self.movement_type == 'devolución')
       unless prospect == nil
         if dont_exist_prospect_sale

@@ -224,6 +224,8 @@ Rails.application.routes.draw do
 
   post '/api/get_all_products',    to: 'api#get_all_products'
 
+  get '/api/get_all_products_for_bill',    to: 'api#get_all_products_for_bill'
+
   get 'warehouse/new_own_entry'
 
   get 'warehouse/remove_inventory'
