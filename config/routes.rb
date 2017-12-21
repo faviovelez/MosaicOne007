@@ -222,9 +222,11 @@ Rails.application.routes.draw do
 
   get 'design_requests/designer/:id', to: 'design_requests#designer', as: 'designer_requests'
 
-  post '/api/get_all_products',    to: 'api#get_all_products'
+  post '/api/get_all_products', to: 'api#get_all_products'
 
-  get '/api/get_all_products_for_bill',    to: 'api#get_all_products_for_bill'
+  get '/api/get_all_products_for_bill', to: 'api#get_all_products_for_bill'
+
+  get '/api/get_info_from_products', to: 'api#get_info_from_products'
 
   get 'warehouse/new_own_entry'
 
