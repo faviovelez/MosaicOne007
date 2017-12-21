@@ -218,6 +218,15 @@ class BillsController < ApplicationController
     else
       @stores = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'})
     end
+    @series = [@stores.series]
+    @folio = []
+     @folio << @stores.bill_last_folio.next
+     @folio << @stores.credit_note_last_folio.next
+     @folio << @stores.debit_note_last_folio.next
+     @folio << @stores.pay_bill_last_folio.next
+     @folio << @stores.advance_e_last_folio.next
+     @folio << @stores.advance_i_last_folio.next
+     @zipcode = @stores.business_unit.billing_address.zipcode
   end
 
   def select_type_of_bill

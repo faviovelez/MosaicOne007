@@ -20,6 +20,45 @@ button#btn-notice {
   padding-right: 1.5rem;
 }
 
+.close-icon {
+  margin-left: 4px;
+  margin-right: 4px;
+  border-radius:50%;
+  width: 16px;
+  height: 16px;
+  background-color: #FF7474;
+  display: flex;
+  align-items: center;
+  vertical-align: middle;
+  z-index: 0;
+}
+
+.close {
+  margin-left: -7.5px !important;
+  margin-bottom: 5.5px;
+  color: #fff;
+}
+
+.close-icon:hover,
+.close-icon:focus {
+  background-color: #D72638;
+}
+
+.center-close {
+  margin: 0 auto !important;
+  padding: 0 auto !important;
+  font-size: 12px !important;
+  opacity: 1 !important;
+  color: #fff;
+}
+
+.white-light {
+  margin: 0 auto !important;
+  padding: 0 auto !important;
+  color: #fff;
+  font-weight: normal;
+}
+
 .flex-table {
   display: flex;
   align-items: stretch;
@@ -67,7 +106,7 @@ button#btn-notice {
 }
 
 .less-margin {
-  margin-left: 53% !important;  
+  margin-left: 53% !important;
 }
 
 span.next_line {
