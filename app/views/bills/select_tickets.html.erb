@@ -8,7 +8,7 @@
   <%= javascript_include_tag 'datatables.min.js' %>
   <%= javascript_include_tag 'tickets' %>
 <% end %>
-
+ 
 <% if @tickets.count >= 1 %>
   <%= form_tag({ controller: 'bills', action: 'select_info' }, method: 'post') do %>
     <table id="tickets">

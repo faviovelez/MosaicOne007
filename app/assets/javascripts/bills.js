@@ -68,17 +68,27 @@ $(document).ready(function() {
     });
   });
 
-
-  $.ajax({
-    url: '/api/get_all_products_for_bill',
-  })
-  .done(function(response){
-    $('.select-product').autocomplete({
-      lookup: response.suggestions,
-      onSelect: function (suggestion) {
-        alert('Seleccionaste ' + suggestion.value + ', ' + suggestion.data);
-      }
+  var newRows = $(".newRow");
+  var rowCount = 1;
+  $("#addNewRow").click(function(){
+    var clone = newRows.clone();
+    clone.attr('id', 'row' + rowCount);
+    $("#fields_for_products").prepend(clone);
+    $.ajax({
+      url: '/api/get_all_products_for_bill',
+    })
+    .done(function(response){
+      $('.select-product').autocomplete({
+        lookup: response.suggestions,
+        onSelect: function (suggestion) {
+          var parent = $(this).parent().parent();
+          debugger
+        }
+      });
     });
+    rowCount ++;
   });
+
+
 
 });

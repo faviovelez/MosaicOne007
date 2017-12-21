@@ -98,27 +98,7 @@
         <th class="space-preview"> Importe </th>
       </tr>
     </thead>
-    <tbody>
-      <tr id="fields_for_product">
-        <td>
-          <div class="close-icon">
-            <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          </div>
-        </td>
-        <td class="space-preview hidden">
-          <%= select_tag :product_id, options_for_select(@products_ids), class: 'form-control select-margin' %>
-        </td>
-        <td class="space-preview"> <%= select_tag :sat_key, options_for_select(@products_sat_keys), class: 'form-control select-margin' %> </td>
-        <td class="space-preview" style="width: 5%"> <%= text_field_tag :unique_code, nil, {class: 'select-product form-control'} %> </td>
-        <td class="space-preview"> <%= text_field_tag :quantity, nil, {placeholder: '100', class: 'form-control center-input'} %> </td>
-        <td class="space-preview"> <%= select_tag :sat_unit_key, options_for_select(@products_sat_unit_keys), class: 'form-control select-margin' %> </td>
-        <td class="space-preview"> <%= select_tag :sat_unit_description, options_for_select(@products_units), class: 'form-control select-margin' %> </td>
-        <td class="space-preview"> <%= select_tag :product_description, options_for_select(@products_description), class: 'form-control select-margin' %> </td>
-        <td class="space-preview"> <%= select_tag :unit_value, options_for_select(@products_prices), class: 'form-control select-margin' %> </td>
-        <td class="space-preview"> <%= text_field_tag :discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-        <td class="space-preview"> <%= text_field_tag :taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-        <td class="space-preview"> <%= text_field_tag :subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-        </tr>
+    <tbody id="fields_for_products">
       <tr>
         <td>
           <br /><br />
@@ -194,9 +174,19 @@
   </tbody>
 </table>
 
+<a href="javascript:;" id="addNewRow"> Agregar</a>
+
 <%= link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
 
 <br /><br /><br /><br />
+
+<table class="hidden">
+  <tbody id="newRowTableBody">
+    <tr class="newRow">
+      <%= render partial: "table_row" %>
+    </tr>
+  </tbody>
+</table>
 
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'select2.min' %>

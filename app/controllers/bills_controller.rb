@@ -275,9 +275,9 @@ class BillsController < ApplicationController
     @prospects_names = [['seleccione']]
     @prospects_rfcs = [['seleccione']]
     if (@user.role.name == 'store' || @user.role.name == 'store-admin')
-      prospects = @stores.prospects
+      prospects = @stores.prospects.limit(10)
     else
-      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
+      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'}).limit(10)
     end
     prospects.each do |prospect|
       if prospect.billing_address != nil
