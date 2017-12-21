@@ -55,7 +55,7 @@ $(document).ready(function() {
     $('#prospect_rfc').children().each(function() {
       if ($(this).val().toString() == $('#prospect_name').val()) {
         $(this).attr("selected","selected");
-      };
+      }
     });
   });
 
@@ -64,16 +64,21 @@ $(document).ready(function() {
     $(store_values).children().each(function() {
       if ($(this).val().toString() == $('#store_name').val()) {
         $(this).attr("selected","selected");
-      };
+      }
     });
   });
 
 
-//  $('#productsForm').autocomplete({
-//    serviceUrl: '/api/get_all_products_for_bill',
-//    onSelect: function (suggestion) {
-//        alert('Seleccionaste ' + suggestion.value + ', ' + suggestion.data);
-//    }
-//  });
+  $.ajax({
+    url: '/api/get_all_products_for_bill',
+  })
+  .done(function(response){
+    $('.select-product').autocomplete({
+      lookup: response.suggestions,
+      onSelect: function (suggestion) {
+        alert('Seleccionaste ' + suggestion.value + ', ' + suggestion.data);
+      }
+    });
+  });
 
 });
