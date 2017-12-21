@@ -1,0 +1,11 @@
+<td class="space-preview"> <%= select_tag :sat_key, options_for_select(@products_sat_keys), class: 'form-control select-margin' %> </td>
+<td class="space-preview"> <%= text_field_tag :subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+<td class="space-preview" style="width: 5%"> <%= select_tag :unique_code, options_for_select(@products_codes), {include_blank: true, multiple: true, class: 'select2-product form-control'} %> </td>
+<td class="space-preview"> <%= text_field_tag :quantity, nil, {placeholder: '100', class: 'form-control center-input'} %> </td>
+<td class="space-preview"> <%= select_tag :sat_unit_key, options_for_select(@products_sat_unit_keys), class: 'form-control select-margin' %> </td>
+<td class="space-preview"> <%= select_tag :sat_unit_description, options_for_select(@products_units), class: 'form-control select-margin' %> </td>
+<td class="space-preview"> <%= select_tag :product_description, options_for_select(@products_description), class: 'form-control select-margin' %> </td>
+<td class="space-preview"> <%= select_tag :unit_value, options_for_select(@products_prices), class: 'form-control select-margin' %> </td>
+<td class="space-preview"> <%= text_field_tag :discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+<td class="space-preview"> <%= text_field_tag :taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+<td class="space-preview"> <%= text_field_tag :subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>

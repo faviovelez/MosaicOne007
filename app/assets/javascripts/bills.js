@@ -55,7 +55,7 @@ $(document).ready(function() {
     $('#prospect_rfc').children().each(function() {
       if ($(this).val().toString() == $('#prospect_name').val()) {
         $(this).attr("selected","selected");
-      };
+      }
     });
   });
 
@@ -64,16 +64,31 @@ $(document).ready(function() {
     $(store_values).children().each(function() {
       if ($(this).val().toString() == $('#store_name').val()) {
         $(this).attr("selected","selected");
-      };
+      }
     });
   });
 
+  var newRows = $(".newRow");
+  var rowCount = 1;
+  $("#addNewRow").click(function(){
+    var clone = newRows.clone();
+    clone.attr('id', 'row' + rowCount);
+    $("#fields_for_products").prepend(clone);
+    $.ajax({
+      url: '/api/get_all_products_for_bill',
+    })
+    .done(function(response){
+      $('.select-product').autocomplete({
+        lookup: response.suggestions,
+        onSelect: function (suggestion) {
+          var parent = $(this).parent().parent();
+          debugger
+        }
+      });
+    });
+    rowCount ++;
+  });
 
-//  $('#productsForm').autocomplete({
-//    serviceUrl: '/api/get_all_products_for_bill',
-//    onSelect: function (suggestion) {
-//        alert('Seleccionaste ' + suggestion.value + ', ' + suggestion.data);
-//    }
-//  });
+
 
 });
