@@ -15,6 +15,12 @@ class StoreMovement < ActiveRecord::Base
 
   after_create :create_update_summary
 
+  after_create :save_web_id
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+
   def create_update_summary
     if (self.movement_type == 'venta' || self.movement_type == 'devolución')
       unless prospect == nil

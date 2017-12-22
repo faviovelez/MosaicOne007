@@ -7,4 +7,11 @@ class Service < ActiveRecord::Base
   has_many :services_tickets
   has_many :service_sales
   has_many :tickets, through: :services_tickets
+
+  after_create :save_web_id
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+  
 end

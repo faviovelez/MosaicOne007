@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171217161237) do
+ActiveRecord::Schema.define(version: 20171222181841) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "pos",        default: false
     t.boolean  "web",        default: true
     t.date     "date"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   create_table "bill_receiveds", force: :cascade do |t|
@@ -94,6 +96,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "web",             default: true
     t.date     "date"
     t.integer  "store_id"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "billing_addresses", ["store_id"], name: "index_billing_addresses_on_store_id", using: :btree
@@ -272,6 +276,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "web",         default: false
     t.date     "date"
     t.float    "cash_alert",  default: 0.0
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "cash_registers", ["store_id"], name: "index_cash_registers_on_store_id", using: :btree
@@ -392,6 +398,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "pos",                default: false
     t.boolean  "web",                default: true
     t.date     "date"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "delivery_services", ["service_offered_id"], name: "index_delivery_services_on_service_offered_id", using: :btree
@@ -547,6 +555,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "pos",              default: false
     t.boolean  "web",              default: true
     t.date     "date"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "expenses", ["bill_received_id"], name: "index_expenses_on_bill_received_id", using: :btree
@@ -830,6 +840,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "pos",              default: false
     t.boolean  "web",              default: true
     t.date     "date"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
@@ -1028,6 +1040,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.float    "armed_discount",           default: 0.0
     t.float    "price_was"
     t.string   "only_measure"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "products", ["business_unit_id"], name: "index_products_on_business_unit_id", using: :btree
@@ -1087,6 +1101,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "pos",                    default: false
     t.boolean  "web",                    default: true
     t.date     "date"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
@@ -1320,6 +1336,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.date     "date"
     t.integer  "prospect_id"
     t.integer  "bill_id"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "service_offereds", ["bill_id"], name: "index_service_offereds_on_bill_id", using: :btree
@@ -1361,6 +1379,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.datetime "updated_at",       null: false
     t.string   "delivery_company"
     t.boolean  "current"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "services", ["business_unit_id"], name: "index_services_on_business_unit_id", using: :btree
@@ -1399,6 +1419,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.integer  "prospect_id"
     t.boolean  "temporal"
     t.boolean  "down_applied"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "store_movements", ["bill_id"], name: "index_store_movements_on_bill_id", using: :btree
@@ -1514,6 +1536,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "web",                 default: true
     t.date     "date"
     t.float    "manual_price"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "stores_inventories", ["product_id"], name: "index_stores_inventories_on_product_id", using: :btree
@@ -1542,6 +1566,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "pos",                   default: false
     t.boolean  "web",                   default: true
     t.date     "date"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "stores_warehouse_entries", ["movement_id"], name: "index_stores_warehouse_entries_on_movement_id", using: :btree
@@ -1617,6 +1643,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "pos",              default: false
     t.boolean  "web",              default: false
     t.date     "date"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "terminals", ["bank_id"], name: "index_terminals_on_bank_id", using: :btree
@@ -1648,6 +1676,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "pos",              default: false
     t.boolean  "web",              default: false
     t.date     "date"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "tickets", ["bill_id"], name: "index_tickets_on_bill_id", using: :btree
@@ -1668,6 +1698,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "web",         default: false
     t.date     "date"
     t.integer  "store_id"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "tickets_children", ["children_id"], name: "index_tickets_children_on_children_id", using: :btree
@@ -1731,6 +1763,8 @@ ActiveRecord::Schema.define(version: 20171217161237) do
     t.boolean  "web"
     t.boolean  "pos"
     t.date     "date"
+    t.integer  "pos_id"
+    t.integer  "web_id"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
