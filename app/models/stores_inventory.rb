@@ -4,6 +4,13 @@ class StoresInventory < ActiveRecord::Base
 
   after_save :update_data_inventory
 
+  after_create :save_web_id
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+
+
   def update_data_inventory
     unless dont_exist_product_sale
       process_inventory(self)

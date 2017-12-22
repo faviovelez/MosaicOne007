@@ -11,6 +11,12 @@ class ServiceOffered < ActiveRecord::Base
 
   after_create :create_update_summary
 
+  after_create :save_web_id
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+
   def create_update_summary
     if (self.service_type == 'venta' || self.service_type == 'devolución')
       unless prospect == nil

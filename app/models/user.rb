@@ -25,6 +25,12 @@ class User < ActiveRecord::Base
   has_many :deposits
   has_many :payments
 
+  after_create :save_web_id
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+
   validates :first_name, presence: { message: 'Por favor escriba el primer nombre del usuario.'}
 
   validates :last_name, presence: { message: 'Por favor anote los apellidos del usuario.'}

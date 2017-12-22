@@ -20,6 +20,13 @@ class Prospect < ActiveRecord::Base
   has_many :tickets
   has_many :estimate_docs
 
+  after_create :save_web_id
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+
+
 #  validates :legal_or_business_name, presence: { message: 'Debe especificar el nombre del prospecto.'}
 
 #  validates :prospect_type, presence: { message: 'Debe especificar el giro comercial.'}
