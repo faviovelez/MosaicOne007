@@ -35,7 +35,38 @@ class Product < ActiveRecord::Base
 
   validate :price_present, unless: :classification_is_special
 
-  validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya existe un producto con con este código."}
+  validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya existe un producto con con este código." }
+
+  after_create :create_inventory_or_store_inventories
+
+  after_create :save_web_id
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+
+  def create_store_inventories
+    if self.classification != 'especial'
+      corporate = StoreType.find_by_store_type('corporativo')
+      stores = Store.where.not(store_type: corporate)
+      stores.each do |store|
+        StoresInventory.create(product: self, store: store) unless store.stores_inventories.where(product: self).count > 0
+      end
+    end
+  end
+
+  def create_inventory_or_store_inventories
+    if self.classification == 'de tienda'
+      inventory = StoresInventory.create(product: self, store: self.store) unless store.stores_inventories.where(product: self).count > 0
+    else
+      create_store_inventories
+      create_corporate_inventory
+    end
+  end
+
+  def create_corporate_inventory
+    inventory_corp = Inventory.create(product: self, unique_code: self.unique_code)
+  end
 
   def price_present
       errors[:base] << "Es necesario el precio del producto." if price.blank?

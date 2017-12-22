@@ -59,7 +59,6 @@ class ProductsController < ApplicationController
           format.html { redirect_to @product, notice: 'Se creó un nuevo producto y una petición de baja de productos en espera del inventario.' }
           format.json { render :show, status: :created, location: @product }
         else
-          create_inventory_or_store_inventories
           update_discount_rules
           format.html { redirect_to @product, notice: 'Se creó un nuevo producto.' }
           format.json { render :show, status: :created, location: @product }
@@ -164,28 +163,6 @@ class ProductsController < ApplicationController
     @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
     store_inventory = StoresInventory.create(product: @product, store: @finded_user.store)
     @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, order: @order, unique_code: @product.unique_code, product_request: @product_request, initial_price: @request.internal_price, buyer_user: @finded_user)
-  end
-
-  def create_inventory_without_order
-    @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
-  end
-
-  def create_store_inventories
-    if @product.classification != 'especial'
-      corporate = StoreType.find_by_store_type('corporativo')
-      stores = Store.where.not(store_type: corporate)
-      stores.each do |store|
-        StoresInventory.create(product: @product, store: store)
-      end
-    end
-  end
-
-  def create_inventory_or_store_inventories
-    if @product.classification == 'de tienda'
-      @inventory = StoresInventory.create(product: @product, store: current_user.store)
-    else
-      create_store_inventories
-    end
   end
 
   def find_user

@@ -408,7 +408,7 @@ class BillsController < ApplicationController
     params[:bills] == nil ? @bills = nil : @bills = Bill.find(params[:bills])
     if (@tickets == nil  && @orders == nil)
       objects = @bills
-    elsif (@tickets == nil  && @bills == nil)
+    elsif (@tickets == nil && @bills == nil)
       objects = @orders
     elsif (@bills == nil  && @orders == nil)
       objects = @tickets
@@ -804,7 +804,7 @@ class BillsController < ApplicationController
   end
 
   def subtotal
-    amounts = []
+      amounts = []
     @rows.each do |row|
       if @bill != nil
         amounts << row.subtotal
@@ -1575,15 +1575,15 @@ XML
       @objects.class == Bill ? bill.from = @bill.class.to_s : bill.from = @objects.first.class.to_s
       @general_bill == true ? bill.bill_type = 'global' : bill.bill_type = 'cliente'
       bill.parent = @bill
-      if @relation.id == 1
+      if @relation&.id == 1
         bill.bill_folio_type = "Nota de Crédito"
-      elsif @relation.id == 2
+      elsif @relation&.id == 2
         bill.bill_folio_type = "Nota de Débito"
-      elsif @relation.id == 3
+      elsif @relation&.id == 3
         bill.bill_folio_type = "Devolución"
-      elsif @relation.id == 4
+      elsif @relation&.id == 4
         bill.bill_folio_type = "Sustitución"
-      elsif @relation.id == 7
+      elsif @relation&.id == 7
         bill.bill_folio_type = "Aplicaición de Anticipo"
       elsif @series.include?("FA")
         bill.bill_folio_type = "Anticipo"

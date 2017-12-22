@@ -82,7 +82,6 @@ $(document).ready(function() {
         lookup: response.suggestions,
         onSelect: function (suggestion) {
           var parent = $(this).parent().parent();
-          debugger
         }
       });
     });

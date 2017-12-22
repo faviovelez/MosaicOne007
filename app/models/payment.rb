@@ -15,6 +15,12 @@ class Payment < ActiveRecord::Base
 
   after_create :create_update_summary
 
+  after_create :save_web_id
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+
   def create_update_summary
     if (self.payment_type == 'pago' || self.payment_type == 'devolución')
       if dont_exist_store_sale

@@ -12,6 +12,12 @@ class BillingAddress < ActiveRecord::Base
 
   validates :rfc, presence: { message: 'Debe escribir el RFC.'}
 
+  after_create :save_web_id
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+
 #  validates :street, presence: { message: 'Debe escribir la calle.'}
 
 #  validates :exterior_number, presence: { message: 'Debe escribir el número exterior.'}

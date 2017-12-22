@@ -3,19 +3,19 @@
     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   </div>
 </td>
-<td class="space-preview hidden">
+<td class="space-preview hidden product_id">
   <%= select_tag :product_id, options_for_select(@products_ids), class: 'form-control select-margin product_id' %>
 </td>
-<td class="space-preview"> <%= select_tag 'id_ticket[]', options_for_select(@products_sat_keys), class: 'form-control select-margin sat_key' %> </td>
-<td class="space-preview"> <%= select_tag 'sat_key[]', options_for_select(@products_sat_keys), class: 'form-control select-margin sat_key' %> </td>
-<td class="space-preview" style="width: 5%"> <%= text_field_tag 'unique_code[]', nil, {class: 'select-product form-control unique_code'} %> </td>
-<td class="space-preview"> <%= text_field_tag :quantity, nil, {placeholder: '100', class: 'form-control center-input quantity'} %> </td>
-<td class="space-preview"> <%= select_tag :sat_unit_key, options_for_select(@products_sat_unit_keys), class: 'form-control select-margin sat_unit_key' %> </td>
-<td class="space-preview"> <%= select_tag :unit_value, options_for_select(@products_prices), class: 'form-control select-margin unit_value' %> </td>
-<td class="space-preview"> <%= text_field_tag :discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input '} %> </td>
-<td class="space-preview"> <%= text_field_tag :taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-<td class="space-preview"> <%= text_field_tag :subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-
+<td class="space-preview sat_key"> <%= select_tag 'sat_key[]', options_for_select(@products_sat_keys), class: 'form-control select-margin sat_key' %> </td>
+<td class="space-preview unique_code" style="width: 5%"> <%= text_field_tag 'unique_code[]', nil, {class: 'select-product form-control unique_code'} %> </td>
+<td class="space-preview quantity"> <%= text_field_tag 'quantity[]', nil, {placeholder: '100', class: 'form-control center-input quantity'} %> </td>
+<td class="space-preview sat_unit_key"> <%= select_tag 'sat_unit_key[]', options_for_select(@products_sat_unit_keys), class: 'form-control select-margin sat_unit_key' %> </td>
+<td class="space-preview sat_unit_key"> <%= select_tag 'sat_unit_description[]', options_for_select(@products_units), class: 'form-control select-margin sat_unit_description' %> </td>
+<td class="space-preview sat_unit_description"> <%= select_tag 'product_description[]', options_for_select(@products_description), class: 'form-control select-margin product_description' %> </td>
+<td class="space-preview unit_value"> <%= select_tag 'unit_value[]', options_for_select(@products_prices), class: 'form-control select-margin unit_value' %> </td>
+<td class="space-preview discount"> <%= text_field_tag 'discount[]', nil, {placeholder: '$ 0.00', class: 'form-control center-input '} %> </td>
+<td class="space-preview taxes"> <%= text_field_tag 'taxes[]', nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+<td class="space-preview subtotal"> <%= text_field_tag 'subtotal[]', nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
 
 estas son las que deben de ir
 <% if (@role == 'store' || @role == 'store-admin' ) %>
