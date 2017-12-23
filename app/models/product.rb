@@ -50,7 +50,7 @@ class Product < ActiveRecord::Base
       corporate = StoreType.find_by_store_type('corporativo')
       stores = Store.where.not(store_type: corporate)
       stores.each do |store|
-        StoresInventory.create(product: self, store: self.store) unless self.store.stores_inventories.where(product: self).count > 0
+        StoresInventory.create(product: self, store: store) unless store.stores_inventories.where(product: self).count > 0
       end
     end
   end
