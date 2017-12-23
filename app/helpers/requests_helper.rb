@@ -2,7 +2,7 @@ module RequestsHelper
 
   def secondary_material_options
     options = [['seleccione', '']]
-    Material.all.each do |m|
+    Material.find_each do |m|
       if (m.name == 'papel kraft' || m.name == 'papel bond')
         options << [m.name, class: 'resistance secondary bolsa']
       elsif (m.name == 'celofán' || m.name == 'acetato')
@@ -17,7 +17,7 @@ module RequestsHelper
 
   def third_material_options
     options = [['seleccione', '']]
-    Material.all.each do |m|
+    Material.find_each do |m|
       if (m.name == 'papel kraft' || m.name == 'papel bond')
         options << [m.name, class: 'resistance third bolsa']
       elsif (m.name == 'celofán' || m.name == 'acetato')
@@ -37,16 +37,16 @@ module RequestsHelper
     r_corrugado = Resistance.where("name LIKE ? AND name NOT LIKE ?", "%ECT%", "%DC%")
     r_d_corrugado = Resistance.where("name LIKE ? AND name LIKE ?", "%ECT%", "%DC%")
 
-    r_plegadizo.all.each do |r|
+    r_plegadizo.find_each do |r|
       options << [r.name, class: 'secondary plegadizo hidden']
     end
-    r_liner.all.each do |r|
+    r_liner.find_each do |r|
       options << [r.name, class: 'secondary liner hidden']
     end
-    r_corrugado.all.each do |r|
+    r_corrugado.find_each do |r|
       options << [r.name, class: 'secondary corrugado hidden']
     end
-    r_d_corrugado.all.each do |r|
+    r_d_corrugado.find_each do |r|
       options << [r.name, class: 'secondary doble_corrugado hidden']
     end
     options << ['no aplica', class: 'secondary otros hidden']
@@ -61,16 +61,16 @@ module RequestsHelper
     r_corrugado = Resistance.where("name LIKE ? AND name NOT LIKE ?", "%ECT%", "%DC%")
     r_d_corrugado = Resistance.where("name LIKE ? AND name LIKE ?", "%ECT%", "%DC%")
 
-    r_plegadizo.all.each do |r|
+    r_plegadizo.find_each do |r|
       options << [r.name, class: 'third plegadizo hidden']
     end
-    r_liner.all.each do |r|
+    r_liner.find_each do |r|
       options << [r.name, class: 'third liner hidden']
     end
-    r_corrugado.all.each do |r|
+    r_corrugado.find_each do |r|
       options << [r.name, class: 'third corrugado hidden']
     end
-    r_d_corrugado.all.each do |r|
+    r_d_corrugado.find_each do |r|
       options << [r.name, class: 'third doble_corrugado hidden']
     end
     options << ['no aplica', class: 'third otros hidden']
@@ -80,7 +80,7 @@ module RequestsHelper
 
   def finishing_options
     options = [['Seleccione', ''], ['Sin acabados']]
-    Finishing.all.each do |f|
+    Finishing.find_each do |f|
       options << [f.name]
     end
     options

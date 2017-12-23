@@ -295,7 +295,7 @@ class BillsController < ApplicationController
 
   def select_payment_forms
     @payment_forms = [['seleccione']]
-    PaymentForm.all.each do |pf|
+    PaymentForm.find_each do |pf|
       string = pf.payment_key + ' - ' + pf.description
       @payment_forms << [string, pf.id]
     end
@@ -308,7 +308,7 @@ class BillsController < ApplicationController
 
   def select_payment_methods
     @payment_methods = [['seleccione']]
-    PaymentMethod.all.each do |pm|
+    PaymentMethod.find_each do |pm|
       string = pm.method + ' - ' + pm.description
       @payment_methods << [string, pm.id]
     end
@@ -317,7 +317,7 @@ class BillsController < ApplicationController
 
   def select_cfdi_use
     @cfdi_use = [['seleccione']]
-    CfdiUse.all.each do |use|
+    CfdiUse.find_each do |use|
       cfdi_string = use.key + ' - ' + use.description
       @cfdi_use << [cfdi_string, use.id]
     end
@@ -348,19 +348,19 @@ class BillsController < ApplicationController
     @products_units = []
     @products_prices = []
     @byll_types = []
-    TypeOfBill.all.each do |tb|
+    TypeOfBill.find_each do |tb|
       string = tb.key + ' ' + '-' + tb.description
       @byll_types << [string, tb.id]
     end
     @products = Product.where(classification: 'de línea').where(current: true)
     @products.each do |product|
       @products_ids << [product.id]
-      @products_codes << [product.unique_code]
-      @products_description << [product.description]
-      @products_sat_keys << [product.sat_key.sat_key]
-      @products_sat_unit_keys << [product.sat_unit_key.unit]
-      @products_units << [product.sat_unit_key.description]
-      @products_prices << [(product.price * (1 + @stores.overprice / 100)).round(2)]
+      @products_codes << [product.unique_code, product.id]
+      @products_description << [product.description, product.id]
+      @products_sat_keys << [product.sat_key.sat_key, product.id]
+      @products_sat_unit_keys << [product.sat_unit_key.unit, product.id]
+      @products_units << [product.sat_unit_key.description, product.id]
+      @products_prices << [(product.price * (1 + @stores.overprice / 100)).round(2), product.id]
     end
   end
 

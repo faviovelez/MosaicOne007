@@ -20,7 +20,7 @@ tables = [
 
 tables.each do |table|
   const = table.singularize.camelize.constantize
-  const.all.each do |c|
-    c.update(web_id: c.id)
+  const.find_each do |c|
+    c.update(web_id: c.id) if c.web_id.nil?
   end
 end
