@@ -60,7 +60,7 @@ class Product < ActiveRecord::Base
       self.update(shared: false, store: Store.find_by_store_name('Bugambilias'))
       inventory = StoresInventory.create(product: self, store: self.store) unless self.store.stores_inventories.where(product: self).count > 0
     else
-      self.update(shared: true, line: Classification.find_by_name(row['line']).name)
+      self.update(shared: true)
       create_store_inventories
       create_corporate_inventory
     end
