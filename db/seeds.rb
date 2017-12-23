@@ -1192,7 +1192,7 @@ puts "There are now #{SatUnitKey.count} rows in the SAT Unit Key table"
 puts "There are now #{SatZipcode.count} rows in the SAT ZipCode table"
 
 
-Store.all.each do |store|
+Store.find_each do |store|
   billing_general_prospect = BillingAddress.find_or_create_by(
                                                                 {
                                                                   business_name: 'Público en General',
