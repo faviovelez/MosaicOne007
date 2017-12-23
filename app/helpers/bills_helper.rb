@@ -295,7 +295,7 @@ module BillsHelper
 
   def select_cfdi_use
     @uses = []
-    CfdiUse.all.each do |use|
+    CfdiUse.find_each do |use|
       name = use.key + ' ' + '-' + ' ' + use.description
       @uses << [name, use.id]
     end
@@ -304,7 +304,7 @@ module BillsHelper
 
   def select_cfdi_type
     @types = []
-    TypeOfBill.all.each do |bill_type|
+    TypeOfBill.find_each do |bill_type|
       string = bill_type.key + ' ' + '-' + ' ' + bill_type.description
       @types << [string, bill_type.id]
     end

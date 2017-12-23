@@ -45,7 +45,7 @@ module ApplicationHelper
 # Inicia la sección de métodos utilizados por formularios en Products y Requests
   def product_line_options
     options = [['seleccione', '']]
-    Classification.all.each do |c|
+    Classification.find_each do |c|
       options << [c.name]
     end
     options
@@ -53,7 +53,7 @@ module ApplicationHelper
 
   def product_type_options
     options = [['seleccione', '']]
-    ProductType.all.each do |t|
+    ProductType.find_each do |t|
       if t.product_type == 'caja'
         options << [t.product_type, class: 'box-other']
       else
@@ -66,7 +66,7 @@ module ApplicationHelper
 
   def interior_color_options
     options = []
-    InteriorColor.all.each do |i|
+    InteriorColor.find_each do |i|
       options << [i.name]
     end
     options
@@ -74,7 +74,7 @@ module ApplicationHelper
 
   def exterior_color_options
     options = []
-    ExteriorColor.all.each do |e|
+    ExteriorColor.find_each do |e|
       options << [e.name]
     end
     options
@@ -82,7 +82,7 @@ module ApplicationHelper
 
   def main_material_options
     options = [['seleccione', '']]
-    Material.all.each do |m|
+    Material.find_each do |m|
       unless (m.name == 'papel arroz' || m.name == 'celofán' || m.name == 'acetato')
         if (m.name == 'papel kraft' || m.name == 'papel bond')
           options << [m.name, class: 'resistance main bolsa']
@@ -102,16 +102,16 @@ module ApplicationHelper
     r_corrugado = Resistance.where("name LIKE ? AND name NOT LIKE ?", "%ECT%", "%DC%")
     r_d_corrugado = Resistance.where("name LIKE ? AND name LIKE ?", "%ECT%", "%DC%")
 
-    r_plegadizo.all.each do |r|
+    r_plegadizo.find_each do |r|
       options << [r.name, class: 'main plegadizo hidden']
     end
-    r_liner.all.each do |r|
+    r_liner.find_each do |r|
       options << [r.name, class: 'main liner hidden']
     end
-    r_corrugado.all.each do |r|
+    r_corrugado.find_each do |r|
       options << [r.name, class: 'main corrugado hidden']
     end
-    r_d_corrugado.all.each do |r|
+    r_d_corrugado.find_each do |r|
       options << [r.name, class: 'main doble_corrugado hidden']
     end
     options << ['no aplica', class: 'main otros hidden']
@@ -121,7 +121,7 @@ module ApplicationHelper
 
   def design_options
     options = [['Seleccione', '']]
-    DesignLike.all.each do |d|
+    DesignLike.find_each do |d|
       options << [d.name]
     end
     options << ['Sugerir armado']

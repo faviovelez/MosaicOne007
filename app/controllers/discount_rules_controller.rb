@@ -95,7 +95,7 @@ class DiscountRulesController < ApplicationController
 
 # CREO QUE ESTE MÉTODO YA NO DEBE EXISTIR
   def product_category
-    Classification.all.each do |c|
+    Classification.find_each do |c|
       @line = c.name
       if params[:discount_rule][:product_filter] == @line
         @products = Product.where(line: @line)
@@ -105,7 +105,7 @@ class DiscountRulesController < ApplicationController
 
 # CREO QUE ESTE MÉTODO YA NO DEBE EXISTIR
   def prospect_category
-    Classification.all.each do |c|
+    Classification.find_each do |c|
       @line = c.name
       if params[:discount_rule][:product_filter] == @line
         @products = Product.where(line: @line)

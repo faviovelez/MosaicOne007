@@ -46,19 +46,21 @@ class Product < ActiveRecord::Base
   end
 
   def create_store_inventories
-    if self.classification != 'especial'
+    if self.classification == 'de línea'
       corporate = StoreType.find_by_store_type('corporativo')
       stores = Store.where.not(store_type: corporate)
       stores.each do |store|
-        StoresInventory.create(product: self, store: store) unless store.stores_inventories.where(product: self).count > 0
+        StoresInventory.create(product: self, store: self.store) unless self.store.stores_inventories.where(product: self).count > 0
       end
     end
   end
 
   def create_inventory_or_store_inventories
     if self.classification == 'de tienda'
-      inventory = StoresInventory.create(product: self, store: self.store) unless store.stores_inventories.where(product: self).count > 0
+      self.update(shared: false, store: Store.find_by_store_name('Bugambilias'))
+      inventory = StoresInventory.create(product: self, store: self.store) unless self.store.stores_inventories.where(product: self).count > 0
     else
+      self.update(shared: true, line: Classification.find_by_name(row['line']).name)
       create_store_inventories
       create_corporate_inventory
     end
