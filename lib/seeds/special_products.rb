@@ -40,6 +40,10 @@ csv.each do |row|
     product.update(impression: false)
   end
 
+  if product.classification != 'de tienda'
+    line: Classification.find_by_name(row['line']).name
+  end
+
   not_armed = (row['discount_when_armed'] == '' || row['discount_when_armed'] == nil)
   product.update(armed: true, armed_discount: row['discount_when_armed']) unless not_armed
 
