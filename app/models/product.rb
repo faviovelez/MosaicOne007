@@ -57,7 +57,6 @@ class Product < ActiveRecord::Base
 
   def create_inventory_or_store_inventories
     if self.classification == 'de tienda'
-      self.update(shared: false, store: Store.find_by_store_name('Bugambilias'))
       inventory = StoresInventory.create(product: self, store: self.store) unless self.store.stores_inventories.where(product: self).count > 0
     else
       self.update(shared: true)
