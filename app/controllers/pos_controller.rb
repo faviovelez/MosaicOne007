@@ -133,9 +133,10 @@ class PosController < ApplicationController
     def vinculate_relations(reference, value)
       table_name = reference.gsub(/_id/,'')
       object     = nil
-      if @ids_references[table_name.singularize][value].nil?
-        binding.pry
-        return value
+      if @ids_references[table_name.singularize][value.to_s].nil?
+        return table_name.camelcase.constantize.find_by_pos_id(
+          value
+        ).web_id
       end
       @ids_references[table_name.singularize][value.to_s]
     rescue
