@@ -26,6 +26,8 @@ csv.each do |row|
                                           only_measure: row['only_measure'],
                                           price: row['price'],
                                           factor: row['factor'],
+                                          line: Classification.find_by_name(row['line'])&.name,
+                                          store: Store.find_by_store_name(row['store']),
                                           average: row['average'],
                                           discount_for_franchises: row['stores_discount'],
                                           discount_for_stores: row['retails_discount'],
@@ -38,10 +40,6 @@ csv.each do |row|
     product.update(impression: true)
   else
     product.update(impression: false)
-  end
-
-  if product.classification != 'de tienda'
-    line: Classification.find_by_name(row['line']).name
   end
 
   not_armed = (row['discount_when_armed'] == '' || row['discount_when_armed'] == nil)
