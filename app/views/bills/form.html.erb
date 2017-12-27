@@ -27,8 +27,8 @@
               <% type = 'Devolución' %>
             <% end %>
 
-            <p> Serie: <%= select_tag :prospect_rfc, options_for_select(@series), class: 'form-control' %> </p>
-            <p> Folio: <%= select_tag :prospect_rfc, options_for_select(@folio), class: 'form-control' %>  </span> </p>
+            <p> Serie: <%= select_tag :series, options_for_select(@series), class: 'form-control', id: 'series' %> </p>
+            <p> Folio: <%= select_tag :folio, options_for_select(@folio), class: 'form-control' %>  </span> </p>
             <p> Fecha y hora de timbrado: <span> <%= @time %> </span> </p>
             <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
             <p> Tipo de comprobante:
@@ -44,7 +44,7 @@
     </thead>
     <tbody>
       <tr>
-        <td class="half first"> RFC: <%= select_tag :store_rfc, options_for_select(@store_rfcs), class: 'form-control' %> </td>
+        <td class="half first"> RFC: <%= select_tag :store_rfc, options_for_select(@store_rfcs), class: 'form-control', id: 'store_rfc' %> </td>
         <td class="half"> RFC: <%= select_tag :prospect_rfc, options_for_select(@prospects_rfcs), class: 'form-control' %> </td>
       </tr>
       <tr>
@@ -52,7 +52,7 @@
         <td class="half"> <span class="next_line"> Nombre: </span> <%= select_tag :prospect_name, options_for_select(@prospects_names), {include_blank: true, multiple: true, class: 'select2-prospect-form'} %> </td>
       </tr>
       <tr>
-        <td class="half first"> Régimen Fiscal: <%= select_tag :tax_regime, options_for_select(@store_tax_regimes), class: 'form-control' %> </td>
+        <td class="half first"> Régimen Fiscal: <%= select_tag :tax_regime, options_for_select(@store_tax_regimes), class: 'form-control', id: 'tax_regime' %> </td>
         <td class="half"> Uso CFDI: <%= select_tag :cfdi_use, options_for_select(@cfdi_use), class: 'form-control' %> </td>
       </tr>
     </tbody>
@@ -115,25 +115,35 @@
         <td></td>
         <td></td>
         <td colspan="3" class="final-total left"> SubTotal </td>
-        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input', disabled: true} %> </td>
       </tr>
       <tr>
         <td colspan="5"></td>
         <td colspan="3" class="final-total left"> Descuento </td>
-        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input', disabled: true} %> </td>
       </tr>
       <tr>
         <td colspan="5" class="letter"> </td>
         <td colspan="3" class="final-total left"> Total Impuestos Trasladados </td>
-        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'}  %> </td>
+        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input', disabled: true}  %> </td>
       </tr>
       <tr>
         <td colspan="5" class="letter"> </td>
         <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
-        <td colspan="2" class="final-total border-top right"> <strong> <%= text_field_tag :bill_total, nil, {placeholder: '$ 0.00', class: 'form-control center-input'}  %> </strong> </td>
+        <td colspan="2" class="final-total border-top right"> <strong> <%= text_field_tag :bill_total, nil, {placeholder: '$ 0.00', class: 'form-control center-input', disabled: true}  %> </strong> </td>
       </tr>
     </tbody>
   </table>
+
+  <br /><br />
+
+  <a href="javascript:;" id="addNewRow"> Agregar</a>
+
+  <br /><br />
+
+  <div class="actions">
+    <%= submit_tag 'Generar factura', class: 'main-button' %>
+  </div><br /><br />
 
 <% end %>
 
@@ -174,9 +184,8 @@
   </tbody>
 </table>
 
-<a href="javascript:;" id="addNewRow"> Agregar</a>
 
-<%= link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
+<%# link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
 
 <br /><br /><br /><br />
 

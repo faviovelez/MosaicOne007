@@ -207,6 +207,15 @@
           <%= link_to 'Formulario de factura', bills_form_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'bills' && params[:action] == 'global_form') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-file-pdf-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Formulario Fact Global', bills_global_form_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para store o store-admin %>
 

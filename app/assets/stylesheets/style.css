@@ -30,7 +30,7 @@ button#btn-notice {
   display: flex;
   align-items: center;
   vertical-align: middle;
-  z-index: 0;
+  z-index: 100;
 }
 
 .close {

@@ -209,24 +209,35 @@ class BillsController < ApplicationController
   end
 
   def select_store(user = current_user)
+    @series = []
+    @folio = []
     @user = user
     @role = @user.role.name
-    store = @user.store
     # Este método es solo para los formularios en Bills
     if (@role == 'store' || @role == 'store-admin')
-      @stores = store
+      store = current_user.store
+      @store = store
+      @series << [store.series, store.id]
+      @folio << [store.bill_last_folio.next, store.id]
+      @folio << [store.credit_note_last_folio.next, store.id]
+      @folio << [store.debit_note_last_folio.next, store.id]
+      @folio << [store.pay_bill_last_folio.next, store.id]
+      @folio << [store.advance_e_last_folio.next, store.id]
+      @folio << [store.advance_i_last_folio.next, store.id]
+      @zipcode = [store.business_unit.billing_address.zipcode, store.id]
     else
       @stores = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'})
+      @stores.each do |store|
+        @series << [store.series, store.id]
+        @folio << [store.bill_last_folio.next, store.id]
+        @folio << [store.credit_note_last_folio.next, store.id]
+        @folio << [store.debit_note_last_folio.next, store.id]
+        @folio << [store.pay_bill_last_folio.next, store.id]
+        @folio << [store.advance_e_last_folio.next, store.id]
+        @folio << [store.advance_i_last_folio.next, store.id]
+        @zipcode = [store.business_unit.billing_address.zipcode, store.id]
+      end
     end
-    @series = [@stores.series]
-    @folio = []
-     @folio << @stores.bill_last_folio.next
-     @folio << @stores.credit_note_last_folio.next
-     @folio << @stores.debit_note_last_folio.next
-     @folio << @stores.pay_bill_last_folio.next
-     @folio << @stores.advance_e_last_folio.next
-     @folio << @stores.advance_i_last_folio.next
-     @zipcode = @stores.business_unit.billing_address.zipcode
   end
 
   def select_type_of_bill
@@ -248,7 +259,7 @@ class BillsController < ApplicationController
     @store_rfcs = [['seleccione']]
     @store_tax_regimes = [['seleccione']]
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
-      store = @stores
+      store = @store
       billing = store.business_unit.billing_address
       @store_series << [store.series, store.id]
       @store_folio << [store.bill_last_folio.to_i.next, store.id]
@@ -275,7 +286,7 @@ class BillsController < ApplicationController
     @prospects_names = [['seleccione']]
     @prospects_rfcs = [['seleccione']]
     if (@user.role.name == 'store' || @user.role.name == 'store-admin')
-      prospects = @stores.prospects.limit(10)
+      prospects = @store.prospects.limit(10)
     else
       prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'}).limit(10)
     end
@@ -352,7 +363,7 @@ class BillsController < ApplicationController
       string = tb.key + ' ' + '-' + tb.description
       @byll_types << [string, tb.id]
     end
-    @products = Product.where(classification: 'de línea').where(current: true)
+    @products = Product.where(classification: 'de línea').where(current: true).limit(10)
     @products.each do |product|
       @products_ids << [product.id]
       @products_codes << [product.unique_code, product.id]
@@ -360,7 +371,11 @@ class BillsController < ApplicationController
       @products_sat_keys << [product.sat_key.sat_key, product.id]
       @products_sat_unit_keys << [product.sat_unit_key.unit, product.id]
       @products_units << [product.sat_unit_key.description, product.id]
-      @products_prices << [(product.price * (1 + @stores.overprice / 100)).round(2), product.id]
+      if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+        @products_prices << [(product.price * (1 + @store.overprice.to_f / 100)).round(2), product.id]
+      else
+        @products_prices << [(product.price * (1 + @stores.first.overprice.to_f / 100)).round(2), product.id]
+      end
     end
   end
 
@@ -914,6 +929,7 @@ class BillsController < ApplicationController
   end
 
   def cfdi_process
+    debugger
     if params[:bill] != nil
       @bill = Bill.find(params[:bill])
     end
