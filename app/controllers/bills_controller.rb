@@ -928,6 +928,59 @@ class BillsController < ApplicationController
     @total_discount
   end
 
+  def variables_needed
+    # si es normal:
+    @relation_type # para saber si es factura o nota de credito
+    @bill # para saber si es de una factura (como las vamos a ligar?) usando el mismo metodo de SIEMPRE
+    @series
+    @folio
+    @zipcode
+    @type_of_bill_key
+    @type_of_bill_description
+    @time.slice(0..18)
+    @store_rfc
+    @prospect_rfc
+    @store_name
+    @prospect_name
+    @tax_regime_key
+    @tax_regime
+    @cfdi_use_key
+    @cfdi_use
+    @payment_key
+    @payment_description
+    @method_key
+    @method_description
+    @payment_form
+    @bill
+    # Pueden ser de estas:
+    @rows
+    row["sat_key"]
+    row["unique_code"]
+    row["description"]
+    row["quantity"]
+    row["sat_unit_key"]
+    row["sat_unit_description"]
+    row["unit_value"]
+    row["discount"]
+    row["taxes"]
+    row["subtotal"]
+    subtotal (metodo)
+    total_discount (metodo)
+    total_taxes
+    total
+    # Agregar un select para relacionar Facturas y CFDI relacionado
+    # Agregar una variable que valide si entro por form y si es asi, enviar todo correcto a cfdi_process por medio de otro metodo
+
+    @relation_type
+    @relation_type_description
+    @bill.uuid
+    @store_rfc
+    @prospect_rfc
+    @store
+    @objects
+    # Tal vez tenga que cambiar el else de if tickets == nil para agregar este escenario 
+  end
+
   def cfdi_process
     debugger
     if params[:bill] != nil

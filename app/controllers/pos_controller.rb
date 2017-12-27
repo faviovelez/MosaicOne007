@@ -107,6 +107,7 @@ class PosController < ApplicationController
       klass = table_name.singularize.camelize.constantize
       new_reg = klass.new
       values[:object].each do |attr|
+        next if %w(pos_id web_id).include?(attr.first)
         if is_relation_object(attr.first)
           id = vinculate_relations(attr.first, attr.last)
           new_reg.send("#{attr.first}=", id)
@@ -132,8 +133,10 @@ class PosController < ApplicationController
     def vinculate_relations(reference, value)
       table_name = reference.gsub(/_id/,'')
       object     = nil
-      if @ids_references[table_name.singularize][value].nil?
-        return value
+      if @ids_references[table_name.singularize][value.to_s].nil?
+        return table_name.camelcase.constantize.find_by_pos_id(
+          value
+        ).web_id
       end
       @ids_references[table_name.singularize][value.to_s]
     rescue
