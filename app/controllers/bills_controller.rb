@@ -286,9 +286,9 @@ class BillsController < ApplicationController
     @prospects_names = [['seleccione']]
     @prospects_rfcs = [['seleccione']]
     if (@user.role.name == 'store' || @user.role.name == 'store-admin')
-      prospects = @store.prospects.limit(10)
+      prospects = @store.prospects
     else
-      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'}).limit(10)
+      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
     end
     prospects.each do |prospect|
       if prospect.billing_address != nil
@@ -363,7 +363,7 @@ class BillsController < ApplicationController
       string = tb.key + ' ' + '-' + tb.description
       @byll_types << [string, tb.id]
     end
-    @products = Product.where(classification: 'de línea').where(current: true).limit(10)
+    @products = Product.where(classification: 'de línea').where(current: true)
     @products.each do |product|
       @products_ids << [product.id]
       @products_codes << [product.unique_code, product.id]
@@ -372,9 +372,9 @@ class BillsController < ApplicationController
       @products_sat_unit_keys << [product.sat_unit_key.unit, product.id]
       @products_units << [product.sat_unit_key.description, product.id]
       if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
-        @products_prices << [(product.price * (1 + @store.overprice.to_f / 100)).round(2), product.id]
+        @products_prices << [(product.price * (1 + (@store.overprice.to_f / 100))).round(2), product.id]
       else
-        @products_prices << [(product.price * (1 + @stores.first.overprice.to_f / 100)).round(2), product.id]
+        @products_prices << [(product.price * (1 + (@stores.first.overprice.to_f / 100))).round(2), product.id]
       end
     end
   end
@@ -978,7 +978,7 @@ class BillsController < ApplicationController
     @prospect_rfc
     @store
     @objects
-    # Tal vez tenga que cambiar el else de if tickets == nil para agregar este escenario 
+    # Tal vez tenga que cambiar el else de if tickets == nil para agregar este escenario
   end
 
   def cfdi_process

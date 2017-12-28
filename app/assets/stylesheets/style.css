@@ -853,9 +853,8 @@ td {
   height: 3rem;
 }
 
-tr:hover {
-  background-color: #F4F9F8;
-  opacity: .99;
+a.close-icon {
+  z-index: 10000;
 }
 
 tr.no-shadow {

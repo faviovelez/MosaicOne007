@@ -74,14 +74,13 @@ $(document).ready(function() {
   function putTaxes(rowCount) {
     quant = parseFloat($('#quantity_' + rowCount).val());
     price = parseFloat($('#unit_value_' + rowCount).val());
-    $('#subtotal_' + rowCount).val(price);
-    $('#unit_value_' + rowCount).val(price);
     if ($('#discount_' + rowCount).val() == '') {
       discountRow = 0;
     } else {
       discountRow = parseFloat($('#discount_' + rowCount).val());
     }
-    base = (parseFloat(price) - parseFloat(discountRow)) * quant;
+    subt = parseFloat((price * quant).toFixed(2));
+    base = subt - discountRow;
     taxValue = parseFloat(
       (base * 0.16).toFixed(2)
     );
@@ -135,11 +134,6 @@ $(document).ready(function() {
     $('#bill_total').val(totalSum.toFixed(2));
   }
 
-  // Este no sirve
-  $(".close-icon a").click(function(){
-    debugger
-  });
-
   var newRows = $(".newRow");
   var rowCount = 1;
   $("#addNewRow").click(function(){
@@ -167,6 +161,25 @@ $(document).ready(function() {
       $('#taxes_' + id).val(newTax);
       putTotals();
     });
+    setTimeout(function(){
+      $(".close-icon").on('click', function() {
+        var row = $(this).parent().parent();
+        thisId = $(this).attr('id').replace('close_icon_', '');
+        var discDel = parseFloat($('#discount_' + thisId).val());
+        var taxDel = parseFloat($('#taxes_' + thisId).val());
+        var subtDel = parseFloat($('#subtotal_' + thisId).val());
+        var totalDel = subtDel - discDel + taxDel;
+        var actSubtotal = parseFloat($('#bill_subtotal').val());
+        var actDiscount = parseFloat($('#bill_discount').val());
+        var actTaxes = parseFloat($('#bill_taxes').val());
+        var actTotal = parseFloat($('#bill_total').val());
+        $('#bill_subtotal').val(actSubtotal - subtDel);
+        $('#bill_taxes').val(actTaxes - taxDel);
+        $('#bill_discount').val(actDiscount - discDel);
+        $('#bill_total').val(actTotal - totalDel);
+        row.remove();
+      });
+    }, 2500);
     $('.discount').blur(function() {
       discVal = 0;
       $('input[id^="discount_"]').each(function() {
@@ -179,10 +192,9 @@ $(document).ready(function() {
           } else {
             discVal += parseFloat(parseFloat($(this).val()).toFixed(2));
           }
-
           // Revisar que lo calcule de una sola vez
-          newQuantity = parseFloat($('#quantity_').val());
-          thisPrice = parseFloat($('#unit_value_hidden_' + id).val());
+          newQuantity = parseFloat($('#quantity_' + id).val());
+          thisPrice = parseFloat($('#unit_value_' + id).val());
           newPrice = parseFloat((newQuantity * thisPrice).toFixed(2));
           newDiscount = parseFloat($('#discount_' + id).val());
           $('#subtotal_' + id).val(newPrice);
