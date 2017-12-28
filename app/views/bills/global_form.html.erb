@@ -3,20 +3,37 @@
     <thead>
       <tr>
         <td>
-          <%= image_tag 'logo-disenos-decarton.png', class: 'img-bill-preview' %>
+          <%= image_tag 'logo-disenos-decarton.png' %>
         </td>
         <td>
+          <div>
+          </div>
           <div class="top-right-preview">
-            <h3 id="top-title"> FACTURA </h3>
-            <p>
-              Serie: <%= select_tag :series, options_for_select(@store_series, selected: @store), class: 'form-control' %>
-            </p>
-            <p>
-              Folio: <%= select_tag :folio, options_for_select(@store_folio, selected: @store), class: 'form-control' %>
-            </p>
+            <% if @bill == nil %>
+              <h3 id="top-title"> FACTURA </h3>
+            <% elsif (@bill != nil && @relation_type == '01') %>
+              <h3 id="top-title"> NOTA DE CRÉDITO </h3>
+            <% elsif (@bill != nil && @relation_type == '03') %>
+              <h3 id="top-title"> DEVOLUCIÓN </h3>
+            <% elsif (@bill != nil && @relation_type == '02') %>
+              <h3 id="top-title"> NOTA DE DÉBITO </h3>
+            <% end %>
+
+            <% if @relation_type == '01' %>
+              <% type = 'Nota de crédito' %>
+            <% elsif @relation_type == '02' %>
+              <% type = 'Nota de débito' %>
+            <% elsif @relation_type == '03' %>
+              <% type = 'Devolución' %>
+            <% end %>
+
+            <p> Serie: <%= select_tag :series, options_for_select(@series), class: 'form-control', id: 'series' %> </p>
+            <p> Folio: <%= select_tag :folio, options_for_select(@folio), class: 'form-control' %>  </span> </p>
             <p> Fecha y hora de timbrado: <span> <%= @time %> </span> </p>
-            <p> Lugar de expedición: <%= select_tag :zipcode, options_for_select(@store_zipcodes, selected: @store),  class: 'form-control' %> </p>
-            <p class="extra-margin"> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill %> </span> </p>
+            <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
+            <p> Tipo de comprobante:
+              <%= select_tag :type_of_bill, options_for_select(@byll_types), class: 'form-control' %>
+            </p>
           </div>
         </td>
       </tr>
@@ -66,6 +83,7 @@
   <table class="quantities-table payments-margin">
     <thead>
       <tr class="header-main-preview">
+        <th></th>
         <th class="space-preview"> Ticket </th>
         <th class="space-preview"> Clave Prod / Serv </th>
         <th class="space-preview"> Cantidad </th>
@@ -78,22 +96,12 @@
         <th class="space-preview"> Importe </th>
       </tr>
     </thead>
-    <tbody>
-      <tr id="fields_for_product">
-          <% if (@role == 'store' || @role == 'store-admin' ) %>
-            <td class="space-preview"> <%= text_field_tag :tickets, nil, {placeholder: 'No. de ticket', class: 'form-control center-input'} %> </td>
-          <% else %>
-            <td class="space-preview"> <%= text_field_tag :orders, nil, {placeholder: 'No. de pedido', class: 'form-control center-input'} %> </td>
-          <% end %>
-          <td class="space-preview"> 01010101 </td>
-          <td class="space-preview"> 1 </td>
-          <td class="space-preview"> <strong> ACT </strong> </td>
-          <td class="space-preview"> Venta </td>
-          <td class="space-preview"> <%= text_field_tag :unit_value, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-          <td class="space-preview"> <%= text_field_tag :discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-          <td class="space-preview"> <%= text_field_tag :taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-          <td class="space-preview"> <%= text_field_tag :subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
-        </tr>
+    <tbody id="fields_for_products">
+      <tr>
+        <td>
+          <br /><br />
+        </td>
+      </tr>
       <tr>
         <td colspan="3 letter" class="center"> </td>
         <td></td>
@@ -105,25 +113,36 @@
         <td></td>
         <td></td>
         <td colspan="3" class="final-total left"> SubTotal </td>
-        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_subtotal, nil, {placeholder: '$ 0.00', class: 'form-control center-input', disabled: true} %> </td>
       </tr>
       <tr>
         <td colspan="5"></td>
         <td colspan="3" class="final-total left"> Descuento </td>
-        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input'} %> </td>
+        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_discount, nil, {placeholder: '$ 0.00', class: 'form-control center-input', disabled: true } %> </td>
       </tr>
       <tr>
         <td colspan="5" class="letter"> </td>
         <td colspan="3" class="final-total left"> Total Impuestos Trasladados </td>
-        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input'}  %> </td>
+        <td colspan="2" class="final-total right"> <%= text_field_tag :bill_taxes, nil, {placeholder: '$ 0.00', class: 'form-control center-input', disabled: true}  %> </td>
       </tr>
       <tr>
         <td colspan="5" class="letter">  </td>
         <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
-        <td colspan="2" class="final-total border-top right"> <strong> <%= text_field_tag :bill_total, nil, {placeholder: '$ 0.00', class: 'form-control center-input'}  %> </strong> </td>
+        <td colspan="2" class="final-total border-top right"> <strong> <%= text_field_tag :bill_total, nil, {placeholder: '$ 0.00', class: 'form-control center-input', disabled: true}  %> </strong> </td>
       </tr>
     </tbody>
   </table>
+
+  <br /><br />
+
+  <a href="javascript:;" id="addNewRow"> Agregar</a>
+
+  <br /><br />
+
+  <div class="actions">
+    <%= submit_tag 'Generar factura', class: 'main-button' %>
+  </div><br /><br />
+
 <% end %>
 
 <table class="payments-summary hidden">
@@ -163,9 +182,17 @@
   </tbody>
 </table>
 
-<%= link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
+<%# link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
 
 <br /><br /><br /><br />
+
+<table class="hidden">
+  <tbody id="newRowTableBody">
+    <tr class="newRow">
+      <%= render partial: "table_row_global" %>
+    </tr>
+  </tbody>
+</table>
 
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'select2.min' %>
@@ -174,5 +201,6 @@
 <%= content_for :javascript do %>
   <%= javascript_include_tag 'select2.min' %>
   <%= javascript_include_tag 'es' %>
-  <%= javascript_include_tag 'bills' %>
+  <%= javascript_include_tag 'jquery.autocomplete.min' %>
+  <%= javascript_include_tag 'bills_global' %>
 <% end %>

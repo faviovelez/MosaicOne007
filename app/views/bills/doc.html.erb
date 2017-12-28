@@ -112,7 +112,7 @@
             <td class="grow space"> <%= row.sat_unit_key %> </strong> </td>
             <td class="grow space"> <%= row.sat_unit_description %> </td>
             <td class="grow space"> <%= row.description %> </td>
-            <td class="grow space"> <%= row.unit_value %> </td>
+            <td class="grow space"> <%= number_to_currency(row.unit_value) %> </td>
             <td class="grow space"> <%= number_to_currency(row.discount) %> </td>
             <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
             <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
