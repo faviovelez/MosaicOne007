@@ -105,12 +105,14 @@ private
   end
 
   def save_tax_regime
-    @tax_regime = ''
-    tax_regime = params[:billing_address][:tax_regime_id]
-    tax_regime.each do |regime|
-      @tax_regime = TaxRegime.find(regime) unless regime == ''
+    if params[:billing_address][:tax_regime_id].present?
+      @tax_regime = ''
+      tax_regime = params[:billing_address][:tax_regime_id]
+      tax_regime.each do |regime|
+        @tax_regime = TaxRegime.find(regime) unless regime == ''
+      end
+      @billing.update(tax_regime: @tax_regime)
     end
-    @billing.update(tax_regime: @tax_regime)
   end
 
   # Este método identifica desde qué owner se agrega la dirección, ya están creados los recursos anidados en routes (Store, Prospect u Order)
