@@ -31,10 +31,12 @@
     </div>
 
     <div class="form-inside-style">
-      <% if (!@bill.sequence.include?('NC') && !@bill.sequence.include?('DE') && !@bill.sequence.include?('PA') && !@bill.sequence.include?('FA') && !@bill.sequence.include?('FE')) %>
-        <% if @bill.tickets.first.ticket_type == 'anticipo' %>
-          <%= label_tag :factura_con_aplicacion_de_anticipo %>
-          <%= radio_button_tag(:relation_type, '07') %> <br /><br />
+      <% if @bill.from != 'Form' %>
+        <% if (!@bill.sequence.include?('NC') && !@bill.sequence.include?('DE') && !@bill.sequence.include?('PA') && !@bill.sequence.include?('FA') && !@bill.sequence.include?('FE')) %>
+          <% if @bill&.tickets&.first&.ticket_type == 'anticipo' %>
+            <%= label_tag :factura_con_aplicacion_de_anticipo %>
+            <%= radio_button_tag(:relation_type, '07') %> <br /><br />
+          <% end %>
         <% end %>
       <% end %>
     </div>

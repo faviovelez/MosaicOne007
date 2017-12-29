@@ -36,6 +36,22 @@ class ApiController < ApplicationController
 #    render json: { suggestions: product_wrapper }
 #  end
 
+  def get_prospects_for_store
+    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+      prospects = current_user.store.prospects
+    else
+      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
+    end
+    options = []
+    prospects.each do |prospect|
+      unless prospect.billing_address.nil?
+        name = prospect.billing_address.business_name
+        options << { "value" => name, "data" => prospect.id }
+      end
+    end
+    render json: { suggestions: options }
+  end
+
   def get_info_from_products
     product = Product.find(params[:product])
     if product.present?
@@ -44,6 +60,26 @@ class ApiController < ApplicationController
                    }
     else
       render json: {product: false}
+    end
+  end
+
+  def get_prospect_rfcs
+    @prospects_rfcs = [['seleccione']]
+    if (@user.role.name == 'store' || @user.role.name == 'store-admin')
+      prospects = @store.prospects
+    else
+      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
+    end
+  end
+
+  def select_prospects_info
+    prospect = Prospect.find(params[:prospect_id]).billing_address.rfc
+    if prospect.present?
+      render json: {
+                    prospect: prospect
+                   }
+    else
+      render json: {prospect: false}
     end
   end
 
