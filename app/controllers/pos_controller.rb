@@ -2,7 +2,6 @@ class PosController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def received_data
-    binding.pry
     if (check_login_data) || true
       @ids_references = {}
       tables_orders.each do |table_name|
@@ -62,7 +61,6 @@ class PosController < ApplicationController
     def fill_references(table_name, pos_id, values)
       reg = create_reg(table_name, values)
       reg = is_a_new_register(reg)
-      binding.pry if reg.class.name == 'StoreMovement'
       if reg.id.nil?
         reg.save
       end

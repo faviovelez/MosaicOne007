@@ -1,13 +1,9 @@
-<td>
-  <a href="javascript:;" class="close-icon" id="close_icon_">
-  </a>
-</td>
 <td class="space-preview tickets" style="width: 5%"> <%= text_field_tag 'tickets[]', nil, {class: 'form-control'} %> </td>
-<td class="space-preview sat_key"> <%= select_tag 'sat_key[]', options_for_select(['01010101']), class: 'form-control select-margin sat_key', disabled: true %> </td>
-<td class="space-preview quantity"> <%= text_field_tag 'quantity[]', nil, {placeholder: '100', class: 'form-control center-input quantity', value: 1, disabled: true} %> </td>
-<td class="space-preview sat_unit_key"> <%= select_tag 'sat_unit_key[]', options_for_select(['ACT']), class: 'form-control select-margin sat_unit_key', disabled: true %> </td>
-<td class="space-preview sat_unit_description"> <%= select_tag 'sat_unit_description[]', options_for_select(['Venta']), class: 'form-control select-margin sat_unit_description', disabled: true %> </td>
+<td class="space-preview sat_key"> <%= select_tag 'sat_key[]', options_for_select(['01010101']), class: 'form-control select-margin sat_key', readonly: true %> </td>
+<td class="space-preview quantity"> <%= text_field_tag 'quantity[]', nil, {placeholder: '100', class: 'form-control center-input quantity', value: 1, readonly: true} %> </td>
+<td class="space-preview sat_unit_key"> <%= select_tag 'sat_unit_key[]', options_for_select(['ACT']), class: 'form-control select-margin sat_unit_key', readonly: true %> </td>
+<td class="space-preview sat_unit_description"> <%= select_tag 'sat_unit_description[]', options_for_select(['Venta']), class: 'form-control select-margin sat_unit_description', readonly: true %> </td>
 <td class="space-preview unit_value"> <%= text_field_tag 'unit_value[]', nil, {placeholder: '100', class: 'form-control center-input unit_value'} %> </td>
 <td class="space-preview discount"> <%= text_field_tag 'discount[]', nil, {placeholder: '$ 0.00', class: 'form-control center-input discount'} %> </td>
-<td class="space-preview taxes"> <%= text_field_tag 'taxes[]', nil, {placeholder: '$ 0.00', class: 'form-control center-input', disabled: true} %> </td>
-<td class="space-preview subtotal"> <%= text_field_tag 'subtotal[]', nil, {class: 'form-control center-input', disabled: true} %> </td>
+<td class="space-preview taxes"> <%= text_field_tag 'taxes[]', nil, {placeholder: '$ 0.00', class: 'form-control center-input', readonly: true} %> </td>
+<td class="space-preview subtotal"> <%= text_field_tag 'subtotal[]', nil, {class: 'form-control center-input', readonly: true} %> </td>

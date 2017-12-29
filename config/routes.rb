@@ -64,7 +64,10 @@ Rails.application.routes.draw do
 
   get 'bills/cfdi_process'
 
+  post 'bills/cfdi_process'
+
   get 'bills/global_preview'
+
 
   get 'bills/process_info'
 
@@ -227,6 +230,10 @@ Rails.application.routes.draw do
   get '/api/get_all_products_for_bill', to: 'api#get_all_products_for_bill'
 
   get '/api/get_info_from_products', to: 'api#get_info_from_products'
+
+  get '/api/get_prospects_for_store', to: 'api#get_prospects_for_store'
+
+  get 'api/select_prospects_info'
 
   get 'warehouse/new_own_entry'
 
