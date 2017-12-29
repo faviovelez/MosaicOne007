@@ -58,7 +58,7 @@
       <tr>
         <td class="grow half first center"> Método de pago:  <span> <strong> <%= @method_key %> </strong> - <%= @method_description %> </span> </td>
         <% if @bill == nil%>
-          <td class="grow half center"> Condiciones de pago: <span> <%= @payment_form %> </span> </td>
+          <td class="grow half center hidden"> Condiciones de pago: <span> <%= @payment_form %> </span> </td>
         <% end %>
       </tr>
       <tr class="hidden">
@@ -89,7 +89,7 @@
         <% @rows.each do |row|%>
           <tr>
             <td class="grow space"> <%= row["sat_key"] %> </td>
-            <% if @relation_type == '03' %>
+            <% if (@bill == nil || @relation_type == '03') %>
               <td class="grow space"> <%= row["ticket"] %> </td>
             <% end %>
             <td class="grow space"> 1 </td>

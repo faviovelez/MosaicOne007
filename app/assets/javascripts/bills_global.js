@@ -7,23 +7,28 @@ $(document).ready(function() {
      width: '100%'
   });
 
-  $('.select2-store-form').select2({
-     placeholder: 'Empresa',
-     language: "es",
-     maximumSelectionLength: 1,
-     width: '100%'
-  });
+  setTimeout(function(){
+    $('.select2-store-form').select2({
+       placeholder: 'Empresa',
+       language: "es",
+       maximumSelectionLength: 1,
+       width: '100%'
+    });
+  }, 300);
 
   $('.select2-tickets').select2({
      placeholder: 'Tickets a facturar',
      language: "es"
   });
 
-  $('.select2-prospect').select2({
-     placeholder: 'Cliente de la factura',
-     language: "es",
-     maximumSelectionLength: 1
-  });
+
+  setTimeout(function(){
+    $('.select2-prospect').select2({
+       placeholder: 'Cliente de la factura',
+       language: "es",
+       maximumSelectionLength: 1
+    });
+  }, 300);
 
   $('.select2-cfdi').select2({
      placeholder: 'Uso para la factura',
@@ -140,6 +145,7 @@ $(document).ready(function() {
     var clone = newRows.clone();
     clone.attr('id', 'row' + rowCount);
     $("#fields_for_products").prepend(clone);
+    $("#addNewRow").addClass('hidden');
     var rowSelects = ['#tickets_', '#sat_key_', '#quantity_', '#sat_unit_key_', '#sat_unit_description_', '#unit_value_', '#discount_', '#taxes_', '#subtotal_',];
     var allRows = ['#tickets_', '#sat_key_', '#quantity_', '#sat_unit_key_', '#sat_unit_description_', '#unit_value_', '#discount_', '#taxes_', '#subtotal_',];
     allRows.forEach(function(field) {

@@ -51,14 +51,6 @@ $(document).ready(function() {
     $(".select_prospect").addClass('hidden');
   });
 
-  $('#prospect_name').bind('change', function() {
-    $('#prospect_rfc').children().each(function() {
-      if ($(this).val().toString() == $('#prospect_name').val()) {
-        $(this).attr("selected","selected");
-      }
-    });
-  });
-
   // Aquí tengo que modificar folio (ese debe estar anclado al tipo de factura)
   $('#store_name').bind('change', function() {
     store_values = ['#store_rfc', '#tax_regime', '#series', '#folio', '#zipcode'];
@@ -135,6 +127,25 @@ $(document).ready(function() {
     $('#bill_total').val(totalSum.toFixed(2));
   }
 
+    $.ajax({
+      url: '/api/get_prospects_for_store',
+    })
+    .done(function(response){
+      $('.select-prospect').autocomplete({
+        lookup: response.suggestions,
+        onSelect: function (suggestion) {
+          var prospect_id = suggestion.data;
+          $.ajax({
+            url: '/api/select_prospects_info',
+            data: {prospect_id: prospect_id}
+          })
+          .done(function(response){
+            $('#prospect_rfc').val(response.prospect);
+          })
+        }
+      });
+    });
+
   setTimeout(function(){
     $(".close-icon").on('click', function() {
       var row = $(this).parent().parent();
@@ -147,13 +158,23 @@ $(document).ready(function() {
       var actDiscount = parseFloat($('#bill_discount').val());
       var actTaxes = parseFloat($('#bill_taxes').val());
       var actTotal = parseFloat($('#bill_total').val());
-      $('#bill_subtotal').val(actSubtotal - subtDel);
-      $('#bill_taxes').val(actTaxes - taxDel);
-      $('#bill_discount').val(actDiscount - discDel);
-      $('#bill_total').val(actTotal - totalDel);
+      $('#bill_subtotal').val((parseFloat(actSubtotal - subtDel)).toFixed(2));
+      $('#bill_taxes').val((parseFloat(actTaxes - taxDel)).toFixed(2));
+      $('#bill_discount').val((parseFloat(actDiscount - discDel)).toFixed(2));
+      $('#bill_total').val((parseFloat(actTotal - totalDel)).toFixed(2));
       row.remove();
     });
   }, 2500);
+
+  function getNewTotals() {
+    setTimeout(function(){
+      $('#bill_subtotal').val(actSubtotal - subtDel);
+      $('#bill_taxes').val(actTaxes - taxDel);
+      $('#bill_discount').val(actDiscount - discDel);
+      $('#bill_total').val((actTotal - totalDel).toFixed(2));
+      row.remove();
+    }, 500);
+  }
 
   var newRows = $(".newRow");
   var rowCount = 1;
@@ -207,21 +228,17 @@ $(document).ready(function() {
                   putTotals();
                   setTimeout(function(){
                     $(".close-icon").on('click', function() {
-                      var row = $(this).parent().parent();
+                      row = $(this).parent().parent();
                       thisId = $(this).attr('id').replace('close_icon_', '');
-                      var discDel = parseFloat($('#discount_' + thisId).val());
-                      var taxDel = parseFloat($('#taxes_' + thisId).val());
-                      var subtDel = parseFloat($('#subtotal_' + thisId).val());
-                      var totalDel = subtDel - discDel + taxDel;
-                      var actSubtotal = parseFloat($('#bill_subtotal').val());
-                      var actDiscount = parseFloat($('#bill_discount').val());
-                      var actTaxes = parseFloat($('#bill_taxes').val());
-                      var actTotal = parseFloat($('#bill_total').val());
-                      $('#bill_subtotal').val(actSubtotal - subtDel);
-                      $('#bill_taxes').val(actTaxes - taxDel);
-                      $('#bill_discount').val(actDiscount - discDel);
-                      $('#bill_total').val(actTotal - totalDel);
-                      row.remove();
+                      discDel = parseFloat($('#discount_' + thisId).val());
+                      taxDel = parseFloat($('#taxes_' + thisId).val());
+                      subtDel = parseFloat($('#subtotal_' + thisId).val());
+                      totalDel = subtDel - discDel + taxDel;
+                      actSubtotal = parseFloat($('#bill_subtotal').val());
+                      actDiscount = parseFloat($('#bill_discount').val());
+                      actTaxes = parseFloat($('#bill_taxes').val());
+                      actTotal = parseFloat($('#bill_total').val());
+                      getNewTotals();
                     });
                   }, 2500);
                   $('.quantity').blur(function() {
@@ -235,6 +252,16 @@ $(document).ready(function() {
                     );
                     $('#subtotal_' + id).val(newPrice);
                     $('#taxes_' + id).val(newTax);
+                    putTotals();
+                  });
+                  $('.unit_value_hidden').blur(function() {
+                    id = $(this).attr('id').replace('unit_value_hidden_', '');
+                    quantityNewValue = parseFloat($('#quantity_' + id).val());
+                    priceNewValue = parseFloat($(this).val());
+                    subtotalNewValue = parseFloat(quantityNewValue * priceNewValue);
+                    taxNewValue = parseFloat(subtotalNewValue * 0.16);
+                    $('#subtotal_' + id).val((parseFloat(subtotalNewValue)).toFixed(2));
+                    $('#taxes_' + id).val((parseFloat(taxNewValue)).toFixed(2));
                     putTotals();
                   });
                   $('.discount').blur(function() {
