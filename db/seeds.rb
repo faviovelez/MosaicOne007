@@ -943,6 +943,23 @@ prospect_files = [
   'LayOutClientesJardinReal'
 ]
 
+new_prospect_files [
+  'LayOutClientesCuautitlan',
+  'LayOutClientesLapiz',
+  'LayOutClientesRoble',
+  'LayOutClientesSJBosco',
+  'LayOutClientesCruzdelSur'
+]
+
+new_stores = [
+  'Cuautitlán',
+  'Lapizlázuli',
+  'Roble',
+  'San Juan Bosco',
+  'Cruz del sur'
+]
+
+
 stores_with_cert = [
   'Avenida México',
   'Ávila Camacho',
@@ -1156,6 +1173,48 @@ stores.each_with_index do |val, index|
                                     }
                                   )
     prospect = Prospect.find_or_create_by(
+                                {
+                                  legal_or_business_name: row['nombre_de_empresa_o_cliente'],
+                                  prospect_type: row['giro'],
+                                  contact_first_name: row['contacto_primer_nombre'],
+                                  contact_middle_name: row['contacto_segundo_nombre'],
+                                  contact_last_name: row['contacto_apellido_paterno'],
+                                  second_last_name: row['contacto_apellido_materno'],
+                                  contact_position: row['puesto_del_contacto'],
+                                  direct_phone: row['tel_fijo'],
+                                  extension: row['ext'],
+                                  cell_phone: row['cel'],
+                                  email: row['mail'],
+                                  store: Store.find_by_store_name(stores[index]),
+                                  billing_address: billing
+                                }
+                              )
+  end
+  s = Store.find_by_store_name(stores[index]).prospects.count
+  puts "There are #{s} Prospects in #{stores[index]} Store"
+end
+
+new_stores.each_with_index do |val, index|
+  csv_text = File.read(Rails.root.join('public', 'prospect_files', "#{new_prospect_files[index]}.csv"))
+  csv = CSV.parse(csv_text, headers: true, encoding: 'ISO-8859-1')
+
+  csv.each do |row|
+
+    billing = BillingAddress.create(
+                                    {
+                                      business_name: row['nombre_de_empresa_o_cliente'],
+                                      rfc: row['rfc'],
+                                      street: row['calle'],
+                                      exterior_number: row['num_ext'],
+                                      interior_number: row['num_num'],
+                                      zipcode: row['cod_postal'],
+                                      neighborhood: row['colonia'],
+                                      city: row['ciudad'],
+                                      state: row['estado'],
+                                      store: Store.find_by_store_name(stores[index])
+                                    }
+                                  )
+    prospect = Prospect.create(
                                 {
                                   legal_or_business_name: row['nombre_de_empresa_o_cliente'],
                                   prospect_type: row['giro'],
