@@ -12,12 +12,19 @@ class ApiController < ApplicationController
 
   def get_all_products_for_bill
     products =  Product.where(classification: 'de línea').where(current: true).where(child: nil)
+    services = Service.where(current: true)
     options = []
     products.each do |product|
       words = product.description.split(' ') [0..5]
       words_clean = words.join(' ')
       string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s
       options << { "value" => string, "data" => product.id }
+    end
+    services.each do |service|
+      words = service.description.split(' ') [0..5]
+      words_clean = words.join(' ')
+      string = service.unique_code + ' ' + words_clean
+      options << { "value" => string, "data" => service.id }
     end
     render json: { suggestions: options }
   end
