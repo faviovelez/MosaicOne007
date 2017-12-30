@@ -127,12 +127,12 @@ class StoresController < ApplicationController
         current_inventory: params[:store][:current_inventory]
       )
     end
-    if params[:store][:prospects].present?
+    if params[:store][:prospects_file].present?
       @store.update(
-        prospects: params[:store][:prospects]
+        prospects_file: params[:store][:prospects_file]
       )
     end
-    if (params[:store][:initial_inventory].present? || params[:store][:current_inventory].present? || params[:store][:prospects].present?)
+    if (params[:store][:initial_inventory].present? || params[:store][:current_inventory].present? || params[:store][:prospects_file].present?)
       process_csv_files
     end
   end
@@ -146,7 +146,7 @@ class StoresController < ApplicationController
     @prospect_update_counter = 0
     initial_inventory = params[:store][:initial_inventory]
     current_inventory = params[:store][:current_inventory]
-    prospects = params[:store][:prospects]
+    prospects = params[:store][:prospects_file]
 
     unless initial_inventory == nil
       url = @store.initial_inventory_url
@@ -251,7 +251,7 @@ class StoresController < ApplicationController
     end
 
     unless prospects == nil
-      url = @store.prospects_url
+      url = @store.prospects_file_url
       csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
       unfinded = []
       csv.each do |row|
@@ -260,7 +260,7 @@ class StoresController < ApplicationController
         phone = row['tel_fijo']
         contact_first_name = row['contacto_primer_nombre']
         contact_last_name = row['contacto_apellido_paterno']
-        if (name == '' || phone == '' || contact_first_name == '' || contact_last_name == '' || phone.length < 10)
+        if (name == '')
           unfinded << name
         else
           if Prospect.find_by_legal_or_business_name(name) == nil
@@ -295,7 +295,7 @@ class StoresController < ApplicationController
                 )
               end
             else
-              BillingAddress.update(
+              prospect.billing_address.update(
                 business_name: name,
                 rfc: row['rfc'],
                 street: row['calle'],
@@ -340,7 +340,7 @@ class StoresController < ApplicationController
                 )
               end
             else
-              BillingAddress.update(
+              prospect.billing_address.update(
                 business_name: name,
                 rfc: row['rfc'].upcase,
                 street: row['calle'],
