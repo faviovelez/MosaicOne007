@@ -275,6 +275,7 @@ class StoresController < ApplicationController
               direct_phone: phone,
               extension: row['ext'],
               cell_phone: row['cel'],
+              store: @store,
               email: row['mail']
             )
             @prospect_create_counter += 1
@@ -290,6 +291,7 @@ class StoresController < ApplicationController
                   zipcode: row['cod_postal'],
                   neighborhood: row['colonia'],
                   city: row['ciudad'],
+                  store: @store,
                   state: row['estado'],
                   country: 'México'
                 )
@@ -304,6 +306,7 @@ class StoresController < ApplicationController
                 zipcode: row['cod_postal'],
                 neighborhood: row['colonia'],
                 city: row['ciudad'],
+                store: @store,
                 state: row['estado']
               )
             end
@@ -320,6 +323,7 @@ class StoresController < ApplicationController
               direct_phone: phone,
               extension: row['ext'],
               cell_phone: row['cel'],
+              store: @store,
               email: row['mail']
             )
             @prospect_update_counter += 1
@@ -336,6 +340,7 @@ class StoresController < ApplicationController
                   neighborhood: row['colonia'],
                   city: row['ciudad'],
                   state: row['estado'],
+                  store: @store,
                   country: 'México'
                 )
               end
@@ -349,6 +354,7 @@ class StoresController < ApplicationController
                 zipcode: row['cod_postal'],
                 neighborhood: row['colonia'],
                 city: row['ciudad'],
+                store: @store
                 state: row['estado']
               )
             end
