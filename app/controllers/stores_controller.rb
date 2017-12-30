@@ -255,7 +255,7 @@ class StoresController < ApplicationController
       csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
       unfinded = []
       csv.each do |row|
-        store = @store
+        @store = current_user.store
         name = row['nombre_de_empresa_o_cliente']
         phone = row['tel_fijo']
         contact_first_name = row['contacto_primer_nombre']
