@@ -392,6 +392,7 @@ class BillsController < ApplicationController
       @byll_types << [string, tb.id]
     end
     @products = Product.where(classification: 'de línea').where(current: true)
+    services = Service.where(current: true)
     @products.each do |product|
       @products_ids << [product.id]
       @products_codes << [product.unique_code, product.id]
@@ -403,6 +404,15 @@ class BillsController < ApplicationController
         @products_prices << [(product.price * (1 + (@store.overprice.to_f / 100))).round(2), product.id] #Cambiar por los de stores_inventories
       else
         @products_prices << [product.price.round(2), product.id]
+      end
+      services.each do |service|
+        @products_ids << [service.id]
+        @products_codes << [service.unique_code, service.id]
+        @products_description << [service.description, service.id]
+        @products_sat_keys << [service.sat_key.sat_key, service.id]
+        @products_sat_unit_keys << [service.sat_unit_key.unit, service.id]
+        @products_units << [service.sat_unit_key.description, service.id]
+        @products_prices << [1, service.id]
       end
     end
   end
