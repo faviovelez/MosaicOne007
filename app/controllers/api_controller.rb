@@ -24,7 +24,7 @@ class ApiController < ApplicationController
       words = service.description.split(' ') [0..5]
       words_clean = words.join(' ')
       string = service.unique_code + ' ' + words_clean
-      options << { "value" => string, "data" => service.id }
+      options << { "value" => string, "data" => service.unique_code }
     end
     render json: { suggestions: options }
   end
