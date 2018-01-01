@@ -354,7 +354,7 @@ class StoresController < ApplicationController
                 zipcode: row['cod_postal'],
                 neighborhood: row['colonia'],
                 city: row['ciudad'],
-                store: @store
+                store: @store,
                 state: row['estado']
               )
             end
