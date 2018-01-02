@@ -105,7 +105,7 @@ class StoreMovement < ActiveRecord::Base
     create_reports_data(
       ProductSale
     ).update(
-      product: product
+      product: product, store: store
     )
   end
 
@@ -185,6 +185,7 @@ class StoreMovement < ActiveRecord::Base
     cost = self.total_cost
     month = Date.today.month
     year  = Date.today.year
+    store =  self.store
     if self.movement_type == 'venta'
       object.create(
         subtotal: subtotal,
@@ -194,6 +195,7 @@ class StoreMovement < ActiveRecord::Base
         cost: cost,
         quantity: quantity,
         month: month,
+        store: store,
         year: year
       )
     else
@@ -202,6 +204,7 @@ class StoreMovement < ActiveRecord::Base
         discount: - discount,
         taxes: - taxes,
         total: - total,
+        store: store,
         cost: - cost,
         quantity: - quantity,
         month: month,
