@@ -38,9 +38,5 @@
           quantity: pr.quantity.to_i + quantity,
         )
       end
-
-      pr.update(
-
-      )
     end
   end
