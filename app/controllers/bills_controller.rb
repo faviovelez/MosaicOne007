@@ -1554,9 +1554,9 @@ class BillsController < ApplicationController
 
     # Crea las variables de los directorios a utilizar
     @working_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}")
-    @working_dir = Dir.pwd + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}"
+    @working_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}"
     @final_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}_final")
-    @final_dir = Dir.pwd + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
+    @final_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @xml_path = "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @sat_path = Rails.root.join('lib', 'sat')
     @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
@@ -1674,7 +1674,6 @@ class BillsController < ApplicationController
       end
     end
     builder.to_xml.encoding
-    debugger
     unsigned = File.open(File.join(@working_dir, 'unsigned.xml'), 'w'){ |file| file.write(builder.to_xml) }
   end
 
