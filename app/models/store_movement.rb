@@ -105,7 +105,7 @@ class StoreMovement < ActiveRecord::Base
     create_reports_data(
       ProductSale
     ).update(
-      product: product
+      product: product, store: store
     )
   end
 
