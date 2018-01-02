@@ -1099,11 +1099,9 @@ class BillsController < ApplicationController
           hash["sat_unit_key"] = Product.find_by_unique_code(params["unique_code"][n].split(' ').first).sat_unit_key.unit
           hash["sat_unit_description"] = Product.find_by_unique_code(params["unique_code"][n].split(' ').first).sat_unit_key.description
         else
-          debugger
           hash["sat_key"] = Service.find_by_unique_code(params["unique_code"][n].split(' ').first).sat_key.sat_key
           hash["sat_unit_key"] = Service.find_by_unique_code(params["unique_code"][n].split(' ').first).sat_unit_key.unit
           hash["sat_unit_description"] = Service.find_by_unique_code(params["unique_code"][n].split(' ').first).sat_unit_key.description
-          debugger
         end
         hash["description"] = params["product_description"][n]
         hash["total"] = (params["subtotal"][n].to_f - params["discount"][n].to_f + params["taxes"][n].to_f)
@@ -1113,7 +1111,6 @@ class BillsController < ApplicationController
       end
       @rows << new_hash
     end
-    debugger
   end
 
   def check_for_discount
