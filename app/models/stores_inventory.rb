@@ -2,7 +2,7 @@ class StoresInventory < ActiveRecord::Base
   belongs_to :product
   belongs_to :store
 
-  after_save :update_data_inventory
+#  after_save :update_data_inventory
 
   after_create :save_web_id
 
