@@ -190,12 +190,12 @@
 
       <div class="form-inside-style">
         <%= f.label 'Código de producto SAT' %>
-        <%= f.text_field :sat_key_id, class: 'form-inside' %>
+        <%= f.select :sat_key_id, options_for_select(get_sat_keys), {include_blank: true, multiple: true, class: 'form-inside select2-sat-keys'} %>
       </div>
 
       <div class="form-inside-style">
         <%= f.label 'Unidad SAT' %>
-        <%= f.text_field :sat_unit_key_id, class: 'form-inside' %>
+        <%= f.select :sat_unit_key_id, options_for_select(get_sat_unit_keys), {include_blank: true, multiple: true, class: 'form-inside select2-sat-unit-keys'} %>
       </div>
 
       <div class="form-inside-style">
@@ -243,4 +243,12 @@
 
   <% end %>
 
+  <%= content_for :stylesheet do %>
+    <%= stylesheet_link_tag 'select2.min' %>
+  <% end %>
+
+  <%= content_for :javascript do %>
+    <%= javascript_include_tag 'select2.min' %>
+    <%= javascript_include_tag 'products_select' %>
+  <% end %>
 </body>

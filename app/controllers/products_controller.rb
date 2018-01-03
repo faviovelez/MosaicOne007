@@ -50,6 +50,7 @@ class ProductsController < ApplicationController
       find_user
     end
     @product = Product.new(product_params)
+    params
     save_image
     respond_to do |format|
       if @product.save
