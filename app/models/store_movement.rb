@@ -195,7 +195,6 @@ class StoreMovement < ActiveRecord::Base
         cost: cost,
         quantity: quantity,
         month: month,
-        store: store,
         year: year
       )
     else
