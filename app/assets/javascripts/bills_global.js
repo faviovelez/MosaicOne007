@@ -21,7 +21,6 @@ $(document).ready(function() {
      language: "es"
   });
 
-
   setTimeout(function(){
     $('.select2-prospect').select2({
        placeholder: 'Cliente de la factura',
@@ -145,7 +144,6 @@ $(document).ready(function() {
     var clone = newRows.clone();
     clone.attr('id', 'row' + rowCount);
     $("#fields_for_products").prepend(clone);
-    $("#addNewRow").addClass('hidden');
     var rowSelects = ['#tickets_', '#sat_key_', '#quantity_', '#sat_unit_key_', '#sat_unit_description_', '#unit_value_', '#discount_', '#taxes_', '#subtotal_',];
     var allRows = ['#tickets_', '#sat_key_', '#quantity_', '#sat_unit_key_', '#sat_unit_description_', '#unit_value_', '#discount_', '#taxes_', '#subtotal_',];
     allRows.forEach(function(field) {
