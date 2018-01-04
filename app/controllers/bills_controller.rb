@@ -287,9 +287,9 @@ class BillsController < ApplicationController
     @prospects_names = [['seleccione']]
     @prospects_rfcs = [['seleccione']]
     if (@user.role.name == 'store' || @user.role.name == 'store-admin')
-      prospects = @store.prospects.limit(10)
+      prospects = @store.prospects.where.not(billing_address: nil)
     else
-      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'}).limit(10)
+      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
     end
     prospects.each do |prospect|
       if prospect.billing_address != nil
@@ -1843,7 +1843,6 @@ XML
   def save_to_db
     @error = false
     @pdf_file = File.open(File.join(@final_dir, 'factura.pdf'), 'r')
-
     bill = Bill.new.tap do |bill|
       bill.status = 'creada'
       bill.issuing_company = @s_billing
@@ -1954,8 +1953,7 @@ XML
           @store.update(advance_e_last_folio: @folio)
         end
       end
-
-      if @object != nil
+      if @objects != nil
         if @objects.is_a?(Array)
           @objects.each do |object|
             object.update(bill: bill)
@@ -1994,6 +1992,7 @@ XML
             end
           end
         else
+          @objects.update(bill: bill)
           @objects.payments.each do |payment|
             payment.update(bill: bill)
           end
