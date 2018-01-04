@@ -38,6 +38,11 @@
         <%= f.text_field :rfc, maxlength: 13, value: @billing.rfc, class: 'form-inside' %>
     </div>
 
+    <div class="form-inside-style hidden">
+      <%= f.label :tienda %>
+      <%= f.text_field :store_id, value: current_user.store.id, class: 'form-inside' %>
+    </div>
+
     <div class="form-inside-style">
       <%= f.label :calle %>
       <%= f.text_field :street, value: @billing.street, class: 'form-inside' %>
