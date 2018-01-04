@@ -152,17 +152,18 @@ $(document).ready(function() {
       }
       $(field).attr('id', field.replace("#", "") + rowCount);
     });
+    rowCount ++;
     $('.unit_value').blur(function() {
-      id = parseInt($(this).attr('id').replace("unit_value_",""));
+      unitId = parseInt($(this).attr('id').replace("unit_value_",""));
       thisPrice = parseFloat($(this).val());
-      newQuantity = parseInt($('#quantity_' + id).val());
+      newQuantity = parseInt($('#quantity_' + unitId).val());
       newPrice = parseFloat((newQuantity * thisPrice).toFixed(2));
-      newDiscount = parseFloat($('#discount_' + rowCount).val());
+      newDiscount = parseFloat($('#discount_' + unitId).val());
       newTax = parseFloat(
         ((newPrice - newDiscount) * 0.16).toFixed(2)
       );
-      $('#subtotal_' + id).val(newPrice);
-      $('#taxes_' + id).val(newTax);
+      $('#subtotal_' + unitId).val(newPrice);
+      $('#taxes_' + unitId).val(newTax);
       putTotals();
     });
     setTimeout(function(){
@@ -187,7 +188,7 @@ $(document).ready(function() {
     $('.discount').blur(function() {
       discVal = 0;
       $('input[id^="discount_"]').each(function() {
-        id = $(this).attr('id').replace('discount_', '');
+        discId = $(this).attr('id').replace('discount_', '');
         // Necesito anclar este valor al cambio de discount, no de quantity
         discountSum = 0;
         if ($(this).attr('id') != "discount_") {
@@ -197,14 +198,14 @@ $(document).ready(function() {
             discVal += parseFloat(parseFloat($(this).val()).toFixed(2));
           }
           // Revisar que lo calcule de una sola vez
-          newQuantity = parseFloat($('#quantity_' + id).val());
-          thisPrice = parseFloat($('#unit_value_' + id).val());
+          newQuantity = parseFloat($('#quantity_' + discId).val());
+          thisPrice = parseFloat($('#unit_value_' + discId).val());
           newPrice = parseFloat((newQuantity * thisPrice).toFixed(2));
-          newDiscount = parseFloat($('#discount_' + id).val());
-          $('#subtotal_' + id).val(newPrice);
+          newDiscount = parseFloat($('#discount_' + discId).val());
+          $('#subtotal_' + discId).val(newPrice);
 
           discountSum += parseFloat(discVal);
-          putTaxes(id);
+          putTaxes(discId);
           $('#bill_discount').val(discountSum.toFixed(2));
         }
       });

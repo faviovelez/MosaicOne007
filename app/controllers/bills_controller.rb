@@ -287,9 +287,9 @@ class BillsController < ApplicationController
     @prospects_names = [['seleccione']]
     @prospects_rfcs = [['seleccione']]
     if (@user.role.name == 'store' || @user.role.name == 'store-admin')
-      prospects = @store.prospects.limit(10)
+      prospects = @store.prospects.where.not(billing_address: nil)
     else
-      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'}).limit(10)
+      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
     end
     prospects.each do |prospect|
       if prospect.billing_address != nil
@@ -1161,7 +1161,14 @@ class BillsController < ApplicationController
       @tax_regime_key = s_billing.tax_regime.tax_id
       @tax_regime = s_billing.tax_regime.description
       if params['form'].present?
-        @prospect = BillingAddress.find_by_business_name(params['prospect_name']).prospects.first
+        bl = BillingAddress.where(business_name: params['prospect_name'], store: @store, rfc: params['prospect_rfc'])
+        bl.each do |b|
+          b.prospects.each do |p|
+            if p.store == @store
+              @prospect = p
+            end
+          end
+        end
         @prospect_name = params['prospect_name']
       elsif params['global_form'].present?
         @prospect = Prospect.find(params['prospect_name']).first
@@ -1843,7 +1850,6 @@ XML
   def save_to_db
     @error = false
     @pdf_file = File.open(File.join(@final_dir, 'factura.pdf'), 'r')
-
     bill = Bill.new.tap do |bill|
       bill.status = 'creada'
       bill.issuing_company = @s_billing
@@ -1954,8 +1960,7 @@ XML
           @store.update(advance_e_last_folio: @folio)
         end
       end
-
-      if @object != nil
+      if @objects != nil
         if @objects.is_a?(Array)
           @objects.each do |object|
             object.update(bill: bill)
@@ -1994,6 +1999,7 @@ XML
             end
           end
         else
+          @objects.update(bill: bill)
           @objects.payments.each do |payment|
             payment.update(bill: bill)
           end
