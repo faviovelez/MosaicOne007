@@ -1161,7 +1161,14 @@ class BillsController < ApplicationController
       @tax_regime_key = s_billing.tax_regime.tax_id
       @tax_regime = s_billing.tax_regime.description
       if params['form'].present?
-        @prospect = BillingAddress.find_by_business_name(params['prospect_name']).prospects.first
+        bl = BillingAddress.where(business_name: params['prospect_name'], store: @store, rfc: params['prospect_rfc'])
+        bl.each do |b|
+          b.prospects.each do |p|
+            if p.store == @store
+              @prospect = p
+            end
+          end
+        end
         @prospect_name = params['prospect_name']
       elsif params['global_form'].present?
         @prospect = Prospect.find(params['prospect_name']).first
