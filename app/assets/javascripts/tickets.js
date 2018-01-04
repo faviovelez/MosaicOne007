@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  $('#tickets').DataTable({
+  var table = $('#tickets').DataTable({
     "language": {
       "sProcessing":     "Procesando...",
       "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -30,6 +30,23 @@ $(document).ready(function(){
     buttons: [
       'excel', 'pdf'
     ]
+  });
+
+  $('.form-data-tables').on('submit', function(e){
+    var $form = $(this);
+
+    table.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
   });
 
 });
