@@ -1160,6 +1160,7 @@ class BillsController < ApplicationController
       @regime = regime
       @tax_regime_key = s_billing.tax_regime.tax_id
       @tax_regime = s_billing.tax_regime.description
+      debugger
       if params['form'].present?
         bl = BillingAddress.where(business_name: params['prospect_name'], store: @store, rfc: params['prospect_rfc'])
         bl.each do |b|
@@ -1170,10 +1171,12 @@ class BillsController < ApplicationController
           end
         end
         @prospect_name = params['prospect_name']
+        debugger
       elsif params['global_form'].present?
         @prospect = Prospect.find(params['prospect_name']).first
         @prospect_name = ''
       end
+      debugger
       prospect = @prospect
       p_billing = prospect.billing_address
       @prospect_rfc = p_billing.rfc.upcase
@@ -1584,10 +1587,10 @@ class BillsController < ApplicationController
     p_b = @prospect.billing_address
 
     e_name = b.business_name
-    e_name_clean = e_name.gsub(",", '').gsub(".", '')
+    e_name_clean = e_name
 
     r_name = p_b.business_name
-    r_name_clean = r_name.gsub(",", '').gsub(".", '')
+    r_name_clean = r_name
 
     document = Hash.new.tap do |hash|
       hash["xmlns:cfdi"] = 'http://www.sat.gob.mx/cfd/3'
