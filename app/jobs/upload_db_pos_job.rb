@@ -1,19 +1,15 @@
-class PosController < ApplicationController
-  skip_before_action :verify_authenticity_token
+class UploadDbPosJob < ActiveJob::Base
+  queue_as :default
 
-  def received_data
-    if (check_login_data) || true
-      @ids_references = {}
-      tables_orders.each do |table_name|
-        @ids_references[table_name.singularize] = {}
-        params[table_name].each do |key, values|
-          next if invalid_params.include? key
-          fill_references(table_name, key, values)
-        end
+  def perform(params)
+    @params = params
+    @ids_references = {}
+    tables_orders.each do |table_name|
+      @ids_references[table_name.singularize] = {}
+      @params[table_name].each do |key, values|
+        next if invalid_params.include? key
+        fill_references(table_name, key, values)
       end
-      render json: {status: "success", message: "Informacion Cargada", ids: @ids_references}
-    else
-      render json: {status: "error", message: "Login Error"}
     end
   end
 
@@ -68,7 +64,7 @@ class PosController < ApplicationController
     end
 
     def is_a_new_register(reg)
-      tables_find_parameters = params_find()
+      tables_find_parameters = params_find
       info = tables_find_parameters[reg.class.to_s]
       if info.present?
         cad = ''
@@ -111,10 +107,8 @@ class PosController < ApplicationController
         if is_relation_object(attr.first)
           id = vinculate_relations(attr.first, attr.last)
           new_reg.send("#{attr.first}=", id)
-        elsif datetime_fields.include? attr.first
-          new_reg.send("#{attr.first}=", parsed_date(attr.last))
         else
-          new_reg.send("#{attr.first}=", attr.last)
+          new_reg.send("#{attr.first}=", parsed_date(attr.last))
         end
       end
       add_extras(new_reg, table_name, values[:object])
@@ -126,14 +120,6 @@ class PosController < ApplicationController
       value.to_datetime - 6.hour
     rescue
       value
-    end
-
-    def datetime_fields
-      %(
-        created_at
-        updated_at
-        date
-      )
     end
 
     def is_relation_object(attribute)
@@ -164,14 +150,7 @@ class PosController < ApplicationController
 
     def can_process?(table_name)
       !!(invalid_params.include? table_name ||
-        params[:po][table_name][:rowsLimit] === 0)
-    end
-
-    def check_login_data
-      code = params[:installCode]
-      !!(code == Store.find(params[:storeId]).install_code)
-    rescue
-      false
+        @params[:po][table_name][:rowsLimit] === 0)
     end
 
 end

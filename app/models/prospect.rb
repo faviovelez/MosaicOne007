@@ -22,8 +22,31 @@ class Prospect < ActiveRecord::Base
 
   after_create :save_web_id
 
+  after_save :create_update_change_table
+
   def save_web_id
     self.update(web_id: self.id)
+  end
+
+  def create_update_change_table
+    if change_table_dont_exists
+      create_change_to_table
+    else
+      update_change_to_table
+    end
+  end
+
+  def create_change_to_table
+    ChangesToTable.create(table: self.class.name.downcase.pluralize, web_id: self.id, date: Date.today)
+  end
+
+  def update_change_to_table
+    change_table = ChangesToTable.where(table: self.class.name.downcase.pluralize, web_id: self.id).first
+    change_table.update(date: Date.today)
+  end
+
+  def change_table_dont_exists
+    ChangesToTable.where(table: self.class.name.downcase.pluralize, web_id: self.id) == []
   end
 
 

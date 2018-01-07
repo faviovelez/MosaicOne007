@@ -62,6 +62,29 @@ class Store < ActiveRecord::Base
 
   after_create :gen_install_code
 
+  after_save :create_update_change_table
+
+  def create_update_change_table
+    if change_table_dont_exists
+      create_change_to_table
+    else
+      update_change_to_table
+    end
+  end
+
+  def create_change_to_table
+    ChangesToTable.create(table: self.class.name.downcase.pluralize, web_id: self.id, date: Date.today)
+  end
+
+  def update_change_to_table
+    change_table = ChangesToTable.where(table: self.class.name.downcase.pluralize, web_id: self.id).first
+    change_table.update(date: Date.today)
+  end
+
+  def change_table_dont_exists
+    ChangesToTable.where(table: self.class.name.downcase.pluralize, web_id: self.id) == []
+  end
+
   @@value = true
 
   def self.my_validation(value)

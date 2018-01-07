@@ -263,6 +263,11 @@
         <%= f.select :supplier_id, options_for_select(suppliers) %>
       </div>
 
+      <div class="form-inside-style hidden">
+        <%= f.label :tienda %>
+        <%= f.select :store_id, options_for_select(@request.store.id) %>
+      </div>
+
       <div class="form-inside-style">
         <%= f.label :piezas_por_paquete %>
         <%= f.number_field :pieces_per_package, min: 0, max: 200, class: 'form-inside' %>
