@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171223014629) do
+ActiveRecord::Schema.define(version: 20180107183932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -301,6 +301,16 @@ ActiveRecord::Schema.define(version: 20171223014629) do
   add_index "change_tickets", ["bill_id"], name: "index_change_tickets_on_bill_id", using: :btree
   add_index "change_tickets", ["store_id"], name: "index_change_tickets_on_store_id", using: :btree
   add_index "change_tickets", ["ticket_id"], name: "index_change_tickets_on_ticket_id", using: :btree
+
+  create_table "changes_to_tables", force: :cascade do |t|
+    t.string   "table"
+    t.integer  "store_id"
+    t.date     "date"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.integer  "web_id"
+    t.text     "pos_ids",    default: [],              array: true
+  end
 
   create_table "classifications", force: :cascade do |t|
     t.string   "name"
