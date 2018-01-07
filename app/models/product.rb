@@ -41,6 +41,41 @@ class Product < ActiveRecord::Base
 
   after_create :save_web_id
 
+  after_save :create_update_change_table
+
+  def create_update_change_table
+    if change_table_dont_exists
+      create_change_to_table
+    else
+      update_change_to_table
+    end
+  end
+
+  def create_change_to_table
+    if (self.classification == 'de tienda' || self.classification == 'especial')
+      ChangesToTable.create(table: self.class.name.downcase.pluralize, web_id: self.id, store_id: self.store.id, date: Date.today)
+    elsif self.classification == 'de línea'
+      ChangesToTable.create(table: self.class.name.downcase.pluralize, web_id: self.id, date: Date.today)
+    end
+  end
+
+  def update_change_to_table
+    if (self.classification == 'de tienda' || self.classification == 'especial')
+      change_table = ChangesToTable.where(table: self.class.name.downcase.pluralize, web_id: self.id, store_id: self.store.id).first
+    elsif self.classification == 'de línea'
+      change_table = ChangesToTable.where(table: self.class.name.downcase.pluralize, web_id: self.id).first
+    end
+    change_table.update(date: Date.today)
+  end
+
+  def change_table_dont_exists
+    if (self.classification == 'de tienda' || self.classification == 'especial')
+      ChangesToTable.where(table: self.class.name.downcase.pluralize, web_id: self.id, store_id: self.store.id) == []
+    elsif self.classification == 'de línea'
+      ChangesToTable.where(table: self.class.name.downcase.pluralize, web_id: self.id) == []
+    end
+  end
+
   def save_web_id
     self.update(web_id: self.id)
   end

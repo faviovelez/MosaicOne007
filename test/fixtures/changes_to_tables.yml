@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  table: MyString
+  web_id: 1
+  pos_id: 1
+  store_id: 1
+  date: 2018-01-07
+
+two:
+  table: MyString
+  web_id: 1
+  pos_id: 1
+  store_id: 1
+  date: 2018-01-07
