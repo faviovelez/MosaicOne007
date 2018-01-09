@@ -593,7 +593,7 @@ private
     file = Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.pem")
     password = ENV['password_pac']
 
-    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.pem"), "w") do |file|
+    File.open(Rails.root.join("public", "uploads", "store", "#{@store.id}", "key", "key.enc.key"), "w") do |file|
       file.write('')
     end
 

@@ -198,6 +198,15 @@
           <%= link_to 'Facturas', bills_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'bills' && params[:action] == 'cancelled') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-eraser other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Facturas Canceladas', bills_path, class: 'text-link' %>
+            </li>
+
           <% if (params[:controller] == 'bills' && params[:action] == 'form') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>

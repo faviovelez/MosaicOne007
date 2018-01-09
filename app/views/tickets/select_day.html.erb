@@ -1,0 +1,18 @@
+<%= form_tag({ controller: 'tickets', action: 'get_date' }, method: 'get', class: 'form-data-tables') do %>
+
+  <br /><br />
+
+  <div class="field">
+    <%= label_tag :fecha_de_reporte %>
+    <%= date_field_tag :date %>
+  </div>
+
+  <br /><br />
+
+  <div class="actions">
+    <%= submit_tag 'Ver reporte', class: 'main-button' %>
+  </div>
+
+  <br /><br />
+
+<% end %>
