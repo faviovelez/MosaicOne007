@@ -24,6 +24,17 @@ class TicketsController < ApplicationController
     end
   end
 
+  def closure_day
+    @tickets = nil
+  end
+
+  def select_day
+  end
+
+  def get_date
+    debugger
+  end
+
   def sales
     store = Store.find(params[:store])
     month = params[:month]

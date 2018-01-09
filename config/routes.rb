@@ -62,6 +62,8 @@ Rails.application.routes.draw do
 
   post 'bills/preview'
 
+  get 'bills/cancelled'
+
   get 'bills/cfdi_process'
 
   post 'bills/cfdi_process'
@@ -134,6 +136,12 @@ Rails.application.routes.draw do
   get 'tickets/index'
 
   get 'tickets/details/:id', to: 'tickets#details', as: 'ticket_details'
+
+  get 'tickets/select_day'
+
+  get 'tickets/get_date'
+
+  get 'tickets/closure_day/:date', to: 'tickets#closure_day', as: 'tickets_closure_day'
 
   get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
 
