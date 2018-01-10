@@ -25,14 +25,103 @@ class TicketsController < ApplicationController
   end
 
   def closure_day
-    @tickets = nil
   end
 
   def select_day
   end
 
   def get_date
-    debugger
+    date = Date.parse(params[:date])
+    if current_user.store.tickets.where(created_at: date.midnight..date.end_of_day) == []
+      redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
+    else
+      @tickets = current_user.store.tickets.where(created_at: date.midnight..date.end_of_day).order(:ticket_number)
+      @month_tickets = current_user.store.tickets.where(created_at: date.beginning_of_month.midnight..Time.now)
+      get_payments_from_ticket_day
+      get_summary_from_ticket_day
+      render 'closure_day'
+    end
+  end
+
+  def get_payments_from_ticket_day
+    @cash = ['Efectivo', 0]
+    @credit_card = ['Tarjeta de crédito', 0]
+    @debit_card = ['Tarjeta de débito', 0]
+    @check = ['Cheque', 0]
+    @transfer = ['Transferencia', 0]
+    @credit_sales = ['Ventas a crédito', 0]
+    @total_payment_forms = 0
+    @payment_forms = [
+    ]
+    @tickets.each do |ticket|
+      ticket.payments.each do |payment|
+        if payment.payment_form.description == 'Efectivo'
+          @cash[1] += payment.total
+        elsif payment.payment_form.description == 'Cheque nominativo'
+          @check[1] += payment.total
+        elsif payment.payment_form.description == 'Transferencia electrónica de fondos'
+          @transfer[1] += payment.total
+        elsif payment.payment_form.description == 'Tarjeta de crédito'
+          @credit_card[1] += payment.total
+        elsif payment.payment_form.description == 'Tarjeta de débito'
+          @debit_card[1] += payment.total
+        elsif payment.payment_form.description == 'Por definir'
+          @debit_card[1] += payment.total
+        end
+      end
+    end
+    @payment_forms << @debit_card
+    @payment_forms << @check
+    @payment_forms << @cash
+    @payment_forms << @credit_card
+    @payment_forms << @transfer
+    @payment_forms << @credit_sales
+    @payment_forms.each do |pay|
+      @total_payment_forms += pay[1]
+    end
+  end
+
+  def get_summary_from_ticket_day
+    @day_pieces = 0
+    @day_total = 0
+    @day_subtotal = 0
+    @day_taxes = 0
+    @day_average = 0
+    @day_payments = 0
+    @month_pieces = 0
+    @month_total = 0
+    @month_average = 0
+    @tickets.each do |ticket|
+      @day_payments += ticket.payments_amount
+      ticket.store_movements.each do |sm|
+        @day_pieces += sm.quantity
+        @day_total += sm.total
+        @day_subtotal += sm.subtotal
+        @day_taxes += sm.taxes
+      end
+      ticket.service_offereds.each do |so|
+        @day_pieces += so.quantity
+        @day_total += so.total
+        @day_subtotal += so.subtotal
+        @day_taxes += so.taxes
+      end
+    end
+    @month_tickets.each do |ticket|
+      ticket.store_movements.each do |sm|
+        @month_pieces += sm.quantity
+        @month_total += sm.total
+      end
+      ticket.service_offereds.each do |so|
+        @month_pieces += so.quantity
+        @month_total += so.total
+      end
+    end
+    month_tickets = @month_tickets.count
+    day_tickets = @tickets.count
+    @average_day_total = @day_total / day_tickets
+    @average_month_total = @month_total / month_tickets
+    @average_day_pieces = @day_pieces / day_tickets
+    @average_month_pieces = @month_pieces / month_tickets
   end
 
   def sales

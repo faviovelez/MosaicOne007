@@ -1,275 +1,89 @@
-<div class="closure-tables-container">
 
-  <div class="returns-changes-container">
+<table id="sales-ticket-day" class="table-display">
+  <thead>
+    <tr>
+      <th colspan="5" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+    </tr>
+    <tr>
+      <th class="no-border"> Ticket </th>
+      <th class="no-border"> Subtotal </th>
+      <th class="no-border"> IVA </th>
+      <th class="no-border"> Total </th>
+      <th class="no-border"> Pagos </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tickets.each do |ticket| %>
+      <tr>
+        <td> <%= ticket.ticket_number %> </td>
+        <td> <%= number_to_currency(ticket.subtotal) %> </td>
+        <td> <%= number_to_currency(ticket.taxes) %> </td>
+        <td> <%= number_to_currency(ticket.total) %> </td>
+        <td> <%= number_to_currency(ticket.payments_amount) %> </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td> <strong> Total </strong> </td>
+      <td> <strong> <%= number_to_currency(@day_subtotal) %> </strong> </td>
+      <td> <strong> <%= number_to_currency(@day_taxes) %> </strong> </td>
+      <td> <strong> <%= number_to_currency(@day_total) %> </strong> </td>
+      <td> <strong> <%= number_to_currency(@day_payments) %> </strong> </td>
+    </tr>
+  </tbody>
+</table>
 
-    <table class="closure-returns-table hidden">
-      <tbody>
-        <tr>
-          <td class="top-of-table">
-            Devoluciones:
-          </td>
-          <td class="top-of-table">
-            4
-          </td>
-          <td class="top-of-table right">
-            - $ 328.50
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>
-              Efectivo en caja (solo devoluciones):
-            </strong>
-          </td>
-          <td></td>
-          <td class="right">
-            <strong>
-              - $ 328.50
-            </strong>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <br /><br />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<table id="payment-day" class="table-display">
+  <thead>
+    <tr>
+      <th colspan="2" class="table-titles"> Resumen de pagos </th>
+    </tr>
+    <tr>
+      <th class="no-border"> Forma de pago </th>
+      <th class="no-border"> Total </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @payment_forms.each do |pay_form| %>
+      <tr>
+        <td> <%= pay_form[0] %> </td>
+        <td> <%= number_to_currency(pay_form[1]) %> </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td> <strong> <%= number_to_currency(@total_payment_form) %> </strong> </td>
+    </tr>
+  </tbody>
+</table>
 
-    <table class="closure-changes-table">
-      <tbody>
-        <tr>
-          <td class="top-of-table">
-            Cambios:
-          </td>
-          <td class="top-of-table">
-            2
-          </td>
-          <td class="top-of-table right">
-            $ 324.20
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Salidas de efectivo por cambios
-          </td>
-          <td></td>
-          <td class="right">
-            - $ 100.00
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Entradas de efectivo por cambios:
-          </td>
-          <td></td>
-          <td class="right">
-            $ 424.20
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>
-              Efectivo en caja (solo cambios):
-            </strong>
-          </td>
-          <td></td>
-          <td class="right">
-            <strong>
-              $ 324.20
-            </strong>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <br />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<table id="payment-average" class="table-display table-display dataTable no-footer">
+  <thead>
+    <tr>
+      <th colspan="4" class="table-titles"> Promedio de ventas </th>
+    </tr>
+    <tr>
+      <th class="no-border"> Ticket promedio (día) </th>
+      <th class="no-border"> Piezas por ticket (día) </th>
+      <th class="no-border"> Ticket promedio (mes) </th>
+      <th class="no-border"> Piezas por ticket (mes) </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> <%= number_to_currency(@average_day_total) %> </td>
+      <td> <%= @average_day_pieces %> </td>
+      <td> <%= number_to_currency(@average_month_total) %> </td>
+      <td> <%= @average_month_pieces %> </td>
+    </tr>
+  </tbody>
+</table>
 
-  </div>  <!-- Terminan returns-changes-container -->
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
 
-  <div class="sales-payments-container">
-
-    <table class="closure-sales-table">
-      <tbody>
-        <tr>
-          <td class="top-of-table">
-            Ventas:
-          </td>
-          <td class="top-of-table right">
-              $ 2,950.00
-              <a href="#">
-                <i class="fa fa-chevron-up hidden" aria-hidden="true" id="sales-hide"></i>
-                <i class="fa fa-chevron-down" aria-hidden="true" id="sales-show"></i>
-              </a>
-          </td>
-        </tr>
-        <tr>
-          <td class="sales-hide hidden"> Efectivo </td>
-          <td class="right sales-hide hidden"> $ 1,535.50 </td>
-        </tr>
-        <tr>
-          <td class="sales-hide hidden"> Tarjeta de débito </td>
-          <td class="right sales-hide hidden"> $ 2,621.00 </td>
-        </tr>
-        <tr>
-          <td class="sales-hide hidden"> Tarjeta de crédito </td>
-          <td class="right sales-hide hidden"> $ 894.00 </td>
-        </tr>
-        <tr>
-          <td class="sales-hide hidden"> Cheque </td>
-          <td class="right sales-hide hidden"> $ 400.00 </td>
-        </tr>
-        <tr>
-          <td class="sales-hide hidden"> Transferencias </td>
-          <td class="right sales-hide hidden"> $ 5,000.00 </td>
-        </tr>
-        <tr>
-          <td class="sales-hide hidden"> Ventas a crédito </td>
-          <td class="right sales-hide hidden"> $ 2,000.00 </td>
-        </tr>
-        <tr>
-          <td class="sales-hide hidden"> Otras formas de pago </td>
-          <td class="right sales-hide hidden"> $ 100.00 </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>
-              Efectivo en caja (ventas):
-            </strong>
-          </td>
-          <td class="right">
-            <strong>
-              $ 1,535.50
-            </strong>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <br />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <table class="closure-payments-table">
-      <tbody>
-        <tr>
-          <td class="top-of-table">
-            Pagos:
-          </td>
-          <td class="top-of-table right">
-              $ 1,450.00
-              <a href="#">
-                <i class="fa fa-chevron-up hidden" aria-hidden="true" id="payment-hide"></i>
-                <i class="fa fa-chevron-down" aria-hidden="true" id="payment-show"></i>
-              </a>
-           </td>
-        </tr>
-        <tr>
-          <td class="payment-hide hidden"> Efectivo </td>
-          <td class="right payment-hide hidden"> $ 539.50 </td>
-        </tr>
-        <tr>
-          <td class="payment-hide hidden"> Tarjeta de débito </td>
-          <td class="right payment-hide hidden"> $ 624.00 </td>
-        </tr>
-        <tr>
-          <td class="payment-hide hidden"> Tarjeta de crédito </td>
-          <td class="right payment-hide hidden"> $ 1,995.00 </td>
-        </tr>
-        <tr>
-          <td class="payment-hide hidden"> Cheque </td>
-          <td class="right payment-hide hidden"> $ 4,000.00 </td>
-        </tr>
-        <tr>
-          <td class="payment-hide hidden"> Transferencias </td>
-          <td class="right payment-hide hidden"> $ 1,000.00 </td>
-        </tr>
-        <tr>
-          <td class="payment-hide hidden"> Otras formas de pago </td>
-          <td class="right payment-hide hidden"> $ 250.00 </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>
-              Efectivo en caja (pagos):
-            </strong>
-          </td>
-          <td class="right">
-            <strong>
-              $ 539.50
-            </strong>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <br />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-  </div> <!-- Terminan sales-payments-container -->
-
-  <div class="total-cash-container">
-    <table class="total-cash-table">
-      <tbody>
-        <tr>
-          <td class="top-of-table-black"> Efectivo total en caja </td>
-          <td class="right top-of-table-black"> $ 2,070.70 </td>
-        </tr>
-        <tr>
-          <td> <br /><br /><br /> </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="cash-register-container">
-    <form class="new_register_close" id="new_register_close" action="configuration.html" accept-charset="UTF-8" method="post">
-      <input name="utf8" type="hidden" value="&#x2713;" />
-      <input type="hidden" name="authenticity_token" value="NTK5uX3QCLZG2RaB2P/w72rV0xhp10n/RIl6eS05AsHEHF+hBTfZCMCD3tnWJ3qMTeQI7TI6ePtA6RoUZpAuRg==" />
-      <div class="actions hidden">
-        <a href="close_register.html">
-          <p>
-            Resumen de cierre
-          </p>
-        </a>
-        <a href="register_sales_details.html">
-          <p>
-            Detalles de ventas
-          </p>
-        </a>
-        <a href="register_returns_details.html">
-          <p>
-            Detalle de devoluciones
-          </p>
-        </a>
-        <a href="register_changes_details.html">
-          <p>
-            Detalle de cambios
-          </p>
-        </a>
-        <a href="register_payments_details.html">
-          <p>
-            Detalle de pagos
-          </p>
-        </a>
-        <a href="#">
-          <p>
-            Imprimir
-          </p>
-        </a>
-
-      </div>
-      <br /><br /><br /><br /><br /> <!-- Estos los quitaré, así como todos los hidden cuando quede lista la funcionalidad-->
-      <div class="actions">
-        <input type="submit" name="commit" id='closeDay' value="Cerrar caja" class="third-button" />
-      </div>
-    </form>
-  </div>
-
-</div><!-- Termina closure-tables-container  -->
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'ticket-day' %>
+<% end %>
