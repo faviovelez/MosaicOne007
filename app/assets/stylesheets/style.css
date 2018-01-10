@@ -20,6 +20,14 @@ button#btn-notice {
   padding-right: 1.5rem;
 }
 
+table#payment-average {
+  margin-bottom: 100px !important;
+}
+
+.no-border {
+    border-bottom: none !important;
+}
+
 .close-icon {
   margin-left: 4px;
   margin-right: 4px;
