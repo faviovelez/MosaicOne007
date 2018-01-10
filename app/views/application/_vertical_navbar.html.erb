@@ -189,6 +189,15 @@
           <%= link_to 'Resumen de ventas', tickets_sales_summary_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'tickets' && params[:action] == 'select_day') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-calendar other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Ventas por día', tickets_select_day_path, class: 'text-link' %>
+            </li>
+
           <% if (params[:controller] == 'bills' && params[:action] == 'select_bills') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
@@ -204,7 +213,7 @@
             <li class="vertical-link">
           <% end %>
           <i class="fa fa-eraser other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Facturas Canceladas', bills_path, class: 'text-link' %>
+          <%= link_to 'Facturas Canceladas', bills_cancelled_path, class: 'text-link' %>
             </li>
 
           <% if (params[:controller] == 'bills' && params[:action] == 'form') %>
