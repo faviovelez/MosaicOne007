@@ -69,6 +69,10 @@ class BillsController < ApplicationController
     @bill = Bill.find(params[:bill])
   end
 
+  def cancelled
+    @bills = current_user.store.bills.where(status: 'cancelada')
+  end
+
   def generate_credit_note
   end
 
