@@ -32,10 +32,12 @@ class TicketsController < ApplicationController
 
   def get_date
     date = Date.parse(params[:date])
-    if current_user.store.tickets.where(created_at: date.midnight..date.end_of_day) == []
+    midnight = date.midnight + 6.hours
+    end_day = date.end_of_day + 6.hours
+    if current_user.store.tickets.where(created_at: midnight..end_day) == []
       redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
     else
-      @tickets = current_user.store.tickets.where(created_at: date.midnight..date.end_of_day).order(:ticket_number)
+      @tickets = current_user.store.tickets.where(created_at: midnight..end_day).order(:ticket_number)
       @month_tickets = current_user.store.tickets.where(created_at: date.beginning_of_month.midnight..Time.now)
       get_payments_from_ticket_day
       get_summary_from_ticket_day
