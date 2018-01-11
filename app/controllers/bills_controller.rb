@@ -396,6 +396,12 @@ class BillsController < ApplicationController
       @byll_types << [string, tb.id]
     end
     @products = Product.where(classification: 'de línea').where(current: true)
+    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+      @store_products = Product.where(store: current_user.store)
+    end
+    @store_products.each do |product|
+      @products << product
+    end
     services = Service.where(current: true)
     @products.each do |product|
       @products_ids << [product.id]
@@ -409,6 +415,7 @@ class BillsController < ApplicationController
       else
         @products_prices << [product.price.round(2), product.id]
       end
+
     end
     services.each do |service|
       @products_ids << [service.unique_code]
