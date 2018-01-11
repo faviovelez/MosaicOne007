@@ -1785,9 +1785,13 @@ XML
 
     @receipt_file = File.open(File.join(@final_dir, 'acuse.xml'), 'r')
 
-    @bill.update(cancel_receipt: @receipt_file, status: 'cancelada')
+    if (@cancel_status == '201' || @cancel_status == nil)
+      @bill.update(cancel_receipt: @receipt_file, status: 'cancelada')
+      redirect_to root_path, notice: "Se ha cancelado exitosamente la factura con Folio #{@bill.folio}."
+    else
+      redirect_to root_path, notice: "Hubo un error al intentar cancelar, por favor intente de nuevo."
+    end
 
-    redirect_to root_path, notice: "Se ha cancelado exitosamente la factura con Folio #{@bill.folio}."
   end
 
   #### ESTE MÉTODO ES PARA BILL ### ##CAMBIAR POR MÉTODO PARA SOLO TIMBRE FISCAL SIN SELLO#
