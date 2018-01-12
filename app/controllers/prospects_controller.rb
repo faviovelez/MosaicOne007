@@ -200,7 +200,7 @@ class ProspectsController < ApplicationController
       :business_group_id,
       :store_id,
       :store_code,
-      :credit_days
+      :credit_days,
       :email_2,
       :email_3
     )
