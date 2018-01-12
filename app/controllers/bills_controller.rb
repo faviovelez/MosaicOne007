@@ -871,7 +871,7 @@ class BillsController < ApplicationController
       end
       days = credit_payments.sort.reverse.first
       @payment_form = 'Crédito'
-      @payment_form += ' ' + days.to_s + ' ' + días unless (days == nil || days == [] || days == [''] || days == '')
+      @payment_form += ' ' + days.to_s + ' ' + 'días' unless (days == nil || days == [] || days == [''] || days == '')
     end
     @payment_form
   end
