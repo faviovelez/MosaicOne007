@@ -178,7 +178,8 @@ class ProspectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def prospect_params
-      params.require(:prospect).permit(:store_id,
+      params.require(:prospect).permit(
+      :store_id,
       :prospect_type,
       :contact_first_name,
       :second_last_name,
@@ -199,6 +200,9 @@ class ProspectsController < ApplicationController
       :business_group_id,
       :store_id,
       :store_code,
-      :credit_days)
+      :credit_days
+      :email_2,
+      :email_3
+    )
     end
 end
