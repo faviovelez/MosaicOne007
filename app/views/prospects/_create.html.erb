@@ -54,6 +54,16 @@
     </div>
 
     <div class="form-inside-style">
+      <%= f.label :correo_electrónico_secundario %>
+      <%= f.email_field :email_2, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :tercer_correo_electrónico %>
+      <%= f.email_field :email_3, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
       <%= f.label :teléfono_directo %>
       <%= f.text_field :direct_phone, maxlength: 10, class: 'form-inside' %>
     </div>

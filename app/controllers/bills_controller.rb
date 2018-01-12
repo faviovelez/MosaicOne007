@@ -1617,7 +1617,13 @@ class BillsController < ApplicationController
       hash["Descuento"] = '%.2f' % @total_discount if @discount_any
       hash["Moneda"] = 'MXN'
       hash["TipoCambio"] = '1'
-      hash["Total"] = '%.2f' % @total
+      @calculated_taxes = ((@subtotal - @total_discount) * 0.16).round(2)
+      if @calculated_taxes != @total_taxes
+        @total = @subtotal - @total_discount + @calculated_taxes
+        hash["Total"] = '%.2f' % @total
+      else
+        hash["Total"] = '%.2f' % @total
+      end
       hash["TipoDeComprobante"] = @type_of_bill_key
       hash["MetodoPago"] = @method_key
       hash["LugarExpedicion"] = b.zipcode
@@ -1683,6 +1689,9 @@ class BillsController < ApplicationController
               end
             end
           end
+        end
+        if @calculated_taxes != @total_taxes
+          @total_taxes = @calculated_taxes
         end
         xml['cfdi'].Impuestos('TotalImpuestosTrasladados'=> @total_taxes) do
           xml['cfdi'].Traslados do
