@@ -812,6 +812,9 @@ class BillsController < ApplicationController
       total_payment << payment.second
     end
     @total_payment = total_payment.inject(&:+)
+    if @total_payment == nil
+      @total_payment = 0
+    end
     @total_payment
   end
 
