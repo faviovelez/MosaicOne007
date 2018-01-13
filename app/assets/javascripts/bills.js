@@ -93,7 +93,7 @@ $(document).ready(function() {
           discVal += parseFloat(parseFloat($(this).val()).toFixed(2));
         }
         discountSum += parseFloat(discVal);
-        $('#bill_discount').val(discountSum);
+        $('#bill_discount').val(discountSum.toFixed(2));
       }
     });
     $('input[id^="subtotal_"]').each(function() {
@@ -246,20 +246,22 @@ $(document).ready(function() {
                     newQuantity = parseFloat($(this).val());
                     thisPrice = parseFloat($('#unit_value_hidden_' + id).val());
                     newPrice = parseFloat((newQuantity * thisPrice).toFixed(2));
-                    newDiscount = parseFloat($('#discount_' + prod_id).val());
+                    newDiscount = parseFloat($('#discount_' + id).val());
                     newTax = parseFloat(
                       ((newPrice - discountRow) * 0.16).toFixed(2) // aquí podría ser newDiscount
                     );
-                    $('#subtotal_' + id).val(newPrice);
-                    $('#taxes_' + id).val(newTax);
+                    $('#subtotal_' + id).val(newPrice.toFixed(2));
+                    $('#taxes_' + id).val(newTax.toFixed(2));
                     putTotals();
                   });
                   $('.unit_value_hidden').blur(function() {
+                    debugger
                     id = $(this).attr('id').replace('unit_value_hidden_', '');
                     quantityNewValue = parseFloat($('#quantity_' + id).val());
                     priceNewValue = parseFloat($(this).val());
                     subtotalNewValue = parseFloat(quantityNewValue * priceNewValue);
-                    taxNewValue = parseFloat(subtotalNewValue * 0.16);
+                    myNewDiscount = parseFloat($('#discount_' + id).val());
+                    taxNewValue = parseFloat((subtotalNewValue - myNewDiscount) * 0.16);
                     $('#subtotal_' + id).val((parseFloat(subtotalNewValue)).toFixed(2));
                     $('#taxes_' + id).val((parseFloat(taxNewValue)).toFixed(2));
                     putTotals();
@@ -282,9 +284,9 @@ $(document).ready(function() {
                         thisPrice = parseFloat($('#unit_value_hidden_' + id).val());
                         newPrice = parseFloat((newQuantity * thisPrice).toFixed(2));
                         newDiscount = parseFloat($('#discount_' + id).val());
-                        $('#subtotal_' + id).val(newPrice);
+                        $('#subtotal_' + id).val(newPrice.toFixed(2));
 
-                        discountSum += parseFloat(discVal);
+                        discountSum += parseFloat(discVal.toFixed(2));
                         putTaxes(id);
                         $('#bill_discount').val(discountSum.toFixed(2));
                       }
