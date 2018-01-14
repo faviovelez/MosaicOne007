@@ -6,21 +6,37 @@
   </head>
   <body>
     <p>
-      Estimado cliente
-      Le enviamos su factura con folio <%= @bill.folio %>.
+      Estimado cliente.
+      <br />
+      <br />
+      <br />
+      Adjunto encontrará su factura con folio No. <%= @bill.folio %>.
     </p>
-    <p>
-      Atentamente:
-    </p>
-    <p>
-      <strong> Diseños de Cartón </strong>
-      Más que cajas... Soluciones.
-    </p>
+
     <br />
     <br />
 
-    <p>
-      Sucursal <%= @bill.store.store_name %>
-    </p>
+    <div class="small-address">
+      <%= image_tag 'logo-disenos-decarton.png', width: '300px', height: 'auto', alt: 'Logo Diseños de Cartón' %>
+      <br />
+      <p>
+        <strong>
+          Sucursal <%= @bill.store.store_name %>
+        </strong>
+        <br />
+        <%= @address %>
+        <br />
+        <% if @store_tel.length > 10 %>
+          Tel: <%= number_to_phone(@store_tel, area_code: true) %>
+        <% else %>
+          Tel: <%= number_to_phone(@store_tel) %>
+        <% end %>
+        <br />
+        <%= mail_to @store_email %>
+        <br />
+        <%= link_to @store_webpage, "http://#{@store_webpage}", target: "_blank" %>
+      </p>
+    </div>
+
   </body>
 </html>
