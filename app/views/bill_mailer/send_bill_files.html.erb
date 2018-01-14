@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Factura de Diseños de Cartón</title>
+  </head>
+  <body>
+    <p>
+      Estimado cliente
+      Le enviamos su factura con folio <%= @bill.folio %>.
+    </p>
+    <p>
+      Atentamente:
+    </p>
+    <p>
+      <strong> Diseños de Cartón </strong>
+      Más que cajas... Soluciones.
+    </p>
+    <br />
+    <br />
+
+    <p>
+      Sucursal <%= @bill.store.store_name %>
+    </p>
+  </body>
+</html>
