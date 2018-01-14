@@ -4,7 +4,7 @@ class BillMailer < ApplicationMailer
   layout 'mailer'
 
   def send_bill_files(bill)
-#    @mails = []
+    @mails = ['favio.velez@hotmail.com', 'faviovelez29@gmail.com']
 #    mail = bill.receiving_company.prospects.first.email
 #    mail_2 = bill.receiving_company.prospects.first.email_2
 #    mail_3 = bill.receiving_company.prospects.first.email_3
