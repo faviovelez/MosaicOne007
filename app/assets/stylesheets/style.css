@@ -28,6 +28,16 @@ table#payment-average {
     border-bottom: none !important;
 }
 
+.small-address {
+  width: 150px;
+}
+
+.img-bill {
+  margin-left: 50px;
+  width: 45%;
+  height: auto;
+}
+
 .close-icon {
   margin-left: 4px;
   margin-right: 4px;
