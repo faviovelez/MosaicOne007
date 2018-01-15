@@ -29,6 +29,7 @@ class BillMailer < ApplicationMailer
     mail_2 = bill.receiving_company.prospects.first.email_2
     mail_3 = bill.receiving_company.prospects.first.email_3
     if ((mail != nil && mail != '') || (mail_2 != nil && mail_2 != '') || (mail_3 != nil && mail_3 != ''))
+      @mails = []
       @bill = bill
       address
       email
