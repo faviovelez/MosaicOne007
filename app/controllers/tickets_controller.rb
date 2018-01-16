@@ -68,7 +68,7 @@ class TicketsController < ApplicationController
         elsif payment.payment_form.description == 'Tarjeta de débito'
           @debit_card[1] += payment.total
         elsif payment.payment_form.description == 'Por definir'
-          @debit_card[1] += payment.total
+          @credit_sales[1] += payment.total
         end
       end
     end
