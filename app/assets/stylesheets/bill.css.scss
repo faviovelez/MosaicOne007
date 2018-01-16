@@ -257,6 +257,10 @@ img.img-bill-preview {
   margin-top: 30px;
 }
 
+thead, tfoot {
+  display: table-row-group;
+}
+
 .with-bg {
   background-color: #364150;
   color: #fff;
