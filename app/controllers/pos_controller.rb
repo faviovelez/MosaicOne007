@@ -2,6 +2,7 @@ class PosController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def received_data
+#    debugger
     if (check_login_data) || true
       @ids_references = {}
       tables_orders.each do |table_name|
@@ -64,7 +65,7 @@ class PosController < ApplicationController
       if reg.id.nil?
         reg.save
       end
-      debugger if values["object"]["user_id"].present?
+#      debugger if values["object"]["user_id"].present?
       @ids_references[table_name.singularize][pos_id] = reg.id
     end
 
