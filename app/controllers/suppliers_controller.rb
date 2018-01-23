@@ -1,4 +1,5 @@
 class SuppliersController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_supplier, only: [:show, :edit, :update, :destroy]
   before_action :set_business_group, only: [:new, :save_supplier_to_business_group]
   # GET /suppliers

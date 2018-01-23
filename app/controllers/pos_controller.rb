@@ -64,6 +64,7 @@ class PosController < ApplicationController
       if reg.id.nil?
         reg.save
       end
+      debugger if values["object"]["user_id"].present?
       @ids_references[table_name.singularize][pos_id] = reg.id
     end
 
