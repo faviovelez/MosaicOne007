@@ -1,5 +1,6 @@
 class ProductsController < ApplicationController
   # Este controller es para crear, modificar o borrar productos en catálogo, ya sea de línea o especiales (los de Request, una vez que se autorizan).
+  before_action :authenticate_user!
   before_action :set_product, only: [:show, :edit, :update, :destroy, :images]
 
   # GET /products

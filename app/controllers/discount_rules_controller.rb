@@ -1,4 +1,5 @@
 class DiscountRulesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_discount_rule, only: [:show, :edit, :update, :destroy]
 
   # GET /discount_rules

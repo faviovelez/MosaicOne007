@@ -1,5 +1,6 @@
 class TicketsController < ApplicationController
-
+  before_action :authenticate_user!
+  
   def index
     # Cambiar a resumen de ventas
     store = current_user.store

@@ -1,4 +1,5 @@
 class BillsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_bill, only: [:show, :edit, :bill, :bill_doc, :update, :destroy, :download_pdf, :download_xml, :download_xml_receipt]
 
   require 'rqrcode'
