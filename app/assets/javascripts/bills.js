@@ -255,7 +255,6 @@ $(document).ready(function() {
                     putTotals();
                   });
                   $('.unit_value_hidden').blur(function() {
-                    debugger
                     id = $(this).attr('id').replace('unit_value_hidden_', '');
                     quantityNewValue = parseFloat($('#quantity_' + id).val());
                     priceNewValue = parseFloat($(this).val());
