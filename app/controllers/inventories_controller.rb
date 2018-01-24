@@ -1,6 +1,6 @@
 class InventoriesController < ApplicationController
   before_action :authenticate_user!
-  
+
   def index
     filter_products
   end
@@ -20,7 +20,7 @@ class InventoriesController < ApplicationController
                           ]).each do |supplier|
                             suppliers_id << supplier.id
                           end
-    @products = Product.where(supplier: suppliers_id)
+    @products = Product.where(shared: true, current: true)
     @products
   end
 
