@@ -816,7 +816,7 @@ class BillsController < ApplicationController
     if @total_payment == nil
       @total_payment = 0
     end
-    @total_payment
+    @total_payment = @total_payment.round(2)
   end
 
   def greatest_payment_key
