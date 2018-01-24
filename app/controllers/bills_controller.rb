@@ -1973,8 +1973,6 @@ XML
           row.update(bill: bill)
         end
       end
-      # El update de folio solo sirve para las facturas normales por el momento
-      bill.update(xml: @stamped_xml, pdf: @pdf_file)
       if @bill == nil
         @store.update(bill_last_folio: @folio)
       else
@@ -1988,6 +1986,8 @@ XML
           @store.update(advance_e_last_folio: @folio)
         end
       end
+      # El update de folio solo sirve para las facturas normales por el momento
+      bill.update(xml: @stamped_xml, pdf: @pdf_file)
       if @objects != nil
         if @objects.is_a?(Array)
           @objects.each do |object|
