@@ -2,7 +2,7 @@ class PosController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def received_data
-#    debugger
+#    binding.pry
     if (check_login_data) || true
       @ids_references = {}
       tables_orders.each do |table_name|
@@ -43,8 +43,8 @@ class PosController < ApplicationController
       return {
         "CashRegister" => ['store_id'],
         "StoresInventory" => ['store_id', 'product_id'],
-        "BillingAddress" => ['business_name'],
-        "Prospect" => ['legal_or_business_name'],
+        "BillingAddress" => ['business_name', 'store_id'], #Agregué store_id
+        "Prospect" => ['legal_or_business_name', 'store_id'], #Agregué store_id
         "Terminal" => ['store_id', 'name']
       }
     end
@@ -60,12 +60,13 @@ class PosController < ApplicationController
     end
 
     def fill_references(table_name, pos_id, values)
+#      binding.pry if values["object"]["user_id"].present?
       reg = create_reg(table_name, values)
       reg = is_a_new_register(reg)
+#      binding.pry if values["object"]["user_id"].present?
       if reg.id.nil?
         reg.save
       end
-#      debugger if values["object"]["user_id"].present?
       @ids_references[table_name.singularize][pos_id] = reg.id
     end
 
@@ -104,11 +105,16 @@ class PosController < ApplicationController
       )
     end
 
+    def set_store_id(value, reference)
+      @store_id = value if reference == 'store_id'
+    end
+
     # Probablemente tengamos que modificar este método
     def create_reg(table_name, values)
       klass = table_name.singularize.camelize.constantize
       new_reg = klass.new
       values[:object].each do |attr|
+        set_store_id(attr.last, attr.first) if @store_id.nil?
         next if %w(pos_id web_id).include?(attr.first)
         if is_relation_object(attr.first)
           id = vinculate_relations(attr.first, attr.last)
@@ -147,12 +153,14 @@ class PosController < ApplicationController
       table_name = reference.gsub(/_id/,'')
       object     = nil
       if @ids_references[table_name.singularize][value.to_s].nil?
-        return table_name.camelcase.constantize.find_by_pos_id(
+        return table_name.camelcase.constantize.where(
+          store_id: @store_id).find_by_pos_id(
           value
         ).web_id
       end
       @ids_references[table_name.singularize][value.to_s]
     rescue
+#      binding.pry
       value
     end
 
