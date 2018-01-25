@@ -425,7 +425,7 @@ class BillsController < ApplicationController
       @products_sat_keys << [service.sat_key.sat_key, service.unique_code]
       @products_sat_unit_keys << [service.sat_unit_key.unit, service.unique_code]
       @products_units << [service.sat_unit_key.description, service.unique_code]
-      @products_prices << [1, service.unique_code]
+      @products_prices << [service.price, service.unique_code]
     end
   end
 
