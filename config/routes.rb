@@ -307,6 +307,12 @@ Rails.application.routes.draw do
 
   post 'pos/received_data', to: 'pos#received_data', as: 'received_data'
 
+  require 'sidekiq/web'
+  match "queue-status" => proc { [200, {"Content-Type" => "text/plain"}, [Sidekiq::Queue.new.size < 100 ? "OK" : "UHOH" ]] }, via: :get
+  match "queue-latency" => proc { [200, {"Content-Type" => "text/plain"}, [Sidekiq::Queue.new.latency < 30 ? "OK" : "UHOH" ]] }, via: :get
+  authenticate :user, lambda { |u| u.role.name == 'platform-admin' } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
 
   # Agregar la ruta para descargar los archivos, el link para descargarlos y el link en el navbar
   # Agregar un proceso para crear un archivo de productos csv en las carpetas de stores
