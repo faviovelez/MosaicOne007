@@ -1,14 +1,17 @@
 <body class="<%= params[:controller] %> <%= params[:action] %>">
 
-  <% if @product.errors.any? %>
-    <ul>
-      <% @product.errors.messages.values.each do |msg| %>
-        <%msg.each do  |m| %>
-          <li><%= m %></li>
+
+  <div class="errors-container">
+    <% if @product.errors.any? %>
+      <ul>
+        <% @product.errors.messages.values.each do |msg| %>
+          <%msg.each do  |m| %>
+            <li><%= m %></li>
+          <% end %>
         <% end %>
-      <% end %>
-    </ul>
-  <% end %>
+      </ul>
+    <% end %>
+  </div>
 
   <%= form_for(@product) do |f| %>
 
@@ -189,12 +192,12 @@
 
       <div class="form-inside-style">
         <%= f.label 'Código de producto SAT' %>
-        <%= f.select :sat_key_id, options_for_select(get_sat_keys, selected: @product.sat_key_id), {include_blank: true, multiple: true, class: 'form-inside select2-sat-keys'} %>
+        <%= f.select :sat_key_id, options_for_select(get_sat_keys, selected: @product.sat_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-keys' %>
       </div>
 
       <div class="form-inside-style">
         <%= f.label 'Unidad SAT' %>
-        <%= f.select :sat_unit_key_id, options_for_select(get_sat_unit_keys, selected: @product.sat_unit_key_id), {include_blank: true, multiple: true, class: 'form-inside select2-sat-unit-keys'} %>
+        <%= f.select :sat_unit_key_id, options_for_select(get_sat_unit_keys, selected: @product.sat_unit_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-unit-keys' %>
       </div>
 
       <div class="form-inside-style">
@@ -239,8 +242,10 @@
       </div>
 
     </div>
+  </div>
 
   <% end %>
+
 
   <%= content_for :stylesheet do %>
     <%= stylesheet_link_tag 'select2.min' %>
@@ -248,6 +253,7 @@
 
   <%= content_for :javascript do %>
     <%= javascript_include_tag 'select2.min' %>
+    <%= javascript_include_tag 'es' %>
     <%= javascript_include_tag 'products_select' %>
   <% end %>
 </body>

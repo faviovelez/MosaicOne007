@@ -2,11 +2,35 @@ class ProductsController < ApplicationController
   # Este controller es para crear, modificar o borrar productos en catálogo, ya sea de línea o especiales (los de Request, una vez que se autorizan).
   before_action :authenticate_user!
   before_action :set_product, only: [:show, :edit, :update, :destroy, :images]
+  require 'csv'
 
   # GET /products
   # GET /products.json
   def index
     filter_products
+  end
+
+  def show_product_csv
+    attributes = %w{unique_code description quantity}
+
+    file = CSV.generate(headers: true) do |csv|
+      csv << attributes
+
+      Product.all.each do |product|
+        csv << attributes.map{ |attr| product.send(attr) }
+      end
+    end
+    new_file = CSV.parse(file, headers: true, encoding: 'ISO-8859-1')
+    File.open(Rails.root.join("public", "uploads", "product_files", "all_stores", "productos.csv"), "w") do |file|
+      file.write(new_file)
+    end
+
+    @products_file = File.read(Rails.root.join("public", "uploads", "product_files", "all_stores", "productos.csv"))
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data @products_file, filename: "productos-#{Date.today}.csv" }
+    end
   end
 
   def images
@@ -51,6 +75,8 @@ class ProductsController < ApplicationController
       find_user
     end
     @product = Product.new(product_params)
+    save_sat_key
+    save_sat_unit_key
     params
     save_image
     respond_to do |format|
@@ -77,6 +103,8 @@ class ProductsController < ApplicationController
   # Este método también lo puede usar solamente 'product-admin'. Tanto en create como en update falta agregar que pueda subir imágenes (un modelo diferente de documents).
   def update
     save_former_price
+    save_sat_key
+    save_sat_unit_key
     @inventory = Inventory.find_by_product_id(@product) || StoresInventory.find_by_product_id(@product)
     save_image
     respond_to do |format|
@@ -101,6 +129,22 @@ class ProductsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to products_url, notice: 'El producto fue eliminado exitosamente.' }
       format.json { head :no_content }
+    end
+  end
+
+  def save_sat_key
+    if params[:product][:sat_key_id] == ['']
+      @product.sat_key = nil
+    else
+      @product.sat_key = SatKey.find(params[:product][:sat_key_id].second)
+    end
+  end
+
+  def save_sat_unit_key
+    if params[:product][:sat_unit_key_id] == ['']
+      @product.sat_unit_key = nil
+    else
+      @product.sat_unit_key = SatUnitKey.find(params[:product][:sat_unit_key_id].second)
     end
   end
 
