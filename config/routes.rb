@@ -157,6 +157,9 @@ Rails.application.routes.draw do
 
   get 'tikets/process_incomming_data'
 
+  get 'products/show_product_csv'
+
+
   devise_for :users
 
   scope "/admin" do
@@ -309,7 +312,6 @@ Rails.application.routes.draw do
 
   require 'sidekiq/web'
   match "queue-status" => proc { [200, {"Content-Type" => "text/plain"}, [Sidekiq::Queue.new.size < 100 ? "OK" : "UHOH" ]] }, via: :get
-  match "queue-latency" => proc { [200, {"Content-Type" => "text/plain"}, [Sidekiq::Queue.new.latency < 30 ? "OK" : "UHOH" ]] }, via: :get
   authenticate :user, lambda { |u| u.role.name == 'platform-admin' } do
     mount Sidekiq::Web => '/sidekiq'
   end
