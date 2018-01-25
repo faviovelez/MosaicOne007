@@ -1943,6 +1943,19 @@ XML
         bill.bill_folio_type = "Factura"
       end
     end
+    if @bill == nil
+      @store.update(bill_last_folio: @folio)
+    else
+      if @relation_type == '01'
+        @store.update(credit_note_last_folio: @folio)
+      elsif @relation_type == '02'
+        @store.update(debit_note_last_folio: @folio)
+      elsif @relation_type == '03'
+        @store.update(return_last_folio: @folio)
+      elsif @relation_type == '07'
+        @store.update(advance_e_last_folio: @folio)
+      end
+    end
     if bill.save
       if @bill != nil
         @bill.children << bill
@@ -1971,19 +1984,6 @@ XML
       else
         @rows.each do |row|
           row.update(bill: bill)
-        end
-      end
-      if @bill == nil
-        @store.update(bill_last_folio: @folio)
-      else
-        if @relation_type == '01'
-          @store.update(credit_note_last_folio: @folio)
-        elsif @relation_type == '02'
-          @store.update(debit_note_last_folio: @folio)
-        elsif @relation_type == '03'
-          @store.update(return_last_folio: @folio)
-        elsif @relation_type == '07'
-          @store.update(advance_e_last_folio: @folio)
         end
       end
       # El update de folio solo sirve para las facturas normales por el momento
