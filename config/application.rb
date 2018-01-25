@@ -9,10 +9,12 @@ Bundler.require(*Rails.groups)
 module Mosaicone007
   class Application < Rails::Application
     config.i18n.default_locale = 'es-MX'
-
     config.active_record.raise_in_transactional_callbacks = true
     config.active_job.queue_adapter = :sidekiq
     config.active_record.default_timezone = :local
     config.active_record.time_zone_aware_attributes = false
+    config.action_view.field_error_proc = Proc.new { |html_tag, instance|
+      html_tag
+    }
   end
 end

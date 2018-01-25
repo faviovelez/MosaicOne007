@@ -37,6 +37,10 @@ class Product < ActiveRecord::Base
 
   validates :unique_code, uniqueness: { message: "El código de producto no se puede repetir, ya existe un producto con con este código." }
 
+  validates :sat_key_id, presence: { message: "Debe elegir una clave del SAT."}
+
+  validates :sat_unit_key_id, presence: { message: "Debe elegir una clave de unidad del SAT."}
+
   after_create :create_inventory_or_store_inventories
 
   after_create :save_web_id
