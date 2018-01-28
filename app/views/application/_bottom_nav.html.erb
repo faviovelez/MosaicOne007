@@ -57,7 +57,19 @@
       <% if (params[:controller] == 'products' && params[:action] == 'show') %>
         <%= link_to 'Modificar producto', edit_product_path(@product), class: 'bottom-link' %>
       <% end %>
+
+      <% if (params[:controller] == 'services' && params[:action] != 'new') %>
+        <%= link_to 'Crear nuevo servicio', new_service_path, class: 'bottom-link' %>
+      <% end %>
+
+        <% if (params[:controller] == 'services' && params[:action] == 'show') %>
+          <% if @service.store == current_user.store %>
+            <%= link_to 'Modificar servicio', edit_service_path(@service), class: 'bottom-link' %>
+          <% end %>
+        <% end %>
+
     <% end %>
+
 
     <% if params[:controller] == 'design_requests' %>
       <% if @design_request && params[:action] != 'new' %>

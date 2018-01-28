@@ -1,0 +1,22 @@
+<div class="show-container" id="products-container">
+
+  <h2 class="info-title">Detalles del Servicio</h2>
+
+  <p> <strong>Código único: </strong>
+    <%= @service.unique_code %>
+  </p>
+
+  <p> <strong>Descripción: </strong>
+    <%= @service.description %>
+  </p>
+
+  <p> <strong> Clave SAT: </strong>
+    <%= @service.sat_key.sat_key %>
+  </p>
+
+  <p> <strong> Unidad SAT: </strong>
+    <%= @service.sat_unit_key.unit %>
+  </p>
+
+</div>
+<br /><br /><br />

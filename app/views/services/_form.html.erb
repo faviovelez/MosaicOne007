@@ -1,0 +1,97 @@
+<body class="<%= params[:controller] %> <%= params[:action] %>">
+
+  <div class="errors-container">
+    <% if @service.errors.any? %>
+      <ul>
+        <% @service.errors.messages.values.each do |msg| %>
+          <% msg.each do  |m| %>
+            <li><%= m %></li>
+          <% end %>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+
+  <%= form_for(@service) do |f| %>
+
+    <% if params[:action] == 'new' %>
+      <h2 class="info-title">Crear Servicio</h2>
+    <% elsif params[:action] == 'edit' %>
+      <h2 class="info-title">Modificar Servicio</h2>
+    <% end %>
+
+    <div class="form-container">
+
+      <% unless params[:action] == 'edit' %>
+        <div class="form-inside-style">
+          <%= f.label :código_único %>
+          <%= f.text_field :unique_code, value: @service.unique_code, class: 'form-inside' %>
+        </div>
+      <% end %>
+
+      <div class="form-inside-style">
+        <%= f.label :descripción %>
+        <%= f.text_field :description, value: @service.description, class: 'form-inside', size: 65 %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :precio_de_venta %>
+        <%= f.text_field :price, value: @service.price, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :empresa %>
+        <%= f.select :business_unit_id, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}, selected: @service.business_unit) %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :compañía_de_mensajería %>
+        <%= f.text_field :delivery_company, class: 'form-inside' %>
+      </div>
+
+      <% if params[:action] == 'new' %>
+        <div class="form-inside-style hidden">
+      <% elsif params[:action] == 'edit' %>
+        <div class="form-inside-style">
+      <% end %>
+
+        <%= f.label '¿servicio activo?' %>
+        <%= f.text_field :current, value: true, class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label 'Código de producto SAT' %>
+        <%= f.select :sat_key_id, options_for_select(get_sat_keys, selected: @service.sat_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-keys' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label 'Unidad SAT' %>
+        <%= f.select :sat_unit_key_id, options_for_select(get_sat_unit_keys, selected: @service.sat_unit_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-unit-keys' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :unidad %>
+        <%= f.text_field :unit, class: 'form-inside' %>
+      </div>
+
+      <div class="button-container">
+        <div class="actions">
+          <%= f.submit :Confirmar, class: 'main-button' %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <% end %>
+
+  <%= content_for :stylesheet do %>
+    <%= stylesheet_link_tag 'select2.min' %>
+  <% end %>
+
+  <%= content_for :javascript do %>
+    <%= javascript_include_tag 'select2.min' %>
+    <%= javascript_include_tag 'es' %>
+    <%= javascript_include_tag 'products_select' %>
+  <% end %>
+</body>

@@ -5,6 +5,7 @@ class ServicesController < ApplicationController
   # GET /services
   # GET /services.json
   def index
+    @services = Service.all
   end
 
   # GET /services/1
@@ -24,7 +25,9 @@ class ServicesController < ApplicationController
   # POST /services
   # POST /services.json
   def create
-    Service.new = Service.new(service_params)
+    @service = Service.new(service_params)
+    save_sat_key
+    save_sat_unit_key
     respond_to do |format|
       if @service.save
         format.html { redirect_to @service, notice: 'El servicio fue creado.' }
@@ -39,8 +42,10 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/1
   # PATCH/PUT /services/1.json
   def update
+    save_sat_key
+    save_sat_unit_key
     respond_to do |format|
-      if @service.update(document_params)
+      if @service.update(service_params)
         format.html { redirect_to @service, notice: 'La servicen fue actualizada.' }
         format.json { render :show, status: :ok, location: @service }
       else
@@ -57,10 +62,48 @@ class ServicesController < ApplicationController
     redirect_to :back, notice: 'El servicio fue eliminado correctamente.'
   end
 
+  def save_sat_key
+    if params[:service][:sat_key_id] == ['']
+      @service.sat_key = nil
+    else
+      @service.sat_key = SatKey.find(params[:service][:sat_key_id].second)
+    end
+  end
+
+  def save_sat_unit_key
+    if params[:service][:sat_unit_key_id] == ['']
+      @service.sat_unit_key = nil
+    else
+      @service.sat_unit_key = SatUnitKey.find(params[:service][:sat_unit_key_id].second)
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service
       @service = Service.find(params[:id])
     end
+
+    def service_params
+      params.require(:service).permit(
+      :unique_code,
+      :description,
+      :description,
+      :price,
+      :sat_key_id,
+      :unit,
+      :sat_unit_key_id,
+      :shared,
+      :store_id,
+      :business_unit_id,
+      :created_at,
+      :updated_at,
+      :delivery_company,
+      :current,
+      :pos_id,
+      :web_id
+      )
+    end
+
 
 end

@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  $('#sales').DataTable({
+  $('#services-table').DataTable({
     "order": [[ 0, "asc" ]],
     stateSave: true,
     "language": {
@@ -31,8 +31,7 @@ $(document).ready(function(){
     dom: 'Bfrtip',
     buttons: [
       'excel', 'pdf'
-    ],
-    order: [[ 1, "desc" ]]
+    ]
   });
 
 });
