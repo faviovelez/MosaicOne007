@@ -291,6 +291,24 @@
           <%= link_to 'Crear nuevo producto', new_product_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'services' && params[:action] == 'new')   %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-hand-pointer-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Crear nuevo servicio', new_service_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'services' && params[:action] == 'index'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-hand-spock-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Todos los servicios', services_path, class: 'text-link' %>
+            </li>
+
           <% if params[:controller] == 'products' && params[:action] == 'index'  %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
@@ -309,14 +327,14 @@
           <%= link_to 'Productos de línea', products_catalogue_path, class: 'text-link' %>
             </li>
 
-            <% if params[:controller] == 'products' && params[:action] == 'special'  %>
-              <li class="vertical-link actual-vertical-link">
-            <% else %>
-              <li class="vertical-link">
-            <% end %>
-            <i class="fa fa-tag other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Productos especiales', products_special_path, class: 'text-link' %>
-              </li>
+          <% if params[:controller] == 'products' && params[:action] == 'special'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-tag other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Productos especiales', products_special_path, class: 'text-link' %>
+            </li>
 
           <% if ((params[:controller] == 'filtered_requests' && params[:action] == 'product_view') || params[:request_id].present?)  %>
             <li class="vertical-link actual-vertical-link">
