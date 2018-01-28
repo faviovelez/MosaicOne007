@@ -1,6 +1,6 @@
 $(document).ready(function(){
-  $('#sales').DataTable({
-    "order": [[ 1, "asc" ]],
+  $('#sales-summary').DataTable({
+    "order": [[ 0, "asc" ]],
     stateSave: true,
     "language": {
       "sProcessing":     "Procesando...",
@@ -32,7 +32,6 @@ $(document).ready(function(){
     buttons: [
       'excel', 'pdf'
     ],
-    order: [[ 1, "desc" ]]
   });
 
 });

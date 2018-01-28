@@ -1,6 +1,6 @@
 $(document).ready(function(){
   var table = $('#tickets').DataTable({
-    "order": [[ 0, "asc" ]],
+    "order": [[ 1, "asc" ]],
     stateSave: true,
     "language": {
       "sProcessing":     "Procesando...",
