@@ -21,7 +21,6 @@
   //source: '/search_suggestions'
 
 $(document).ready(function() {
-  $(".se-pre-con").fadeOut("slow");
 
   if (!waitLoader) {
     $(".se-pre-con").fadeOut("slow");
