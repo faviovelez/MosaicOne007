@@ -1,5 +1,7 @@
 $(document).ready(function(){
   $('#prosp').DataTable({
+    "order": [[ 0, "asc" ]],
+    stateSave: true,
     "language": {
       "sProcessing":     "Procesando...",
       "sLengthMenu":     "Mostrar _MENU_ registros",

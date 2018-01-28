@@ -12,7 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
 //= require request_form
 //= require show
 
@@ -22,10 +21,7 @@
   //source: '/search_suggestions'
 
 $(document).ready(function() {
-
-  if (!waitLoader) {
-    $(".se-pre-con").fadeOut("slow");
-  }
+  $(".se-pre-con").fadeOut("slow");
 
   setTimeout(function() {
     $('#mydropdown').click(function(event){

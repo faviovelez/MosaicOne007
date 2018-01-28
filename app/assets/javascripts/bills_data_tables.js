@@ -1,6 +1,7 @@
 $(document).ready(function() {
-
   $('#bills').DataTable({
+    "order": [[ 0, "asc" ]],
+    stateSave: true,
     "language": {
       "sProcessing":     "Procesando...",
       "sLengthMenu":     "Mostrar _MENU_ registros",
