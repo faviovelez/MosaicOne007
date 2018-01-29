@@ -1,5 +1,7 @@
 $(document).ready(function(){
-  $('#sales').DataTable({
+  $('#sales-summary').DataTable({
+    "order": [[ 0, "asc" ]],
+    stateSave: true,
     "language": {
       "sProcessing":     "Procesando...",
       "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -30,7 +32,6 @@ $(document).ready(function(){
     buttons: [
       'excel', 'pdf'
     ],
-    order: [[ 1, "desc" ]]
   });
 
 });

@@ -1,0 +1,49 @@
+<% if @services.count >= 1 %>
+  <table id="services-table">
+    <thead>
+      <tr class="table-titles">
+        <th>Código</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @services.each do |service| %>
+        <tr>
+          <td class="col-md-1"><%= service.unique_code %></td>
+          <td class="col-md-2"><%= service.description %></td>
+          <td class="col-md-1"><%= number_to_currency(service.price) %></td>
+          <td class="col-md-1">
+            <%= link_to service do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+            <% end %>
+
+              <% role = current_user.role.name %>
+              <% user_bg = current_user.store.business_unit.business_group %>
+              <% service_bg = service.business_unit.business_group %>
+              <% if (((role == 'product-admin' || role == 'product-staff') && service.shared == true) || current_user.role.name == 'store-admin' && service.store == current_user.store) %>
+                <%= link_to edit_service_path(service) do %>
+                  <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
+                <% end %>
+              <% end %>
+          </td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font">No hay servicios dados de alta </p>
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts' %>
+  <%= javascript_include_tag 'datatables.min' %>
+  <%= javascript_include_tag 'services' %>
+<% end %>

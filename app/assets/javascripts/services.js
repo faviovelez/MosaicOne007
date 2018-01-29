@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  $('#orders').DataTable({
+  $('#services-table').DataTable({
     "order": [[ 0, "asc" ]],
     stateSave: true,
     "language": {
