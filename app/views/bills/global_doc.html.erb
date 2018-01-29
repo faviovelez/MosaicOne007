@@ -21,6 +21,20 @@
     <p> <strong> Tipo de comprobante: </strong> <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill_description %> </span> </p>
   </div>
 
+  <div class="center bottom">
+    <% if @store.store_type.store_type == 'tienda propia' %>
+      <p> Sucursal <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+    <% elsif @store.store_type.store_type == 'franquicia' %>
+      <p> Tienda <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+    <% elsif @store.store_type.store_type == 'corporativo' %>
+      <p> <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+    <% end %>
+    <p> <%= address %> </p>
+    <p> Tel. <%= number_to_phone(@store.direct_phone, area_code: true) %> </p>
+    <p> <%= @store.email %> </p>
+    <p> www.disenosdecarton.com.mx </p>
+  </div>
+
   <table id="issuing-receiving-table">
     <thead>
       <tr class="ligth-bg">
@@ -235,18 +249,3 @@
   </div>
 
   <p class="grow footer"> Este documento es una representación impresa de un CFDI </p>
-
-  <div class="center bottom">
-      <p class="grow"> <strong> Diseños de Cartón, más que cajas... soluciones. </strong> </p>
-      <% if @store.store_type.store_type == 'tienda propia' %>
-        <p> Sucursal <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
-      <% elsif @store.store_type.store_type == 'franquicia' %>
-        <p> Tienda <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
-      <% elsif @store.store_type.store_type == 'corporativo' %>
-        <p> <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
-      <% end %>
-      <p> <%= address %> </p>
-      <p> Tel. <%= number_to_phone(@store.direct_phone, area_code: true) %> </p>
-      <p> <%= @store.email %> </p>
-      <p> www.disenosdecarton.com.mx </p>
-  </div>
