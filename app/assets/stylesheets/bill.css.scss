@@ -261,6 +261,10 @@ thead, tfoot {
   display: table-row-group;
 }
 
+tr {
+    page-break-inside: avoid;
+}
+
 .with-bg {
   background-color: #364150;
   color: #fff;
