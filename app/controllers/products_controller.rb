@@ -16,7 +16,7 @@ class ProductsController < ApplicationController
     file = CSV.generate(headers: true) do |csv|
       csv << attributes
 
-      Product.all.each do |product|
+      Product.where(current: true, shared: true).each do |product|
         csv << attributes.map{ |attr| product.send(attr) }
       end
     end
