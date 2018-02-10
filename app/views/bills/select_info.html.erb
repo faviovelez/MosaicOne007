@@ -1,16 +1,6 @@
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'select2.min' %>
-<% end %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'select2.min' %>
-  <%= javascript_include_tag 'es' %>
-  <%= javascript_include_tag 'bills' %>
-<% end %>
-
 <h2> Selecciona los datos de la factura que desea elaborar</h2>
 
-<%= form_tag({ controller: 'bills', action: 'preview' }, method: 'get') do %>
+<%= form_tag({ controller: 'bills', action: 'preview' }, method: 'post') do %>
 
   <div class="field form-inside-style prospect-list margin-select">
     <%= label_tag :facturar_a_cliente %>
@@ -52,4 +42,14 @@
 
   <br /><br />
 
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'bills' %>
 <% end %>
