@@ -2063,14 +2063,14 @@ XML
         new_hash["ticket"] = o.ticket_number
         new_hash["total"] += o.total.round(2) unless o.total == nil
         new_hash["unit_value"] += o.subtotal.round(2) unless o.subtotal == nil
-        new_hash["subtotal"] += o.subtotal.round(2) unless o.subtotal == nil
-        new_hash["taxes"] += o.taxes.round(2) unless o.taxes == nil
+        new_hash["subtotal"] += ((o.total / 1.16).round(2) - o.discount_applied) unless o.subtotal == nil
+        new_hash["taxes"] += (((o.total / 1.16).round(2) - o.discount_applied) * 0.16).round(2) unless o.taxes == nil
         new_hash["discount"] += o.discount_applied.round(2) unless o.discount_applied == nil
         o.children.each do |children|
           new_hash["total"] += children.total.round(2) unless children.total == nil
           new_hash["unit_value"] += children.subtotal.round(2) unless children.subtotal == nil
-          new_hash["subtotal"] += children.subtotal.round(2) unless children.subtotal == nil
-          new_hash["taxes"] += children.taxes.round(2) unless children.taxes == nil
+          new_hash["subtotal"] += ((children.total / 1.16).round(2) - children.discount_applied) unless children.subtotal == nil
+          new_hash["taxes"] += (((children.total / 1.16).round(2) - children.discount_applied) * 0.16).round(2) unless children.taxes == nil
           new_hash["discount"] += children.discount_applied.round(2) unless children.discount_applied == nil
         end
         @rows << new_hash
