@@ -159,8 +159,6 @@ Rails.application.routes.draw do
 
   get 'products/show_product_csv'
 
-  resources :services
-
   devise_for :users
 
   scope "/admin" do
