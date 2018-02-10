@@ -175,13 +175,13 @@
       </tr>
       <tr>
         <% if @bill == nil %>
-          <td colspan="5" class="letter"> <%= number_to_letters(@total_all_objects) %> <%= decimals(@total_all_objects) %> </td>
+          <td colspan="5" class="letter"> <%= number_to_letters(@total) %> <%= decimals(@total) %> </td>
         <% else %>
           <td colspan="5" class="letter"> <%= number_to_letters(@bill.total) %> <%= decimals(@bill.total) %> </td>
         <% end %>
         <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
         <% if @bill == nil %>
-          <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@total_all_objects) %> </strong> </td>
+          <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@total) %> </strong> </td>
         <% else %>
           <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
         <% end %>
