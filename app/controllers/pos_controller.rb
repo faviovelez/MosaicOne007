@@ -35,7 +35,9 @@ class PosController < ApplicationController
         'stores_inventories',
         'service_offereds',
         'delivery_services',
-        'expenses'
+        'expenses',
+        'deposits', # Agregué esta línea
+        'withdrawals' # Agregué esta línea
       ]
     end
 
@@ -45,7 +47,8 @@ class PosController < ApplicationController
         "StoresInventory" => ['store_id', 'product_id'],
         "BillingAddress" => ['business_name', 'store_id'], #Agregué store_id
         "Prospect" => ['legal_or_business_name', 'store_id'], #Agregué store_id
-        "Terminal" => ['store_id', 'name']
+        "Terminal" => ['store_id', 'name'],
+        "Ticket" => ['ticket_number', 'store_id', 'total', 'payments_amount', 'cash_return'] #Agregué esta línea
       }
     end
 
@@ -55,7 +58,8 @@ class PosController < ApplicationController
         "StoresInventory" => ['manual_price_update', 'manual_price', 'quantity'],
         "BillingAddress" => ['type_of_person', 'business_name', 'rfc', 'street', 'exterior_number', 'interior_number', 'zipcode', 'neighborhood', 'city', 'state', 'country', 'tax_regime_id'],
         "Prospect" => ['legal_or_business_name', 'prospect_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'contact_position', 'direct_phone', 'extension', 'cell_phone', 'business_type', 'prospect_status', 'billing_address_id', 'delivery_address_id', 'second_last_name', 'email', 'credit_days'],
-        "Terminal" => ['debit_comission', 'credit_comission']
+        "Terminal" => ['debit_comission', 'credit_comission'],
+        "Ticket" => ['parent_id', 'ticket_type', 'cfdi_use', 'subtotal', 'total', 'taxes', 'discount_applied', 'prospect_id', 'comments', 'payed', 'cost', 'payments_amount', 'cash_return'] #Agregué esta línea
       }
     end
 
