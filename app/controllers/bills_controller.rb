@@ -1569,10 +1569,10 @@ class BillsController < ApplicationController
     @base = Rails.root.join('public', 'uploads')
 
     # Crea los directorios
-    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/#{@time}-#{@p_rfc}`
-    `sudo chown -R ubuntu:ubuntu #{@base}/bill_files/#{@store.id}/#{@time}-#{@p_rfc}/`
-    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final`
-    `sudo chown -R ubuntu:ubuntu #{@base}/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final/`
+    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"`
+    `sudo chown -R ubuntu:ubuntu #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"/`
+    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"_final`
+    `sudo chown -R ubuntu:ubuntu #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"_final/`
 
     # Crea las variables de los directorios a utilizar
     @working_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}")
