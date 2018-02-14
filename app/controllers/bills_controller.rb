@@ -5,7 +5,6 @@ class BillsController < ApplicationController
   require 'rqrcode'
   require 'savon'
   require 'base64'
-  require 'cgi'
 
   # GET /bills@type_of_bill
   # GET /bills.json
@@ -1714,7 +1713,7 @@ class BillsController < ApplicationController
     sign = File.open(File.join(@working_dir, 'sign.bin'), 'w'){ |file| file.write('') }
 
     # Lee el XML creado, lo procesa con el archivo XSLT del SAT y lo guarda en un archivo
-      xml = Nokogiri::XML(File.read(@working_path.join('unsigned.xml')))
+    xml = Nokogiri::XML(File.read(@working_path.join('unsigned.xml')))
     xslt = Nokogiri::XSLT(File.read(@sat_path.join('cadenaoriginal_3_3.xslt')))
     original_chain = xslt.apply_to(xml)
     orig = File.open(File.join(@working_dir, 'original_chain.txt'), 'w'){ |file| file.write(original_chain) }
@@ -1816,10 +1815,8 @@ XML
     #Carga el XML para ser timbrado
     file = File.read(@working_path.join('unstamped.xml')) ## CAMBIAR A UNSTAMPED CUANDO SEAN EXITOSAS LAS PRUEBAS
 
-    escaped = CGI.unescapeHTML(file)
-
     #Cifra el XML en Base64
-    xml_file = Base64.encode64(escaped.delete("\n"))
+    xml_file = Base64.encode64(file.delete("\n"))
 
     #Correo y contraseña de acceso al panel de FINKOK
     username = ENV['username_pac']
