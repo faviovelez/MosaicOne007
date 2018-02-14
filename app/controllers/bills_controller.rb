@@ -1705,7 +1705,6 @@ class BillsController < ApplicationController
         end
       end
     end
-    debugger
     builder.to_xml.encoding
     unsigned = File.open(File.join(@working_dir, 'unsigned.xml'), 'w'){ |file| file.write(builder.to_xml) }
   end
