@@ -1725,14 +1725,14 @@ class BillsController < ApplicationController
     @original = File.read(original).delete("\n")
 
     # Ejecuta el proceso de encriptado con SHA256 y lo guarda en el archivo bin
-    `openssl dgst -sha256 -out "#{bin}" -sign #{new_pem} "#{original}"`
+    `openssl dgst -sha256 -out "#{bin}" -sign "#{new_pem}" "#{original}"`
 
     # Crea y lee un archivo en blanco para guardar el sello digital
     stmp = File.open(File.join(@working_dir, 'stamp.txt'), 'w'){ |file| file.write('') }
     stamp = @working_path.join('stamp.txt')
 
     # Ejecuta el proceso de sello digital y lo guarda en el archivo
-    `openssl enc -in #{bin} -a -A -out #{stamp}`
+    `openssl enc -in "#{bin}" -a -A -out "#{stamp}"`
 
     stamp_value = File.read(@working_path.join('stamp.txt'))
     xml.xpath('cfdi:Comprobante').attribute('Sello').value = stamp_value
