@@ -49,6 +49,10 @@ class PosController < ApplicationController
         "Prospect" => ['legal_or_business_name', 'store_id'], #Agregué store_id
         "Terminal" => ['store_id', 'name'],
         "Ticket" => ['ticket_number', 'store_id', 'total', 'payments_amount', 'cash_return'] #Agregué esta línea
+#        "Payment" => ['ticket_id', 'store_id', 'total', 'payment_form_id', 'payment_number'],
+#        "StoreMovement" => ['ticket_id', 'store_id', 'total', 'subtotal', 'taxes', 'product_id']
+#        "ServiceOffered" => [''],
+#        "DeliveryService" => ['']
       }
     end
 
@@ -60,6 +64,10 @@ class PosController < ApplicationController
         "Prospect" => ['legal_or_business_name', 'prospect_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'contact_position', 'direct_phone', 'extension', 'cell_phone', 'business_type', 'prospect_status', 'billing_address_id', 'delivery_address_id', 'second_last_name', 'email', 'credit_days'],
         "Terminal" => ['debit_comission', 'credit_comission'],
         "Ticket" => ['parent_id', 'ticket_type', 'cfdi_use', 'subtotal', 'total', 'taxes', 'discount_applied', 'prospect_id', 'comments', 'payed', 'cost', 'payments_amount', 'cash_return'] #Agregué esta línea
+#        "Payment" => ['ticket_id', 'store_id', 'total', 'payment_form_id', 'payment_number', 'credit_days'],
+#        "StoreMovement" => ['total', 'subtotal', 'taxes', 'cost']
+#        "ServiceOffered" => [''],
+#        "DeliveryService" => ['']
       }
     end
 
@@ -156,6 +164,7 @@ class PosController < ApplicationController
       return nil if value.nil?
       table_name = reference.gsub(/_id/,'')
       object     = nil
+      table_name = 'ticket' if table_name == 'parent' || table_name == 'children'
       if @ids_references[table_name.singularize][value.to_s].nil?
         return table_name.camelcase.constantize.where(
           store_id: @store_id).find_by_pos_id(
@@ -167,6 +176,8 @@ class PosController < ApplicationController
 #      binding.pry
       value
     end
+
+# aqui si puedo escribir bien, quizas fue Rails
 
     def add_extras(reg, table_name, values)
       case table_name
