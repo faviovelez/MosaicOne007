@@ -1,6 +1,6 @@
 class TicketsController < ApplicationController
   before_action :authenticate_user!
-  
+
   def index
     # Cambiar a resumen de ventas
     store = current_user.store
@@ -35,10 +35,10 @@ class TicketsController < ApplicationController
     date = Date.parse(params[:date])
     midnight = date.midnight + 6.hours
     end_day = date.end_of_day + 6.hours
-    if current_user.store.tickets.where(created_at: midnight..end_day) == []
+    if current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta') == []
       redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
     else
-      @tickets = current_user.store.tickets.where(created_at: midnight..end_day).order(:ticket_number)
+      @tickets = current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta').order(:ticket_number)
       @month_tickets = current_user.store.tickets.where(created_at: date.beginning_of_month.midnight..Time.now)
       get_payments_from_ticket_day
       get_summary_from_ticket_day
@@ -132,9 +132,9 @@ class TicketsController < ApplicationController
     month = params[:month]
     year = params[:year]
     @tickets = store.tickets.where(
-    'extract(month from created_at) = ? and extract(year from created_at) = ?',
-    month, year
-    ).where(tickets: {parent_id: nil})
+      'extract(month from created_at) = ? and extract(year from created_at) = ?',
+      month, year
+    ).where(tickets: {parent_id: nil, ticket_type: 'venta'})
   end
 
   def process_incomming_data
