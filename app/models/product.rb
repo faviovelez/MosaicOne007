@@ -47,6 +47,17 @@ class Product < ActiveRecord::Base
 
   after_save :create_update_change_table
 
+  def store_price(store)
+    overprice = (self.price * (1 + (store.overprice / 100) ) * 1.16).round(2)
+    inventory_price = (StoresInventory.where(product: self, store: store).first.manual_price * 1.16).round(2)
+    if (inventory_price == nil || inventory_price == 0)
+      @price = overprice
+    else
+      @price = inventory_price
+    end
+    @price
+  end
+
   def create_update_change_table
     if change_table_dont_exists
       create_change_to_table
