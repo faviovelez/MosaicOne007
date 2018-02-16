@@ -192,7 +192,7 @@ class StoresController < ApplicationController
             quantity: quantity,
             store_movement: movement
           )
-          inventory.update(quantity: quantity)
+          inventory.update(quantity: quantity, rack: row['estante'], level: row['nivel'])
         end
       end
       unfinded.join(", ")
@@ -243,8 +243,8 @@ class StoresController < ApplicationController
             quantity: quantity,
             store_movement: movement
           )
-          inventory.update(quantity: quantity)
-        end
+          inventory.update(quantity: quantity, rack: row['estante'], level: row['nivel'])
+          end
       end
       unfinded.join(", ")
       @product_undefined = unfinded
