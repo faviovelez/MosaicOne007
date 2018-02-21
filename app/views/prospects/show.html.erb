@@ -20,6 +20,18 @@
     <%= @prospect.email %>
   </p>
 
+  <% unless (@prospect.email_2 == "" || @prospect.email_2 == nil) %>
+    <p><strong>Correo electrónico secundario: </strong>
+      <%= @prospect.email_2 %>
+    </p>
+  <% end %>
+
+  <% unless (@prospect.email_3 == "" || @prospect.email_3 == nil) %>
+    <p><strong>Trecer correo electrónico: </strong>
+      <%= @prospect.email_3 %>
+    </p>
+  <% end %>
+
   <p><strong>Teléfono directo: </strong>
     <%= @prospect.direct_phone %> <strong>Extensión: </strong> <%= @prospect.extension %>
   </p>

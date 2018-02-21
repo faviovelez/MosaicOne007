@@ -330,7 +330,9 @@ module BillsHelper
   def get_returns_or_changes(ticket)
     difference = []
     ticket.children.each do |ticket|
-      difference << ticket.total
+      if ticket.ticket_type != 'pago'
+        difference << ticket.total
+      end
     end
     difference = difference.inject(&:+)
     difference == nil ? @difference = 0 : @difference = difference
