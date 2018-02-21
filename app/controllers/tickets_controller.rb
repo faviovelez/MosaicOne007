@@ -39,7 +39,7 @@ class TicketsController < ApplicationController
       redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
     else
       @tickets = current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta').order(:ticket_number)
-      @month_tickets = current_user.store.tickets.where(created_at: date.beginning_of_month.midnight..Time.now)
+      @month_tickets = current_user.store.tickets.where(created_at: date.beginning_of_month.midnight..Time.now, ticket_type: 'venta')
       get_payments_from_ticket_day
       get_summary_from_ticket_day
       render 'closure_day'
