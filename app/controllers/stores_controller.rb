@@ -52,7 +52,7 @@ class StoresController < ApplicationController
     @store = Store.new(store_params)
 ############################################################
 #CAMBIAR ESTA LÓGICA AL TENER UN BUSCADOR CON AJAX
-    zip_code_is_in_sat_list
+#    zip_code_is_in_sat_list
 ############################################################
     assign_cost_type
     get_last_series
@@ -78,7 +78,7 @@ class StoresController < ApplicationController
   def update
 ############################################################
 #CAMBIAR ESTA LÓGICA AL TENER UN BUSCADOR CON AJAX
-    zip_code_is_in_sat_list
+#    zip_code_is_in_sat_list
 ############################################################
     assign_cost_type
     @prospect = Prospect.find_by_store_code(@store.store_code) || Prospect.find_by_store_prospect_id(@store)
