@@ -1,6 +1,7 @@
 module TicketsHelper
 
   def discount_percentage(summary)
+#    debugger
     @discount_percentage = summary.discount / summary.total * 100
   end
 

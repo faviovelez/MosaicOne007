@@ -43,12 +43,11 @@ class PosController < ApplicationController
 
     def params_find
       return {
-        "CashRegister" => ['store_id'],
-        "StoresInventory" => ['store_id', 'product_id'],
-        "BillingAddress" => ['business_name', 'store_id'], #Agregué store_id
-        "Prospect" => ['legal_or_business_name', 'store_id'], #Agregué store_id
-        "Terminal" => ['store_id', 'name'],
-        "Ticket" => ['ticket_number', 'store_id', 'total', 'payments_amount', 'cash_return'] #Agregué esta línea
+        "StoresInventory" => ['product_id'],
+        "BillingAddress" => ['business_name'], #Agregué store_id
+        "Prospect" => ['legal_or_business_name'], #Agregué store_id
+        "Terminal" => ['name'],
+        "Ticket" => ['ticket_number', 'total'] #Agregué esta línea
 #        "Payment" => ['ticket_id', 'store_id', 'total', 'payment_form_id', 'payment_number'],
 #        "StoreMovement" => ['ticket_id', 'store_id', 'total', 'subtotal', 'taxes', 'product_id']
 #        "ServiceOffered" => [''],
@@ -84,19 +83,17 @@ class PosController < ApplicationController
 
     def is_a_new_register(reg)
       tables_find_parameters = params_find()
-      info = tables_find_parameters[reg.class.to_s]
-      if info.present?
-        cad = ''
-        info.each_with_index do |value, index|
-          cad << "#{value} = '#{reg.send(value)}'"
-          cad << "AND " unless index == info.length - 1
-        end
-        object = reg.class.where(cad).first
-        return reg if object.nil?
-        updated_reg_for(object, reg)
-        return object
+      info = tables_find_parameters[reg.class.to_s] || []
+      info += ['store_id', 'pos_id']
+      cad = ''
+      info.each_with_index do |value, index|
+        cad << "#{value} = '#{reg.send(value)}'"
+        cad << "AND " unless index == info.length - 1
       end
-      reg
+      object = reg.class.where(cad).first
+      return reg if object.nil?
+      updated_reg_for(object, reg)
+      return object
     end
 
     def updated_reg_for(object, reg)
@@ -127,7 +124,7 @@ class PosController < ApplicationController
       new_reg = klass.new
       values[:object].each do |attr|
         set_store_id(attr.last, attr.first) if @store_id.nil?
-        next if %w(pos_id web_id).include?(attr.first)
+        next if %w(web_id).include?(attr.first)
         if is_relation_object(attr.first)
           id = vinculate_relations(attr.first, attr.last)
           new_reg.send("#{attr.first}=", id)
