@@ -16,10 +16,12 @@
 
   <div class="form-container">
 
-    <div class="form-inside-style tax-regime">
+    <% if @owner.class == 'BusinessUnit' %>
+      <div class="form-inside-style tax-regime">
         <%= f.label :régimen_fiscal %>
-        <%= f.select :tax_regime_id, options_for_select(tax_regime_options, value: @billing.tax_regime_id) %>
-    </div>
+        <%= f.select :tax_regime_id, options_for_select(tax_regime_options, value: @billing.tax_regime_id), {include_blank: true}, multiple: true, class: 'select2-field' %>
+      </div>
+    <% end %>
 
     <div class="form-inside-style">
       <%= f.label :tipo_de_persona %>
