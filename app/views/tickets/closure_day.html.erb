@@ -2,7 +2,7 @@
 <table id="sales-ticket-day" class="table-display">
   <thead>
     <tr>
-      <th colspan="5" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <th colspan="7" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
     </tr>
     <tr>
       <th class="no-border"> Ticket </th>
@@ -10,16 +10,20 @@
       <th class="no-border"> IVA </th>
       <th class="no-border"> Total </th>
       <th class="no-border"> Pagos </th>
+      <th class="no-border"> Factura </th>
+      <th class="no-border"> Estatus Fact. </th>
     </tr>
   </thead>
   <tbody>
     <% @tickets.each do |ticket| %>
       <tr>
-        <td> <%= ticket.ticket_number %> </td>
+        <td> <%= ticket.pos_id %> </td>
         <td> <%= number_to_currency(ticket.subtotal) %> </td>
         <td> <%= number_to_currency(ticket.taxes) %> </td>
         <td> <%= number_to_currency(ticket.total) %> </td>
-        <td> <%= number_to_currency(ticket.payments_amount) %> </td>
+        <td> <%= number_to_currency(payments_of_ticket(ticket)) %> </td>
+        <td> <%= ticket.bill.folio %> </td>
+        <td> <%= ticket.bill.bill_type.capitalize %> / <%= ticket.bill.status.capitalize %> </td>
       </tr>
     <% end %>
     <tr>
@@ -28,6 +32,8 @@
       <td> <strong> <%= number_to_currency(@day_taxes) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_total) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_payments) %> </strong> </td>
+      <td> - </td>
+      <td> - </td>
     </tr>
   </tbody>
 </table>
@@ -35,11 +41,12 @@
 <table id="payment-day" class="table-display">
   <thead>
     <tr>
-      <th colspan="2" class="table-titles"> Resumen de pagos </th>
+      <th colspan="5" class="table-titles"> Resumen de pagos </th>
     </tr>
     <tr>
       <th class="no-border"> Forma de pago </th>
       <th class="no-border"> Total </th>
+      <th class="no-border"> Tickets </th>
     </tr>
   </thead>
   <tbody>
@@ -47,10 +54,17 @@
       <tr>
         <td> <%= pay_form[0] %> </td>
         <td> <%= number_to_currency(pay_form[1]) %> </td>
+        <% if pay_form[2] == [] %>
+          -
+        <% else %>
+          <td> <%= pay_form[2] %> </td>
+        <% end %>
       </tr>
     <% end %>
     <tr>
-      <td> <strong> <%= number_to_currency(@total_payment_form) %> </strong> </td>
+      <td> <strong> Total Pagos </strong> </td>
+      <td> <strong> <%= number_to_currency(@total_payment_forms) %> </strong> </td>
+      <td> - </strong> </td>
     </tr>
   </tbody>
 </table>
