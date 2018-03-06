@@ -198,6 +198,15 @@
           <%= link_to 'Ventas por día', tickets_select_day_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'tickets' && params[:action] == 'cancelled_tickets') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-calendar-times-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Tickets cancelados', tickets_cancelled_tickets_path, class: 'text-link' %>
+            </li>
+
           <% if (params[:controller] == 'bills' && params[:action] == 'select_bills') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>

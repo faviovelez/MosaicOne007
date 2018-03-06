@@ -31,6 +31,10 @@ class TicketsController < ApplicationController
   def select_day
   end
 
+  def cancelled_tickets
+    @tickets = current_user.store.tickets.where(ticket_type: 'cancelado')
+  end
+
   def get_date
     date = Date.parse(params[:date])
     midnight = date.midnight + 6.hours
