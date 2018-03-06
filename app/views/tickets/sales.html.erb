@@ -11,6 +11,7 @@
         <th> Total </th>
         <th> Saldo </th>
         <th> Estatus </th>
+        <th> Factura </th>
         <th> Detalles </th>
       </tr>
     </thead>
@@ -30,6 +31,11 @@
             <td> <%= number_to_currency(get_total_with_returns_or_changes(ticket)) %> </td>
             <td> <%= get_payments_from_individual_ticket(ticket) %> </td>
             <td> <%= get_bill_status(ticket) %> </td>
+            <% if ticket.bill == nil %>
+              <td> - </td>
+            <% else %>
+              <td> <%= ticket.bill.folio %> </td>
+            <% end %>
             <td>
               <%= link_to ticket_details_path(ticket) do %>
                 <i class="fa fa-book link-to-price" aria-hidden="true"></i>
