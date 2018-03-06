@@ -24,7 +24,7 @@
         <td> <%= number_to_currency(payments_of_ticket(ticket)) %> </td>
         <% if ticket.bill == nil %>
           <td> - </td>
-          <td> - </td>
+          <td> Pendiente </td>
         <% else %>
           <td> <%= ticket.bill.folio %> </td>
           <td> <%= ticket.bill.bill_type.capitalize %> / <%= ticket.bill.status.capitalize %> </td>
@@ -37,8 +37,8 @@
       <td> <strong> <%= number_to_currency(@day_taxes) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_total) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_payments) %> </strong> </td>
-      <td> - </td>
-      <td> - </td>
+      <td> N/A </td>
+      <td> N/A </td>
     </tr>
   </tbody>
 </table>

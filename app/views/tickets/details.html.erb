@@ -106,7 +106,19 @@
             <% end %>
           <% end %>
         </td>
-      </tr>
+      <% if (@ticket.comments != "" || @ticket.comments != nil)  %>
+        <tr>
+          <td colspan="10">
+            <strong>
+              Comentarios:
+            </strong>
+          </td>
+        </tr>
+          <td colspan="10">
+            <%= @ticket.comments %>
+          </td>
+        </tr>
+      <% end %>
   </tbody>
 </table>
 <!-- Termina la tabla del ticket seleccionado en la búsqueda-->
