@@ -22,8 +22,13 @@
         <td> <%= number_to_currency(ticket.taxes) %> </td>
         <td> <%= number_to_currency(ticket.total) %> </td>
         <td> <%= number_to_currency(payments_of_ticket(ticket)) %> </td>
-        <td> <%= ticket.bill.folio %> </td>
-        <td> <%= ticket.bill.bill_type.capitalize %> / <%= ticket.bill.status.capitalize %> </td>
+        <% if ticket.bill == nil %>
+          <td> - </td>
+          <td> - </td>
+        <% else %>
+          <td> <%= ticket.bill.folio %> </td>
+          <td> <%= ticket.bill.bill_type.capitalize %> / <%= ticket.bill.status.capitalize %> </td>
+        <% end %>
       </tr>
     <% end %>
     <tr>
