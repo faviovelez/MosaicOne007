@@ -23,6 +23,14 @@ module TicketsHelper
     @ticket_true
   end
 
+  def payments_of_ticket(ticket)
+    @all_payments_of_ticket = 0
+    ticket.payments.each do |pay|
+      @all_payments_of_ticket += pay.total
+    end
+    @all_payments_of_ticket
+  end
+
   def bills_exists(month, year)
     store = current_user.store
     @bills_true = store.bills.where(

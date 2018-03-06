@@ -92,7 +92,6 @@ $(function(){
           }
         },
         pageLength: 10,
-        responsive: true,
         dom: 'Bfrtip',
         buttons: [
           'copy', 'csv', 'excel', 'pdf'

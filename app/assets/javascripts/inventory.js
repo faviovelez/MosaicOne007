@@ -25,7 +25,6 @@ $(document).ready(function(){
       }
     },
     pageLength: 9,
-    responsive: true,
     dom: 'Bfrtip',
     buttons: [
       'excel', 'pdf'

@@ -19,7 +19,7 @@ class TicketsController < ApplicationController
       @cash_register_name = cash_register.name
       @cash_register_balance = cash_register.balance
       last_ticket = store.tickets.last
-      @last_ticket_number = last_ticket.ticket_number
+      @last_ticket_number = last_ticket.pos_id
       @last_ticket_date = last_ticket.created_at.to_date
       @last_ticket_hour = last_ticket.created_at.strftime("%I:%M %p")
     end
@@ -38,7 +38,7 @@ class TicketsController < ApplicationController
     if current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta') == []
       redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
     else
-      @tickets = current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta').order(:ticket_number)
+      @tickets = current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta').order(:pos_id)
       @month_tickets = current_user.store.tickets.where(created_at: date.beginning_of_month.midnight..Time.now, ticket_type: 'venta')
       get_payments_from_ticket_day
       get_summary_from_ticket_day
@@ -47,12 +47,12 @@ class TicketsController < ApplicationController
   end
 
   def get_payments_from_ticket_day
-    @cash = ['Efectivo', 0]
-    @credit_card = ['Tarjeta de crédito', 0]
-    @debit_card = ['Tarjeta de débito', 0]
-    @check = ['Cheque', 0]
-    @transfer = ['Transferencia', 0]
-    @credit_sales = ['Ventas a crédito', 0]
+    @cash = ['Efectivo', 0, []]
+    @credit_card = ['Tarjeta de crédito', 0, []]
+    @debit_card = ['Tarjeta de débito', 0, []]
+    @check = ['Cheque', 0, []]
+    @transfer = ['Transferencia', 0, []]
+    @credit_sales = ['Ventas a crédito', 0, []]
     @total_payment_forms = 0
     @payment_forms = [
     ]
@@ -60,16 +60,22 @@ class TicketsController < ApplicationController
       ticket.payments.each do |payment|
         if payment.payment_form.description == 'Efectivo'
           @cash[1] += payment.total
+          @cash[2] << payment.ticket.pos_id
         elsif payment.payment_form.description == 'Cheque nominativo'
           @check[1] += payment.total
+          @check[2] << payment.ticket.pos_id
         elsif payment.payment_form.description == 'Transferencia electrónica de fondos'
           @transfer[1] += payment.total
+          @transfer[2] << payment.ticket.pos_id
         elsif payment.payment_form.description == 'Tarjeta de crédito'
           @credit_card[1] += payment.total
+          @credit_card[2] << payment.ticket.pos_id
         elsif payment.payment_form.description == 'Tarjeta de débito'
           @debit_card[1] += payment.total
+          @debit_card[2] << payment.ticket.pos_id
         elsif payment.payment_form.description == 'Por definir'
           @credit_sales[1] += payment.total
+          @credit_sales[2] << payment.ticket.pos_id
         end
       end
     end
@@ -397,7 +403,7 @@ class TicketsController < ApplicationController
 
   def details
     @ticket = Ticket.find(params[:id])
-    @number = @ticket.ticket_number
+    @number = @ticket.pos_id
     @date = @ticket.created_at.to_date
     unless @ticket.user == nil
       @user = @ticket.user.first_name + ' ' + @ticket.user.last_name
@@ -477,7 +483,7 @@ class TicketsController < ApplicationController
 
   def ticket_details
     @ticket = Ticket.find(params[:id])
-    @number = @ticket.ticket_number
+    @number = @ticket.pos_id
     @date = @ticket.created_at.to_date
     @prospect = @ticket&.prospect&.legal_or_business_name
     @register = 'Caja ' + @ticket.cash_register.name
