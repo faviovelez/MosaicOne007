@@ -17,7 +17,7 @@
   <tbody>
     <% @tickets.each do |ticket| %>
       <tr>
-        <td> <%= ticket.pos_id %> </td>
+        <td> <%= ticket.ticket_number %> </td>
         <td> <%= number_to_currency(ticket.subtotal) %> </td>
         <td> <%= number_to_currency(ticket.taxes) %> </td>
         <td> <%= number_to_currency(ticket.total) %> </td>
