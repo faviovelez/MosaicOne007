@@ -141,6 +141,8 @@ Rails.application.routes.draw do
 
   get 'tickets/get_date'
 
+  get 'tickets/cancelled_tickets'
+
   get 'tickets/closure_day/:date', to: 'tickets#closure_day', as: 'tickets_closure_day'
 
   get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
