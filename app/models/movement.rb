@@ -23,8 +23,7 @@ class Movement < ActiveRecord::Base
   has_many :sales_movements
   belongs_to :entry_movement, class_name: 'Movement', foreign_key: 'entry_movement_id'
 
-  after_create :create_update_summary
-#  after_create :update_inventory
+  after_save :create_update_summary
 
   def create_update_summary
     if (self.movement_type == 'venta' || self.movement_type == 'devolución')
