@@ -13,7 +13,7 @@ class Payment < ActiveRecord::Base
   belongs_to :bank
   belongs_to :order
 
-  after_save :create_update_summary
+  after_create :create_update_summary
 
   after_create :save_web_id
 
