@@ -105,7 +105,9 @@ class TicketsController < ApplicationController
     @month_total = 0
     @month_average = 0
     @tickets.each do |ticket|
-      @day_payments += ticket.payments_amount
+      ticket.payments.each do |pay|
+        @day_payments += pay.total
+      end
       ticket.store_movements.each do |sm|
         @day_pieces += sm.quantity
         @day_total += sm.total

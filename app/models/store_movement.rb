@@ -13,7 +13,7 @@ class StoreMovement < ActiveRecord::Base
   belongs_to :bill
   belongs_to :prospect
 
-  after_create :create_update_summary
+  after_save :create_update_summary
 
   after_create :save_web_id
 
