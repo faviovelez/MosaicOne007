@@ -136,7 +136,11 @@ class ProductsController < ApplicationController
     if params[:product][:sat_key_id] == ['']
       @product.sat_key = nil
     else
-      @product.sat_key = SatKey.find(params[:product][:sat_key_id].second)
+      if SatKey.where(id: params[:product][:sat_key_id].second) == []
+        @product.sat_key = SatKey.find_by_sat_key(params[:product][:sat_key_id].second)
+      else
+        @product.sat_key = SatKey.find(params[:product][:sat_key_id].second)
+      end
     end
   end
 
@@ -144,7 +148,11 @@ class ProductsController < ApplicationController
     if params[:product][:sat_unit_key_id] == ['']
       @product.sat_unit_key = nil
     else
-      @product.sat_unit_key = SatUnitKey.find(params[:product][:sat_unit_key_id].second)
+      if SatUnitKey.where(id: params[:product][:sat_unit_key_id].second) == []
+        @product.sat_unit_key = SatUnitKey.find_by_unit(params[:product][:sat_unit_key_id].second)
+      else
+        @product.sat_unit_key = SatUnitKey.find(params[:product][:sat_unit_key_id].second)
+      end
     end
   end
 
