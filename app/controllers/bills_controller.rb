@@ -1915,7 +1915,7 @@ XML
       bill.original_chain = @stamp_original_chain
       bill.sat_stamp = @sat_seal
       bill.digital_stamp = @cfd_stamp
-      bill.sat_zipcode_id = @store.zip_code
+      bill.sat_zipcode_id = SatZipcode.find_by_zipcode(@store.zip_code)
       bill.date_signed = @date
       bill.leyend = ''
       bill.uuid = @uuid
