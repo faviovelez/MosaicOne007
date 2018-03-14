@@ -4,7 +4,7 @@ class BillingAddressesController < ApplicationController
   before_action :set_billing_address, only: [:show, :edit, :update, :destroy]
 
   # Billing address (datos de facturación) debe pertenecer a un owner (que puede ser una tienda o a un prospecto o una orden, pero cada orden debe tener ligada una BIlling Address. Para store siempre será la misma (cuando facture Diseños de Cartón) y puede registrarse desde que se da de alta al cliente o después, ya que el estatus de pedido está en 'autorizada'.
-  before_action :identify_owner_type, only: [:new, :create]
+  before_action :identify_owner_type, only: [:new, :create, :edit, :update]
 
   def index
   end
