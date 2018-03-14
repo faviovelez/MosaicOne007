@@ -66,7 +66,11 @@ class ServicesController < ApplicationController
     if params[:service][:sat_key_id] == ['']
       @service.sat_key = nil
     else
-      @service.sat_key = SatKey.find(params[:service][:sat_key_id].second)
+      if SatKey.where(id: params[:service][:sat_key_id].second) == []
+        @service.sat_key = SatKey.find_by_sat_key(params[:service][:sat_key_id].second)
+      else
+        @service.sat_key = SatKey.find(params[:service][:sat_key_id].second)
+      end
     end
   end
 
@@ -74,9 +78,14 @@ class ServicesController < ApplicationController
     if params[:service][:sat_unit_key_id] == ['']
       @service.sat_unit_key = nil
     else
-      @service.sat_unit_key = SatUnitKey.find(params[:service][:sat_unit_key_id].second)
+      if SatUnitKey.where(id: params[:service][:sat_unit_key_id].second) == []
+        @service.sat_unit_key = SatUnitKey.find_by_unit(params[:service][:sat_unit_key_id].second)
+      else
+        @service.sat_unit_key = SatUnitKey.find(params[:service][:sat_unit_key_id].second)
+      end
     end
   end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

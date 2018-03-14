@@ -61,12 +61,12 @@
 
       <div class="form-inside-style">
         <%= f.label 'Código de producto SAT' %>
-        <%= f.select :sat_key_id, options_for_select(get_sat_keys, selected: @service.sat_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-keys' %>
+        <%= f.select :sat_key_id, options_for_select(get_service_sat_keys, selected: @service.sat_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-keys' %>
       </div>
 
       <div class="form-inside-style">
         <%= f.label 'Unidad SAT' %>
-        <%= f.select :sat_unit_key_id, options_for_select(get_sat_unit_keys, selected: @service.sat_unit_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-unit-keys' %>
+        <%= f.select :sat_unit_key_id, options_for_select(get_service_sat_unit_keys, selected: @service.sat_unit_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-unit-keys' %>
       </div>
 
       <div class="form-inside-style">
