@@ -31,22 +31,40 @@ class TicketsController < ApplicationController
   def select_day
   end
 
+  def closure_day_detailed
+  end
+
   def cancelled_tickets
     @tickets = current_user.store.tickets.where(ticket_type: 'cancelado')
   end
 
   def get_date
-    date = Date.parse(params[:date])
-    midnight = date.midnight + 6.hours
-    end_day = date.end_of_day + 6.hours
-    if current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta') == []
+    if params[:options] == 'Seleccionar día'
+      date = Date.parse(params[:date]) unless (params[:date] == nil || params[:date] == '')
+      midnight = date.midnight + 6.hours
+      end_day = date.end_of_day + 6.hours
+      tickets = current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta').order(:ticket_number)
+    elsif params[:options] == 'Mes actual'
+      beginning_of = Date.today.beginning_of_month.midnight + 6.hours
+      end_of = Date.today + 6.hours
+      tickets = current_user.store.tickets.where(created_at: beginning_of..end_of, ticket_type: 'venta').order(:ticket_number)
+    else
+      initial_date = Date.parse(params[:initial_date]).midnight + 6.hours unless (params[:initial_date] == nil || params[:initial_date] == '')
+      final_date = Date.parse(params[:final_date]).end_of_day + 6.hours unless (params[:final_date] == nil || params[:final_date] == '')
+      tickets = current_user.store.tickets.where(created_at: initial_date..final_date, ticket_type: 'venta').order(:ticket_number)
+    end
+    if tickets == []
       redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
     else
-      @tickets = current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta').order(:ticket_number)
-      @month_tickets = current_user.store.tickets.where(created_at: date.beginning_of_month.midnight..Time.now, ticket_type: 'venta')
+      @tickets = tickets
+      @month_tickets = current_user.store.tickets.where(created_at: (Date.today.beginning_of_month.midnight + 6.hours)..(Time.now + 6.hours), ticket_type: 'venta')
       get_payments_from_ticket_day
       get_summary_from_ticket_day
-      render 'closure_day'
+      if params[:report_type] == 'Detallado'
+        render 'closure_day_detailed'
+      else
+        render 'closure_day'
+      end
     end
   end
 
@@ -101,6 +119,7 @@ class TicketsController < ApplicationController
     @day_taxes = 0
     @day_average = 0
     @day_payments = 0
+    @day_discount = 0
     @month_pieces = 0
     @month_total = 0
     @month_average = 0
@@ -113,12 +132,14 @@ class TicketsController < ApplicationController
         @day_total += sm.total
         @day_subtotal += sm.subtotal
         @day_taxes += sm.taxes
+        @day_discount += sm.discount_applied
       end
       ticket.service_offereds.each do |so|
         @day_pieces += so.quantity
         @day_total += so.total
         @day_subtotal += so.subtotal
         @day_taxes += so.taxes
+        @day_discount += so.discount_applied
       end
     end
     @month_tickets.each do |ticket|

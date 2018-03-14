@@ -29,7 +29,14 @@ $(document).ready(function(){
     pageLength: 5,
     dom: 'Bfrtip',
     buttons: [
-      'excel', 'pdf'
+      {
+        extend: 'excel',
+        title: 'Resumen de ventas:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs'
+      },
+      {
+        extend: 'pdf',
+        title: 'Resumen de ventas:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs'
+      },
     ]
   });
 

@@ -1,4 +1,4 @@
-<%= form_tag({ controller: 'tickets', action: 'get_date' }, method: 'get', class: 'form-data-tables') do %>
+<%= form_tag({ controller: 'inventories', action: 'get_report' }, method: 'get', class: 'form-data-tables') do %>
 
   <br /><br />
 
@@ -7,13 +7,23 @@
   <br /><br />
 
   <div class="field">
+    <%= label_tag :tipo_de_reporte %>
+    <%= select_tag :information, options_for_select([['Movimientos de Inventario'], ['Ventas y movmientos']]) %>
+  </div>
+
+  <div class="field">
     <%= label_tag :opciones %>
     <%= select_tag :options, options_for_select([['Seleccionar día'], ['Mes actual'], ['Rango de fechas']]) %>
   </div>
 
   <div class="field">
-    <%= label_tag :detalle %>
-    <%= select_tag :report_type, options_for_select([['Resumido'], ['Detallado']]) %>
+    <%= label_tag :productos_en_el_reporte %>
+    <%= select_tag :products, options_for_select([['Elegir producto'], ['Todos los productos']]) %>
+  </div>
+
+  <div class="field product-select-2">
+    <%= label_tag :seleccionar_producto %>
+    <%= select_tag :product_list, options_for_select(@products, selected: @products.first), {include_blank: true, multiple: true, class: 'form-inside select2-products'} %>
   </div>
 
   <div class="field extra-margin-top">
@@ -33,7 +43,6 @@
     </div>
   </div>
 
-
   <br /><br />
 
   <div class="actions">
@@ -44,6 +53,13 @@
 
 <% end %>
 
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
 <%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'products_select' %>
   <%= javascript_include_tag 'reports' %>
 <% end %>

@@ -12,6 +12,7 @@ class PosController < ApplicationController
           fill_references(table_name, key, values)
         end
       end
+#      binding.pry
       render json: {status: "success", message: "Informacion Cargada", ids: @ids_references}
     else
       render json: {status: "error", message: "Login Error"}

@@ -198,6 +198,15 @@
           <%= link_to 'Ventas por día', tickets_select_day_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'inventories' && params[:action] == 'select_report') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-tasks other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Movimientos de inventario', inventories_select_report_path, class: 'text-link' %>
+            </li>
+
           <% if (params[:controller] == 'tickets' && params[:action] == 'cancelled_tickets') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
