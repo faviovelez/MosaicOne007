@@ -186,7 +186,12 @@
       <% end %>
 
         <%= f.label '¿producto activo?' %>
-        <%= f.text_field :current, value: true, class: 'form-inside' %>
+        <%= f.select :shared, options_for_select([['Activo', true], ['Inactivo', false]], selected: true), class: 'form-inside' %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label '¿producto pra todas las tiendas?' %>
+        <%= f.select :shared, options_for_select([['Visible', true], ['No visible', false]], selected: true), class: 'form-inside' %>
       </div>
 
       <div class="form-inside-style">

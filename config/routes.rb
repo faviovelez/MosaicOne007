@@ -133,6 +133,12 @@ Rails.application.routes.draw do
 
   get 'inventories/order_suggestions'
 
+  get 'inventories/show_product_movements'
+
+  get 'inventories/select_report'
+
+  get 'inventories/get_report'
+
   get 'tickets/index'
 
   get 'tickets/details/:id', to: 'tickets#details', as: 'ticket_details'
@@ -144,6 +150,8 @@ Rails.application.routes.draw do
   get 'tickets/cancelled_tickets'
 
   get 'tickets/closure_day/:date', to: 'tickets#closure_day', as: 'tickets_closure_day'
+
+  get 'tickets/closure_day_detailed/:date', to: 'tickets#closure_day_detailed', as: 'tickets_closure_day_detailed'
 
   get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
 

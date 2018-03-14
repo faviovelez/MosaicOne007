@@ -24,12 +24,46 @@ table#payment-average {
   margin-bottom: 100px !important;
 }
 
+.group_fields {
+  width: 600px;
+  display: flex;
+  wrap: nowrap;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+.extra-margin-top {
+  margin-top: 2rem !important;
+}
+
+.group_fields > div {
+  padding-left: 20px;
+}
+
 .no-border {
-    border-bottom: none !important;
+  border-bottom: none !important;
 }
 
 .small-address {
   width: 150px;
+}
+
+.product-select-2 {
+  margin-top: 1.5rem !important;
+}
+
+.width-450 {
+  width: 450px !important;
+}
+
+select#report_type,
+select#options,
+select#initial_date,
+select#final_date,
+select#products,
+select#information {
+  background-color: #fff !important;
+  color: #000 !important;
 }
 
 .img-bill {
