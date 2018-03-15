@@ -38,6 +38,10 @@ class BillMailer < ApplicationMailer
       @mails << mail unless (mail == nil || mail == '')
       @mails << mail_2 unless (mail_2 == nil || mail_2 == '')
       @mails << mail_3 unless (mail_3 == nil || mail_3 == '')
+      users = bill.store.users.where.not("email LIKE ?", "%pos_%")
+      users.each do |u|
+        @mails << u.email
+      end
       attachments['Factura.pdf'] = open(bill.pdf_url).read
       attachments['Factura.xml'] = open(bill.xml_url).read
         mail(
