@@ -2,10 +2,11 @@
 <table id="sales-ticket-day" class="table-display">
   <thead>
     <tr>
-      <th colspan="9" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <th colspan="10" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
     </tr>
     <tr>
       <th class="no-border"> Ticket </th>
+      <th class="no-border"> Tipo </th>
       <th class="no-border"> Fecha </th>
       <th class="no-border"> Subtotal </th>
       <th class="no-border"> Descuento </th>
@@ -20,6 +21,7 @@
     <% @tickets.each do |ticket| %>
       <tr>
         <td> <%= ticket.ticket_number %> </td>
+        <td> <%= ticket.ticket_type %> </td>
         <td> <%= l ticket.created_at.to_date, format: :short %> </td>
         <td> <%= number_to_currency(ticket.subtotal) %> </td>
         <td> <%= number_to_currency(ticket.discount_applied) %> </td>
@@ -36,6 +38,7 @@
       </tr>
     <% end %>
     <tr>
+      <td> </td>
       <td> </td>
       <td> <strong> Total </strong> </td>
       <td> <strong> <%= number_to_currency(@day_subtotal) %> </strong> </td>
