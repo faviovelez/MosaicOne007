@@ -2,10 +2,11 @@
 <table id="sales-ticket-day" class="table-display-details">
   <thead>
     <tr>
-      <th colspan="9" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <th colspan="10" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
     </tr>
     <tr>
       <th> Ticket </th>
+      <th> Tipo </th>
       <th> Fecha </th>
       <th> Movimiento </th>
       <th class="quantity-width"> Cantidad </th>
@@ -22,6 +23,7 @@
       <% @rows.each do |row| %>
         <tr>
           <td> <%= ticket.ticket_number %> </td>
+          <td> <%= ticket.ticket_type %> </td>
           <td> <%= l ticket.created_at.to_date, format: :short %> </td>
           <td> <%= row["type"] %> </td>
           <td> <%= number_with_delimiter(row["quantity"]) %> </td>
@@ -34,6 +36,7 @@
       <% end %>
     <% end %>
     <tr>
+      <td> </td>
       <td> </td>
       <td> </td>
       <td> </td>
