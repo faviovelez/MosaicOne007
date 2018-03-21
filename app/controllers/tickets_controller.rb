@@ -43,21 +43,21 @@ class TicketsController < ApplicationController
       date = Date.parse(params[:date]) unless (params[:date] == nil || params[:date] == '')
       midnight = date.midnight + 6.hours
       end_day = date.end_of_day + 6.hours
-      tickets = current_user.store.tickets.where(created_at: midnight..end_day, ticket_type: 'venta').order(:ticket_number)
+      tickets = current_user.store.tickets.where(created_at: midnight..end_day).where.not(ticket_type: ['cancelado', 'pending']).order(:ticket_number)
     elsif params[:options] == 'Mes actual'
       beginning_of = Date.today.beginning_of_month.midnight + 6.hours
       end_of = Date.today + 6.hours
-      tickets = current_user.store.tickets.where(created_at: beginning_of..end_of, ticket_type: 'venta').order(:ticket_number)
+      tickets = current_user.store.tickets.where(created_at: beginning_of..end_of).where.not(ticket_type: ['cancelado', 'pending']).order(:ticket_number)
     else
       initial_date = Date.parse(params[:initial_date]).midnight + 6.hours unless (params[:initial_date] == nil || params[:initial_date] == '')
       final_date = Date.parse(params[:final_date]).end_of_day + 6.hours unless (params[:final_date] == nil || params[:final_date] == '')
-      tickets = current_user.store.tickets.where(created_at: initial_date..final_date, ticket_type: 'venta').order(:ticket_number)
+      tickets = current_user.store.tickets.where(created_at: initial_date..final_date).where.not(ticket_type: ['cancelado', 'pending']).order(:ticket_number)
     end
     if tickets == []
       redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
     else
       @tickets = tickets
-      @month_tickets = current_user.store.tickets.where(created_at: (Date.today.beginning_of_month.midnight + 6.hours)..(Time.now + 6.hours), ticket_type: 'venta')
+      @month_tickets = current_user.store.tickets.where(created_at: (Date.today.beginning_of_month.midnight + 6.hours)..(Time.now + 6.hours)).where.not(ticket_type: ['cancelado', 'pending'])
       get_payments_from_ticket_day
       get_summary_from_ticket_day
       if params[:report_type] == 'Detallado'
