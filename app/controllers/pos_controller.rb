@@ -48,7 +48,8 @@ class PosController < ApplicationController
         "BillingAddress" => ['business_name'], #Agregué store_id
         "Prospect" => ['legal_or_business_name'], #Agregué store_id
         "Terminal" => ['name'],
-        "Ticket" => ['ticket_number', 'total'] #Agregué esta línea
+        "Ticket" => ['ticket_number', 'total'],
+        "StoresInventory" => ['product_id'] #Agregué esta línea
 #        "Payment" => ['ticket_id', 'store_id', 'total', 'payment_form_id', 'payment_number'],
 #        "StoreMovement" => ['ticket_id', 'store_id', 'total', 'subtotal', 'taxes', 'product_id']
 #        "ServiceOffered" => [''],
@@ -63,7 +64,8 @@ class PosController < ApplicationController
         "BillingAddress" => ['type_of_person', 'business_name', 'rfc', 'street', 'exterior_number', 'interior_number', 'zipcode', 'neighborhood', 'city', 'state', 'country', 'tax_regime_id'],
         "Prospect" => ['legal_or_business_name', 'prospect_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'contact_position', 'direct_phone', 'extension', 'cell_phone', 'business_type', 'prospect_status', 'billing_address_id', 'delivery_address_id', 'second_last_name', 'email', 'credit_days'],
         "Terminal" => ['debit_comission', 'credit_comission'],
-        "Ticket" => ['parent_id', 'ticket_type', 'cfdi_use', 'subtotal', 'total', 'taxes', 'discount_applied', 'prospect_id', 'comments', 'payed', 'cost', 'payments_amount', 'cash_return'] #Agregué esta línea
+        "Ticket" => ['ticket_number' 'parent_id', 'ticket_type', 'cfdi_use', 'subtotal', 'total', 'taxes', 'discount_applied', 'prospect_id', 'comments', 'payed', 'cost', 'payments_amount', 'cash_return'],
+        "StoresInventory" => ['quantity', 'manual_price', 'rack', 'level', 'manual_price_update', 'pos_id', 'web_id'] #Agregué esta línea
 #        "Payment" => ['ticket_id', 'store_id', 'total', 'payment_form_id', 'payment_number', 'credit_days'],
 #        "StoreMovement" => ['total', 'subtotal', 'taxes', 'cost']
 #        "ServiceOffered" => [''],
@@ -73,6 +75,7 @@ class PosController < ApplicationController
 
     def fill_references(table_name, pos_id, values)
 #      binding.pry if values["object"]["user_id"].present?
+#      debugger if (table_name == 'payments' || table_name == 'store_movements' || table_name == 'service_offereds' || table_name == 'delivery_services' || )
       reg = create_reg(table_name, values)
       reg = is_a_new_register(reg)
 #      binding.pry if values["object"]["user_id"].present?
@@ -84,12 +87,16 @@ class PosController < ApplicationController
 
     def is_a_new_register(reg)
       tables_find_parameters = params_find()
-      info = tables_find_parameters[reg.class.to_s] || []
-      info += ['store_id', 'pos_id']
+      information = tables_find_parameters[reg.class.to_s] || []
+      if (reg.class == StoresInventory)
+        information += ['store_id']
+      else
+        information += ['store_id', 'pos_id']
+      end
       cad = ''
-      info.each_with_index do |value, index|
+      information.each_with_index do |value, index|
         cad << "#{value} = '#{reg.send(value)}'"
-        cad << "AND " unless index == info.length - 1
+        cad << "AND " unless index == information.length - 1
       end
       object = reg.class.where(cad).first
       return reg if object.nil?
@@ -119,7 +126,6 @@ class PosController < ApplicationController
       @store_id = value if reference == 'store_id'
     end
 
-    # Probablemente tengamos que modificar este método
     def create_reg(table_name, values)
       klass = table_name.singularize.camelize.constantize
       new_reg = klass.new
