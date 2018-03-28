@@ -64,7 +64,7 @@ class PosController < ApplicationController
         "BillingAddress" => ['type_of_person', 'business_name', 'rfc', 'street', 'exterior_number', 'interior_number', 'zipcode', 'neighborhood', 'city', 'state', 'country', 'tax_regime_id'],
         "Prospect" => ['legal_or_business_name', 'prospect_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'contact_position', 'direct_phone', 'extension', 'cell_phone', 'business_type', 'prospect_status', 'billing_address_id', 'delivery_address_id', 'second_last_name', 'email', 'credit_days'],
         "Terminal" => ['debit_comission', 'credit_comission'],
-        "Ticket" => ['ticket_number' 'parent_id', 'ticket_type', 'cfdi_use', 'subtotal', 'total', 'taxes', 'discount_applied', 'prospect_id', 'comments', 'payed', 'cost', 'payments_amount', 'cash_return'],
+        "Ticket" => ['parent_id', 'ticket_type', 'cfdi_use', 'subtotal', 'total', 'taxes', 'discount_applied', 'prospect_id', 'comments', 'payed', 'cost', 'payments_amount', 'cash_return'],
         "StoresInventory" => ['quantity', 'manual_price', 'rack', 'level', 'manual_price_update', 'pos_id', 'web_id'] #Agregué esta línea
 #        "Payment" => ['ticket_id', 'store_id', 'total', 'payment_form_id', 'payment_number', 'credit_days'],
 #        "StoreMovement" => ['total', 'subtotal', 'taxes', 'cost']
@@ -74,8 +74,8 @@ class PosController < ApplicationController
     end
 
     def fill_references(table_name, pos_id, values)
-#      binding.pry if values["object"]["user_id"].present?
-#      debugger if (table_name == 'payments' || table_name == 'store_movements' || table_name == 'service_offereds' || table_name == 'delivery_services' || )
+#     binding.pry if values["object"]["user_id"].present?
+#      debugger if (table_name == 'payments' || table_name == 'store_movements' || table_name == 'service_offereds' || table_name == 'delivery_services' || ) # Para evitar que se dupliquen hay que hacer debugger y ver si quito pos o web_id
       reg = create_reg(table_name, values)
       reg = is_a_new_register(reg)
 #      binding.pry if values["object"]["user_id"].present?
