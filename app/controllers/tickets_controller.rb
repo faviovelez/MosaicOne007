@@ -69,6 +69,9 @@ class TicketsController < ApplicationController
   end
 
   def get_payments_from_ticket_day
+    first = @tickets.first.created_at.to_date.beginning_of_month.midnight + 6.hours
+    second = Time.now + 6.hours
+    @month_tickets = current_user.store.tickets.where(created_at: (first)..(second)).where.not(ticket_type: ['cancelado', 'pending'])
     @cash = ['Efectivo', 0, []]
     @credit_card = ['Tarjeta de crédito', 0, []]
     @debit_card = ['Tarjeta de débito', 0, []]
