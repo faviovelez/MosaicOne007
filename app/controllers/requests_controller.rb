@@ -130,7 +130,7 @@ class RequestsController < ApplicationController
     # Este método guarda el documento y el campo que detecta si está presente el documento, ya sea de especificaciones (document_type: 'specification') para la Request o de Ficha de depósito (document_type: 'pago') o Pedido autorizado (document_type: 'pedido')
     save_document
     # Este método guarda el estatus de si la solicitud tiene solicitud de diseño.
-    request_has_design?
+    # request_has_design?
     # Este método asigna al usuario actual (solo un usuario por tipo de role).
     assign_to_current_user
     # Este método asigna la tienda a la Request.
@@ -157,7 +157,7 @@ class RequestsController < ApplicationController
     save_last_status
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       # Este método guarda el estatus de si la solicitud tiene solicitud de diseño.
-      request_has_design?
+      # request_has_design?
       @request.update(request_params)
       # Este método borra las autorizaciones o pagos guardados cuando se modifica la solicitud.
       delete_authorisation_or_payment
