@@ -15,7 +15,7 @@ class PosController < ApplicationController
 #      binding.pry
       render json: {status: "success", message: "Informacion Cargada", ids: @ids_references}
     else
-      render json: {status: "error", message: "Login Error"}
+      render json: {status: "error", message: "Error de acceso"}
     end
   end
 
@@ -32,7 +32,7 @@ class PosController < ApplicationController
         'terminals',
         'payments',
         'store_movements',
-        'stores_warehouse_entries',
+#        'stores_warehouse_entries',
         'stores_inventories',
         'service_offereds',
         'delivery_services',
@@ -49,11 +49,13 @@ class PosController < ApplicationController
         "Prospect" => ['legal_or_business_name'], #Agregué store_id
         "Terminal" => ['name'],
         "Ticket" => ['ticket_number', 'total'],
-        "StoresInventory" => ['product_id'] #Agregué esta línea
-#        "Payment" => ['ticket_id', 'store_id', 'total', 'payment_form_id', 'payment_number'],
-#        "StoreMovement" => ['ticket_id', 'store_id', 'total', 'subtotal', 'taxes', 'product_id']
-#        "ServiceOffered" => [''],
-#        "DeliveryService" => ['']
+        "Payment" => ['ticket_id', 'total', 'payment_form_id', 'payment_number'],
+        "StoreMovement" => ['product_id', 'quantity'],
+        "ServiceOffered" => ['service_id', 'total', 'subtotal', 'quantity', 'taxes', 'ticket_id'],
+        "DeliveryService" => ['service_offered_id', 'company'],
+        "Deposit" => ['amount'],
+        "withdrawal" => ['amount'],
+        "Expense" => ['total']
       }
     end
 
@@ -65,11 +67,14 @@ class PosController < ApplicationController
         "Prospect" => ['legal_or_business_name', 'prospect_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'contact_position', 'direct_phone', 'extension', 'cell_phone', 'business_type', 'prospect_status', 'billing_address_id', 'delivery_address_id', 'second_last_name', 'email', 'credit_days'],
         "Terminal" => ['debit_comission', 'credit_comission'],
         "Ticket" => ['ticket_number', 'parent_id', 'ticket_type', 'cfdi_use', 'subtotal', 'total', 'taxes', 'discount_applied', 'prospect_id', 'comments', 'payed', 'cost', 'payments_amount', 'cash_return'],
-        "StoresInventory" => ['quantity', 'manual_price', 'rack', 'level', 'manual_price_update', 'pos_id', 'web_id'] #Agregué esta línea
-#        "Payment" => ['ticket_id', 'store_id', 'total', 'payment_form_id', 'payment_number', 'credit_days'],
-#        "StoreMovement" => ['total', 'subtotal', 'taxes', 'cost']
-#        "ServiceOffered" => [''],
-#        "DeliveryService" => ['']
+        "StoresInventory" => ['quantity', 'manual_price', 'rack', 'level', 'manual_price_update', 'pos_id', 'web_id'], #Agregué esta línea
+        "Payment" => ['ticket_id', 'store_id', 'total', 'payment_form_id', 'payment_type', 'payment_number', 'credit_days'],
+        "StoreMovement" => ['total', 'subtotal', 'taxes', 'cost', 'movement_type', 'total_cost'],
+        "ServiceOffered" => ['total', 'subtotal', 'taxes', 'service_type', 'cost', 'total_cost'],
+        "DeliveryService" => ['sender_name', 'sender_zipcode', 'tracking_number', 'receivers_name', 'contact_name', 'street', 'exterior_number', 'interior_number', 'city', 'neighborhood', 'state', 'country', 'phone', 'cellphone', 'service_offered_id'],
+        "Deposit" => ['amount', 'name'],
+        "Withdrawal" => ['amount', 'name'],
+        "Expense" => ['total', 'subtotal', 'taxes', 'expense type']
       }
     end
 
