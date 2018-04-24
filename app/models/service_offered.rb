@@ -13,8 +13,14 @@ class ServiceOffered < ActiveRecord::Base
 
   after_create :save_web_id
 
+  after_create :update_web_true
+
   def save_web_id
     self.update(web_id: self.id)
+  end
+
+  def update_web_true
+    self.update(web: true)
   end
 
   def create_update_summary
@@ -50,23 +56,23 @@ class ServiceOffered < ActiveRecord::Base
   end
 
   def dont_exist_service_sale
-    !!(ServiceSale.where(month: Date.today.month, year: Date.today.year, store: store, service: self.service).first.nil?)
+    !!(ServiceSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store, service: self.service).first.nil?)
   end
 
   def dont_exist_prospect_sale
-    !!(ProspectSale.where(month: Date.today.month, year: Date.today.year, store: store, prospect: self.prospect).first.nil?)
+    !!(ProspectSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store, prospect: self.prospect).first.nil?)
   end
 
   def dont_exist_store_sale
-    !!(StoreSale.where(month: Date.today.month, year: Date.today.year, store: store).first.nil?)
+    !!(StoreSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store).first.nil?)
   end
 
   def dont_exist_business_unit_sale
-    !!(BusinessUnitSale.where(month: Date.today.month, year: Date.today.year, business_unit: self.store.business_unit).first.nil?)
+    !!(BusinessUnitSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, business_unit: self.store.business_unit).first.nil?)
   end
 
   def dont_exist_business_group_sale
-    !!(BusinessGroupSale.where(month: Date.today.month, year: Date.today.year, business_group: self.store.business_unit.business_group).first.nil?)
+    !!(BusinessGroupSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, business_group: self.store.business_unit.business_group).first.nil?)
   end
 
   def create_business_group_report
@@ -111,31 +117,31 @@ class ServiceOffered < ActiveRecord::Base
 
   def update_business_group_report
     update_reports_data(
-      BusinessGroupSale.where(month: Date.today.month, year: Date.today.year, business_group: self.store.business_unit.business_group).first
+      BusinessGroupSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, business_group: self.store.business_unit.business_group).first
     )
   end
 
   def update_business_unit_report
     update_reports_data(
-      BusinessUnitSale.where(month: Date.today.month, year: Date.today.year, business_unit: self.store.business_unit).first
+      BusinessUnitSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, business_unit: self.store.business_unit).first
     )
   end
 
   def update_store_report
     update_reports_data(
-      StoreSale.where(month: Date.today.month, year: Date.today.year, store: store).first
+      StoreSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store).first
     )
   end
 
   def update_prospect_report
     update_reports_data(
-      ProspectSale.where(month: Date.today.month, year: Date.today.year, prospect: prospect, store: store).first
+      ProspectSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, prospect: prospect, store: store).first
     )
   end
 
   def update_service_report
     update_reports_data(
-      ServiceSale.where(month: Date.today.month, year: Date.today.year, service: self.service, store: store).first
+      ServiceSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, service: self.service, store: store).first
     )
   end
 
@@ -162,7 +168,7 @@ class ServiceOffered < ActiveRecord::Base
         taxes: object.taxes.to_f - taxes,
         total: object.total.to_f - total,
         cost: object.cost.to_f - cost,
-        quantity: object.quantity_to_i - quantity,
+        quantity: object.quantity.to_i - quantity,
       )
     end
     object
@@ -175,8 +181,8 @@ class ServiceOffered < ActiveRecord::Base
     total = self.total
     quantity = self.quantity.to_i
     cost = self.total_cost
-    month = Date.today.month
-    year  = Date.today.year
+    month = self.created_at.to_date.month
+    year  = self.created_at.to_date.year
     if self.service_type == 'venta'
       object.create(
         subtotal: subtotal,
