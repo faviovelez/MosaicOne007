@@ -74,7 +74,7 @@ class PosController < ApplicationController
         "DeliveryService" => ['sender_name', 'sender_zipcode', 'tracking_number', 'receivers_name', 'contact_name', 'street', 'exterior_number', 'interior_number', 'city', 'neighborhood', 'state', 'country', 'phone', 'cellphone', 'service_offered_id'],
         "Deposit" => ['amount', 'name'],
         "Withdrawal" => ['amount', 'name'],
-        "Expense" => ['total', 'subtotal', 'taxes', 'expense type']
+        "Expense" => ['total', 'subtotal', 'taxes', 'expense_type']
       }
     end
 
