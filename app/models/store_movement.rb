@@ -28,32 +28,10 @@ class StoreMovement < ActiveRecord::Base
   end
 
   def create_update_summary
-    unless prospect == nil
-      if dont_exist_prospect_sale
-        create_prospect_report
-      else
-        update_prospect_report
-      end
-    end
     if dont_exist_store_sale
       create_store_report
     else
       update_store_report
-    end
-    if dont_exist_business_unit_sale
-      create_business_unit_report
-    else
-      update_business_unit_report
-    end
-    if dont_exist_business_group_sale
-      create_business_group_report
-    else
-      update_business_group_report
-    end
-    if dont_exist_product_sale
-      puts 'hello'
-    else
-      update_product_report
     end
   end
 
