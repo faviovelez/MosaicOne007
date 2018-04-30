@@ -15,12 +15,12 @@
         <tr class="table-titles">
           <th class="col-md-1">Caja</th>
           <th class="col-md-1">No.</th>
-          <th>Fecha</th>
-          <th>Cliente</th>
-          <th>Subtotal</th>
-          <th>Dev / Cambios</th>
-          <th>Total</th>
-          <th>Saldo / Estauts</th>
+          <th> Fecha</th>
+          <th> Cliente</th>
+          <th> Subtotal</th>
+          <th> Devoluciones </th>
+          <th> Total</th>
+          <th> Saldo / Estauts</th>
           <th> Detalles </th>
         </tr>
       </thead>
@@ -34,7 +34,7 @@
               <td> <%= number_to_currency(ticket.total) %> </td>
               <td> <%= number_to_currency(get_returns_or_changes(ticket)) %> </td>
               <td> <%= number_to_currency(get_total_with_returns_or_changes(ticket)) %> </td>
-              <td> <%= get_payments_from_individual_ticket(ticket) %> </td>
+              <td> <%= get_payments_on_sales_summary(ticket) %> </td>
               <td>
                 <%= link_to ticket_details_path(ticket) do %>
                   <i class="fa fa-book link-to-price" aria-hidden="true"></i>

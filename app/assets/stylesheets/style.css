@@ -24,12 +24,88 @@ table#payment-average {
   margin-bottom: 100px !important;
 }
 
+.head-blue {
+  background-color: #00B3D3;
+  color: #fff;
+}
+
+[id^=redAddOn] {
+  padding-bottom: 7px;
+  background-color: #D72638;
+  border: 1px solid #D72638;
+  color: #fff;
+}
+
+.red-icon {
+  color: #D72638;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+[id^=redAddOn]:hover,
+[id^=redAddOn]:active,
+[id^=redAddOn]:focus {
+  padding-bottom: 7px;
+  background-color: #B21C2B;
+  border: 1px solid #B21C2B;
+  color: #fff;
+}
+
+.flex-inline {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+input[value="Generar factura"] {
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  background-color: #00B3D3;
+  height: 50px;
+  padding: 0 2.5rem;
+  border: none;
+  border-radius: 0%;
+  box-shadow: none;
+  color: #fff;
+}
+
+input[value="Generar factura"]:hover,
+input[value="Generar factura"]:active,
+input[value="Generar factura"]:visited,
+input[value="Generar factura"]:focus {
+  color: #0288D1;
+}
+
+input#boxesQuantity {
+    margin-left: 1rem;
+    display: inherit;
+    text-align: center;
+}
+
+.align-rigth {
+  text-align: right;
+}
+
+.tableInsideModal {
+  width: 90%;
+  margin-right: 5%;
+  margin-left: 5%;
+}
+
+.link-extra-space {
+  margin-right: 1rem;
+}
+
 .group_fields {
   width: 600px;
   display: flex;
   wrap: nowrap;
   margin: 0 auto;
   margin-top: 30px;
+}
+
+.wide-selector {
+  width: 90%
 }
 
 .extra-margin-top {
@@ -269,10 +345,6 @@ color: #fff;
   padding: 1rem 0rem;
 }
 
-.modal-content {
-  z-index: 50000;
-}
-
 #no-margin {
   margin-left: 0
 }
@@ -315,12 +387,27 @@ p.info > strong {
   color: #D72638;
 }
 
+.red-headder {
+  background-color: #D72638 !important;
+}
+
 .capitalize {
   text-transform: capitalize;
 }
 
 .uppercase {
   text-transform: uppercase;
+}
+
+#order_user_ids {
+    background-color: #fff;
+    border: 1px solid lightgray;
+}
+
+.searh-products-form {
+  margin-left: 7.5%;
+  margin-right: 7.5%;
+  margin-top: 3%;
 }
 
 .info-container {
@@ -387,6 +474,18 @@ p.info > strong {
   margin: 0;
 }
 
+.center-text {
+  text-align: center;
+}
+
+.green {
+  background-color: #8DF41F !important;
+}
+
+[id^=vincularSupplier] {
+  border: none;
+}
+
 .centered {
   display: inline-block !important;
   margin-left: 20vw;
@@ -395,7 +494,7 @@ p.info > strong {
   padding: 0;
   text-align: center;
   width: 75vw;
-  z-index: 5;
+/*  z-index: 5; */
 }
 
 .white {
@@ -545,7 +644,7 @@ a.individual-font {
   text-align: center;
   width: 70vw;
   vertical-align: middle;
-  z-index: 5;
+/*  z-index: 5; */
 }
 
 textarea:focus, input:focus{
@@ -685,7 +784,7 @@ select {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-bottom: 1rem;
   border-radius: 1.5%;
-  z-index: 3;
+/*  z-index: 3; */
   position: absolute;
 }
 
@@ -722,14 +821,6 @@ select {
   border-radius: 0%;
   box-shadow: none;
   opacity: .95;
-}
-
-.modal-backdrop.fade.in{
-  z-index: 0;
-}
-
-.modal-backdrop.fade.in {
-  z-index: 0;
 }
 
 .justify {
@@ -806,9 +897,10 @@ select {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-bottom: 1rem;
   border-radius: 1.5%;
-  z-index: 3;
+  /* z-index: 3; */
   position: absolute;
 }
+
 
 .container-home {
   margin-top: 15vh;
@@ -818,7 +910,7 @@ select {
 
 .big-logo-home {
   width: 60vw;
-  z-index: 100;
+/*  z-index: 100; */
   padding-bottom: 1rem;
 }
 
@@ -945,7 +1037,7 @@ th.col-md-3, th.col-md-1, th.col-md-2 {
 }
 
 i.fa {
-  z-index: 35;
+/*  z-index: 35; */
 }
 
 h2.reg-title {
@@ -1033,7 +1125,7 @@ h2.reg-title {
   top: 0px;
   width: 100%;
   height: 100%;
-  z-index: 9999;
+/*  z-index: 9999; */
   background: url("Preloader.gif") center no-repeat #fff;
 }
 

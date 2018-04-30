@@ -2,6 +2,7 @@ class ProductsController < ApplicationController
   # Este controller es para crear, modificar o borrar productos en catálogo, ya sea de línea o especiales (los de Request, una vez que se autorizan).
   before_action :authenticate_user!
   before_action :set_product, only: [:show, :edit, :update, :destroy, :images]
+  before_action :filter_warehouses, only: [:new, :edit]
   require 'csv'
 
   # GET /products
@@ -75,6 +76,7 @@ class ProductsController < ApplicationController
       find_user
     end
     @product = Product.new(product_params)
+    validate_store_user
     save_sat_key
     save_sat_unit_key
     params
@@ -103,6 +105,7 @@ class ProductsController < ApplicationController
   # Este método también lo puede usar solamente 'product-admin'. Tanto en create como en update falta agregar que pueda subir imágenes (un modelo diferente de documents).
   def update
     save_former_price
+    validate_store_user
     save_sat_key
     save_sat_unit_key
     @inventory = Inventory.find_by_product_id(@product) || StoresInventory.find_by_product_id(@product)
@@ -118,6 +121,27 @@ class ProductsController < ApplicationController
       else
         format.html { render :edit }
         format.json { render json: @product.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def filter_warehouses
+    @warehouses = Warehouse.where(id: [1,2,3])
+  end
+
+  def validate_store_user
+    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+      if (@product.rack != "" || @product.rack != nil)
+        rack = @product.rack
+        @product.stores_inventories.each do |si|
+          si.update(rack: rack)
+        end
+        if (@product.level != "" || @product.level != nil)
+          level = @product.level
+          @product.stores_inventories.each do |si|
+            si.update(level: level)
+          end
+        end
       end
     end
   end
@@ -242,13 +266,13 @@ class ProductsController < ApplicationController
   end
 
   private
-
+  # aquí es el problema
     def filter_products
       @products = []
       role = current_user.role.name
       @store = current_user.store
       @dc_products = Product.where(current: true, shared: true)
-      if role == 'store-admin' || role == 'store'
+      if (role == 'store-admin' || role == 'store')
         @store_products = Product.where(store: @store)
         if @store_products == []
           @products = @dc_products
@@ -316,7 +340,15 @@ class ProductsController < ApplicationController
       :wholesale_id,
       :retail_id,
       :sat_key_id,
-      :sat_unit_key_id
+      :sat_unit_key_id,
+      :group,
+      :average,
+      :armed_discount,
+      :discount_for_stores,
+      :discount_for_franchises,
+      :only_measure,
+      :parent_id,
+      :child_id
       )
     end
 

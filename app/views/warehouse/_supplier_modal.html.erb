@@ -2,41 +2,65 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="ModalLabel">Vincular proveedor</h5>
+        <h3 class="modal-title" id="ModalLabel">Vincular proveedor</h3>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+
       <div class="modal-body">
-        <%= select_tag :suppliersList, options_for_select(suppliers_collection) %>
-        <%= form_for :supplier, html: { id: 'supplierForm' } do |f| %>
-          <input type="hidden" id="supplierId" />
-          <div class="form-group">
-            <%= f.label :folio %>
-            <%= f.text_field :folio %>
+        <%= form_tag({ controller: 'warehouse', action: 'save_supplier_product'}, method: 'post') do %>
+
+          <%= text_field_tag 'suppliersAutocomplete', nil, {class: 'select-product form-control', placeholder: 'Por favor seleccione un proveedor'} %>
+
+          <input type="hidden" id="productId" />
+
+          <div class="form-group hidden">
+            <%= label_tag :proveedor %>
+            <%= text_field_tag :supplierId, nil, {class: 'form-control center-text'} %>
           </div>
-          <div class="form-group">
-            <%= f.label :date_of_bill %>
-            <%= f.date_field :date_of_bill %>
+
+          <div class="form-group hidden toShowOnSelect">
+            <%= label_tag :proveedor %>
+            <%= text_field_tag :supplierName, nil, {class: 'form-control center-text', readonly:true} %>
           </div>
+
           <div class="form-group">
-            <%= f.label :total_amount %>
-            <%= f.text_field :total_amount %>
+            <%= label_tag :folio %>
+            <%= text_field_tag :supplier_folio, nil, {class: 'form-control center-text'} %>
           </div>
+
           <div class="form-group">
-            <%= f.label :taxes_rate %>
-            <%= f.text_field :taxes_rate %>
-            <label><input type="checkbox" id='checkPercent'> %</label>
+            <%= label_tag :fecha %>
+            <%= date_field_tag :supplier_date_of_bill, nil, {class: 'form-control center-text'} %>
           </div>
+
           <div class="form-group">
-            <%= f.label :subtotal %>
-            <%= f.text_field :subtotal, disabled: true %>
+            <%= label_tag :total %>
+            <%= text_field_tag :supplier_total_amount, nil, {class: 'form-control center-text'} %>
           </div>
+
+          <div class="form-group">
+            <%= label_tag 'IVA', nil, class: 'uppercase' %>
+            <%= text_field_tag :supplier_taxes_rate, nil, {class: 'form-control center-text'} %>
+
+            <label>
+              <%= check_box_tag :checkPercent, nil, checked: true %>
+              %
+            </label>
+          </div>
+
+          <div class="form-group">
+            <%= label_tag :subtotal %>
+            <%= text_field_tag :supplier_subtotal, nil, {class: 'form-control center-text', disabled: true} %>
+          </div>
+
         <% end %>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" id="vinculateSupplier">Vincular</button>
+        <button type="button" class="btn btn-primary" id="addSupplierToForm">Guardar</button>
       </div>
     </div>
   </div>

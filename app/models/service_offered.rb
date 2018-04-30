@@ -9,11 +9,11 @@ class ServiceOffered < ActiveRecord::Base
   belongs_to :ticket
   belongs_to :prospect
 
-  after_create :create_update_summary
-
   after_create :save_web_id
 
   after_create :update_web_true
+
+  before_update :create_update_summary
 
   def save_web_id
     self.update(web_id: self.id)
@@ -24,34 +24,32 @@ class ServiceOffered < ActiveRecord::Base
   end
 
   def create_update_summary
-    if (self.service_type == 'venta' || self.service_type == 'devolución')
-      unless prospect == nil
-        if dont_exist_prospect_sale
-          create_prospect_report
-        else
-          update_prospect_report
-        end
-      end
-      if dont_exist_service_sale
-        create_service_report
+    unless prospect == nil
+      if dont_exist_prospect_sale
+        create_prospect_report
       else
-        update_service_report
+        update_prospect_report
       end
-      if dont_exist_store_sale
-        create_store_report
-      else
-        update_store_report
-      end
-      if dont_exist_business_unit_sale
-        create_business_unit_report
-      else
-        update_business_unit_report
-      end
-      if dont_exist_business_group_sale
-        create_business_group_report
-      else
-        update_business_group_report
-      end
+    end
+    if dont_exist_store_sale
+      create_store_report
+    else
+      update_store_report
+    end
+    if dont_exist_business_unit_sale
+      create_business_unit_report
+    else
+      update_business_unit_report
+    end
+    if dont_exist_business_group_sale
+      create_business_group_report
+    else
+      update_business_group_report
+    end
+    if dont_exist_service_sale
+      create_service_report
+    else
+      update_service_report
     end
   end
 
@@ -103,7 +101,7 @@ class ServiceOffered < ActiveRecord::Base
     create_reports_data(
       ServiceSale
     ).update(
-      service: service
+      service: service, store: store
     )
   end
 
@@ -152,26 +150,48 @@ class ServiceOffered < ActiveRecord::Base
     total = self.total.to_f
     quantity = self.quantity.to_i
     cost = self.total_cost.to_f
-    if self.service_type == 'venta'
-      object.update_attributes(
-        subtotal: object.subtotal.to_f + subtotal,
-        discount: object.discount.to_f + discount,
-        taxes: object.taxes.to_f + taxes,
-        total: object.total.to_f + total,
-        cost: object.cost.to_f + cost,
-        quantity: object.quantity.to_i + quantity,
-      )
-    else
-      object.update_attributes(
-        subtotal: object.subtotal.to_f - subtotal,
-        discount: object.discount.to_f - discount,
-        taxes: object.taxes.to_f - taxes,
-        total: object.total.to_f - total,
-        cost: object.cost.to_f - cost,
-        quantity: object.quantity.to_i - quantity,
-      )
+    if id_changed?
+      if self.service_type == 'venta'
+        object.update_attributes(
+          subtotal: object.subtotal.to_f + subtotal,
+          discount: object.discount.to_f + discount,
+          taxes: object.taxes.to_f + taxes,
+          total: object.total.to_f + total,
+          cost: object.cost.to_f + cost,
+          quantity: object.quantity.to_i + quantity,
+        )
+      elsif self.service_type == 'devolución'
+        object.update_attributes(
+          subtotal: object.subtotal.to_f - subtotal,
+          discount: object.discount.to_f - discount,
+          taxes: object.taxes.to_f - taxes,
+          total: object.total.to_f - total,
+          cost: object.cost.to_f - cost,
+          quantity: object.quantity.to_i - quantity,
+        )
+      end
+      object
+    elsif (!id_changed? && changes['service_type'] != nil)
+      if (changes['service_type'][0] == 'venta' && self.service_type == 'cancelado')
+        object.update_attributes(
+          subtotal: object.subtotal.to_f - subtotal,
+          discount: object.discount.to_f - discount,
+          taxes: object.taxes.to_f - taxes,
+          total: object.total.to_f - total,
+          cost: object.cost.to_f - cost,
+          quantity: object.quantity.to_i - quantity,
+        )
+      elsif (changes['service_type'][0] == 'devolución' && self.service_type == 'cancelado')
+        object.update_attributes(
+          subtotal: object.subtotal.to_f + subtotal,
+          discount: object.discount.to_f + discount,
+          taxes: object.taxes.to_f + taxes,
+          total: object.total.to_f + total,
+          cost: object.cost.to_f + cost,
+          quantity: object.quantity.to_i + quantity,
+        )
+      end
     end
-    object
   end
 
   def create_reports_data(object)
@@ -183,28 +203,54 @@ class ServiceOffered < ActiveRecord::Base
     cost = self.total_cost
     month = self.created_at.to_date.month
     year  = self.created_at.to_date.year
-    if self.service_type == 'venta'
-      object.create(
-        subtotal: subtotal,
-        discount: discount,
-        taxes: taxes,
-        total: total,
-        cost: cost,
-        quantity: quantity,
-        month: month,
-        year: year
-      )
-    else
-      object.create(
-        subtotal: - subtotal,
-        discount: - discount,
-        taxes: - taxes,
-        total: - total,
-        cost: - cost,
-        quantity: - quantity,
-        month: month,
-        year: year
-      )
+    if id_changed?
+      if self.service_type == 'venta'
+        object.create(
+          subtotal: subtotal,
+          discount: discount,
+          taxes: taxes,
+          total: total,
+          cost: cost,
+          quantity: quantity,
+          month: month,
+          year: year
+        )
+      elsif self.service_type == 'devolución'
+        object.create(
+          subtotal: - subtotal,
+          discount: - discount,
+          taxes: - taxes,
+          total: - total,
+          cost: - cost,
+          quantity: - quantity,
+          month: month,
+          year: year
+        )
+      end
+    elsif !id_changed? && changes['service_type'] != nil
+      if (changes['service_type'][0] == 'venta' && self.service_type == 'cancelado')
+        object.create(
+          subtotal: - subtotal,
+          discount: - discount,
+          taxes: - taxes,
+          total: - total,
+          cost: - cost,
+          quantity: - quantity,
+          month: month,
+          year: year
+        )
+      elsif (changes['service_type'][0] == 'devolución' && self.service_type == 'cancelado')
+        object.create(
+          subtotal: subtotal,
+          discount: discount,
+          taxes: taxes,
+          total: total,
+          cost: cost,
+          quantity: quantity,
+          month: month,
+          year: year
+        )
+      end
     end
   end
 

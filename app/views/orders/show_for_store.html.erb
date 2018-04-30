@@ -1,38 +1,49 @@
 <table class="table">
   <thead>
     <tr class="table-titles">
-      <th> Código </th>
-      <th> Descripción </th>
+      <th> Producto </th>
       <th> Color </th>
       <th> Cantidad </th>
       <th> Total </th>
       <th> Producto </th>
+      <th> Acciones </th>
     </tr>
   </thead>
   <tbody>
     <% @order.product_requests.each do |product_request| %>
       <tr>
-        <td><%= product_request.product.unique_code %></td>
-        <td>
-          <%# link_to product_details_path(product: product_request.product.id), {:remote => true,  :id => product_request.product.id, 'data-toggle' =>  "modal", 'data-target' => '#productShow'} do %>
-            <%= product_request.product.description %>
-          <%# end %>
-        </td>
+        <%# link_to product_details_path(product: product_request.product.id), {:remote => true,  :id => product_request.product.id, 'data-toggle' =>  "modal", 'data-target' => '#productShow'} do %>
+          <td> <%= product_request.product.unique_code %> <%= product_request.product.description %> </td>
+        <%# end %>
         <td><%= product_request.product.exterior_color_or_design %></td>
         <td><%= number_with_delimiter(product_request.quantity) %></td>
-        <td><%= number_to_currency(get_total_from_movements(product_request)) %></td>
-        <td><%= product_request.status%></td>
+        <td><%= number_to_currency(get_total_from_pr_and_movs(product_request)) %></td>
+        <td>
+          <% if product_request.status == 'asignado' %>
+          <span class="label label-info">
+            <%= product_request.status%>
+          </span>
+          <% elsif product_request.status == 'sin asignar' %>
+            <span class="label label-warning">
+              <%= product_request.status%>
+            </span>
+          <% elsif product_request.status == 'entregado' %>
+            <span class="label label-success">
+              <%= product_request.status%>
+            </span>
+          <% end %>
+        </td>
         <% if (@order.status == 'en espera' || @order.status == 'mercancía asignada' && (@order.bill == nil)) %>
           <td class="col-md-1">
             <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
-              <i class="fa fa-minus-square link-to-price" aria-hidden="true"></i>
+              <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
             <% end %>
           </td>
         <% end %>
       </tr>
       <% end %>
       <tr>
-        <td colspan="3"></td>
+        <td colspan="2"></td>
         <td colspan="1"> <strong> Total: </strong>  </td>
         <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
         <td colspan="1"></td>

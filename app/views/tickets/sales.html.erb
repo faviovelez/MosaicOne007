@@ -7,7 +7,7 @@
         <th> Fecha </th>
         <th> Cliente </th>
         <th> Subtotal </th>
-        <th> Dev / Cambios </th>
+        <th> Devoluciones </th>
         <th> Total </th>
         <th> Saldo </th>
         <th> Estatus </th>
@@ -29,7 +29,7 @@
             <td> <%= number_to_currency(ticket.total) %> </td>
             <td> <%= number_to_currency(get_returns_or_changes(ticket)) %> </td>
             <td> <%= number_to_currency(get_total_with_returns_or_changes(ticket)) %> </td>
-            <td> <%= get_payments_from_individual_ticket(ticket) %> </td>
+            <td> <%=get_payments_on_sales_summary(ticket) %> </td>
             <td> <%= get_bill_status(ticket) %> </td>
             <% if ticket.bill == nil %>
               <td> - </td>

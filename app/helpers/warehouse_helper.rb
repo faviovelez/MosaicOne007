@@ -24,6 +24,12 @@ module WarehouseHelper
     end
   end
 
+  def warehouse_user_name(order)
+    user = order.users.joins(:role).where(roles: {name: ["warehouse-admin", "warehouse-staff"]}).first
+    name = user.first_name.capitalize + " " + user.middle_name.to_s.capitalize + " " + user.last_name.capitalize
+    name
+  end
+
   def image(movement)
     movement.product.images.first.try(
       :image_url, :thumb) || 'product_thumb.png'
@@ -32,9 +38,19 @@ module WarehouseHelper
   def warehouse_name(order)
     user = order.users.joins(:role).where('roles.name' => ['warehouse-staff', 'warehouse-admin']).first
     if user == nil
-      name = 'sin asignar'
+      name = content_tag(:span, 'sin asignar', class: 'label label-danger')
     else
-      name = user.first_name + " " + user.last_name
+      name = user.first_name.capitalize + " " + user.last_name.capitalize
+    end
+    name
+  end
+
+  def driver_name(order)
+    delivery = order.delivery_attempt
+    if delivery == nil
+      name = content_tag(:span, 'sin asignar', class: 'label label-danger')
+    else
+      name = delivery.driver.first_name.capitalize + " " + user.last_name.capitalize
     end
     name
   end
@@ -52,6 +68,10 @@ module WarehouseHelper
       end
     end
     @finded_user
+  end
+
+  def actual_inventory(product)
+    product.quantity
   end
 
 end

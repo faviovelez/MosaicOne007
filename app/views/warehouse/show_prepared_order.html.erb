@@ -1,0 +1,63 @@
+<table class="table dataTableNoPaginationNoButton">
+  <thead>
+    <tr class="table-titles">
+      <th> Producto </th>
+      <th> Color </th>
+      <th> Paquetes </th>
+      <th> Almacén </th>
+      <th> Ubicación </th>
+      <th> Notas </th>
+      <th class="hidden"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="boxes"></td>
+      <td class="boxes"></td>
+      <td class="boxes"></td>
+      <td class="boxes"></td>
+      <td class="boxes"></td>
+      <td class="boxes">
+        <strong>
+          Cajas:
+        </strong>
+        <%= @order.boxes %>
+      </td>
+      <td class="hidden"></td>
+    </tr>
+    <% @order.product_requests.where(status: 'asignado').each do |product_request| %>
+      <tr>
+        <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
+        <td><%= product_request.product.exterior_color_or_design %></td>
+        <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
+        <td><%= product_request.product.warehouse.name %></td>
+        <% if (product_request.product.rack.nil? && product_request.product.level.nil?) %>
+          <td class="center-text"> - </td>
+        <% else %>
+          <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
+        <% end %>
+        <td> <%= product_request.alert %> </td>
+        <td class="hidden">
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br /> <br />
+
+  <p>
+    Este pedido fue preparado por <%= warehouse_name(@order) %>
+  </p>
+
+<br /> <br />
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'tableLoader' %>
+  <%= javascript_include_tag 'prepareOrder' %>
+<% end %>

@@ -7,6 +7,11 @@
   <div class="form-container">
 
     <div class="form-inside-style">
+      <%= f.label :nombre %>
+      <%= f.text_field :name, value: @delivery.name, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
       <%= f.label :calle %>
       <%= f.text_field :street, value: @delivery.street, class: 'form-inside' %>
     </div>

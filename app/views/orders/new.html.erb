@@ -1,17 +1,73 @@
-<%= render partial: 'form' %>
-<%= render partial: 'order_show_template' %>
+<%= form_tag({ controller: 'orders', action: 'save_products' }, method: 'post') do %>
+
+<h2> Seleccione los productos para su pedido </h2>
+
+<table class="wide-selector">
+  <tbody>
+    <tr>
+      <td> <%= text_field_tag 'unique_code[]', nil, {class: 'select-product form-control unique_code searh-products-form', placeholder: 'Seleccione un producto'} %> </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="table" id="productsList">
+  <thead>
+    <tr class="head-blue">
+      <th> </th>
+      <th class="hidden"> Ids Producto</th>
+      <th> Producto </th>
+      <th> Color </th>
+      <th> Descuento </th>
+      <th> Precio unitario </th>
+      <th> Piezas </th>
+      <th class="hidden"> Inventario </th>
+      <th> Paquetes </th>
+      <th> Pedido </th>
+      <th> Estatus </th>
+      <th> Total </th>
+    </tr>
+  </thead>
+
+  <tbody id="fields_for_warehouse_entries">
+    <tr id="totalRow" class="hidden">
+      <td colspan="9" class="right"><strong>Total</strong></td>
+      <td colspan="2" id="realTotal" class="center-text"><strong id="strongTotal"></strong></td>
+    </tr>
+  </tbody>
+  </table>
+
+  <div class="actions">
+    <br><br>
+    <div>
+      <%= label_tag '¿Entregar completo?' %>
+      <%= check_box_tag :deliver_complete, true, false  %>
+    </div>
+    <br><br>
+
+    <%= submit_tag 'Elaborar pedido', class: 'main-button', id: 'generateEntry', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
+  </div><br /><br />
+
+  <% end %>
+
+<div class="hidden" id="action"><%= params[:action] %></div>
+
+<table class="hidden">
+<tbody id="newRowTableBody">
+  <tr class="newRow">
+    <%= render partial: "row_orders" %>
+  </tr>
+</tbody>
+</table>
 
 <%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'select2.min' %>
+  <%= stylesheet_link_tag 'formValidation.min' %>
 <% end %>
 
 <%= content_for :javascript do %>
-  <%= javascript_include_tag 'select2.min' %>
-  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'jquery.autocomplete.min' %>
   <%= javascript_include_tag 'jquery.mask.min' %>
-  <%= javascript_include_tag 'underscore.min' %>
-  <%= javascript_include_tag 'orders' %>
+  <%= javascript_include_tag 'jquery.maskMoney.min' %>
+  <%= javascript_include_tag 'form_validation_pack.min' %>
+  <%= javascript_include_tag 'jquery.mask.min' %>
+  <%= javascript_include_tag 'orders_new' %>
 <% end %>
-<script>
-  var waitLoader = false;
-</script>

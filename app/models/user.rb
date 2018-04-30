@@ -27,12 +27,18 @@ class User < ActiveRecord::Base
 
   after_create :save_web_id
 
-  def save_web_id
-    self.update(web_id: self.id)
-  end
+  after_create :update_web_true
 
   validates :first_name, presence: { message: 'Por favor escriba el primer nombre del usuario.'}
 
   validates :last_name, presence: { message: 'Por favor anote los apellidos del usuario.'}
+
+  def save_web_id
+    self.update(web_id: self.id)
+  end
+
+  def update_web_true
+    self.update(web: true)
+  end
 
 end

@@ -1,22 +1,31 @@
-<table class="table" id="productsList">
+<table class="table dataTable" id="productsList">
   <thead>
     <tr>
-      <th>Codigo unico</th>
-      <th>Descripcion</th>
-      <th>Image</th>
-      <th>Cantidad</th>
+      <% if @movements.first.movement_type == 'alta' %>
+        <th colspan="4" class="table-titles"> Entradas de Mercancía del <%= l @movements.first.created_at.to_date, format: :short %> a las <%= Time.now.strftime("%H:%M") %> HRS por el usuario <%=@movements.first.user.first_name%> <%=@movements.first.user.middle_name%> <%=@movements.first.user.last_name%> </td>
+      <% else %>
+        <th colspan="4" class="table-titles"> Salidas de Mercancía <%= l @movements.first.created_at.to_date, format: :short %> a las <%= Time.now.strftime("%H:%M") %> HRS por el usuario <%=@movements.first.user.first_name%> <%=@movements.first.user.middle_name%> <%=@movements.first.user.last_name%></td>
+      <% end %>
+    </tr>
+    <tr>
+      <th> Producto </th>
+      <th> Movimiento </th>
+      <th> Cantidad </th>
+      <th> Usuario </th>
     </tr>
   </thead>
   <tbody>
     <% @movements.each do |movement| %>
       <tr id="trForProduct<%= movement.product.id %>">
-        <td><%= movement.product.unique_code %></td>
-        <td><%= movement.product.description %></td>
-        <td><%= image_tag image(movement), alt: movement.product.description %></td>
-        <td><%= number_with_delimiter(movement.quantity) %></td>
+        <td> <%= movement.product.unique_code %> <%= movement.product.description %> </td>
+        <td> <%= movement.movement_type.capitalize %> </td>
+        <td> <%= number_with_delimiter(movement.quantity) %> </td>
+        <td> <%= movement.user.first_name.capitalize %> <%= movement.user.middle_name.capitalize %> <%= movement.user.last_name.capitalize %> </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 <%= link_to 'Confirmar', warehouse_confirm_path(@codes), class: 'btn btn-primary', method: 'post' %>
 <br /> <br /> <br /> <br /> <br />
+
+<%= render 'dataTables'%>

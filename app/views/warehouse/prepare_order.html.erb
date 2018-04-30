@@ -1,40 +1,77 @@
-<table class="table">
+<%= form_tag({ controller: 'warehouse', action: 'complete_preparation' }, method: 'post') do %>
+<table class="table dataTableNoPagination">
   <thead>
     <tr class="table-titles">
-      <th>Código</th>
-      <th>Color</th>
-      <th>Imagen</th>
-      <th>Paquetes</th>
-      <th>Almacén</th>
-      <th>Ubicación</th>
-      <th>Urgencia</th>
-      <th>Entregar</th>
+      <th> Producto </th>
+      <th> Color </th>
+      <th> Paquetes </th>
+      <th> Almacén </th>
+      <th> Ubicación </th>
+      <th> Notas </th>
+      <th class="hidden"></th>
     </tr>
   </thead>
   <tbody>
+    <% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role_name == 'warehouse-admin') && @order.status != 'preparado') %>
+      <tr>
+        <td class="boxes"></td>
+        <td class="boxes"></td>
+        <td class="boxes"></td>
+        <td class="boxes"></td>
+        <td class="boxes"></td>
+        <td class="boxes align-rigth">
+            <div class="flex-inline">
+              <strong>
+                Cajas:
+              </strong>
+              <%= text_field_tag :boxes, nil, {id: 'boxesQuantity', class: 'form-control'} %>
+            </div>
+        </td>
+        <td class="hidden">
+          <%= text_field_tag :order, params[:id], {class: 'form-control hidden'} %>
+        </td>
+      </tr>
+    <% end %>
     <% @order.product_requests.where(status: 'asignado').each do |product_request| %>
       <tr>
-        <td><%= product_request.product.unique_code %></td>
+        <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
         <td><%= product_request.product.exterior_color_or_design %></td>
-        <td><%= image_tag image(product_request), alt: product_request.product.description %></td>
         <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
         <td><%= product_request.product.warehouse.name %></td>
         <% if (product_request.product.rack.nil? && product_request.product.level.nil?) %>
-          <td> - </td>
+          <td class="center-text"> - </td>
         <% else %>
-          <td> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
+          <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
         <% end %>
-        <td><%= product_request.urgency_level %></td>
-        <% if product_request.maximum_date.present? %>
-          <td><%= l product_request.maximum_date %></td>
-        <% else %>
-          <td> - </td>
-        <% end %>
+        <td>
+          <% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role_name == 'warehouse-admin') && @order.status != 'preparado') %>
+            <a href="#" id="iconLink_<%= product_request.id %>">
+              <i class="fa fa-warning red-icon" aria-hidden="true"></i>
+            </a>
+            <div id="myWrapper_<%= product_request.id %>" class="hidden">
+              <div class="input-group">
+                <%= text_field_tag 'alert[]', nil, {class: 'form-control'} %>
+                <span class="input-group-btn">
+                  <button class="btn" id="redAddOn_<%= product_request.id %>">Ocultar</button>
+                </span>
+              </div>
+            </div>
+          <% end %>
+        </td>
+        <td class="hidden">
+          <%= text_field_tag 'pr[]', product_request.id, {class: 'form-control'} %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 <br /> <br />
+<% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role_name == 'warehouse-admin') && @order.status != 'preparado') %>
+    <div class="actions">
+      <%= submit_tag 'Completar ', class: 'main-button', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
+    </div><br /><br />
+  <% end %>
+<% end %>
 
 <% if @order.users.count <= 1 %>
 
@@ -61,4 +98,31 @@
 
 <% end %>
 
+<table class="hidden">
+  <tbody>
+    <tr>
+      <td id="date"> <%= l Date.today, format: :short %> </td>
+      <td id="store"> <%= @order.store.store_name.capitalize %> </td>
+      <td id="hour"> <%= Time.now.strftime("%H:%M") %> </td>
+      <td id="user"> <%= warehouse_name(@order) %> </td>
+      <td id="orderNumber"> <%= @order.id %> </td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
 <br /> <br />
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'tableLoader' %>
+  <%= javascript_include_tag 'prepareOrder' %>
+<% end %>

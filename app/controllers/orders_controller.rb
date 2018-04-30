@@ -1,6 +1,7 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_order, only: [:show_for_store, :change_delivery_address]
+  before_action :reverse_params_array, only: [:save_products, :save_products_for_prospects]
 
   def new(role = current_user.role.name)
     @order = Order.new(store: current_user.store,
@@ -11,8 +12,26 @@ class OrdersController < ApplicationController
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'store' || role == 'store-admin')
   end
 
+  def new_order_for_prospects(role = current_user.role.name)
+    @prospect = Prospect.find(params[:prospect_id])
+    @order = Order.new(store: current_user.store,
+                       category: 'de línea',
+                       prospect: @prospect
+                      )
+    @order.users << current_user
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'admin-desk')
+  end
+
   def show
-    @orders = Order.find(params[:ids].split('/'))
+    update_order_total
+  end
+
+  def update_order_total
+    if params[:ids].present?
+      @orders = Order.find(params[:ids].split('/'))
+    else
+      @orders = Order.where(id:params[:id])
+    end
     @orders.each do |order|
       cost = 0
       subtotal = 0
@@ -36,11 +55,20 @@ class OrdersController < ApplicationController
           if mov.quantity == nil
             mov.delete
           else
-            cost += mov.total_cost.to_f
-            subtotal += mov.subtotal.to_f
-            discount += mov.discount_applied.to_f
-            taxes += mov.taxes.to_f
-            total += mov.total.to_f
+            product = mov.product
+            if product.group
+              cost += mov.total_cost.to_f * mov.quantity * product.average
+              subtotal += mov.subtotal.to_f * mov.quantity * product.average
+              discount += mov.discount_applied.to_f * mov.quantity * product.average
+              taxes += mov.taxes.to_f * mov.quantity * product.average
+              total += (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
+            else
+              cost += mov.total_cost.to_f * mov.quantity
+              subtotal += mov.subtotal.to_f * mov.quantity
+              discount += mov.discount_applied.to_f * mov.quantity
+              taxes += mov.taxes.to_f * mov.quantity
+              total += (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
+            end
           end
         end
       end
@@ -48,6 +76,7 @@ class OrdersController < ApplicationController
       discount = discount.round(2)
       taxes = taxes.round(2)
       cost = cost.round(2)
+      total = total.round(2)
       order.update(
         subtotal: subtotal,
         discount_applied: discount,
@@ -64,6 +93,8 @@ class OrdersController < ApplicationController
   end
 
   def show_for_store
+    update_order_total
+    @order = Order.find(params[:id])
   end
 
   def get_product
@@ -95,7 +126,7 @@ class OrdersController < ApplicationController
     discount_applied = order.discount_applied
     order.movements.each do |mov|
       if mov.product == product
-        number = product.warehouse_entries.order(:id).last.entry_number.to_i
+        number = WarehouseEntry.where(product: product).order(:id).last.entry_number.to_i
         entry_mov = mov.entry_movement
         entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number.next)
         inventory = Inventory.find_by_product_id(product.id)
@@ -146,7 +177,7 @@ class OrdersController < ApplicationController
     order.movements.each do |mov|
       # Falta el proceso que los quita de los reportes
       if mov.product == product
-        number = product.warehouse_entries.order(:id).last.entry_number.to_i
+        number = WarehouseEntry.where(product: product).order(:id).last.entry_number.to_i
         entry_mov = mov.entry_movement
         entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number.next)
         inventory = Inventory.find_by_product_id(product.id)
@@ -195,6 +226,8 @@ class OrdersController < ApplicationController
   end
 
   def save_products
+    @store = Store.find(params[:store_id])
+    @prospect = Prospect.find_by_store_prospect_id(current_user.store)
     status = []
     prod_req = []
     movs = []
@@ -203,54 +236,126 @@ class OrdersController < ApplicationController
                             store: current_user.store,
                             category: 'de línea',
                             delivery_address: current_user.store.delivery_address,
-                            prospect: Prospect.find_by_store_prospect_id(current_user.store)
+                            prospect: @prospect
                           )
+    @order.update(deliver_complete: true) if params[:deliver_complete] == "true"
     @order.users << current_user
     @order.save
     create_product_requests
-    @order.product_requests.each do |pr|
-      status << [pr.status]
-      prod_req << pr
-    end
-    if status.uniq.length != 1
-      @order.movements.each do |mov|
-        movs << mov
+    if @order.deliver_complete
+      @order.product_requests.each do |pr|
+        status << [pr.status]
+        prod_req << pr
       end
-      @order.pending_movements.each do |mov|
-        pend_movs << mov
-      end
-      @new_order = Order.create(store: current_user.store,
-        category: 'de línea',
-        delivery_address: current_user.store.delivery_address,
-        status: 'en espera',
-        prospect: Prospect.find_by_store_prospect_id(current_user.store)
-      )
-      assigned_mov = []
-      unassigned_pr = []
-      assigned_pr = []
-      pendings = []
-      prod_req.each do |pr|
-        pend_movs.each do |pm|
-          pendings << pm if (pm.product_id == pr.product_id && (pendings.include?(pm) == false))
-          unassigned_pr << pr if (pm.product_id == pr.product_id && (unassigned_pr.include?(pr) == false))
+      if status.uniq.length != 1
+        @order.movements.each do |mov|
+          movs << mov
         end
-        movs.each do |mov|
-          assigned_mov << mov if (pr.product_id == mov.product_id && (movs.include?(mov) == false))
-          assigned_pr << pr if (pr.product_id == mov.product_id && (assigned_pr.include?(pr) == false))
+        @order.pending_movements.each do |mov|
+          pend_movs << mov
         end
-      end
-      pendings.each do |pend|
-        PendingMovement.find(pend.id).update(order: @new_order)
-      end
-      unassigned_pr.each do |pr|
-        ProductRequest.find(pr.id).update(order: @new_order)
-      end
-      @order.update(status: 'mercancía asignada')
-    else
-      if status.first == ['asignado']
+        @new_order = Order.create(store: current_user.store,
+          category: 'de línea',
+          delivery_address: current_user.store.delivery_address,
+          status: 'en espera',
+          prospect: @prospect
+        )
+        assigned_mov = []
+        unassigned_pr = []
+        assigned_pr = []
+        pendings = []
+        prod_req.each do |pr|
+          pend_movs.each do |pm|
+            pendings << pm if (pm.product_id == pr.product_id && (pendings.include?(pm) == false))
+            unassigned_pr << pr if (pm.product_id == pr.product_id && (unassigned_pr.include?(pr) == false))
+          end
+          movs.each do |mov|
+            assigned_mov << mov if (pr.product_id == mov.product_id && (movs.include?(mov) == false))
+            assigned_pr << pr if (pr.product_id == mov.product_id && (assigned_pr.include?(pr) == false))
+          end
+        end
+        pendings.each do |pend|
+          PendingMovement.find(pend.id).update(order: @new_order)
+        end
+        unassigned_pr.each do |pr|
+          ProductRequest.find(pr.id).update(order: @new_order)
+        end
         @order.update(status: 'mercancía asignada')
       else
-        @order.update(status: 'en espera')
+        if status.first == ['asignado']
+          @order.update(status: 'mercancía asignada')
+        else
+          @order.update(status: 'en espera')
+        end
+      end
+    end
+    @orders = []
+    @orders << @order.id
+    @orders << @new_order.id unless @new_order == nil
+    redirect_to orders_show_path(@orders), notice: 'Todos los registros almacenados.'
+  end
+
+  def save_products_for_prospects
+    @prospect = Prospect.find(params[:prospect_id])
+    status = []
+    prod_req = []
+    movs = []
+    pend_movs = []
+    @order = Order.create(
+                            store: current_user.store,
+                            category: 'de línea',
+                            delivery_address: current_user.store.delivery_address,
+                            prospect: @prospect
+                          )
+    @order.update(deliver_complete: true) if params[:deliver_complete] == "true"
+    @order.users << current_user
+    @order.save
+    create_product_requests
+    if @order.deliver_complete
+      @order.product_requests.each do |pr|
+        status << [pr.status]
+        prod_req << pr
+      end
+      if status.uniq.length != 1
+        @order.movements.each do |mov|
+          movs << mov
+        end
+        @order.pending_movements.each do |mov|
+          pend_movs << mov
+        end
+        @new_order = Order.create(store: current_user.store,
+          category: 'de línea',
+          delivery_address: current_user.store.delivery_address,
+          status: 'en espera',
+          prospect: @prospect
+        )
+        assigned_mov = []
+        unassigned_pr = []
+        assigned_pr = []
+        pendings = []
+        prod_req.each do |pr|
+          pend_movs.each do |pm|
+            pendings << pm if (pm.product_id == pr.product_id && (pendings.include?(pm) == false))
+            unassigned_pr << pr if (pm.product_id == pr.product_id && (unassigned_pr.include?(pr) == false))
+          end
+          movs.each do |mov|
+            assigned_mov << mov if (pr.product_id == mov.product_id && (movs.include?(mov) == false))
+            assigned_pr << pr if (pr.product_id == mov.product_id && (assigned_pr.include?(pr) == false))
+          end
+        end
+        pendings.each do |pend|
+          PendingMovement.find(pend.id).update(order: @new_order)
+        end
+        unassigned_pr.each do |pr|
+          ProductRequest.find(pr.id).update(order: @new_order)
+        end
+        @order.update(status: 'mercancía asignada')
+      else
+        if status.first == ['asignado']
+          @order.update(status: 'mercancía asignada')
+        else
+          @order.update(status: 'en espera')
+        end
       end
     end
     @orders = []
@@ -297,11 +402,11 @@ class OrdersController < ApplicationController
   end
 
   def current_orders
-    @orders = current_user.store.orders.where.not(status: ['entregada', 'cancelada', 'expirada']).order(:created_at)
+    @orders = current_user.store.orders.where.not(status: ['entregado', 'cancelada', 'expirada']).order(:created_at)
   end
 
   def delivered_orders
-    @orders = current_user.store.orders.where(status:'entregada').order(:created_at)
+    @orders = current_user.store.orders.where(status:'entregado').order(:created_at)
   end
 
   def history
@@ -311,82 +416,87 @@ class OrdersController < ApplicationController
   private
 
   def create_product_requests
-    params.select {|p| p.match('trForProduct').present? }.each do |product|
-      attributes = product.second
-      product = Product.find(attributes.first.second).first
-      @product_request = ProductRequest.create(
+    counter = params[:products].count
+    n = 0
+    counter.times do
+      product = Product.find(params[:products][n])
+      product_request = ProductRequest.create(
         product: product,
-        quantity: attributes[:order],
-        order: @order,
-        urgency_level: attributes[:urgency]
+        quantity: params[:request][n],
+        order: @order
       )
-      if @product_request.save
-        if @product_request.urgency_level === 'alta'
-          @product_request.update(maximum_date: attributes[:maxDate])
-        end
-        passing_validation
+      if product_request.save
+        passing_validation(product_request, n)
       end
+      n += 1
     end
   end
 
-  def passing_validation
-    order_quantity = @product_request.quantity
-    inventory = @product_request.product.inventory
-    @product_request.update(order: @order)
-    if order_quantity > inventory.fix_quantity
-      @product_request.update(status: 'sin asignar')
-      q = @product_request.quantity
-      mov = create_movement(PendingMovement)
-      mov.update(
-        quantity: q,
-        taxes: q * mov.taxes,
-        subtotal: q * mov.subtotal,
-        discount_applied: q * mov. discount_applied,
-        automatic_discount: q * mov. discount_applied,
-        total: (q * mov.subtotal) - (q * mov. discount_applied) + (q * mov.taxes)
-      )
+  def passing_validation(product_request, n)
+    order_quantity = product_request.quantity
+    inventory = product_request.product.inventory
+    product = product_request.product
+    if @prospect.store_prospect != nil
+      if @prospect.store_prospect.store_type.store_type == 'tienda propia'
+        discount = product.discount_for_stores / 100
+      elsif @prospect.store_prospect.store_type.store_type == 'franquicia'
+        discount = product.discount_for_franchises / 100
+      end
     else
-      Movement.initialize_with(
-        @product_request,
+      discount = params[:discount][n].to_f / 100
+    end
+    if order_quantity > inventory.fix_quantity
+      product_request.update(status: 'sin asignar')
+      q = product_request.quantity
+      mov = create_movement(PendingMovement, n, product_request)
+    else
+      Movement.new_object(
+        product_request,
         current_user,
-        'venta'
+        'venta',
+        discount,
+        @prospect
         )
-      @product_request.update(status: 'asignado')
-      # VALIDAR POR QUÉ DA ERROR (revisar si todavía da error)#
-      movement = Movement.last
-      movement.process_extras(order_type, @product_request.quantity, @order)
     end
   end
 
-  def create_movement(object)
-    product = @product_request.product
+  def create_movement(object, n, product_request)
+    product = product_request.product
     store = Store.find_by_store_name('Corporativo Compresor')
-    prospect = Prospect.find_by_store_prospect_id(current_user.store)
-    if prospect.store_prospect.store_type.store_type == 'tienda propia'
-      discount = product.discount_for_stores / 100
-    elsif prospect.store_prospect.store_type.store_type == 'franquicia'
-      discount = product.discount_for_franchises / 100
+    prospect = @prospect
+    if prospect.store_prospect != nil
+      if prospect.store_prospect.store_type.store_type == 'tienda propia'
+        discount = product.discount_for_stores / 100
+      elsif prospect.store_prospect.store_type.store_type == 'franquicia'
+        discount = product.discount_for_franchises / 100
+      end
+    else
+      discount = params[:discount][n].to_f / 100
     end
-    disc_app = product.price * discount
-    unit_price = product.price * (1 - discount)
+    price = ('%.2f' % product.price).to_f
+    disc_app = ('%.2f' % (product.price * discount)).to_f
+    unit_price = ('%.2f' % (price * (1 - discount))).to_f
+    cost = ('%.2f' % product.cost.to_f).to_f
     movement = object.create(
       product: product,
       order: @order,
       unique_code: product.unique_code,
+      quantity: product_request.quantity,
       store: store,
-      initial_price: product.price,
+      initial_price: price,
       automatic_discount: disc_app,
       discount_applied: disc_app,
       supplier: product.supplier,
       final_price: unit_price,
       movement_type: 'venta',
       user: current_user,
-      total: product.price,
+      cost: cost,
+      total: unit_price,
       taxes: unit_price * 0.16,
       subtotal: product.price,
       business_unit: store.business_unit,
-      product_request: @product_request,
-      maximum_date: @product_request.maximum_date,
+      product_request: product_request,
+      maximum_date: product_request.maximum_date,
       prospect: prospect
     )
     movement
