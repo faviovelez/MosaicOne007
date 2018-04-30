@@ -84,6 +84,7 @@ class StoreMovement < ActiveRecord::Base
     object.update(
       store: store
     )
+    end
   end
 
 #  def create_product_report
