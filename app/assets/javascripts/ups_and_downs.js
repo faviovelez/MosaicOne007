@@ -87,16 +87,16 @@ $(document).ready(function() {
 
   function addEvents(idProd){
     $("#close_icon_" + idProd).on("click", function(event) {
-      let row = $(this).parent().parent();
+      var row = $(this).parent().parent();
       row.remove();
       enableButton();
     });
 
     if (action == 'remove_inventory') {
       $('[id^=quantity_]').on('keyup', function(){
-        let id = $(this).attr('id').replace('quantity_', '');
-        let limitValue = parseInt($(this).parent().parent().find('#totalInventory_' + id).html());
-        let tryValue = parseInt($(this).val());
+        var id = $(this).attr('id').replace('quantity_', '');
+        var limitValue = parseInt($(this).parent().parent().find('#totalInventory_' + id).html());
+        var tryValue = parseInt($(this).val());
         if ( tryValue > limitValue ){
           $(this).val(limitValue);
         }
