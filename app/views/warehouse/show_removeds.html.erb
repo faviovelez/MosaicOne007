@@ -1,0 +1,25 @@
+<table class="table dataTable" id="productsList">
+  <thead>
+    <tr>
+      <th colspan="4" class="table-titles"> Salidas de Mercancía <%= l @movements.first.created_at.to_date, format: :short %> a las <%= Time.now.strftime("%H:%M") %> HRS por el usuario <%=@movements.first.user.first_name%> <%=@movements.first.user.middle_name%> <%=@movements.first.user.last_name%></td>
+    </tr>
+    <tr>
+      <th> Producto </th>
+      <th> Movimiento </th>
+      <th> Cantidad </th>
+      <th> Usuario </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @movements.each do |movement| %>
+      <tr id="trForProduct<%= movement.product.id %>">
+        <td> <%= movement.product.unique_code %> <%= movement.product.description %> </td>
+        <td> <%= movement.movement_type.capitalize %> </td>
+        <td> <%= number_with_delimiter(movement.quantity) %></td>
+        <td> <%= movement.user.first_name.capitalize %> <%= movement.user.middle_name.capitalize %> <%= movement.user.last_name.capitalize %> </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br /> <br /> <br /> <br /> <br />
+<%= render 'dataTables'%>

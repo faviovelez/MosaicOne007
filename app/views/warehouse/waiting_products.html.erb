@@ -3,7 +3,6 @@
     <tr class="table-titles">
       <th>Código</th>
       <th>Color</th>
-      <th>Imagen</th>
       <th>Paquetes</th>
       <th>Almacén</th>
       <th>Ubicación</th>
@@ -12,11 +11,10 @@
     </tr>
   </thead>
   <tbody>
-    <% @order.product_requests.where(status: 'en espera').each do |product_request| %>
+    <% @order.product_requests.each do |product_request| %>
       <tr>
         <td><%= product_request.product.unique_code %></td>
         <td><%= product_request.product.exterior_color_or_design %></td>
-        <td><%= image_tag image(product_request), alt: product_request.product.description %></td>
         <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
         <td><%= product_request.product.warehouse.name %></td>
         <% if (product_request.product.rack.nil? && product_request.product.level.nil?) %>

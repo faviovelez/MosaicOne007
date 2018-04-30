@@ -1,0 +1,20 @@
+<td>
+  <a href="javascript:;" class="close-icon" id="close_icon_">
+  </a>
+</td>
+<td class="hidden"> <%= text_field_tag 'products[]', nil, {class: 'form-control products'} %> </td>
+<td id="description_" class="center-text"></td>
+<td id="color_" class="center-text"></td>
+<% if @prospect %>
+  <td> <%= text_field_tag 'discount[]', nil, {class: 'form-control center-text discount'} %> </td>
+<% else %>
+  <td id="discount_" class="center-text"></td>
+<% end %>
+<td id="unit_price_" class="center-text"></td>
+<td id="base_unit_price_" class="center-text hidden"></td>
+<td id="pieces_per_package_" class="center-text"></td>
+<td id="inventory_" class="hidden"> </td>
+<td> <%= text_field_tag 'packages[]', nil, {class: 'form-control center-text packages'} %> </td>
+<td> <%= text_field_tag 'request[]', nil, {class: 'form-control center-text request', readonly: true} %> </td>
+<td id="status_" class="center-text"></td>
+<td id="total_" class="center-text"></td>

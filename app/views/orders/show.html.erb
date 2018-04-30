@@ -1,26 +1,23 @@
 <table class="table" id="productsList">
   <thead>
-    <tr>
-      <th>Código</th>
+    <tr class="table-titles">
+      <th>Producto</th>
       <th>Color</th>
-      <th>Imagen</th>
       <th>Cantidad</th>
       <th>Total</th>
     </tr>
   </thead>
   <tbody>
     <% get_orders %>
-    <% @movements.each do |movement| %>
-      <tr id="trForProduct<%= movement.product_id %>">
-        <td><%= movement.product.unique_code %></td>
-        <td><%= movement.product.exterior_color_or_design %></td>
-        <td><%= image_tag image(movement), alt: movement.product.description %></td>
-        <td><%= number_with_delimiter(movement.quantity) %></td>
-        <td><%= number_to_currency(movement.total) %></td>
+    <% @product_requests.each do |pr| %>
+      <tr id="trForProduct<%= pr.product_id %>">
+        <td> <%= pr.product.unique_code %> <%= pr.product.description %></td>
+        <td> <%= pr.product.exterior_color_or_design %> </td>
+        <td> <%= number_with_delimiter(pr.quantity) %> </td>
+        <td> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
       </tr>
       <% end %>
       <tr>
-        <td></td>
         <td></td>
         <td></td>
         <td> <strong> Total: </strong> </td>

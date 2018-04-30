@@ -3,7 +3,6 @@
     <tr class="table-titles">
       <th>Código</th>
       <th>Color</th>
-      <th>Imagen</th>
       <th>Cantidad</th>
       <th>Urgencia</th>
       <th>Entregar</th>
@@ -14,7 +13,6 @@
       <tr>
         <td><%= product_request.product.unique_code %></td>
         <td><%= product_request.product.exterior_color_or_design %></td>
-        <td><%= image_tag image(product_request), alt: product_request.product.description %></td>
         <td><%= number_with_delimiter(product_request.quantity) %></td>
         <td><%= product_request.urgency_level %></td>
         <% if product_request.maximum_date.present? %>

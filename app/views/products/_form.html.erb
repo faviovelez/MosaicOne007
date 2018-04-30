@@ -96,38 +96,45 @@
         <%= f.select :resistance_main_material, options_for_select(main_resistance_options, selected: @product.resistance_main_material) %>
       </div>
 
-      <h4>Medidas Internas</h4>
+      <h4 class="hidden">Medidas Internas</h4>
 
-      <div class="form-inside-style">
+      <div class="form-inside-style hidden">
         <%= f.label :largo %>
         <%= f.text_field :inner_length, value: @product.inner_length, class: 'form-inside' %>
       </div>
 
-      <div class="form-inside-style">
+      <div class="form-inside-style hidden">
         <%= f.label :ancho %>
         <%= f.text_field :inner_width, value: @product.inner_width, class: 'form-inside' %>
       </div>
 
-      <div class="form-inside-style">
+      <div class="form-inside-style hidden">
         <%= f.label :alto %>
         <%= f.text_field :inner_height, value: @product.inner_height, class: 'form-inside' %>
       </div>
 
-      <h4>Medidas Externas</h4>
+      <h4 class="hidden">Medidas Externas</h4>
 
-      <div class="form-inside-style">
+      <div class="form-inside-style hidden">
         <%= f.label :largo %>
         <%= f.text_field :outer_length, value: @product.outer_length, class: 'form-inside' %>
       </div>
 
-      <div class="form-inside-style">
+      <div class="form-inside-style hidden">
         <%= f.label :ancho %>
         <%= f.text_field :outer_width, value: @product.outer_width, class: 'form-inside' %>
       </div>
 
-      <div class="form-inside-style">
+      <div class="form-inside-style hidden">
         <%= f.label :alto %>
         <%= f.text_field :outer_height, value: @product.outer_height, class: 'form-inside' %>
+      </div>
+
+      <h4>Medidas</h4>
+
+      <div class="form-inside-style">
+        <%= f.label :medidas %>
+        <%= f.text_field :only_measure, value: @product.only_measure, class: 'form-inside' %>
       </div>
 
       <h4>Diseño e Información Adicional</h4>
@@ -179,20 +186,26 @@
         <%= f.number_field :pieces_per_package, min: 0, max: 200, class: 'form-inside' %>
       </div>
 
-      <% if params[:action] == 'new' %>
-        <div class="form-inside-style hidden">
-      <% elsif params[:action] == 'edit' %>
-        <div class="form-inside-style">
+
+      <% if (current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin') %>
+
+        <% if params[:action] == 'new' %>
+          <div class="form-inside-style hidden">
+        <% elsif params[:action] == 'edit' %>
+          <div class="form-inside-style">
+        <% end %>
+
+          <%= f.label '¿producto activo?' %>
+          <%= f.select :current, options_for_select([['Activo', true], ['Inactivo', false]], selected: true), class: 'form-inside' %>
+          </div>
       <% end %>
 
-        <%= f.label '¿producto activo?' %>
-        <%= f.select :current, options_for_select([['Activo', true], ['Inactivo', false]], selected: true), class: 'form-inside' %>
-      </div>
-
-      <div class="form-inside-style">
-        <%= f.label '¿producto pra todas las tiendas?' %>
-        <%= f.select :shared, options_for_select([['Visible', true], ['No visible', false]], selected: true), class: 'form-inside' %>
-      </div>
+      <% if (current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin') %>
+        <div class="form-inside-style">
+          <%= f.label '¿producto para todas las tiendas?' %>
+          <%= f.select :shared, options_for_select([['Visible', true], ['No visible', false]], selected: true), class: 'form-inside' %>
+        </div>
+      <% end %>
 
       <div class="form-inside-style">
         <%= f.label 'Código de producto SAT' %>
@@ -209,9 +222,50 @@
         <%= f.text_field :unit, class: 'form-inside' %>
       </div>
 
+      <% if (current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin') %>
+        <div class="form-inside-style">
+          <%= f.label :descuento_para_franquicias %>
+          <% if params[:action] == 'edit' %>
+            <%= f.text_field :discount_for_franchises, value: @product.discount_for_franchises, class: 'form-inside' %>
+          <% else %>
+            <%= f.text_field :discount_for_franchises, value: @product.discount_for_franchises == 0 ? 35.0 : 0, class: 'form-inside' %>
+          <% end %>
+        </div>
+
+        <div class="form-inside-style">
+          <%= f.label :descuento_para_tiendas %>
+          <% if params[:action] == 'edit' %>
+            <%= f.text_field :discount_for_stores, value: @product.discount_for_stores, class: 'form-inside' %>
+          <% else %>
+            <%= f.text_field :discount_for_stores, value: @product.discount_for_stores == 0 ? 35.0 : 0, class: 'form-inside' %>
+          <% end %>
+        </div>
+
+        <div class="form-inside-style">
+          <%= f.label :descuento_cuando_está_armado %>
+          <%= f.text_field :armed_discount, class: 'form-inside' %>
+        </div>
+
+        <div class="form-inside-style">
+          <%= f.label '¿venta por kg?' %>
+          <%= f.select :group, options_for_select([['sí', true], ['no', false]], selected: false), class: 'form-inside' %>
+        </div>
+
+        <div class="form-inside-style">
+          <%= f.label :promedio_por_kg %>
+          <%= f.text_field :average, class: 'form-inside' %>
+        </div>
+      <% end %>
+
+
       <div class="form-inside-style">
         <%= f.label :almacén %>
-        <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.business_group.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+
+        <% if (current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin') %>
+          <%= f.select :warehouse_id, options_for_select(Warehouse.where("warehouse_code LIKE ?", "%AG%").collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+        <% else %>
+          <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.business_group.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+        <% end %>
       </div>
 
       <div class="form-inside-style">
@@ -244,7 +298,6 @@
           <%= f.submit :Confirmar, class: 'main-button' %>
         </div>
       </div>
-
     </div>
   </div>
 

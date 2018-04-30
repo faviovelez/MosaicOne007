@@ -1,5 +1,13 @@
 module ApplicationHelper
 
+  def address_for_delivery(store = object.store)
+    @address = store.delivery_address.street + ' ' + store.delivery_address.exterior_number + ' '
+    @address += 'Int. ' + store.delivery_address.interior_number + ' ' unless store.delivery_address.interior_number.blank?
+    @address += 'Col. ' + store.delivery_address.neighborhood + '.' + ' ' + store.delivery_address.city + ',' + ' ' + store.delivery_address.state
+    @address = @address.split.map(&:capitalize)*' '
+    @address
+  end
+
   def show_non_blank_field(field)
     field.blank? ? @field_value = '-' : @field_value = field
     @field_value

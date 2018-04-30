@@ -36,6 +36,14 @@
               <span>Cotizaciones</span>
             <% end %>
           <% end %>
+
+          <% if current_user.role.name == "admin-desk" %>
+            <%= link_to orders_new_order_for_prospects_path(prospect) do %>
+              <i class="fa fa-send-o link-to-price" aria-hidden="true"></i>
+              <span class="link-to-price hidden">Pedido</span>
+            <% end %>
+          <% end %>
+
         </td>
       </tr>
     <% end %>

@@ -1,0 +1,30 @@
+<div class="modal fade" id="completeOrder" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="ModalLabel">Datos del pedido</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="productId" />
+        <table class="tableInsideModal">
+          <tbody id="fields_for_complete_order">
+            <tr>
+              <td colspan="2">
+                <h3 id="title">Caja </h3>
+              </td>
+            </tr>
+            <%= render partial: "row_order_modal" %>
+          </tbody>
+        </table>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="addSupplierToForm">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>

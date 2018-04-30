@@ -7,25 +7,56 @@
         <th class="col-md-1">Productos</th>
         <th class="col-md-1">Piezas</th>
         <th class="col-md-1">Estatus</th>
+        <th class="col-md-1">Acciones</th>
       </tr>
     </thead>
     <tbody>
       <% @orders.each do |order| %>
         <tr>
           <td> <%= order.id %> </td>
-          <td> <%= order.category %> </td>
+          <td>
+            <% if order.category == 'de línea' %>
+              <span class="label label-success">
+                <%= order.category %>
+              </span>
+            <% elsif order.category == 'especial' %>
+              <span class="label label-primary">
+                <%= order.category %>
+              </span>
+            <% end %>
+          </td>
           <td> <%= order.product_requests.count %> </td>
           <td> <%= number_with_delimiter(sum_quantity(order)) %> </td>
-          <td> <%= order.status %> </td>
-          <td class="col-md-1">
-            <%= link_to orders_show_for_store_path(order) do %>
-              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-              <span>Ver</span>
+          <td>
+            <% if (order.status == 'mercancía asignada' || order.status == 'preparando') %>
+              <span class="label label-info">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'en espera' %>
+              <span class="label label-warning">
+                <%= order.status %>
+              </span>
+            <% elsif (order.status == 'preparado' || order.status == 'en ruta') %>
+              <span class="label label-primary">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'entregado' %>
+              <span class="label label-success">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'cancelada' %>
+              <span class="label label-danger">
+                <%= order.status %>
+              </span>
             <% end %>
           </td>
           <td class="col-md-1">
+            <%= link_to orders_show_for_store_path(order), class: 'link-extra-space' do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <span>Ver</span>
+            <% end %>
             <% if (order.status == 'en espera' || order.status == 'mercancía asignada' && (order.bill == nil)) %>
-              <%= link_to delete_order_path(order), data: { confirm: "Desa cancelar el pedido #{order.id}?. Esta acción no se puede deshacer." } do %>
+              <%= link_to delete_order_path(order), class: 'link-extra-space', data: { confirm: "Desa cancelar el pedido #{order.id}?. Esta acción no se puede deshacer." } do %>
                 <i class="fa fa-minus-square link-to-price" aria-hidden="true"></i>
                 <span class="link-to-price">Borrar</span>
               <% end %>

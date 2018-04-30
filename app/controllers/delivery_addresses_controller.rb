@@ -23,6 +23,25 @@ class DeliveryAddressesController < ApplicationController
     end
   end
 
+  def other_addresses_new
+    @store = Store.find(params[:store_id])
+    @delivery = DeliveryAddress.new
+  end
+
+  def other_deliveries
+    @store = Store.find(params[:delivery_address][:store_alter_id])
+    @delivery = DeliveryAddress.new(delivery_params)
+    if @delivery.save
+      @store.delivery_addresses << @delivery
+      redirect_to @delivery, notice: 'Se guardó exitosamente la dirección de entrega alternativa.'
+    else
+      redirect_to root_path, alert: 'Hubo un error, por favor intente más tarde.'
+    end
+  end
+
+  def other_deliveries_update
+  end
+
   def create
     @delivery = DeliveryAddress.new(delivery_params)
     respond_to do |format|
@@ -35,7 +54,6 @@ class DeliveryAddressesController < ApplicationController
         format.json { render json: @delivery.errors, status: :unprocessable_entity }
       end
     end
-
   end
 
   def update
@@ -98,7 +116,21 @@ private
 
 
   def delivery_params
-    params.require(:delivery_address).permit(:street, :exterior_number, :interior_number, :zipcode, :neighborhood, :city, :state, :country, :additional_references, :type_of_address)
+    params.require(:delivery_address).permit(
+      :street,
+      :exterior_number,
+      :interior_number,
+      :zipcode,
+      :neighborhood,
+      :city,
+      :state,
+      :country,
+      :additional_references,
+      :type_of_address,
+      :store_alter_id,
+      :store_id,
+      :name
+    )
   end
 
 end

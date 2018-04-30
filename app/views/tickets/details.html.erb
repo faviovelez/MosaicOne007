@@ -63,24 +63,26 @@
         <td> <%= number_to_currency(row["unit_value"]) %> </td>
         <td> <%= number_with_delimiter(row["quantity"]) %> </td>
         <td> <%= number_to_currency(row["discount"]) %> </td>
-        <td class="right"> <%= number_to_currency(row["total"]) %> </td>
+        <td class="right"> <%= number_to_currency(convert_total(row)) %> </td>
       </tr>
     <% end %>
     <tr>
       <td colspan="8"> </td>
       <td> <strong> Total: </strong> </td>
-      <td> <strong> <%= number_to_currency(get_total_with_returns_or_changes(@ticket)) %> </strong> </td>
+      <td> <strong> <%= number_to_currency(@total_rows_ticket) %> </strong> </td>
     </tr>
     <tr>
-      <td colspan="5"> </td>
+      <td colspan="3"> </td>
       <td colspan="2" class="border-top"> <strong> Fecha </strong> </td>
+      <td colspan="2" class="border-top"> <strong> Tipo </strong> </td>
       <td colspan="2" class="border-top"> <strong> Forma de pago </strong> </td>
       <td colspan="2" class="border-top"> <strong> Total </strong> </td>
     </tr>
     <% @payments_ticket.each do |payment| %>
       <tr>
-        <td colspan="5"> </td>
+        <td colspan="3"> </td>
         <td colspan="2"> <%= l payment.created_at.to_date, format: :short %> </td>
+        <td colspan="2"> <%= payment.payment_type %></td>
         <td colspan="2"> <%= payment.payment_form.description %> </td>
         <td colspan="2"> <%= number_to_currency(payment.total) %> </td>
       </tr>

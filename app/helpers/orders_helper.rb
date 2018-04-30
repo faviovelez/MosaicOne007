@@ -30,6 +30,7 @@ module OrdersHelper
 
   def get_orders
     @movements = []
+    @product_requests = []
     @orders.each do |order|
       order.movements.each do |movement|
         @movements << movement
@@ -37,8 +38,10 @@ module OrdersHelper
       order.pending_movements.each do |movement|
         @movements << movement
       end
+      order.product_requests.each do |pr|
+        @product_requests << pr
+      end
     end
-    @movements
   end
 
   def get_total_from_movements(prod_req)
@@ -60,6 +63,34 @@ module OrdersHelper
       @total += mov.total
     end
     @total
+  end
+
+  def get_total_from_pr_and_movs(prod_req)
+    prod_req_result = 0
+    @total = 0
+    @order = prod_req.order
+    @order.product_requests.each do |pr|
+      if pr.id == prod_req.id
+        prod_req_result = pr.product_id
+      end
+    end
+    @order.movements.each do |mov|
+      @total += mov.total if prod_req_result == mov.product_id
+    end
+    @order.pending_movements.each do |pm|
+      if pm.product.group
+        tot = ((pm.total * pm.quantity * pm.product.average) * 1.16).round(2)
+      else
+        tot = ((pm.total * pm.quantity) * 1.16).round(2)
+      end
+      @total += tot if prod_req_result == pm.product_id
+    end
+    @total
+  end
+
+  def image(movement)
+    movement.product.images.first.try(
+      :image_url, :thumb) || 'product_thumb.png'
   end
 
   def get_total
