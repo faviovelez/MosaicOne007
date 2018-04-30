@@ -76,6 +76,7 @@ class ServiceOffered < ActiveRecord::Base
     object.update(
       store: store
     )
+    end
   end
 
   def create_service_report
