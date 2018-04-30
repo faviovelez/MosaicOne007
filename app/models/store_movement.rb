@@ -78,7 +78,10 @@ class StoreMovement < ActiveRecord::Base
   def create_store_report
     create_reports_data(
       StoreSale
-    ).update(
+    )
+    object = StoreSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store).first
+    if object != []
+    object.update(
       store: store
     )
   end
