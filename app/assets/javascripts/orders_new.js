@@ -86,7 +86,7 @@ $(document).ready(function() {
 
   function addEvents(idProd){
     $("#close_icon_" + idProd).on("click", function(event) {
-      let row = $(this).parent().parent();
+      var row = $(this).parent().parent();
       row.remove();
       realTotal();
     });
@@ -217,7 +217,7 @@ $(document).ready(function() {
     bigTotal = 0;
 
     $.each($("[id^=total_]"), function(){
-      let thisAmount = parseFloat($(this).html()
+      var thisAmount = parseFloat($(this).html()
         .replace("$ ", "").replace(/,/g,''));
       if (isNaN(thisAmount)) {
         thisAmount = 0;
