@@ -51,7 +51,7 @@ class StoreMovement < ActiveRecord::Base
       update_business_group_report
     end
     if dont_exist_product_sale
-      create_product_report
+      puts 'hello'
     else
       update_product_report
     end
@@ -105,13 +105,13 @@ class StoreMovement < ActiveRecord::Base
     )
   end
 
-  def create_product_report
-    create_reports_data(
-      ProductSale
-    ).update(
-      product: product, store: store
-    )
-  end
+#  def create_product_report
+#    create_reports_data(
+#      ProductSale
+#    ).update(
+#      product: product, store: store
+#    )
+#  end
 
   def create_prospect_report
     create_reports_data(
