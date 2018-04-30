@@ -1,28 +1,50 @@
-<table class="table" id="productsList">
-  <thead>
-    <tr>
-      <th>Codigo unico</th>
-      <th>Razon</th>
-      <th>Inventario</th>
-      <th>Descripcion</th>
-      <th>Image</th>
-      <th>Cantidad</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
+<%= form_tag({ controller: 'warehouse', action: 'remove_product' }, method: 'post') do %>
+
+<h2> Seleccione los productos para la salida de mercancía </h2>
+
+<table class="wide-selector">
   <tbody>
-    <tr id='trForProduct1'>
-      <td class='select'>
-        <%= select_tag :product1, options_for_select([]), include_blank: 'Selecionar un producto' %>
-      </td>
+    <tr>
+      <td> <%= text_field_tag 'unique_code[]', nil, {class: 'select-product form-control unique_code searh-products-form', placeholder: 'Seleccione un producto'} %> </td>
     </tr>
   </tbody>
 </table>
-<a href='#' id='sendInfo' class='btn btn-primary' >Dar de baja</a>
-<br /> <br /><br />
-<br /> <br /><br />
-<div id='productInfo'>
-  <%= link_to product_product_images_path(product_id: 0), id: 'link_to_images' do %>
-    <%= image_tag 'product_thumb.png', class: 'hidden', id: 'not_image_temp' %>
+
+<table class="table" id="productsList">
+  <thead>
+    <tr class="head-blue red-headder">
+      <th> </th>
+      <th> Producto </th>
+      <th> En Almacén </th>
+      <th> Apartado </th>
+      <th> Disponible </th>
+      <th> Cantidad baja </th>
+      <th class="weightKg hidden"> Peso </th>
+      <th> Motivo </th>
+    </tr>
+  </thead>
+
+  <tbody id="fields_for_warehouse_entries">
+  </tbody>
+  </table>
+
+  <div class="actions">
+    <%= submit_tag 'Salida de Mercancía', class: 'main-button', id: 'generateEntry', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
+  </div><br /><br />
+
   <% end %>
-</div>
+
+<table class="hidden">
+<tbody id="newRowTableBody">
+  <tr class="newRow">
+    <%= render partial: "row_remove_entry", locals: { supplier: false } %>
+  </tr>
+</tbody>
+</table>
+
+<div class="hidden" id="action"><%= params[:action] %></div>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'jquery.autocomplete.min' %>
+  <%= javascript_include_tag 'ups_and_downs' %>
+<% end %>

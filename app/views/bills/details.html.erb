@@ -2,7 +2,7 @@
   <table>
     <thead>
       <tr>
-        <th colspan="9"> Detalles de la factura con
+        <th colspan="8"> Detalles de la factura con
           Serie: <%= @bill.sequence %>
           Folio: <%= @bill.folio %>
         </th>
@@ -12,6 +12,9 @@
           <% else %>
           <span class="label label-success"> <%= @bill.status %> </span>
           <% end %>
+        </th>
+        <th>
+          <%= get_payments_from_individual_bill(@bill) %>
         </th>
       </tr>
       <tr>

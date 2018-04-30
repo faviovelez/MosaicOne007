@@ -42,6 +42,8 @@ Rails.application.routes.draw do
 
   get 'products/special'
 
+  get 'tickets/tickets_closure_day_pdf'
+
   get 'bills/download_pdf/:id', to: 'bills#download_pdf', as: 'download_pdf'
 
   get 'bills/download_xml/:id', to: 'bills#download_xml', as: 'download_xml'
@@ -69,7 +71,6 @@ Rails.application.routes.draw do
   post 'bills/cfdi_process'
 
   get 'bills/global_preview'
-
 
   get 'bills/process_info'
 
@@ -153,12 +154,6 @@ Rails.application.routes.draw do
 
   get 'tickets/closure_day_detailed/:date', to: 'tickets#closure_day_detailed', as: 'tickets_closure_day_detailed'
 
-  get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
-
-  get 'orders/delete_product_from_order/:id', to: 'orders#delete_product_from_order', as: 'delete_product_from_order'
-
-  get 'orders/delete_order/:id', to: 'orders#delete_order', as: 'delete_order'
-
   get 'tickets/sales/:store/:year/:month', to: 'tickets#sales', as: 'sales'
 
   get 'bills/issued/:store/:year/:month', to: 'bills#issued', as: 'bills_issued'
@@ -168,6 +163,64 @@ Rails.application.routes.draw do
   get 'tikets/process_incomming_data'
 
   get 'products/show_product_csv'
+
+  get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
+
+  get 'orders/delete_product_from_order/:id', to: 'orders#delete_product_from_order', as: 'delete_product_from_order'
+
+  get 'orders/delete_order/:id', to: 'orders#delete_order', as: 'delete_order'
+
+  patch 'orders/change_delivery_address/:id', to: 'orders#change_delivery_address', as: 'change_delivery_address'
+
+  get 'orders/get/:product', to: 'orders#get_product', as: 'orders_get_product'
+
+  post 'orders/save_products/:store_id', to: 'orders#save_products', as: 'orders_save_product'
+
+  post 'orders/save_products_for_prospects/:prospect_id', to: 'orders#save_products_for_prospects', as: 'orders_save_products_for_prospects'
+
+  get 'orders/new_order_for_prospects/:prospect_id', to: 'orders#new_order_for_prospects', as: 'orders_new_order_for_prospects'
+
+  get 'orders/show/:ids', to: 'orders#show', as: 'orders_show'
+
+  get 'orders/show_for_store/:id', to: 'orders#show_for_store', as: 'orders_show_for_store'
+
+  post 'orders/confirm/:ids', to: 'orders#confirm', as: 'orders_confirm'
+
+  get 'orders/history'
+
+  get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc', as: 'request_authorisation'
+
+  get 'requests/authorisation_page/:id', to: 'requests#authorisation_page'
+
+  get 'requests/estimate_doc/:id', to: 'requests#estimate_doc', as: 'request_estimate'
+
+  get 'requests/estimate_page/:id', to: 'requests#estimate_page'
+
+  get 'requests/confirm/:id', to: 'requests#confirm', as: 'confirm_requests'
+
+  get 'requests/confirm_view/:id', to: 'requests#confirm_view', as: 'confirm_view_requests'
+
+  get 'requests/price/:id', to: 'requests#price', as: 'requests_price'
+
+  get 'requests/manager/:id', to: 'requests#manager', as: 'manager_requests'
+
+  get 'requests/manager_view/:id', to: 'requests#manager_view', as: 'manager_view_requests'
+
+  get 'requests/manager_after/:id', to: 'requests#manager_after', as: 'manager_after'
+
+  get 'design_requests/designer/:id', to: 'design_requests#designer_view', as: 'designer_view_requests'
+
+  get 'design_requests/designer/:id', to: 'design_requests#designer', as: 'designer_requests'
+
+  get 'delivery_addresses/other_addresses_new/:store_id', to: 'delivery_addresses#other_addresses_new', as: 'other_addresses'
+
+  get 'delivery_addresses/other_addresses_update/:store_id', to: 'delivery_addresses#other_addresses_update', as: 'other_addresses_update'
+
+  post 'delivery_addresses/other_deliveries'
+
+  patch 'delivery_addresses/other_deliveries_update'
+
+  put 'delivery_addresses/other_deliveries_update'
 
   devise_for :users
 
@@ -191,7 +244,7 @@ Rails.application.routes.draw do
   end
 
   resources :prospects do
-    resources :billing_addresses, :delivery_addresses, :requests
+    resources :billing_addresses, :delivery_addresses, :requests, :orders
   end
 
   resources :stores do
@@ -223,39 +276,21 @@ Rails.application.routes.draw do
 
   resources :services
 
-  get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc', as: 'request_authorisation'
-
-  get 'requests/authorisation_page/:id', to: 'requests#authorisation_page'
-
-  get 'requests/estimate_doc/:id', to: 'requests#estimate_doc', as: 'request_estimate'
-
-  get 'requests/estimate_page/:id', to: 'requests#estimate_page'
-
-  get 'requests/confirm/:id', to: 'requests#confirm', as: 'confirm_requests'
-
-  get 'requests/confirm_view/:id', to: 'requests#confirm_view', as: 'confirm_view_requests'
-
-  get 'requests/price/:id', to: 'requests#price', as: 'requests_price'
-
-  get 'requests/manager/:id', to: 'requests#manager', as: 'manager_requests'
-
-  get 'requests/manager_view/:id', to: 'requests#manager_view', as: 'manager_view_requests'
-
-  get 'requests/manager_after/:id', to: 'requests#manager_after', as: 'manager_after'
-
-  get 'design_requests/designer/:id', to: 'design_requests#designer_view', as: 'designer_view_requests'
-
-  get 'design_requests/designer/:id', to: 'design_requests#designer', as: 'designer_requests'
-
   post '/api/get_all_products', to: 'api#get_all_products'
 
   get '/api/get_all_products_for_bill', to: 'api#get_all_products_for_bill'
 
-  get '/api/get_info_from_products', to: 'api#get_info_from_products'
+  get '/api/get_just_products', to: 'api#get_just_products'
+
+  get '/api/get_info_from_product/:id', to: 'api#get_info_from_product', as: "get_info_from_product"
 
   get '/api/get_prospects_for_store', to: 'api#get_prospects_for_store'
 
   get 'api/select_prospects_info'
+
+  get '/api/get_all_suppliers_for_corporate', to: 'api#get_all_suppliers_for_corporate'
+
+  post 'warehouse/complete_preparation'
 
   get 'warehouse/new_own_entry'
 
@@ -263,7 +298,7 @@ Rails.application.routes.draw do
 
   post 'warehouse/remove_product', to: 'warehouse#remove_product', as: 'warehouse_remove_product'
 
-  get 'warehouse/show_remove', to: 'warehouse#show_removeds', as: 'warehouse_show_remove'
+  get 'warehouse/show_remove/:entry_codes', to: 'warehouse#show_removeds', as: 'warehouse_show_remove'
 
   post 'warehouse/confirm/:entry_codes', to: 'warehouse#confirm', as: 'warehouse_confirm'
 
@@ -289,6 +324,8 @@ Rails.application.routes.draw do
 
   get 'warehouse/waiting_orders'
 
+  get 'warehouse/ready_orders'
+
   get 'warehouse/waiting_products/:id', to: 'warehouse#waiting_products', as: 'warehouse_waiting_products'
 
   get 'warehouse/pending_products/:id', to: 'warehouse#pending_products', as: 'warehouse_pending_products'
@@ -305,19 +342,7 @@ Rails.application.routes.draw do
 
   get 'warehouse/prepare_order/:id', to: 'warehouse#prepare_order', as: 'warehouse_prepare_order'
 
-  patch 'orders/change_delivery_address/:id', to: 'orders#change_delivery_address', as: 'change_delivery_address'
-
-  get 'orders/get/:product', to: 'orders#get_product', as: 'orders_get_product'
-
-  post 'orders/save_products/:store', to: 'orders#save_products', as: 'orders_save_product'
-
-  get 'orders/show/:ids', to: 'orders#show', as: 'orders_show'
-
-  get 'orders/show_for_store/:id', to: 'orders#show_for_store', as: 'orders_show_for_store'
-
-  post 'orders/confirm/:ids', to: 'orders#confirm', as: 'orders_confirm'
-
-  get 'orders/history'
+  get 'warehouse/show_prepared_order/:id', to: 'warehouse#show_prepared_order', as: 'warehouse_show_prepared_order'
 
   post 'pos/received_data', to: 'pos#received_data', as: 'received_data'
 

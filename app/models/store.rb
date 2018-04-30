@@ -7,6 +7,7 @@ class Store < ActiveRecord::Base
   has_many :movements
   has_many :pending_movements
   belongs_to :delivery_address
+  has_many :delivery_addresses
   has_many :store_sales
   belongs_to :business_unit
   belongs_to :business_group
@@ -48,6 +49,8 @@ class Store < ActiveRecord::Base
   has_many :business_group_sales
   has_many :billing_addresses
   has_many :tickets_children
+  has_many :withdrawals
+  has_many :deposits
   mount_uploader :certificate, SatCertificateUploader
   mount_uploader :key, SatKeyUploader
   mount_uploader :initial_inventory, InitialInventoryUploader

@@ -272,7 +272,7 @@
 <% end %>
 
 <% if @bill == nil%>
-  <%= link_to 'Generar factura', bills_cfdi_process_path(tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]) %>
+  <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
 <% end %>
 
 <br /><br /><br /><br />

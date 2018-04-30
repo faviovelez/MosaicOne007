@@ -327,6 +327,7 @@ module BillsHelper
     @name
   end
 
+  # Hacer más cambios cuando haya la funcionalidad de cambio
   def get_returns_or_changes(ticket)
     difference = []
     ticket.children.each do |ticket|
@@ -341,31 +342,34 @@ module BillsHelper
 
   def get_total_with_returns_or_changes(ticket)
     get_returns_or_changes(ticket)
-    @ticket_total = ticket.total + @difference
+    @ticket_total = ticket.total - @difference
     @ticket_total
   end
 
-  def get_payments_from_individual_ticket(ticket)
-    get_total_with_returns_or_changes(ticket)
-    payments = []
-    payments << ticket.payments_amount
-    ticket.children.each do |t|
-        payments << t.payments_amount
+  def payments_for_bill_show(bill)
+    @payments_bill = []
+    @total_payments_bill = 0
+    bill.payments.each do |payment|
+      unless payment.payment_type == 'crédito'
+        @payments_bill << payment
+        if payment.payment_type == 'pago'
+          @total_payments_bill += payment.total
+        elsif payment.payment_type == 'devolución'
+          @total_payments_bill -= payment.total
+        end
+      end
     end
-    payments = payments.inject(&:+)
-    payments == nil ? @payments = 0 : @payments = payments
-    @ticket_total <= @payments ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency((@ticket_total - payments).round(2)).to_s
+    @total_payments_bill
+  end
+
+  def get_payments_on_sales_summary(bill)
+    payments_for_bill_show(bill)
+    (bill.total <= @total_payments_bill || bill.total - @total_payments_bill < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(bill.total - @total_payments_bill)
     @pending
   end
 
-  def get_payments_from_bill(bill)
-    payments = []
-    bill.payments.each do |payment|
-      payments << payment.total.to_f
-    end
-    payments = payments.inject(&:+)
-    payments == nil ? @payments = 0 : @payments = payments
-    bill.total <= @payments ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency((bill.total - @payments).round(2)).to_s
+  def get_payments_from_individual_bill(bill)
+    (bill.total <= @total_payments_bill || bill.total - @total_payments_bill < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(bill.total - @total_payments_bill)
     @pending
   end
 

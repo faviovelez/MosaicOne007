@@ -1,14 +1,1 @@
 <%= render partial: 'own_products', locals: { supplier: false } %>
-<%= render partial: 'product_show_template', locals: {supplier: false } %>
-
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'select2.min' %>
-<% end %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'select2.min' %>
-  <%= javascript_include_tag 'es' %>
-  <%= javascript_include_tag 'jquery.mask.min' %>
-  <%= javascript_include_tag 'underscore.min' %>
-  <%= javascript_include_tag 'warehouse' %>
-<% end %>

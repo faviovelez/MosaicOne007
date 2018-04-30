@@ -43,21 +43,21 @@ class TicketsController < ApplicationController
       date = Date.parse(params[:date]) unless (params[:date] == nil || params[:date] == '')
       midnight = date.midnight + 6.hours
       end_day = date.end_of_day + 6.hours
-      tickets = current_user.store.tickets.where(created_at: midnight..end_day).where.not(ticket_type: ['cancelado', 'pending']).order(:ticket_number)
+      tickets = current_user.store.tickets.where(created_at: midnight..end_day).where(ticket_type: ['venta', 'devolución', 'cambio', 'pago']).order(:ticket_number)
     elsif params[:options] == 'Mes actual'
       beginning_of = Date.today.beginning_of_month.midnight + 6.hours
       end_of = Date.today + 6.hours
-      tickets = current_user.store.tickets.where(created_at: beginning_of..end_of).where.not(ticket_type: ['cancelado', 'pending']).order(:ticket_number)
+      tickets = current_user.store.tickets.where(created_at: beginning_of..end_of).where(ticket_type: ['venta', 'devolución', 'cambio', 'pago']).order(:ticket_number)
     else
       initial_date = Date.parse(params[:initial_date]).midnight + 6.hours unless (params[:initial_date] == nil || params[:initial_date] == '')
       final_date = Date.parse(params[:final_date]).end_of_day + 6.hours unless (params[:final_date] == nil || params[:final_date] == '')
-      tickets = current_user.store.tickets.where(created_at: initial_date..final_date).where.not(ticket_type: ['cancelado', 'pending']).order(:ticket_number)
+      tickets = current_user.store.tickets.where(created_at: initial_date..final_date).where(ticket_type: ['venta', 'devolución', 'cambio', 'pago']).order(:ticket_number)
     end
     if tickets == []
       redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
     else
       @tickets = tickets
-      @month_tickets = current_user.store.tickets.where(created_at: (Date.today.beginning_of_month.midnight + 6.hours)..(Time.now + 6.hours)).where.not(ticket_type: ['cancelado', 'pending'])
+      @month_tickets = current_user.store.tickets.where(created_at: (Date.today.beginning_of_month.midnight + 6.hours)..(Time.now + 6.hours)).where(ticket_type: ['venta', 'devolución'])
       get_payments_from_ticket_day
       get_summary_from_ticket_day
       if params[:report_type] == 'Detallado'
@@ -71,7 +71,7 @@ class TicketsController < ApplicationController
   def get_payments_from_ticket_day
     first = @tickets.first.created_at.to_date.beginning_of_month.midnight + 6.hours
     second = Time.now + 6.hours
-    @month_tickets = current_user.store.tickets.where(created_at: (first)..(second)).where.not(ticket_type: ['cancelado', 'pending'])
+    @month_tickets = current_user.store.tickets.where(created_at: (first)..(second)).where(ticket_type: ['venta', 'devolución'])
     @cash = ['Efectivo', 0, []]
     @credit_card = ['Tarjeta de crédito', 0, []]
     @debit_card = ['Tarjeta de débito', 0, []]
@@ -79,28 +79,51 @@ class TicketsController < ApplicationController
     @transfer = ['Transferencia', 0, []]
     @credit_sales = ['Ventas a crédito', 0, []]
     @total_payment_forms = 0
-    @payment_forms = [
-    ]
+    @payment_forms = []
     @tickets.each do |ticket|
       ticket.payments.each do |payment|
         if payment.payment_form.description == 'Efectivo'
-          @cash[1] += payment.total
-          @cash[2] << payment.ticket.ticket_number
+          if payment.payment_type == 'pago'
+            @cash[1] += payment.total
+          elsif payment.payment_type == 'devolución'
+            @cash[1] -= payment.total
+          end
+          @cash[2] << payment.ticket.ticket_number unless @cash[2].include?(payment.ticket.ticket_number)
         elsif payment.payment_form.description == 'Cheque nominativo'
-          @check[1] += payment.total
-          @check[2] << payment.ticket.ticket_number
+          if payment.payment_type == 'pago'
+            @check[1] += payment.total
+          elsif payment.payment_type == 'devolución'
+            @check[1] -= payment.total
+          end
+          @check[2] << payment.ticket.ticket_number unless @check[2].include?(payment.ticket.ticket_number)
         elsif payment.payment_form.description == 'Transferencia electrónica de fondos'
-          @transfer[1] += payment.total
-          @transfer[2] << payment.ticket.ticket_number
+          if payment.payment_type == 'pago'
+            @transfer[1] += payment.total
+          elsif payment.payment_type == 'devolución'
+            @transfer[1] -= payment.total
+          end
+          @transfer[2] << payment.ticket.ticket_number unless @transfer[2].include?(payment.ticket.ticket_number)
         elsif payment.payment_form.description == 'Tarjeta de crédito'
-          @credit_card[1] += payment.total
-          @credit_card[2] << payment.ticket.ticket_number
+          if payment.payment_type == 'pago'
+            @credit_card[1] += payment.total
+          elsif payment.payment_type == 'devolución'
+            @credit_card[1] -= payment.total
+          end
+          @credit_card[2] << payment.ticket.ticket_number unless @credit_card[2].include?(payment.ticket.ticket_number)
         elsif payment.payment_form.description == 'Tarjeta de débito'
-          @debit_card[1] += payment.total
-          @debit_card[2] << payment.ticket.ticket_number
+          if payment.payment_type == 'pago'
+            @debit_card[1] += payment.total
+          elsif payment.payment_type == 'devolución'
+            @debit_card[1] -= payment.total
+          end
+          @debit_card[2] << payment.ticket.ticket_number unless @debit_card[2].include?(payment.ticket.ticket_number)
         elsif payment.payment_form.description == 'Por definir'
-          @credit_sales[1] += payment.total
-          @credit_sales[2] << payment.ticket.ticket_number
+          if payment.payment_type == 'pago'
+            @credit_sales[1] += payment.total
+          elsif payment.payment_type == 'devolución'
+            @credit_sales[1] -= payment.total
+          end
+          @credit_sales[2] << payment.ticket.ticket_number unless @credit_sales[2].include?(payment.ticket.ticket_number)
         end
       end
     end
@@ -113,6 +136,14 @@ class TicketsController < ApplicationController
     @payment_forms.each do |pay|
       @total_payment_forms += pay[1]
     end
+  end
+
+  def closure_day_pdf
+    get_date
+    pdf = render_to_string pdf: "closure_day_pdf", template: 'tickets/closure_day_pdf', page_size: 'Letter', layout: 'closure.html', encoding: "UTF-8"
+    save_path = Rails.root.join('public', 'uploads', 'closures', "#{@store.id}", 'cierre.pdf')
+    pdf_bill = File.open(save_path, 'wb'){ |file| file << pdf }
+    @pdf = pdf_bill
   end
 
   def get_summary_from_ticket_day
@@ -128,35 +159,65 @@ class TicketsController < ApplicationController
     @month_average = 0
     @tickets.each do |ticket|
       ticket.payments.each do |pay|
-        @day_payments += pay.total
+        if pay.payment_type == 'devolución'
+          @day_payments -= pay.total
+        elsif pay.payment_type == 'pago'
+          @day_payments += pay.total
+        end
       end
       ticket.store_movements.each do |sm|
-        @day_pieces += sm.quantity
-        @day_total += sm.total
-        @day_subtotal += sm.subtotal
-        @day_taxes += sm.taxes
-        @day_discount += sm.discount_applied
+        if sm.movement_type == 'devolución'
+          @day_pieces -= sm.quantity
+          @day_total -= sm.total
+          @day_subtotal -= sm.subtotal
+          @day_taxes -= sm.taxes
+          @day_discount -= sm.discount_applied
+        elsif sm.movement_type == 'venta'
+          @day_pieces += sm.quantity
+          @day_total += sm.total
+          @day_subtotal += sm.subtotal
+          @day_taxes += sm.taxes
+          @day_discount += sm.discount_applied
+        end
       end
       ticket.service_offereds.each do |so|
-        @day_pieces += so.quantity
-        @day_total += so.total
-        @day_subtotal += so.subtotal
-        @day_taxes += so.taxes
-        @day_discount += so.discount_applied
+        if so.service_type == 'devolución'
+          @day_pieces -= so.quantity
+          @day_total -= so.total
+          @day_subtotal -= so.subtotal
+          @day_taxes -= so.taxes
+          @day_discount -= so.discount_applied
+        elsif so.service_type == 'venta'
+          @day_pieces += so.quantity
+          @day_total += so.total
+          @day_subtotal += so.subtotal
+          @day_taxes += so.taxes
+          @day_discount += so.discount_applied
+        end
       end
     end
     @month_tickets.each do |ticket|
       ticket.store_movements.each do |sm|
-        @month_pieces += sm.quantity
-        @month_total += sm.total
+        if sm.movement_type == 'devolución'
+          @month_pieces -= sm.quantity
+          @month_total -= sm.total
+        elsif sm.movement_type == 'venta'
+          @month_pieces += sm.quantity
+          @month_total += sm.total
+        end
       end
       ticket.service_offereds.each do |so|
-        @month_pieces += so.quantity
-        @month_total += so.total
+        if so.service_type == 'devolución'
+          @month_pieces -= so.quantity
+          @month_total -= so.total
+        elsif so.service_type == 'venta'
+          @month_pieces += so.quantity
+          @month_total += so.total
+        end
       end
     end
-    month_tickets = @month_tickets.count
-    day_tickets = @tickets.count
+    month_tickets = @month_tickets.count - @month_tickets.where(ticket_type: 'pago').count
+    day_tickets = @tickets.count - @tickets.where(ticket_type: 'pago').count
     @average_day_total = @day_total / day_tickets
     @average_month_total = @month_total / month_tickets
     @average_day_pieces = @day_pieces / day_tickets
@@ -508,6 +569,15 @@ class TicketsController < ApplicationController
         @rows << hash
       end
     end
+    @total_rows_ticket = 0
+    @rows.each do |row|
+      if row["type"] == 'venta'
+        @total_rows_ticket += row["total"]
+      elsif row["type"] == 'devolución'
+        @total_rows_ticket -= row["total"]
+      end
+    end
+    @total_rows_ticket
     @rows
   end
 
@@ -523,19 +593,29 @@ class TicketsController < ApplicationController
 
   def payments_for_ticket_show
     @payments_ticket = []
+    @total_payments_ticket = 0
     @ticket.payments.each do |payment|
-      @payments_ticket << payment unless payment.payment_type == 'crédito'
+      unless payment.payment_type == 'crédito'
+        @payments_ticket << payment
+        if payment.payment_type == 'pago'
+          @total_payments_ticket += payment.total
+        elsif payment.payment_type == 'devolución'
+          @total_payments_ticket -= payment.total
+        end
+      end
     end
     @ticket.children.each do |ticket|
       ticket.payments.each do |payment|
-        @payments_ticket << payment unless payment.payment_type == 'crédito'
+        unless payment.payment_type == 'crédito'
+          @payments_ticket << payment
+          if payment.payment_type == 'pago'
+            @total_payments_ticket += payment.total
+          elsif payment.payment_type == 'devolución'
+            @total_payments_ticket -= payment.total
+          end
+        end
       end
     end
-    total = []
-    @payments_ticket.each do |pay|
-      total << pay.total
-    end
-    @total_payments_ticket = total.inject(&:+)
     @total_payments_ticket
   end
 

@@ -24,7 +24,7 @@
             <td> <%= number_to_currency(bill.total) %> </td>
             <td>  </td>
             <td>  </td>
-            <td> <%= get_payments_from_bill(bill) %> </td>
+            <td> <%= get_payments_on_sales_summary(bill) %> </td>
             <td style="width: 100px">
               <% unless bill.pdf_url == nil %>
                 <%= link_to download_pdf_path(bill), download: "Factura.pdf" do %>

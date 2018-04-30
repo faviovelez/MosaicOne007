@@ -1,0 +1,68 @@
+<% if @orders.count >= 1 %>
+  <table class="dataTable">
+    <thead>
+      <tr class="table-titles">
+        <th>Pedido</th>
+        <th>Tienda</th>
+        <th>Tipo</th>
+        <th>Cajas</th>
+        <th>Estatus</th>
+        <th>Chofer</th>
+        <th>Entregar en</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+        <tr>
+          <td> <%= order.id %> </td>
+          <td> <%= order.store.store_code %> - <%= order.store.store_name %> </td>
+          <% if order.category == 'de línea' %>
+              <td>
+                <span class="label label-primary">
+                  <%= order.category %>
+                </span>
+              </td>
+            <% elsif order.category == 'especial' %>
+              <td>
+                <span class="label label-success">
+                  <%= order.category %>
+                </span>
+              </td>
+            <% end %>
+          <td> <%= order.boxes %> </td>
+          <td>
+            <% if order.status == 'preparado' %>
+              <span class="label label-warning">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'en ruta' %>
+              <span class="label label-primary">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'entregado' %>
+              <span class="label label-success">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'cancelada' %>
+              <span class="label label-danger">
+                <%= order.status %>
+              </span>
+            <% end %>
+          </td>
+          <td> <%= driver_name(order) %> </td>
+          <td> <%= address_for_delivery(order) %> </td>
+          <td class="col-md-1">
+            <%= link_to warehouse_prepare_order_path(order) do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <span>Ver</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="individual-font">No hay pedidos en listos para entregarse.</p>
+<% end %>
+<%= render 'dataTables'%>

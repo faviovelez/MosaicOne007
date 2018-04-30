@@ -94,6 +94,7 @@ class BillsController < ApplicationController
 
   def details
     @bill = Bill.find(params[:bill])
+    payments_for_bill_show
   end
 
   def details_global
@@ -113,6 +114,22 @@ class BillsController < ApplicationController
   def select_bills
     store = current_user.store
     @bills = store.bills.where.not(status: 'cancelada').where.not(receiving_company: nil).where.not(total: nil).where(parent: nil)
+  end
+
+  def payments_for_bill_show
+    @payments_bill = []
+    @total_payments_bill = 0
+    @bill.payments.each do |payment|
+      unless payment.payment_type == 'crédito'
+        @payments_bill << payment
+        if payment.payment_type == 'pago'
+          @total_payments_bill += payment.total
+        elsif payment.payment_type == 'devolución'
+          @total_payments_bill -= payment.total
+        end
+      end
+    end
+    @total_payments_bill
   end
 
   def ticket_details
@@ -472,13 +489,13 @@ class BillsController < ApplicationController
   def select_orders(user_role = current_user.role.name)
     permitted_roles = ['admin-desk']
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless permitted_roles.include?(user_role)
-    @orders = Order.where.not(status: 'entregada').where(bill: nil)
+    @orders = Order.where.not(status: 'entregado').where(bill: nil)
     # Cambiar cuando reestructure la información
   end
 
   def select_info
     params[:tickets] == nil ? @tickets = nil : @tickets = Ticket.find(params[:tickets])
-    params[:orders] == nil ? @orders = nil : @orders = Order.find(params[:orders])
+    (params[:orders] == nil || params[:orders] == "") ? @orders = nil : @orders = Order.find(params[:orders])
     params[:bills] == nil ? @bills = nil : @bills = Bill.find(params[:bills])
     if (@tickets == nil  && @orders == nil)
       objects = @bills
@@ -507,7 +524,7 @@ class BillsController < ApplicationController
     @relation_type = params[:relation_type]
     params[:bill] == nil ? @bill = nil : @bill = Bill.find(params[:bill])
     params[:tickets] == nil ? tickets = nil : tickets = Ticket.find(params[:tickets])
-    params[:orders] == nil ? orders = nil : orders = Order.find(params[:orders])
+    (params[:orders] == nil || params[:orders] == "") ? orders = nil : orders = Order.find(params[:orders])
     if @bill != nil
       @store = @bill.store
       @bill.bill_type == 'global' ? @cfdi_type = 'global' : @cfdi_type = nil
@@ -558,7 +575,7 @@ class BillsController < ApplicationController
 
       @time = Time.now.strftime('%FT%T')
       if prospect.billing_address == nil
-        redirect_to bills_select_data_path, notice: "El prospecto elegido no tiene datos de facturación registrados."
+        redirect_to tickets_sales_summary_path, notice: "El cliente elegido no tiene datos de facturación registrados."
       else
         if (params[:cfdi_type] == 'global' || @cfdi_type == 'global')
           @general_bill = true
@@ -1250,8 +1267,8 @@ class BillsController < ApplicationController
       if params[:bill] != nil
         @bill = Bill.find(params[:bill])
       end
-      params[:tickets] == nil ? tickets = nil : tickets = Ticket.find(params[:tickets])
-      params[:orders] == nil ? orders = nil : orders = Order.find(params[:orders])
+      params[:tickets] == nil ? tickets = nil : tickets = Ticket.where(id: params[:tickets])
+      (params[:orders] == nil || params[:orders] == "") ? orders = nil : orders = Order.find(params[:orders])
       tickets == nil ? @objects = orders : @objects = tickets
       if (tickets == nil && @bill == nil)
         @objects = orders
@@ -1802,7 +1819,7 @@ XML
       @bill.update(cancel_receipt: @receipt_file, status: 'cancelada')
       redirect_to root_path, notice: "Se ha cancelado exitosamente la factura con Folio #{@bill.folio}."
     else
-      redirect_to root_path, notice: "Hubo un error al intentar cancelar, por favor intente de nuevo."
+      redirect_to root_path, alert: "Hubo un error al intentar cancelar, por favor intente de nuevo."
     end
 
   end
@@ -1989,7 +2006,7 @@ XML
       # El update de folio solo sirve para las facturas normales por el momento
       bill.update(xml: @stamped_xml, pdf: @pdf_file)
       if @objects != nil
-        if @objects.is_a?(Array)
+        if @objects.is_a?(Array) || @objects.is_a?(ActiveRecord::Relation)
           @objects.each do |object|
             object.update(bill: bill)
             object.payments.each do |payment|

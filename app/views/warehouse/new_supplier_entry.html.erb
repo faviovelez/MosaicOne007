@@ -1,19 +1,2 @@
-<%= render partial: 'own_products', locals: { supplier: true } %>
-<%= render partial: 'product_show_template', locals: {supplier: true } %>
+<%= render partial: 'supplier_products', locals: { supplier: true } %>
 <%= render partial: 'supplier_modal' %>
-
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'select2.min' %>
-  <%= stylesheet_link_tag 'formValidation.min' %>
-<% end %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'select2.min' %>
-  <%= javascript_include_tag 'es' %>
-  <%= javascript_include_tag 'jquery.mask.min' %>
-  <%= javascript_include_tag 'jquery.maskMoney.min' %>
-  <%= javascript_include_tag 'underscore.min' %>
-  <%= javascript_include_tag 'form_validation_pack.min' %>
-  <%= javascript_include_tag 'moment_2_11_2.min' %>
-  <%= javascript_include_tag 'warehouse' %>
-<% end %>

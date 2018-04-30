@@ -22,13 +22,22 @@ module ProductsHelper
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       manual_price = store.stores_inventories.where(product: product).first.manual_price
       if (manual_price == nil || manual_price == 0)
-        @price = (product.price * (1 + (store.overprice / 100)) * 1.16).round(2)
+        overp = ('%.2f' % (product.price * (1 + (store.overprice / 100)))).to_f
+        @price = (overp * 1.16).round(2)
       else
         @price = manual_price * 1.16
       end
     else
       @price = product.price
     end
+  end
+
+  def convert_warehouses_to_options
+    @warehouses_options = []
+    @warehouses.each do |w|
+      @warehouses_options << [w.name, w.id]
+    end
+    @warehouses_options
   end
 
   def get_sat_keys

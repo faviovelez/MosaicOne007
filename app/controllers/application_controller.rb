@@ -14,6 +14,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def reverse_params_array
+    n = 0
+    params.length.times do
+      params.values[n].reverse! if params.values[n].class == Array
+      n += 1
+    end
+  end
+
   def order_type
     current_user.store.cost_type.warehouse_cost_type == 'PEPS' ? 'ASC' : 'DESC'
   end

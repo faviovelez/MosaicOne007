@@ -22,9 +22,9 @@
       <% rows_for_ticket_show_helper(ticket) %>
       <% @rows.each do |row| %>
         <tr>
-          <td> <%= ticket.ticket_number %> </td>
-          <td> <%= ticket.ticket_type %> </td>
-          <td> <%= l ticket.created_at.to_date, format: :short %> </td>
+          <td> <%= row["ticket_number"] %> </td>
+          <td> <%= row["type"] %> </td>
+          <td> <%= l ticket.created_at.to_date %> </td>
           <td> <%= row["type"] %> </td>
           <td> <%= number_with_delimiter(row["quantity"]) %> </td>
           <td> <%= row["unique_code"] %> - <%= row["description"] %> <%= row["color"] %> </td>

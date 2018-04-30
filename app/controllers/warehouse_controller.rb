@@ -1,8 +1,8 @@
 class WarehouseController < ApplicationController
   # Este controller se utilizará para la funcionalidad de warehouse con varios modelos.
   before_action :authenticate_user!
-  before_action :set_movements, only: [:show, :confirm]
-  before_action :set_order, only: [:prepare_order, :waiting_products, :pending_products]
+  before_action :set_movements, only: [:show, :confirm, :show_removeds]
+  before_action :set_order, only: [:prepare_order, :waiting_products, :pending_products, :show_prepared_order]
 
   def new_own_entry
     @movement = Movement.new
@@ -61,12 +61,29 @@ class WarehouseController < ApplicationController
   end
 
   def prepare_order
+    if @order.status == 'preparado'
+      redirect_to warehouse_show_prepared_order_path(@order.id)
+    end
   end
 
   def waiting_products
   end
 
   def pending_products
+  end
+
+  def complete_preparation
+    @order = Order.find(params[:order])
+    @order.update(boxes: params[:boxes], status: "preparado")
+    counter = params[:pr].count
+    n = 0
+    counter.times do
+      if params[:pr][n] != ""
+        ProductRequest.find(params[:pr][n]).update(alert: params[:alert][n])
+      end
+      n += 1
+    end
+    redirect_to warehouse_show_prepared_order_path(@order.id), notice: "Se actualizó el pedido #{@order.id}."
   end
 
   def get_product
@@ -84,13 +101,11 @@ class WarehouseController < ApplicationController
 
   def save_own_product
     create_movements('alta')
-    attach_entry
     redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
   end
 
   def save_supplier_product
     create_movements('alta')
-    attach_entry
     attach_bill_received
     redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
   end
@@ -100,7 +115,6 @@ class WarehouseController < ApplicationController
 
   def remove_product
     create_movements('baja')
-    remove_of_inventory
     redirect_to warehouse_show_remove_path(@codes), notice: 'Se aplicaron las bajas solicitadas correctamente.'
   end
 
@@ -122,8 +136,8 @@ class WarehouseController < ApplicationController
 
   def new_supplier_entry
     @movement = Movement.new
-    role = Role.find_by_name('warehouse-staff') || Role.find_by_name('warehouse-admin') || Role.find_by_name('store') || Role.find_by_name('store-admin')
-    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless current_user.role == role
+    roles = ['warehouse-staff', 'warehouse-admin', 'store', 'store-admin']
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless roles.include?(current_user.role.name)
   end
 
   def orders_products
@@ -131,7 +145,7 @@ class WarehouseController < ApplicationController
   end
 
   def index
-    @entries = WarehouseEntry.joins(:movement).where('movements.cost' => nil)
+    @entries = Movement.where(cost: nil, movement_type: 'alta')
   end
 
   def edit
@@ -149,13 +163,18 @@ class WarehouseController < ApplicationController
 
   def form_for_movement
     @movement = Movement.find(params[:id])
-    @movement.cost = params[:movement][:cost]
+    cost = params[:movement][:cost].to_f
+    total_cost = cost * @movement.quantity
+    @sales_related = Movement.where(entry_movement: @movement)
+    @sales_related.each do |mov|
+      mov.update(cost: cost, total_cost: cost * mov.quantity)
+    end
+    @movement.update(cost: cost, total_cost: @movement.quantity * cost)
     if @movement.save
       redirect_to warehouse_index_path, notice: 'Se guardó el costo exitosamente.'
     else
       redirect_to root_path, alert: 'No se pudo guardar el movimiento.'
     end
-
   end
 
   def assign_warehouse_admin
@@ -167,7 +186,7 @@ class WarehouseController < ApplicationController
       change_status
       redirect_to warehouse_orders_path, notice: "Se asignó el pedido a #{name}."
     else
-      redirect_to warehouse_prepare_order_path, alert: 'No se pudo asignar el pedido.'
+      redirect_to warehouse_prepare_order_path(@order), alert: 'No se pudo asignar el pedido.'
     end
   end
 
@@ -185,6 +204,10 @@ class WarehouseController < ApplicationController
     end
   end
 
+  def ready_orders
+    @orders = Order.where(status: 'preparado')
+  end
+
   def change_status
     @order.status = 'preparando'
     @order.save
@@ -196,104 +219,111 @@ class WarehouseController < ApplicationController
     @order = Order.find(params[:id])
   end
 
-  def attach_entry
-    @collection.each do |movement|
-      if movement.save
-        put_inventory(movement)
-        after_processed = movement.process_pendings(
-          order_type, movement.quantity, movement
-        )
-        if after_processed > 0
-          movement.warehouse_entry = WarehouseEntry.create(
-            product:  movement.product,
-            quantity: after_processed,
-            movement: movement
-          )
-        end
-      end
-    end
-    @codes = @collection.map {|movement| movement.id}.join('-')
+  def attach_entry(product, quantity)
+    update_inventory(product, quantity)
+    WarehouseEntry.create(
+      product:  product,
+      quantity: quantity
+    )
   end
 
-  def put_inventory(movement)
-    begin
-      movement.product.inventory.set_quantity(
-        movement.quantity
-      )
-    rescue NoMethodError
-      movement.product.inventory = Inventory.create
-      movement.product.inventory.set_quantity(
-        movement.quantity
-      )
-    end
+  def update_inventory(product, quantity)
+    product.inventory.set_quantity(
+      quantity
+    )
   end
 
   def attach_bill_received
-    params.select {|p| p.match('trForProduct').present? }.each_with_index do |product, index|
-      movement = @collection[index]
-      info = product.second
-      if movement.save
-        supplier_info = info[:supplierInfo].split(',')
-        supplier = Supplier.find(supplier_info.first)
-        movement.update(supplier: supplier)
-        BillReceived.create(
-          folio: supplier_info.second,
-          date_of_bill: supplier_info.third,
-          subtotal: supplier_info.fourth,
-          taxes_rate: supplier_info.fifth,
-          total_amount: supplier_info[5],
-          supplier: supplier,
-          product: movement.product
-        )
+    counter = params[:id].count
+    n = 0
+    counter.times do
+      product = Product.find(params[:id][n])
+      unless params[:supplier] == nil
+        if (params[:supplier][n] == nil || params[:supplier][n] == "")
+          supplier = product.supplier
+        else
+          supplier = Supplier.find(params[:supplier][n])
+        end
       end
+      product = Product.find(params[:id][n])
+      BillReceived.create(
+        folio: params[:folio][n],
+        date_of_bill: params[:date_of_bill][n],
+        subtotal: params[:subtotal][n],
+        taxes_rate: params[:taxes_rate][n],
+        total_amount: params[:total_amount][n],
+        supplier: supplier,
+        product: product
+      )
+      n += 1
     end
-  end
-
-  def filter_movement(movement)
-    %w(id created_at updated_at).each do |deleted|
-      movement.delete(deleted)
-    end
-    movement
   end
 
   def create_movements(type)
-    @collection = []
-    params.select {|p| p.match('trForProduct').present? }.each do |product|
-      attributes = product.second
-      product = Product.find(attributes.first.second).first
-      quantity = attributes[:cantidad].to_i
-      movement = Movement.new.tap do |movement|
-        movement.product = product
-        movement.quantity = quantity
-        movement.movement_type = type
-        movement.user = current_user
-        movement.unique_code = product.unique_code
-        movement.supplier = product.supplier
-        movement.store = current_user.store
-        movement.business_unit = current_user.store.business_unit
-        unless (product.cost == 0 || product.cost == nil)
-          movement.cost = product.cost
-          movement.total_cost = (product.cost * quantity)
+    @codes = []
+    codes = []
+    counter = params[:id].count
+    n = 0
+    counter.times do
+      if params[:id][n].include?('_')
+        valid_id = params[:id][n].slice(0..(params[:id][n].index('_') -1))
+        product = Product.find(valid_id)
+        identifier = Movement.where(product: product, movement_type: "alta").count + 1
+        if params[:identifier] != nil
+          identifier_value = params[:identifier][n]
+        else
+          identifier_value = identifier
+        end
+      else
+        product = Product.find(params[:id][n])
+      end
+      quantity = params[:quantity][n].to_i
+      movement = Hash.new.tap do |movement|
+        if params[:reason] != nil
+          movement["reason"] = params[:reason][n]
+        else
+          movement["reason"] = nil
+        end
+        if params[:kg] != nil
+          movement["kg"] = params[:kg][n].to_f
+        else
+          movement["kg"] = nil
+        end
+        movement["identifier"] = identifier_value if params[:id][n].include?('_')
+        movement["product"] = product
+        movement["quantity"] = quantity
+        movement["movement_type"] = type
+        movement["user"]= current_user
+        movement["unique_code"] = product.unique_code
+        movement["store"] = current_user.store
+        movement["business_unit"] = current_user.store.business_unit
+        unless params[:supplier] == nil
+          if (params[:supplier][n] == nil || params[:supplier][n] == "")
+            movement["supplier"] = product.supplier
+          else
+            movement["supplier"] = Supplier.find(params[:supplier][n])
+          end
+        end
+        movement["cost"] = product.cost.to_f
+        if product.group
+          movement["total_cost"] = (product.cost.to_f * quantity * params[:kg][n].to_f).round(2)
+        else
+          movement["total_cost"] = (product.cost.to_f * quantity).round(2)
         end
       end
-      movement.save
-     @collection << movement unless @collection.include?(movement)
-    end
-  end
-
-  def remove_of_inventory
-    params.select {|p| p.match('trForProduct').present? }.each_with_index do |product, index|
-      params    = product.second
-      movement = @collection[index]
-      quantity = params[:cantidad].to_i
-      if movement.save
-        inventory = Inventory.find_by_product_id(params[:id])
-        inventory.set_quantity(quantity, '-')
-        movement.convert_warehouses(order_type, quantity)
-        movement.update(reason: params[:reason])
+      n += 1
+      if type == 'alta'
+        attach_entry(movement["product"], quantity)
+        last_mov = Movement.create(movement)
+        @codes << last_mov.id
+      else
+        codes = Movement.generate_objects(movement)
+        codes.each do |code|
+          @codes << code unless @codes.include?(code)
+        end
       end
     end
-    @codes = @collection.map {|movement| movement.id}.join('-')
+    @codes = @codes.join('-')
   end
 
   def set_movements

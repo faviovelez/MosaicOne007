@@ -23,7 +23,8 @@ class Movement < ActiveRecord::Base
   has_many :sales_movements
   belongs_to :entry_movement, class_name: 'Movement', foreign_key: 'entry_movement_id'
 
-  after_save :create_update_summary
+  after_create :create_update_summary
+  after_create :vinculate_warehouse, :check_for_pendings, if: :is_entry_movement
 
   def create_update_summary
     if (self.movement_type == 'venta' || self.movement_type == 'devolución')
@@ -216,7 +217,7 @@ class Movement < ActiveRecord::Base
   end
 
   def fix_cost
-    self.cost || 0
+    self.cost.to_f || 0
   end
 
   def fix_quantity
@@ -235,16 +236,6 @@ class Movement < ActiveRecord::Base
     self.product || self.product_request.product
   end
 
-  def split(quantity, cost)
-    movement = remove_attributes(self.attributes)
-    movement = Movement.create(movement)
-    movement.update_attributes(
-      quantity: quantity,
-      cost: cost,
-    )
-    movement
-  end
-
   def remove_attributes(attributes)
     %w(id created_at updated_at).each do |attr|
       attributes.delete(attr)
@@ -259,167 +250,287 @@ class Movement < ActiveRecord::Base
     end
   end
 
-  def transform(pending, inventory, mov)
-    if inventory.quantity >= pending.quantity
-      movement = Movement.create(
-        remove_attributes(pending.attributes)
-      )
-      if movement.save
-        movement.update(cost: mov.product.cost, total_cost: mov.product.cost * movement.quantity, entry_movement: mov)
-        inventory.set_quantity(pending.quantity, '-')
-        movement.product_request.update(
-          status: 'asignado'
-        )
-        status_arr = []
-        order = movement.order
-        order.product_requests.each do |pr|
-          status_arr << pr.status
-        end
-        if status_arr.uniq.length == 1 && status_arr.first == 'asignado'
-          order.update(status:'mercancía asignada')
-        end
-        #Revisar con qué atributos está creándose (precio y costo)
-        # y si se va a respetar precio de cuando se creó el pending_movement
-        return true
-      end
-    end
-    false
-  end
-
   def actual_inventory
     get_product.inventory.quantity || 0
   end
 
-  def related_warehouses(order_type)
+  def related_warehouses(object)
     WarehouseEntry.where(
-      product: self.get_product
-    ).order(
-      "created_at #{order_type}"
-    )
+      product: object
+    ).order(:id)
   end
 
-  def convert_warehouses(order_type, local_quantity)
-    @movement = []
-    related_warehouses(order_type).each do |entry|
-      @movement << entry.movement unless @movement.include?(entry.movement)
-      if local_quantity > entry.fix_quantity
-        local_quantity -= entry.fix_quantity
-        entry.destroy
-      else
-        entry.update(
-          quantity: entry.quantity - local_quantity
-        )
-      end
-    end
+  def is_entry_movement
+    !!(self.movement_type == 'alta')
   end
 
-  def process_pendings(order_type, quantity, mov)
-    inventories = {
-      actual:       actual_inventory - quantity,
-      to_processed: quantity
-    }
-    inventory = get_product.inventory
-    PendingMovement.where(
-      product: self.get_product
-    ).order(
-      "created_at #{order_type}"
-    ).each do |pending|
-      # Para ignorar los PendingMovements negativos creados al devolver productos facturados
+  def check_for_pendings
+    product = self.product
+    quantity = product.inventory.quantity
+    pendings = PendingMovement.where(product: product)
+    pendings.each do |pending|
       unless pending.quantity <= 0
-        if transform(pending, inventory, mov)
-          convert_warehouses(order_type, pending.quantity)
+        if quantity >= pending.quantity
+          generate_objects_instance(pending)
           pending.destroy
-          process_inventories(inventories, pending.quantity)
-          inventories[:actual] = actual_inventory
         end
       end
     end
-    inventories[:to_processed]
   end
 
-  def process_extras(order_type, total_quantity, order)
-    self.update(order: order)
-    bigger_than_entry = false
-    related_warehouses(order_type).each do |entry|
-      if total_quantity >= entry.fix_quantity
+  def update_movement_and_requests(movement)
+    movement.product_request.update(
+      status: 'asignado'
+    )
+    status_arr = []
+    order = movement.order
+    order.product_requests.each do |pr|
+      status_arr << pr.status
+    end
+    if status_arr.uniq.length == 1 && status_arr.first == 'asignado'
+      order.update(status:'mercancía asignada')
+    end
+  end
 
-        bigger_than_entry = true
-        mov = entry.movement
-        mov_sales = entry.movement.sales
-        mov_sales << Movement.last unless mov_sales.include?(Movement.last)
+  def generate_objects_instance(object)
+    @model_collection = []
+    # Genera Movements, Altera warehouses e Inventories
+    if object.class == PendingMovement
+      hash = remove_attributes(object.attributes)
+      product = Product.find(hash["product_id"])
+    else
+      hash = object
+      product = hash["product"]
+    end
+    hash_1 = hash.dup
+    total_quantity = hash_1["quantity"]
+    product.inventory.update(quantity: product.inventory.quantity - total_quantity)
+    WarehouseEntry.where(product: product).order(:id).each do |entry|
+      hash_1 = hash.dup
+      mov_sales = entry.movement.sales
+      mov = entry.movement
+      hash_1["entry_movement"] = mov
+      if product.group
+        hash_1["kg"] = mov.kg
+        hash_1["identifier"] = mov.identifier
+      end
+      cost = ('%.2f' % mov.cost.to_f).to_f
+        if total_quantity >= entry.fix_quantity
         q = entry.fix_quantity
-        c = entry.movement.fix_cost
-
-        if Movement.last.quantity == nil
-          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2), initial_price: Movement.last.initial_price.round(2), final_price: Movement.last.final_price.round(2))
+        hash_1["quantity"] = q
+        hash_1["cost"] = cost
+        hash_1["total_cost"] = (cost * q).round(2)
+        unless hash_1["subtotal"] == nil
+          subtotal = hash_1["subtotal"]
+          actual_subtotal = (subtotal * q).round(2)
+          discount = hash_1["discount_applied"]
+          actual_discount = (discount * q).round(2)
+          if product.group
+            actual_subtotal = (subtotal * q * mov.kg).round(2)
+            actual_discount = (discount * q * mov.kg).round(2)
+            hash_1["total_cost"] = (cost * q * mov.kg).round(2)
+          end
+          hash_1["subtotal"] = actual_subtotal
+          hash_1["discount_applied"] = actual_discount
+          hash_1["automatic_discount"] = actual_discount
+          to_appy_taxes = ((actual_subtotal - actual_discount) * 0.16).round(2)
+          actual_taxes = to_appy_taxes
+          hash_1["taxes"] = actual_taxes
+          hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
         end
-
+        Movement.create(hash_1)
+        update_movement_and_requests(Movement.last) unless Movement.last.movement_type == 'baja'
+        mov_sales << Movement.last unless mov_sales.include?(Movement.last)
+        @model_collection << Movement.last.id
         total_quantity -= Movement.last.quantity
-        temp_quantity = Movement.last.quantity
         entry.destroy
       else
-        bigger_than_entry = false
-        mov = entry.movement
-        mov_sales = entry.movement.sales
-        mov_sales << Movement.last unless mov_sales.include?(Movement.last)
         q = total_quantity
-        c = entry.movement.fix_cost
-
-        if Movement.last.quantity == nil
-          Movement.last.update(entry_movement: mov, quantity: q, cost: c, total_cost: (c * q).round(2), discount_applied: (Movement.last.discount_applied * q).round(2), automatic_discount: (Movement.last.automatic_discount * q).round(2), taxes: (Movement.last.taxes * q).round(2), subtotal: (Movement.last.subtotal * q).round(2), total: (Movement.last.subtotal * q).round(2) - (Movement.last.discount_applied * q).round(2) + (Movement.last.taxes * q).round(2), initial_price: Movement.last.initial_price.round(2), final_price: Movement.last.final_price.round(2))
+        hash_1["quantity"] = q
+        hash_1["cost"] = cost
+        hash_1["total_cost"] = (cost * q).round(2)
+        unless hash_1["subtotal"] == nil
+          subtotal = hash_1["subtotal"]
+          actual_subtotal = (subtotal * q).round(2)
+          discount = hash_1["discount_applied"]
+          actual_discount = (discount * q).round(2)
+          if product.group
+            actual_subtotal = (subtotal * q * mov.kg).round(2)
+            actual_discount = (discount * q * mov.kg).round(2)
+            hash_1["total_cost"] = (cost * q * mov.kg).round(2)
+          end
+          hash_1["subtotal"] = actual_subtotal
+          hash_1["discount_applied"] = actual_discount
+          hash_1["automatic_discount"] = actual_discount
+          to_appy_taxes = ((actual_subtotal - actual_discount) * 0.16).round(2)
+          actual_taxes = to_appy_taxes
+          hash_1["taxes"] = actual_taxes
+          hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
         end
-
-        temp_quantity = total_quantity
-        entry.update(quantity: (entry.fix_quantity - total_quantity))
+        Movement.create(hash_1)
+        update_movement_and_requests(Movement.last) unless Movement.last.movement_type == 'baja'
+        @model_collection << Movement.last.id
+        mov_sales << Movement.last unless mov_sales.include?(Movement.last)
+        entry.update(quantity: entry.quantity - total_quantity)
         total_quantity -= Movement.last.quantity
       end
-      if bigger_than_entry
-        split(nil, entry.movement.fix_cost)
-      end
-      get_product.update_inventory_quantity(
-        temp_quantity, self.movement_type
-      )
       break if total_quantity == 0
     end
-  rescue
-    return false
+    return @model_collection
+  end
+
+  def vinculate_warehouse
+    WarehouseEntry.last.update(movement: self)
   end
 
   class << self
 
-    def initialize_with(object, user ,type)
-      product = object.product
-      store   = Store.find_by_store_name('Corporativo Compresor')
-      prospect = Prospect.find_by_store_prospect_id(user.store)
-      if prospect.store_prospect.store_type.store_type == 'tienda propia'
-        discount = product.discount_for_stores / 100
-      elsif prospect.store_prospect.store_type.store_type == 'franquicia'
-        discount = product.discount_for_franchises / 100
-      end
-      disc_app = product.price * discount
-      unit_price = product.price * (1 - discount)
-      create(
-        product: product,
-        unique_code: product.unique_code,
-        store: store,
-        initial_price: product.price,
-        automatic_discount: disc_app,
-        discount_applied: disc_app,
-        final_price: unit_price,
-        taxes: unit_price * 0.16,
-        subtotal: product.price,
-        supplier: product.supplier,
-        movement_type: type,
-        user: user,
-        business_unit: store.business_unit,
-        prospect: prospect,
-        product_request: object,
-        tax: Tax.find(2)
+    def update_movement_and_requests_for_class(movement)
+      movement.product_request.update(
+        status: 'asignado'
       )
-      if (user.role.name == 'store' || user.role.name == 'store-admin')
-        Movement.last.update(buyer_user: user)
+      status_arr = []
+      order = movement.order
+      order.product_requests.each do |pr|
+        status_arr << pr.status
+      end
+      if status_arr.uniq.length == 1 && status_arr.first == 'asignado'
+        order.update(status:'mercancía asignada')
+      end
+    end
+
+    def generate_objects(object)
+      @model_collection = []
+      # Genera Movements, Altera warehouses e Inventories
+      if object.class == PendingMovement
+        hash = remove_attributes(object)
       else
-        Movement.last.update(seller_user: user)
+        hash = object
+      end
+      hash_1 = hash.dup
+      total_quantity = hash_1["quantity"]
+      product = hash_1["product"]
+      product.inventory.update(quantity: product.inventory.quantity - total_quantity)
+      WarehouseEntry.where(product: product).order(:id).each do |entry|
+        hash_1 = hash.dup
+        mov_sales = entry.movement.sales
+        mov = entry.movement
+        hash_1["entry_movement"] = mov
+        if product.group
+          hash_1["kg"] = mov.kg
+          hash_1["identifier"] = mov.identifier
+        end
+        cost = ('%.2f' % mov.cost.to_f).to_f
+        if total_quantity >= entry.fix_quantity
+          q = entry.fix_quantity
+          hash_1["quantity"] = q
+          hash_1["cost"] = cost
+          hash_1["total_cost"] = (cost * q).round(2)
+          unless hash_1["subtotal"] == nil
+            subtotal = hash_1["subtotal"]
+            actual_subtotal = (subtotal * q).round(2)
+            discount = hash_1["discount_applied"]
+            actual_discount = (discount * q).round(2)
+            if product.group
+              actual_subtotal = (subtotal * q * mov.kg).round(2)
+              actual_discount = (discount * q * mov.kg).round(2)
+              hash_1["total_cost"] = (cost * q * mov.kg).round(2)
+            end
+            hash_1["subtotal"] = actual_subtotal
+            hash_1["discount_applied"] = actual_discount
+            hash_1["automatic_discount"] = actual_discount
+            to_appy_taxes = ((actual_subtotal - actual_discount) * 0.16).round(2)
+            actual_taxes = to_appy_taxes
+            hash_1["taxes"] = actual_taxes
+            hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
+          end
+          Movement.create(hash_1)
+          if hash_1.class == Hash
+            update_movement_and_requests_for_class(Movement.last) unless Movement.last.movement_type == 'baja'
+          else
+            update_movement_and_requests(Movement.last) unless Movement.last.movement_type == 'baja'
+          end
+          mov_sales << Movement.last unless mov_sales.include?(Movement.last)
+          @model_collection << Movement.last.id
+          total_quantity -= Movement.last.quantity
+          entry.destroy
+        else
+          q = total_quantity
+          hash_1["quantity"] = q
+          hash_1["cost"] = cost
+          hash_1["total_cost"] = (cost * q).round(2)
+          unless hash_1["subtotal"] == nil
+            subtotal = hash_1["subtotal"]
+            actual_subtotal = (subtotal * q).round(2)
+            discount = hash_1["discount_applied"]
+            actual_discount = (discount * q).round(2)
+            if product.group
+              actual_subtotal = (subtotal * q * mov.kg).round(2)
+              actual_discount = (discount * q * mov.kg).round(2)
+              hash_1["total_cost"] = (cost * q * mov.kg).round(2)
+            end
+            hash_1["subtotal"] = actual_subtotal
+            hash_1["discount_applied"] = actual_discount
+            hash_1["automatic_discount"] = actual_discount
+            to_appy_taxes = ((actual_subtotal - actual_discount) * 0.16).round(2)
+            actual_taxes = to_appy_taxes
+            hash_1["taxes"] = actual_taxes
+            hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
+          end
+          Movement.create(hash_1)
+          if hash.class == Hash
+            update_movement_and_requests_for_class(Movement.last) unless Movement.last.movement_type == 'baja'
+          else
+            update_movement_and_requests(Movement.last) unless Movement.last.movement_type == 'baja'
+          end
+          @model_collection << Movement.last.id
+          mov_sales << Movement.last unless mov_sales.include?(Movement.last)
+          entry.update(quantity: entry.quantity - total_quantity)
+          total_quantity -= Movement.last.quantity
+        end
+        break if total_quantity == 0
+      end
+      return @model_collection
+    end
+
+    def new_object(product_request, user, type, discount, prospect)
+      product = product_request.product
+      store = Store.find_by_store_name('Corporativo Compresor')
+      prospect = prospect
+      price = ('%.2f' % product.price).to_f
+      disc_app = ('%.2f' % (product.price * discount)).to_f
+      unit_price = ('%.2f' % (price * (1 - discount))).to_f
+      cost = ('%.2f' % product.cost.to_f).to_f
+      hash = Hash.new.tap do |hash|
+        hash["product"] = product
+        hash["quantity"] = product_request.quantity
+        hash["unique_code"] = product.unique_code
+        hash["store"] = store
+        hash["order"] = product_request.order
+        hash["initial_price"] = price
+        hash["automatic_discount"] = disc_app
+        hash["discount_applied"] = disc_app
+        hash["final_price"] = unit_price
+        hash["taxes"] = unit_price * 0.16
+        hash["cost"] = cost
+        hash["subtotal"] = product.price
+        hash["supplier"] = product.supplier
+        hash["movement_type"] = type
+        hash["user"] = user
+        hash["business_unit"] = store.business_unit
+        hash["prospect"] = prospect
+        hash["product_request"] = product_request
+        hash["tax"] = Tax.find(2)
+        if (user.role.name == 'store' || user.role.name == 'store-admin')
+          hash["buyer_user"] = user
+        else
+          hash["seller_user"] = user
+        end
+      end
+      if hash.class == Hash
+        generate_objects(hash)
+      else
+        generate_objects_instance(hash)
       end
     end
 

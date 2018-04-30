@@ -24,6 +24,12 @@ class Prospect < ActiveRecord::Base
 
   after_save :create_update_change_table
 
+  after_create :update_web_true
+
+  def update_web_true
+    self.update(web: true)
+  end
+
   def save_web_id
     self.update(web_id: self.id)
   end
