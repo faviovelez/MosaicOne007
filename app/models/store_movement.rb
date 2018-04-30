@@ -260,17 +260,6 @@ class StoreMovement < ActiveRecord::Base
           year: year
         )
       end
-    else
-      object.create(
-        subtotal: subtotal,
-        discount: discount,
-        taxes: taxes,
-        total: total,
-        cost: cost,
-        quantity: quantity,
-        month: month,
-        year: year
-      )      
     end
   end
 

@@ -2,6 +2,8 @@ module TicketsHelper
 
   def discount_percentage(summary)
     @discount_percentage = summary.discount / summary.total * 100
+    @discount_percentage.nan? ? @discount_percentage = 0 : @discount_percentage
+    @discount_percentage
   end
 
   def margin_currency(summary)
@@ -11,6 +13,8 @@ module TicketsHelper
   def margin_percentage(summary)
     margin_currency(summary)
     @margin_percentage = @margin_currency / summary.total * 100
+    @margin_percentage.nan? ? @margin_percentage = 0 : @margin_percentage
+    @margin_percentage
   end
 
   def tickets_exists(month, year)
