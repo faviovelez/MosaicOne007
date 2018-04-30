@@ -1267,8 +1267,8 @@ class BillsController < ApplicationController
       if params[:bill] != nil
         @bill = Bill.find(params[:bill])
       end
-      params[:tickets] == nil ? tickets = nil : tickets = Ticket.where(id: params[:tickets])
-      (params[:orders] == nil || params[:orders] == "") ? orders = nil : orders = Order.find(params[:orders])
+      params[:tickets] == nil ? tickets = nil : tickets = Ticket.where(id: params[:tickets].split("/"))
+      (params[:orders] == nil || params[:orders] == "") ? orders = nil : orders = Order.find(params[:orders].split("/"))
       tickets == nil ? @objects = orders : @objects = tickets
       if (tickets == nil && @bill == nil)
         @objects = orders
@@ -1283,7 +1283,6 @@ class BillsController < ApplicationController
         @relation_type = params[:relation_type]
         get_series_and_folio
       end
-
       if @bill == nil
         if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
           @store = current_user.store
@@ -1390,7 +1389,6 @@ class BillsController < ApplicationController
         else
           @discount_any = false
         end
-
         if (params[:relation_type] != nil && params[:relation_type] != '')
           relation_type = RelationType.find_by_key(params[:relation_type])
           @relation = relation_type
@@ -1598,8 +1596,7 @@ class BillsController < ApplicationController
     @final_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @xml_path = "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @sat_path = Rails.root.join('lib', 'sat')
-    @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
-  end
+    @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")  end
 
   #FACTURA GENERAL:
     # SIEMPRE 'I' (TipoDeComprobante) TypeOfBill.find(1).key
