@@ -72,7 +72,7 @@ class ServiceOffered < ActiveRecord::Base
       StoreSale
     )
     object = StoreSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store).first
-    if object != []
+    if (object != [] || object != nil)
     object.update(
       store: store
     )
