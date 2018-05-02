@@ -15,16 +15,14 @@ class StoreMovement < ActiveRecord::Base
 
   before_update :create_update_summary
 
-  after_create :save_web_id
+  after_create :save_web_id_and_set_web_true
 
-  after_create :update_web_true
-
-  def save_web_id
-    self.update(web_id: self.id)
+  def save_web_id_and_set_web_true
+    self.update(web_id: self.id, web: true)
   end
 
-  def update_web_true
-    self.update(web: true)
+  def not_allowed_types
+    return not_allowed = ['alta', 'baja', 'alta automática', 'baja automática']
   end
 
   def create_update_summary
@@ -35,16 +33,14 @@ class StoreMovement < ActiveRecord::Base
     end
   end
 
+  # Se van a sustituir por queries
   def dont_exist_product_sale
     !!(ProductSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store, product: product).first.nil?)
   end
 
+  # Se van a sustituir por queries
   def dont_exist_prospect_sale
     !!(ProspectSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store, prospect: prospect).first.nil?)
-  end
-
-  def dont_exist_store_sale
-    !!(StoreSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store).first.nil?)
   end
 
   def dont_exist_store_sale
@@ -76,24 +72,27 @@ class StoreMovement < ActiveRecord::Base
   end
 
   def create_store_report
-    create_reports_data(
-      StoreSale
-    )
-    object = StoreSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store).first
-    if (object != [] || object != nil) 
-    object.update(
-      store: store
-    )
+    not_allowed = not_allowed_types
+    if !(not_allowed.include?(self.movement_type))
+      create_reports_data(
+        StoreSale
+      )
+      object = StoreSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store).first
+      if (object != [] || object != nil)
+      object.update(
+        store: store
+      )
+      end
     end
   end
 
-#  def create_product_report
-#    create_reports_data(
-#      ProductSale
-#    ).update(
-#      product: product, store: store
-#    )
-#  end
+  def create_product_report
+    create_reports_data(
+      ProductSale
+    ).update(
+      product: product, store: store
+    )
+  end
 
   def create_prospect_report
     create_reports_data(

@@ -12,18 +12,12 @@ class BillingAddress < ActiveRecord::Base
 
   validates :rfc, presence: { message: 'Debe escribir el RFC.'}
 
-  after_create :save_web_id
+  after_create :save_web_id_and_set_web_true
 
   after_save :create_update_change_table
 
-  after_create :update_web_true
-
-  def update_web_true
-    self.update(web: true)
-  end
-
-  def save_web_id
-    self.update(web_id: self.id)
+  def save_web_id_and_set_web_true
+    self.update(web_id: self.id, web: true)
   end
 
   def create_update_change_table
