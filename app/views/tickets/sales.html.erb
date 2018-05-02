@@ -29,7 +29,7 @@
             <td> <%= number_to_currency(ticket.total) %> </td>
             <td> <%= number_to_currency(get_returns_or_changes(ticket)) %> </td>
             <td> <%= number_to_currency(get_total_with_returns_or_changes(ticket)) %> </td>
-            <td> <%=get_payments_on_sales_summary(ticket) %> </td>
+            <td> <%= get_payments_on_sales_summary(ticket) %> </td>
             <td> <%= get_bill_status(ticket) %> </td>
             <% if ticket.bill == nil %>
               <td> - </td>

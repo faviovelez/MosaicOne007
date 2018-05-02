@@ -86,13 +86,13 @@ module TicketsHelper
         hash["unique_code"] = movement.product.unique_code
         hash["description"] = movement.product.description
         hash["color"] = movement.product.exterior_color_or_design
-        hash["unit_value"] = movement.initial_price
-        hash["quantity"] = movement.quantity
-        hash["discount"] = movement.discount_applied
-        hash["total"] = movement.total
-        hash["subtotal"] = movement.subtotal
-        hash["taxes"] = movement.taxes
-        hash["discount"] = movement.discount_applied
+        hash["unit_value"] = movement.initial_price.to_f
+        hash["quantity"] = movement.quantity.to_i
+        hash["discount"] = movement.discount_applied.to_f
+        hash["total"] = movement.total.to_f
+        hash["subtotal"] = movement.subtotal.to_f
+        hash["taxes"] = movement.taxes.to_f
+        hash["discount"] = movement.discount_applied.to_f
       end
       @rows << hash
     end
@@ -104,13 +104,13 @@ module TicketsHelper
         hash["date"] = service.created_at.to_date
         hash["unique_code"] = service.service.unique_code
         hash["description"] = service.service.description
-        hash["unit_value"] = service.initial_price
-        hash["quantity"] = service.quantity
-        hash["discount"] = service.discount_applied
-        hash["total"] = service.total
-        hash["subtotal"] = service.subtotal
-        hash["taxes"] = service.taxes
-        hash["discount"] = service.discount_applied
+        hash["unit_value"] = service.initial_price.to_f
+        hash["quantity"] = service.quantity.to_i
+        hash["discount"] = service.discount_applied.to_f
+        hash["total"] = service.total.to_f
+        hash["subtotal"] = service.subtotal.to_f
+        hash["taxes"] = service.taxes.to_f
+        hash["discount"] = service.discount_applied.to_f
       end
       @rows << hash
     end

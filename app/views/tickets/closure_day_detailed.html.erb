@@ -6,7 +6,6 @@
     </tr>
     <tr>
       <th> Ticket </th>
-      <th> Tipo </th>
       <th> Fecha </th>
       <th> Movimiento </th>
       <th class="quantity-width"> Cantidad </th>
@@ -23,7 +22,6 @@
       <% @rows.each do |row| %>
         <tr>
           <td> <%= row["ticket_number"] %> </td>
-          <td> <%= row["type"] %> </td>
           <td> <%= l ticket.created_at.to_date %> </td>
           <td> <%= row["type"] %> </td>
           <td> <%= number_with_delimiter(row["quantity"]) %> </td>
