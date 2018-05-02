@@ -4,10 +4,10 @@ class Deposit < ActiveRecord::Base
   belongs_to :store
   belongs_to :cash_register
 
-  after_create :update_web_true
+  after_create :save_web_id_and_set_web_true
 
-  def update_web_true
-    self.update(web: true)
+  def save_web_id_and_set_web_true
+    self.update(web_id: self.id, web: true)
   end
 
 end
