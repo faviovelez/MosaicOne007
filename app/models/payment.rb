@@ -15,16 +15,10 @@ class Payment < ActiveRecord::Base
 
   before_update :create_update_summary
 
-  after_create :save_web_id
+  after_create :save_web_id_and_set_web_true
 
-  after_create :update_web_true
-
-  def save_web_id
-    self.update(web_id: self.id)
-  end
-
-  def update_web_true
-    self.update(web: true)
+  def save_web_id_and_set_web_true
+    self.update(web_id: self.id, web: true)
   end
 
   def create_update_summary

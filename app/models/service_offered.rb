@@ -9,18 +9,12 @@ class ServiceOffered < ActiveRecord::Base
   belongs_to :ticket
   belongs_to :prospect
 
-  after_create :save_web_id
-
-  after_create :update_web_true
+  after_create :save_web_id_and_set_web_true
 
   before_update :create_update_summary
 
-  def save_web_id
-    self.update(web_id: self.id)
-  end
-
-  def update_web_true
-    self.update(web: true)
+  def save_web_id_and_set_web_true
+    self.update(web_id: self.id, web: true)
   end
 
   def create_update_summary
@@ -31,10 +25,12 @@ class ServiceOffered < ActiveRecord::Base
     end
   end
 
+  # Se van a sustituir por queries
   def dont_exist_service_sale
     !!(ServiceSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store, service: self.service).first.nil?)
   end
 
+  # Se van a sustituir por queries
   def dont_exist_prospect_sale
     !!(ProspectSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store, prospect: self.prospect).first.nil?)
   end

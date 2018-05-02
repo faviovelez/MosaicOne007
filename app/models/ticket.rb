@@ -15,16 +15,10 @@ class Ticket < ActiveRecord::Base
   has_many :tickets_child
   belongs_to :parent, class_name: 'Ticket', foreign_key: 'parent_id'
 
-  after_create :save_web_id
+  after_create :save_web_id_and_set_web_true
 
-  after_create :update_web_true
-
-  def save_web_id
-    self.update(web_id: self.id)
-  end
-
-  def update_web_true
-    self.update(web: true)
+  def save_web_id_and_set_web_true
+    self.update(web_id: self.id, web: true)
   end
 
 end

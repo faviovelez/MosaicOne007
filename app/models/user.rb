@@ -25,20 +25,14 @@ class User < ActiveRecord::Base
   has_many :deposits
   has_many :payments
 
-  after_create :save_web_id
-
-  after_create :update_web_true
+  after_create :save_web_id_and_set_web_true
 
   validates :first_name, presence: { message: 'Por favor escriba el primer nombre del usuario.'}
 
   validates :last_name, presence: { message: 'Por favor anote los apellidos del usuario.'}
 
-  def save_web_id
-    self.update(web_id: self.id)
-  end
-
-  def update_web_true
-    self.update(web: true)
+  def save_web_id_and_set_web_true
+    self.update(web_id: self.id, web: true)
   end
 
 end
