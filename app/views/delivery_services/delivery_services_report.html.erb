@@ -1,46 +1,53 @@
 <table id="delivery-services" class="table-display-details">
   <thead>
     <tr>
-      <th colspan="10" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <th colspan="12" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
     </tr>
     <tr>
       <th> Ticket </th>
       <th> Fecha </th>
       <th> Movimiento </th>
+      <th> Tipo de guía </th>
       <th class="quantity-width"> Cantidad </th>
-      <th> Producto o Servicio </th>
       <th> Subtotal </th>
       <th> Descuento </th>
       <th> IVA </th>
       <th> Total </th>
+      <th> Costo de venta </th>
+      <th> Margen $</th>
+      <th> Acciones</th>
     </tr>
   </thead>
   <tbody>
-    <% @delivery_services.each do |delivery| %>
+    <% @delivery_services.each do |service_offered| %>
       <tr>
-        <td> <%= row["ticket_number"] %> </td>
-        <td> <%= l ticket.created_at.to_date %> </td>
-        <td> <%= row["type"] %> </td>
-        <td> <%= number_with_delimiter(row["quantity"]) %> </td>
-        <td> <%= row["unique_code"] %> - <%= row["description"] %> <%= row["color"] %> </td>
-        <td> <%= number_to_currency(row["subtotal"]) %> </td>
-        <td> <%= number_to_currency(row["discount"]) %> </td>
-        <td> <%= number_to_currency(row["taxes"]) %> </td>
-        <td> <%= number_to_currency(row["total"]) %> </td>
+        <td> <%= service_offered.ticket.ticket_number %> </td>
+        <td> <%= l service_offered.created_at.to_date %> </td>
+        <td> <%= service_offered.service_type %> </td>
+        <td> <%= service_offered.service.unique_code %> <%= service_offered.service.description %> </td>
+        <td> <%= number_with_delimiter(service_offered.quantity) %> </td>
+        <td> <%= number_to_currency(service_offered.subtotal) %> </td>
+        <td> <%= number_to_currency(service_offered.discount_applied) %> </td>
+        <td> <%= number_to_currency(service_offered.taxes) %> </td>
+        <td> <%= number_to_currency(service_offered.total) %> </td>
+        <td> <%= number_to_currency(service_offered.total_cost) %> </td>
+        <td> <%= number_to_currency(service_offered.total - service_offered.total_cost) %> </td>
+        <td>  </td>
       </tr>
-      <% end %>
     <% end %>
     <tr>
       <td> </td>
       <td> </td>
       <td> </td>
-      <td> </td>
-      <td> </td>
       <td> <strong> Total </strong> </td>
+      <td> <strong> <%= number_to_currency(@day_quantity) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_subtotal) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_discount) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_taxes) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_total) %> </strong> </td>
+      <td> <strong> <%= number_to_currency(@day_total_cost) %> </strong> </td>
+      <td> <strong> <%= number_to_currency(@day_total_margin) %> </strong> </td>
+      <td> </td>
     </tr>
   </tbody>
 </table>
@@ -68,5 +75,5 @@
   <%= javascript_include_tag 'pdfmake.min' %>
   <%= javascript_include_tag 'vfs_fonts.js' %>
   <%= javascript_include_tag 'datatables.min.js' %>
-  <%= javascript_include_tag 'ticket-day-closure' %>
+  <%= javascript_include_tag 'delivery-services' %>
 <% end %>
