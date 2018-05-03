@@ -41,9 +41,9 @@ class Payment < ActiveRecord::Base
         StoreSale.create(payments: self.total * (-1), store: self.store, month: self.created_at.month, year: self.created_at.year)
       end
     elsif (!id_changed? && changes['payment_type'] != nil)
-      if (changes['payment_type'][0] == 'pago' && self.movement_type == 'cancelado')
+      if (changes['payment_type'][0] == 'pago' && self.payment_type == 'cancelado')
         StoreSale.create(payments: self.total * (-1), store: self.store, month: self.created_at.month, year: self.created_at.year)
-      elsif (changes['payment_type'][0] == 'devolución' && self.movement_type == 'cancelado')
+      elsif (changes['payment_type'][0] == 'devolución' && self.payment_type == 'cancelado')
         StoreSale.create(payments: self.total, store: self.store, month: self.created_at.month, year: self.created_at.year)
       end
     end
@@ -59,9 +59,9 @@ class Payment < ActiveRecord::Base
         sale.update(payments: sale.payments.to_f - total)
       end
     elsif (!id_changed? && changes['payment_type'] != nil)
-      if (changes['payment_type'][0] == 'pago' && self.movement_type == 'cancelado')
+      if (changes['payment_type'][0] == 'pago' && self.payment_type == 'cancelado')
         sale.update(payments: sale.payments.to_f - total)
-      elsif (changes['payment_type'][0] == 'devolución' && self.movement_type == 'cancelado')
+      elsif (changes['payment_type'][0] == 'devolución' && self.payment_type == 'cancelado')
         sale.update(payments: sale.payments.to_f + total)
       end
     end

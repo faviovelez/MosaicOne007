@@ -137,7 +137,8 @@ select#options,
 select#initial_date,
 select#final_date,
 select#products,
-select#information {
+select#information,
+select#companies {
   background-color: #fff !important;
   color: #000 !important;
 }

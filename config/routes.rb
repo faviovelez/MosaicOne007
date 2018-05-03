@@ -1,10 +1,18 @@
 Rails.application.routes.draw do
 
+  root 'pages#index'
+
   get 'movements/index'
 
   get 'movements/edit'
 
-  root 'pages#index'
+  get 'delivery_services/select_report'
+
+  get 'delivery_services/delivery_services_database'
+
+  get 'delivery_services/delivery_services_report'
+
+  get 'delivery_services/report_type'
 
   match '/search_suggestions', to: 'search_suggestions#index', via: :get
 

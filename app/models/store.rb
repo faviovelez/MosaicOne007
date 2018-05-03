@@ -51,6 +51,7 @@ class Store < ActiveRecord::Base
   has_many :tickets_children
   has_many :withdrawals
   has_many :deposits
+  has_many :delivery_services
   mount_uploader :certificate, SatCertificateUploader
   mount_uploader :key, SatKeyUploader
   mount_uploader :initial_inventory, InitialInventoryUploader
