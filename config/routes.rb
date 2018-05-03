@@ -14,6 +14,10 @@ Rails.application.routes.draw do
 
   get 'delivery_services/report_type'
 
+  get 'delivery_services/cost_save_view'
+
+  post 'delivery_services/save_cost'
+
   match '/search_suggestions', to: 'search_suggestions#index', via: :get
 
   get 'pages/index'

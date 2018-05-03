@@ -151,7 +151,6 @@
             </li>
 
           <div class="hidden">
-
             <% if (params[:controller] == 'products' && params[:action] == 'new' && params[:request_id].nil?)   %>
               <li class="vertical-link actual-vertical-link">
             <% else %>
@@ -205,6 +204,15 @@
           <% end %>
           <i class="fa fa-tasks other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Movimientos de inventario', inventories_select_report_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'delivery_services' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-plane other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Servicios de Mensajería', delivery_services_select_report_path, class: 'text-link' %>
             </li>
 
           <% if (params[:controller] == 'tickets' && params[:action] == 'cancelled_tickets') %>
