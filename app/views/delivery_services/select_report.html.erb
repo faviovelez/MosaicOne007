@@ -1,0 +1,59 @@
+<%= form_tag({ controller: 'delivery_services', action: 'report_type' }, method: 'get', class: 'form-data-tables') do %>
+
+  <br /><br />
+
+  <h2 class="blue-title">Por favor seleccione la fecha y el tipo de reporte</h2>
+
+  <br /><br />
+
+  <div class="field">
+    <%= label_tag :opciones %>
+    <%= select_tag :options, options_for_select([['Seleccionar día'], ['Mes actual'], ['Rango de fechas']]) %>
+  </div>
+
+  <div class="field">
+    <%= label_tag :tipo_de_reporte %>
+    <%= select_tag :report_type, options_for_select([['Ventas'], ['Base de datos']]) %>
+  </div>
+
+  <div class="field product-select-2">
+    <%= label_tag :mensajerías %>
+    <%= select_tag :companies, options_for_select(company_options, selected: 'Todas'), {include_blank: true, multiple: true} %>
+  </div>
+
+  <div class="field extra-margin-top">
+    <%= label_tag :fecha_de_reporte %>
+    <%= date_field_tag(:date, Date.today, options = {max: Date.today, min: current_user.store.tickets.first.created_at.to_date }) %>
+  </div>
+
+  <div class="group_fields hidden">
+    <div class="field">
+      <%= label_tag :fecha_inicial %>
+      <%= date_field_tag(:initial_date, Date.today, options = {max: Date.today, min: current_user.store.tickets.first.created_at.to_date }) %>
+    </div>
+
+    <div class="field">
+      <%= label_tag :fecha_final %>
+      <%= date_field_tag(:final_date, Date.today, options = {max: Date.today, min: current_user.store.tickets.first.created_at.to_date }) %>
+    </div>
+  </div>
+
+  <br /><br />
+
+  <div class="actions">
+    <%= submit_tag 'Ver reporte', class: 'main-button' %>
+  </div>
+
+  <br /><br />
+
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'delivery_reports' %>
+<% end %>
