@@ -14,21 +14,9 @@ $(document).ready(function(){
     }
   });
 
-  $("#products").bind('change', function() {
-    var products = $(this).val();
-    if (products == 'Elegir producto') {
-      $(".product-select-2").removeClass("hidden");
-      $("input.select2-search__field").addClass("width-450")
-    } else {
-      $(".product-select-2").addClass("hidden");
-    }
-  });
-
-  $('.select2-products').select2({
-     placeholder: 'Seleccione un producto',
-     tags: true,
+  $('#companies').select2({
+     placeholder: 'Mensajerías',
      language: "es"
   });
-
 
 });
