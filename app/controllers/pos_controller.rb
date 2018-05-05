@@ -87,7 +87,7 @@ class PosController < ApplicationController
     def is_a_new_register(reg)
       tables_find_parameters = params_find()
       information = tables_find_parameters[reg.class.to_s] || []
-      if reg.class == StoresInventory
+      if (reg.class == StoresInventory || reg.class == CashRegister)
         information += ['store_id']
       else
         information += ['store_id', 'pos_id']
