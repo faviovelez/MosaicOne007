@@ -25,27 +25,27 @@ class BillMailer < ApplicationMailer
   end
 
   def send_bill_files(bill)
+    @mails = []
+    @bill = bill
     mail = bill.receiving_company.prospects.first.email
     mail_2 = bill.receiving_company.prospects.first.email_2
     mail_3 = bill.receiving_company.prospects.first.email_3
-    if ((mail != nil && mail != '') || (mail_2 != nil && mail_2 != '') || (mail_3 != nil && mail_3 != ''))
-      @mails = []
-      @bill = bill
-      address
-      email
-      store_tel
-      webpage
-      @mails << mail unless (mail == nil || mail == '')
-      @mails << mail_2 unless (mail_2 == nil || mail_2 == '')
-      @mails << mail_3 unless (mail_3 == nil || mail_3 == '')
-      @mails << bill.store.bill_email
-      attachments['Factura.pdf'] = open(bill.pdf_url).read
-      attachments['Factura.xml'] = open(bill.xml_url).read
-        mail(
-          bcc: @mails,
-          subject: "Facturas Diseños de Cartón"
-        )
-    end
+    address
+    email
+    store_tel
+    webpage
+    @mails << mail unless (mail == nil || mail == '')
+    @mails << mail_2 unless (mail_2 == nil || mail_2 == '')
+    @mails << mail_3 unless (mail_3 == nil || mail_3 == '')
+    @mails << bill.store.bill_email
+    attachments['Factura.pdf'] = open(bill.pdf_url).read
+    attachments['Factura.xml'] = open(bill.xml_url).read
+      mail(
+        bcc: @mails,
+        subject: "Facturas Diseños de Cartón"
+      )
   end
+
+  def send_mail
 
 end
