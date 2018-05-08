@@ -1258,6 +1258,7 @@ class BillsController < ApplicationController
         if @error
           redirect_to root_path, alert: 'Hubo un error con el proceso, por favor intente de nuevo.'
         else
+          Bill.find(bill).send_mail_prospect_email_fields
           redirect_to root_path, notice: 'Su factura ha sido generada con éxito.'
         end
       else
@@ -1569,6 +1570,7 @@ class BillsController < ApplicationController
         if @error
           redirect_to root_path, alert: 'Hubo un error con el proceso, por favor intente de nuevo.'
         else
+          Bill.find(bill).send_mail_prospect_email_fields
           redirect_to root_path, notice: 'Su factura ha sido generada con éxito.'
         end
       else
@@ -1596,7 +1598,8 @@ class BillsController < ApplicationController
     @final_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @xml_path = "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @sat_path = Rails.root.join('lib', 'sat')
-    @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")  end
+    @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
+  end
 
   #FACTURA GENERAL:
     # SIEMPRE 'I' (TipoDeComprobante) TypeOfBill.find(1).key
