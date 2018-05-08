@@ -32,6 +32,8 @@ class Bill < ActiveRecord::Base
   belongs_to :parent, class_name: 'Bill', foreign_key: 'parent_id'
   has_many :rows
 
+  after_create :send_mail_prospect_email_fields, on: :create
+
   def send_mail_prospect_email_fields
     BillMailer.send_bill_files(self).deliver_later
   end

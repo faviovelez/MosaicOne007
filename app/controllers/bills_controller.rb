@@ -1258,7 +1258,6 @@ class BillsController < ApplicationController
         if @error
           redirect_to root_path, alert: 'Hubo un error con el proceso, por favor intente de nuevo.'
         else
-          Bill.find(bill).send_mail_prospect_email_fields
           redirect_to root_path, notice: 'Su factura ha sido generada con éxito.'
         end
       else
@@ -1570,7 +1569,6 @@ class BillsController < ApplicationController
         if @error
           redirect_to root_path, alert: 'Hubo un error con el proceso, por favor intente de nuevo.'
         else
-          Bill.find(bill).send_mail_prospect_email_fields
           redirect_to root_path, notice: 'Su factura ha sido generada con éxito.'
         end
       else
