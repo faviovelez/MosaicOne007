@@ -54,49 +54,49 @@ class InventoriesController < ApplicationController
       date = Date.parse(params[:date]) unless (params[:date] == nil || params[:date] == '')
       midnight = date.midnight + 6.hours
       end_day = date.end_of_day + 6.hours
-      if params[:options] == 'Movimientos de Inventario'
+      if params[:information] == 'Movimientos de Inventario'
         if params[:products] == 'Elegir producto'
-          movements = current_user.store.store_movements.where(created_at: midnight..end_day, movement_type: ['alta', 'baja'], product: params[:product_list]).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: midnight..end_day, movement_type: ['alta', 'baja'], product: params[:product_list]).where.not(quantity: 0)
         else
-          movements = current_user.store.store_movements.where(created_at: midnight..end_day, movement_type: ['alta', 'baja']).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: midnight..end_day, movement_type: ['alta', 'baja']).where.not(quantity: 0)
         end
       else
         if params[:products] == 'Elegir producto'
-          movements = current_user.store.store_movements.where(created_at: midnight..end_day, product: params[:product_list]).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: midnight..end_day, product: params[:product_list]).where.not(quantity: 0)
         else
-          movements = current_user.store.store_movements.where(created_at: midnight..end_day).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: midnight..end_day).where.not(quantity: 0)
         end
       end
     elsif params[:options] == 'Mes actual'
       beginning_of = Date.today.beginning_of_month.midnight + 6.hours
       end_of = Date.today + 6.hours
-      if params[:options] == 'Movimientos de Inventario'
+      if params[:information] == 'Movimientos de Inventario'
         if params[:products] == 'Elegir producto'
-          movements = current_user.store.store_movements.where(created_at: beginning_of..end_of, product: params[:product_list], movement_type: ['alta', 'baja']).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: beginning_of..end_of, product: params[:product_list], movement_type: ['alta', 'baja']).where.not(quantity: 0)
         else
-          movements = current_user.store.store_movements.where(created_at: beginning_of..end_of, movement_type: ['alta', 'baja']).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: beginning_of..end_of, movement_type: ['alta', 'baja']).where.not(quantity: 0)
         end
       else
         if params[:products] == 'Elegir producto'
-          movements = current_user.store.store_movements.where(created_at: beginning_of..end_of, product: params[:product_list]).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: beginning_of..end_of, product: params[:product_list]).where.not(quantity: 0)
         else
-          movements = current_user.store.store_movements.where(created_at: beginning_of..end_of).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: beginning_of..end_of).where.not(quantity: 0)
         end
       end
     else
       initial_date = Date.parse(params[:initial_date]).midnight + 6.hours unless (params[:initial_date] == nil || params[:initial_date] == '')
       final_date = Date.parse(params[:final_date]).end_of_day + 6.hours unless (params[:final_date] == nil || params[:final_date] == '')
-      if params[:options] == 'Movimientos de Inventario'
+      if params[:information] == 'Movimientos de Inventario'
         if params[:products] == 'Elegir producto'
-          movements = current_user.store.store_movements.where(created_at: initial_date..final_date, product: params[:product_list], movement_type: ['alta', 'baja']).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: initial_date..final_date, product: params[:product_list], movement_type: ['alta', 'baja']).where.not(quantity: 0)
         else
-          movements = current_user.store.store_movements.where(created_at: initial_date..final_date, movement_type: ['alta', 'baja']).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja']).where.not(quantity: 0)
         end
       else
         if params[:products] == 'Elegir producto'
-          movements = current_user.store.store_movements.where(created_at: initial_date..final_date, product: params[:product_list]).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: initial_date..final_date, product: params[:product_list]).where.not(quantity: 0)
         else
-          movements = current_user.store.store_movements.where(created_at: initial_date..final_date).where.not(quantity: 0)
+          movements = StoreMovement.includes(:product).where(store: current_user.store, created_at: initial_date..final_date).where.not(quantity: 0)
         end
       end
     end

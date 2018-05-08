@@ -1,9 +1,10 @@
 <table id="store_movements" class="table-display">
   <thead>
     <tr>
-      <th colspan="7" class="table-titles"> Resumen de movimientos <%= params[:date] %> </th>
+      <th colspan="9" class="table-titles"> Resumen de movimientos <%= params[:date] %> </th>
     </tr>
     <tr>
+      <th> Id </th>
       <th> Código </th>
       <th> Descripción </th>
       <th> Fecha </th>
@@ -11,11 +12,14 @@
       <th> Movimiento </th>
       <th> Cantidad </th>
       <th> Motivo / Folio </th>
+      <th> Web_id </th>
+      <th> Pos_id </th>
     </tr>
   </thead>
   <tbody>
     <% @movements.each do |movement| %>
         <tr>
+          <td> <%= movement.id %> </td>
           <td> <%= movement.product.unique_code %> </td>
           <td> <%= movement.product.description %> </td>
           <td> <%= l movement.created_at.to_date %> </td>
@@ -23,6 +27,8 @@
           <td> <%= movement.movement_type %> </td>
           <td> <%= movement.quantity %> </td>
           <td> <%= movement.reason %> </td>
+          <td> <%= movement.web_id %> </td>
+          <td> <%= movement.pos_id %> </td>
         </tr>
     <% end %>
   </tbody>
@@ -34,6 +40,8 @@
       <td id="date"> <%= l Date.today, format: :short %> </td>
       <td id="store"> <%= current_user.store.store_name %> </td>
       <td id="hour"> <%= Time.now.strftime("%H:%M") %> </td>
+      <td></td>
+      <td></td>
       <td></td>
       <td></td>
       <td></td>
