@@ -34,6 +34,14 @@ class TicketsController < ApplicationController
   def closure_day_detailed
   end
 
+  def no_payment
+    @tickets = Ticket.where(store: current_user.store, ticket_type: 'venta', payed: false)
+  end
+
+  def saved
+    @tickets = Ticket.where(store: current_user.store).where("ticket_type LIKE ? OR ticket_type LIKE?", "%guardado%", "%pending%")
+  end
+
   def cancelled_tickets
     @tickets = current_user.store.tickets.where(ticket_type: 'cancelado')
   end
