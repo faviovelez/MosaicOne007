@@ -59,7 +59,6 @@ class PosController < ApplicationController
     def changes_to_fields
       return {
         "CashRegister" => ['balance'],
-        "StoresInventory" => ['manual_price_update', 'manual_price', 'quantity'],
         "BillingAddress" => ['type_of_person', 'business_name', 'rfc', 'street', 'exterior_number', 'interior_number', 'zipcode', 'neighborhood', 'city', 'state', 'country', 'tax_regime_id'],
         "Prospect" => ['legal_or_business_name', 'prospect_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'contact_position', 'direct_phone', 'extension', 'cell_phone', 'business_type', 'prospect_status', 'billing_address_id', 'delivery_address_id', 'second_last_name', 'email', 'credit_days'],
         "Terminal" => ['debit_comission', 'credit_comission'],
