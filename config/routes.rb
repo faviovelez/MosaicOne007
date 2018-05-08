@@ -56,6 +56,10 @@ Rails.application.routes.draw do
 
   get 'tickets/tickets_closure_day_pdf'
 
+  get 'tickets/no_payment'
+
+  get 'tickets/saved'
+
   get 'bills/download_pdf/:id', to: 'bills#download_pdf', as: 'download_pdf'
 
   get 'bills/download_xml/:id', to: 'bills#download_xml', as: 'download_xml'

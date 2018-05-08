@@ -188,6 +188,15 @@
           <%= link_to 'Resumen de ventas', tickets_sales_summary_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'tickets' && params[:action] == 'no_payment') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-warning other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Ventas no liquidadas', tickets_no_payment_path, class: 'text-link' %>
+            </li>
+
           <% if (params[:controller] == 'tickets' && params[:action] == 'select_day') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
@@ -206,15 +215,6 @@
           <%= link_to 'Movimientos de inventario', inventories_select_report_path, class: 'text-link' %>
             </li>
 
-          <% if params[:controller] == 'delivery_services' %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-          <i class="fa fa-plane other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Servicios de Mensajería', delivery_services_select_report_path, class: 'text-link' %>
-            </li>
-
           <% if (params[:controller] == 'tickets' && params[:action] == 'cancelled_tickets') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
@@ -222,6 +222,24 @@
           <% end %>
           <i class="fa fa-calendar-times-o other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Tickets cancelados', tickets_cancelled_tickets_path, class: 'text-link' %>
+            </li>
+
+          <% if (params[:controller] == 'tickets' && params[:action] == 'saved') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-save other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Tickets guardados', tickets_saved_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'delivery_services' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-plane other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Servicios de Mensajería', delivery_services_select_report_path, class: 'text-link' %>
             </li>
 
           <% if (params[:controller] == 'bills' && params[:action] == 'select_bills') %>
