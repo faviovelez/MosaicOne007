@@ -46,6 +46,4 @@ class BillMailer < ApplicationMailer
       )
   end
 
-  def send_mail
-
 end
