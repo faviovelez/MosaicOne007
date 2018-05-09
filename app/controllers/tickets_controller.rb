@@ -236,7 +236,7 @@ class TicketsController < ApplicationController
     store = Store.find(params[:store])
     month = params[:month]
     year = params[:year]
-    @tickets = store.tickets.where(
+    @tickets = Ticket.includes(:bill, :prospect, :payments, store_movements: :product, service_offereds: :service, children: [:payments, store_movements: :product, service_offereds: :service]).where(store: store).where(
       'extract(month from created_at) = ? and extract(year from created_at) = ?',
       month, year
     ).where(tickets: {parent_id: nil, ticket_type: 'venta'})
@@ -501,7 +501,7 @@ class TicketsController < ApplicationController
   end
 
   def details
-    @ticket = Ticket.find(params[:id])
+    @ticket = Ticket.includes(store_movements: :product, service_offereds: :service).find(params[:id])
     @number = @ticket.ticket_number
     @date = @ticket.created_at.to_date
     unless @ticket.user == nil

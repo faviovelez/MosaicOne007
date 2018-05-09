@@ -10,21 +10,22 @@ class InventoriesController < ApplicationController
   end
 
   def filter_products
-    @products = []
+    @inventories = []
     role = current_user.role.name
     @store = current_user.store
-    @dc_products = Product.where(current: true, shared: true)
     if role == 'store-admin' || role == 'store'
-      @store_products = Product.where(store: @store)
+      @dc_products = StoresInventory.includes(:product).where(store: @store, products: {current: true, shared: true})
+      @store_products = StoresInventory.includes(:product).where(products: {store_id: @store})
       if @store_products == []
-        @products = @dc_products
+        @inventories = @dc_products
       else
-        @products = @store_products + @dc_products
+        @inventories = @store_products + @dc_products
       end
     else
-      @products = @dc_products
+      @dc_products = Inventory.includes(:product).where(products: {current: true, shared: true})
+      @inventories = @dc_products
     end
-    @products
+    @inventories
   end
 
   def select_report

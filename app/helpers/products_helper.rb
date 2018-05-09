@@ -17,18 +17,18 @@ module ProductsHelper
     @suppliers
   end
 
-  def show_price_with_overprice(product)
+  def show_price_with_overprice(inventory)
     store = current_user.store
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
-      manual_price = store.stores_inventories.where(product: product).first.manual_price
+      manual_price = inventory.manual_price
       if (manual_price == nil || manual_price == 0)
-        overp = ('%.2f' % (product.price * (1 + (store.overprice / 100)))).to_f
+        overp = ('%.2f' % (inventory.product.price * (1 + (inventory.store.overprice / 100)))).to_f
         @price = (overp * 1.16).round(2)
       else
         @price = manual_price * 1.16
       end
     else
-      @price = product.price
+      @price = inventory.product.price
     end
   end
 
