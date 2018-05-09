@@ -362,7 +362,7 @@ module BillsHelper
     @total_payments_bill
   end
 
-  def get_payments_on_sales_summary(bill)
+  def get_payments_on_sales_summary_bill(bill)
     payments_for_bill_show(bill)
     (bill.total <= @total_payments_bill || bill.total - @total_payments_bill < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(bill.total - @total_payments_bill)
     @pending
@@ -514,9 +514,11 @@ module BillsHelper
 
   def sum_children(bill)
     @sum = 0
-    bill.children.each do |child|
-      @sum += child.total unless child.status == 'cancelada'
-    end
+      unless bill.children == []
+        bill.children.each do |child|
+          @sum += child.total unless child.status == 'cancelada'
+        end
+      end
     @sum = -@sum
   end
 

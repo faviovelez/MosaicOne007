@@ -1,4 +1,4 @@
-<% if @products.count >= 1 %>
+<% if @inventories.count >= 1 %>
   <table id="products-table">
     <thead>
       <tr class="table-titles">
@@ -12,23 +12,22 @@
     </thead>
 
     <tbody>
-      <% @products.each do |product| %>
+      <% @inventories.each do |inventory| %>
         <tr>
-          <td class="col-md-1"><%= product.unique_code %></td>
-          <td class="col-md-2"><%= product.description %></td>
-          <td class="col-md-1"><%= product.exterior_color_or_design %></td>
-          <td class="col-md-2"><%= product.line %></td>
-          <td class="col-md-1"><%= number_to_currency(show_price_with_overprice(product)) %></td>
+          <td class="col-md-1"><%= inventory.product.unique_code %></td>
+          <td class="col-md-2"><%= inventory.product.description %></td>
+          <td class="col-md-1"><%= inventory.product.exterior_color_or_design %></td>
+          <td class="col-md-2"><%= inventory.product.line %></td>
+          <td class="col-md-1"><%= number_to_currency(show_price_with_overprice(inventory)) %></td>
           <td class="col-md-1">
-            <%= link_to product do %>
+            <%= link_to inventory.product do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
             <% end %>
-
               <% role = current_user.role.name %>
               <% user_bg = current_user.store.business_unit.business_group %>
-              <% product_bg = product.business_unit.business_group %>
-              <% if (((role == 'product-admin' || role == 'product-staff') && product.shared == true) || current_user.role.name == 'store-admin' && product.store == current_user.store) %>
-                <%= link_to edit_product_path(product) do %>
+              <% product_bg = inventory.product.business_unit.business_group %>
+              <% if (((role == 'product-admin' || role == 'product-staff') && inventory.product.shared == true) || current_user.role.name == 'store-admin' && inventory.product.store == current_user.store) %>
+                <%= link_to edit_product_path(inventory.product) do %>
                   <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
                 <% end %>
               <% end %>

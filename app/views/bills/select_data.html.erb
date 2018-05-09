@@ -1,13 +1,3 @@
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'select2.min' %>
-<% end %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'select2.min' %>
-  <%= javascript_include_tag 'es' %>
-  <%= javascript_include_tag 'bills' %>
-<% end %>
-
 <h2> Seleccione los datos de la factura que desea elaborar</h2>
 
 <%= form_tag({ controller: 'bills', action: 'process_info' }, method: 'get') do %>
@@ -44,4 +34,14 @@
 
   <br /><br />
 
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'bills' %>
 <% end %>

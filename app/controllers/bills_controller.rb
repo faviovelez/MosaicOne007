@@ -9,8 +9,7 @@ class BillsController < ApplicationController
   # GET /bills@type_of_bill
   # GET /bills.json
   def index
-    store = current_user.store
-    @bills = store.bills.where.not(status: 'cancelada').where.not(receiving_company: nil).where.not(total: nil).where(parent: nil)
+    @bills = Bill.includes(:payments, :receiving_company, :children).where(store: current_user.store, parent: nil).where.not(status: 'cancelada', receiving_company: nil, total: nil)
   end
 
   # GET /bills/1

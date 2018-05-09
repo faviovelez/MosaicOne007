@@ -1,10 +1,9 @@
 module InventoriesHelper
 
-  def inventory_alert(product)
-    set_inventory(product)
-    if (@inventory.alert == true && @inventory.alert_type == 'bajo')
+  def inventory_alert(inventory)
+    if (inventory.alert == true && @inventory.alert_type == 'bajo')
       @label = content_tag(:span, 'bajo', class: 'label label-warning')
-    elsif (@inventory.alert == true && @inventory.alert_type == 'crítico')
+    elsif (inventory.alert == true && @inventory.alert_type == 'crítico')
       @label = content_tag(:span, 'crítico', class: 'label label-danger')
     else
       @label = content_tag(:span, 'adecuado', class: 'label label-success')
@@ -12,19 +11,8 @@ module InventoriesHelper
     @label
   end
 
-  def set_inventory(product)
-    @inventory = ''
-    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
-      @inventory = current_user.store.stores_inventories.find_by_product_id(product)
-    else
-      @inventory = Inventory.find_by_product_id(product)
-    end
-    @inventory
-  end
-
-  def packages(product)
-    set_inventory(product)
-    @packages = @inventory.quantity / product.pieces_per_package
+  def packages(inventory)
+    @packages = inventory.quantity / inventory.product.pieces_per_package
     @packages
   end
 

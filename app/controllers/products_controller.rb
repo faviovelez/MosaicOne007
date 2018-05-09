@@ -40,12 +40,12 @@ class ProductsController < ApplicationController
 
   def catalogue
     filter_products
-    @products = @products.where(classification: 'de línea')
+    @inventories = @inventories.where(classification: 'de línea')
   end
 
   def special
     filter_products
-    @products = @products.where(classification: 'especial')
+    @inventories = @inventories.where(classification: 'especial')
   end
 
   # GET /products/1
@@ -268,21 +268,22 @@ class ProductsController < ApplicationController
   private
   # aquí es el problema
     def filter_products
-      @products = []
+      @inventories = []
       role = current_user.role.name
       @store = current_user.store
-      @dc_products = Product.where(current: true, shared: true)
-      if (role == 'store-admin' || role == 'store')
-        @store_products = Product.where(store: @store)
+      if role == 'store-admin' || role == 'store'
+        @dc_products = StoresInventory.includes(:store, product: [business_unit: :business_group, store: [business_unit: :business_group]]).where(store: @store, products: {current: true, shared: true})
+        @store_products = StoresInventory.includes(:store, product: [business_unit: :business_group, store: [business_unit: :business_group]]).where(products: {store_id: @store})
         if @store_products == []
-          @products = @dc_products
+          @inventories = @dc_products
         else
-          @products = @store_products + @dc_products
+          @inventories = @store_products + @dc_products
         end
       else
-        @products = @dc_products
+        @dc_products = Inventory.includes(product: [business_unit: :business_group, store: [business_unit: :business_group]]).where(products: {current: true, shared: true})
+        @inventories = @dc_products
       end
-      @products
+      @inventories
     end
 
     # Use callbacks to share common setup or constraints between actions.

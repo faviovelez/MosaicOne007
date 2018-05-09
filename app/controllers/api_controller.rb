@@ -118,7 +118,7 @@ class ApiController < ApplicationController
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       prospects = current_user.store.prospects
     else
-      prospects = Prospect.joins(:billing_address).joins(:business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
+      prospects = Prospect.includes(:billing_address, :business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
     end
     options = []
     prospects.each do |prospect|

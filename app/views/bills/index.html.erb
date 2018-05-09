@@ -25,7 +25,7 @@
             <td> <%= number_to_currency(bill.total) %> </td>
             <td> <%= number_to_currency(sum_children(bill)) %> </td>
             <td> <%= number_to_currency(real_total(bill)) %> </td>
-            <td> <%= get_payments_on_sales_summary(bill) %> </td>
+            <td> <%= get_payments_on_sales_summary_bill(bill) %> </td>
             <td> <%= bill.status %> </td>
             <td style="width: 100px">
               <% unless bill.pdf_url == nil %>
