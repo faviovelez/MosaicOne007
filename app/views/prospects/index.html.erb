@@ -14,7 +14,7 @@
         <td> <%= prospect.legal_or_business_name %> </td>
         <td> <%= prospect.business_type %> </td>
         <td> <%= prospect.prospect_type %> </td>
-        <td class="col-md-2 flex-table">
+        <td class="col-md-2 flex-table left-align">
           <%= link_to prospect do %>
             <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
             <span class="hidden">Ver</span>
@@ -32,7 +32,7 @@
 
           <% if prospect.requests.count >= 1 %>
             <%= link_to prospect_requests_path(prospect) do %>
-              <i class="fa fa-book link-to-details hidden" aria-hidden="true"></i>
+              <i class="fa fa-book link-to-details" aria-hidden="true"></i>
               <span>Cotizaciones</span>
             <% end %>
           <% end %>

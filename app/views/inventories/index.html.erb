@@ -13,16 +13,16 @@
   </thead>
   <tbody>
     <% @inventories.each do |inventory| %>
-    <tr>
-      <td> <%= show_non_blank_field(inventory.product.unique_code) %> </td>
-      <td> <%= show_non_blank_field(inventory.product.description) %> </td>
-      <td> <%= show_non_blank_field(inventory.product.exterior_color_or_design) %> </td>
-      <td> <%= show_non_blank_field(inventory.product.line) %> </td>
-      <td> <%= packages(inventory) %> </td>
-      <td> <%= inventory.product.pieces_per_package %> </td>
-      <td> <%= inventory.quantity %> </td>
-      <td> <%= inventory_alert(inventory) %> </td>
-    </tr>
+      <tr>
+        <td> <%= show_non_blank_field(inventory.product.unique_code) %> </td>
+        <td> <%= show_non_blank_field(inventory.product.description) %> </td>
+        <td> <%= show_non_blank_field(inventory.product.exterior_color_or_design) %> </td>
+        <td> <%= show_non_blank_field(inventory.product.line) %> </td>
+        <td> <%= packages(inventory) %> </td>
+        <td> <%= inventory.product.pieces_per_package %> </td>
+        <td> <%= inventory.quantity %> </td>
+        <td> <%= inventory_alert(inventory) %> </td>
+      </tr>
     <% end %>
   </tbody>
 </table>

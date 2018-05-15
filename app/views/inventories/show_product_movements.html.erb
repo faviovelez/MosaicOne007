@@ -1,7 +1,7 @@
 <table id="store_movements" class="table-display">
   <thead>
     <tr>
-      <th colspan="7" class="table-titles"> Resumen de movimientos <%= params[:date] %> </th>
+      <th colspan="8" class="table-titles"> Resumen de movimientos <%= params[:date] %> </th>
     </tr>
     <tr>
       <th> Código </th>
@@ -34,6 +34,8 @@
       <td id="date"> <%= l Date.today, format: :short %> </td>
       <td id="store"> <%= current_user.store.store_name %> </td>
       <td id="hour"> <%= Time.now.strftime("%H:%M") %> </td>
+      <td></td>
+      <td></td>
       <td></td>
       <td></td>
       <td></td>

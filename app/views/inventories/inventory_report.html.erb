@@ -1,0 +1,52 @@
+<table id="inventory">
+  <thead>
+    <tr class="table-titles-inventories">
+      <th> Código </th>
+      <th> Descripción </th>
+      <th> Color </th>
+      <th> Línea </th>
+      <th> Inventario </th>
+      <th> Costo </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @inventories.each do |inventory| %>
+    <tr>
+      <td> <%= show_non_blank_field(inventory.unique_code) %> </td>
+      <td> <%= show_non_blank_field(inventory.description) %> </td>
+      <td> <%= show_non_blank_field(inventory.exterior_color_or_design) %> </td>
+      <td> <%= show_non_blank_field(inventory.line) %> </td>
+      <td> <%= number_with_delimiter(inventory.quantity) %> </td>
+      <td> <%= number_to_currency(inventory.total_cost) %> </td>
+    </tr>
+    <% end %>
+    <tr>
+      <td> - </td>
+      <td> <strong> Total </strong> </td>
+      <td> - </td>
+      <td> - </td>
+      <td>
+        <strong>
+          <%= number_with_delimiter(@total_quantity) %>
+        </strong>
+      </td>
+      <td>
+        <strong>
+          <%= number_to_currency(@total_cost) %>
+        </strong>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'inventory' %>
+<% end %>

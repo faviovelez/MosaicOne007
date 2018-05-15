@@ -59,14 +59,32 @@
   </p>
 
   <p>
+    <strong> ¿Cobranza activa?: </strong>
+    <%= translate_collection(@store) %>
+  </p>
+
+  <p>
+    <strong> Aviso de vencimiento de crédito: </strong>
+    <%= @store.days_before %> días
+  </p>
+
+  <p>
+    <strong> Aviso de después de vencimiento: </strong>
+    <%= @store.days_after %> días
+  </p>
+
+  <p>
+    <% if current_user.role.name == 'store-admin' %>
+      <%= link_to 'Editar datos', edit_store_path(@store), class: 'space-between-links' %>
+    <% end %>
     <% if @store.business_unit.billing_address.present? %>
-      <%= link_to 'Datos de facturación', billing_address_path(id: @store.business_unit.billing_address) %>
+      <%= link_to 'Datos de facturación', billing_address_path(id: @store.business_unit.billing_address), class: 'space-between-links' %>
     <% end %>
     <% if @store.delivery_address.present? %>
-      <%= link_to 'Dirección de entrega principal', delivery_address_path(id: @store.delivery_address) %>
+      <%= link_to 'Dirección de entrega principal', delivery_address_path(id: @store.delivery_address), class: 'space-between-links' %>
     <% end %>
     <% if current_user.role.name == 'platform-admin' %>
-      <%= link_to 'Eliminar tienda', store_path(@store), class: 'red', method: :delete, data: { confirm: '¿Está seguro que desea eliminar esta tienda?' } %>
+      <%= link_to 'Eliminar tienda', store_path(@store), class: 'red space-between-links', method: :delete, data: { confirm: '¿Está seguro que desea eliminar esta tienda?' } %>
     <% end %>
   </p>
 
