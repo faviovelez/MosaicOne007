@@ -16,6 +16,7 @@ class Order < ActiveRecord::Base
   has_one :delivery_attempt
   has_many :payments
   belongs_to :order
+  has_many :date_advises
 
   def all_movements
     self.movements + self.pending_movements

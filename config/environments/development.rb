@@ -25,7 +25,7 @@ Rails.application.configure do
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
-  config.assets.debug = true
+  config.assets.debug = false
 
   # Asset digests allow you to set far-future HTTP expiration dates on all assets,
   # yet still be able to expire them through the digest params.
@@ -36,6 +36,8 @@ Rails.application.configure do
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
 
+  config.action_mailer.perform_deliveries = true
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   config.action_mailer.delivery_method = :smtp
@@ -43,15 +45,24 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default :charset => "utf-8"
   config.action_mailer.asset_host = 'http://www.plataforma-dc.com'
-  
 
   config.action_mailer.smtp_settings = {
-   :address => ENV['SES_SERVER_NAME'],
+   :address => 'smtp.gmail.com',
    :port => 587,
    :authentication => :login,
    :domain => 'plataforma-dc.com',
-   :user_name => ENV['SES_SMTP_USERNAME'],
-   :password => ENV['SES_SMTP_PASSWORD'],
+   :user_name => ENV['email_user'],
+   :password => ENV['email_password'],
    :enable_starttls_auto => true
   }
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.alert = true
+    Bullet.bullet_logger = true
+    Bullet.console = true
+    Bullet.rails_logger = true
+    Bullet.add_footer = true
+  end
+
 end
