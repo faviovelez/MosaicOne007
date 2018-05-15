@@ -12,10 +12,15 @@ class Payment < ActiveRecord::Base
   belongs_to :payment_form
   belongs_to :bank
   belongs_to :order
+  has_one :date_advise
 
   before_update :create_update_summary
 
   after_create :save_web_id_and_set_web_true
+
+
+  # Crear o modificar objeto y si pertenece al mismo ticket dejar solo uno y borrar los demás (borrar los viejos)
+  # Buscar y modificar los que pertenezcan al mismo ticket y desactivarlas y/o borrarlas (DateAdvise) ON CREATE Y ON UPDATE?
 
   def save_web_id_and_set_web_true
     self.update(web_id: self.id, web: true)

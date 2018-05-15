@@ -17,6 +17,8 @@ class StoreMovement < ActiveRecord::Base
 
   after_create :save_web_id_and_set_web_true
 
+  before_update :update_total_cost
+
   def save_web_id_and_set_web_true
     self.update(web_id: self.id, web: true)
   end
@@ -130,6 +132,23 @@ class StoreMovement < ActiveRecord::Base
     update_reports_data(
       ProductSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, product: product, store: store).first
     )
+  end
+
+  def update_total_cost
+    inventory = StoresInventory.where(store: self.store, product: self.product).first
+    if id_changed?
+      if (self.movement_type == 'venta' || self.movement_type == 'baja' || self.movement_type == 'baja automática')
+        inventory.update(total_cost: (inventory.total_cost.to_f - self.total_cost.to_f).round(2))
+      elsif (self.movement_type == 'devolución' || self.movement_type == 'alta' || self.movement_type == 'alta automática')
+        inventory.update(total_cost: (inventory.total_cost.to_f + self.total_cost.to_f).round(2))
+      end
+    elsif !id_changed? && changes['movement_type'] != nil
+      if (changes['movement_type'][0] == 'venta' && self.movement_type == 'cancelado')
+        inventory.update(total_cost: (inventory.total_cost.to_f + self.total_cost.to_f).round(2))
+      elsif (changes['movement_type'][0] == 'devolución' && self.movement_type == 'cancelado')
+        inventory.update(total_cost: (inventory.total_cost.to_f - self.total_cost.to_f).round(2))
+      end
+    end
   end
 
   def update_reports_data(object)

@@ -13,6 +13,7 @@ class Ticket < ActiveRecord::Base
   has_many :payments
   has_many :children, through: :tickets_child, foreign_key: 'children_id'
   has_many :tickets_child
+  has_one :date_advise
   belongs_to :parent, class_name: 'Ticket', foreign_key: 'parent_id'
 
   after_create :save_web_id_and_set_web_true

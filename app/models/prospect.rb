@@ -19,6 +19,7 @@ class Prospect < ActiveRecord::Base
   belongs_to :store_prospect, class_name: "Store", foreign_key: 'store_prospect_id'
   has_many :tickets
   has_many :estimate_docs
+  has_many :date_advises
 
   after_create :save_web_id
 

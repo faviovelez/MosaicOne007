@@ -24,6 +24,10 @@ table#payment-average {
   margin-bottom: 100px !important;
 }
 
+.space-between-links {
+  margin-right: 1.5rem;
+}
+
 .head-blue {
   background-color: #00B3D3;
   color: #fff;
@@ -136,6 +140,7 @@ select#report_type,
 select#options,
 select#initial_date,
 select#final_date,
+select#what_final_date,
 select#products,
 select#information,
 select#companies {
@@ -985,6 +990,10 @@ color: #0288D1;
 img.small-img {
   max-height: 30vh !important;
   width: auto !important;
+}
+
+.left-align {
+  text-align: left;
 }
 
 .img-td {

@@ -7,5 +7,4 @@ module StoresHelper
     end
     @zip
   end
-
 end
