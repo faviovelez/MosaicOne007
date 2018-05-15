@@ -720,7 +720,10 @@ private
                                   :advance_i_last_folio,
                                   :initial_inventory,
                                   :current_inventory,
-                                  :prospects_file
+                                  :prospects_file,
+                                  :collection_active,
+                                  :days_before,
+                                  :days_after
                                   )
   end
 

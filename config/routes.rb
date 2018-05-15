@@ -18,6 +18,10 @@ Rails.application.routes.draw do
 
   post 'delivery_services/save_cost'
 
+  get 'delivery_services/show_report/:id', to: 'delivery_services#show_report', as: 'delivery_services_show_report'
+
+  get 'delivery_services/show_database/:id', to: 'delivery_services#show_database', as: 'delivery_services_show_database'
+
   match '/search_suggestions', to: 'search_suggestions#index', via: :get
 
   get 'pages/index'
@@ -155,6 +159,10 @@ Rails.application.routes.draw do
   get 'inventories/select_report'
 
   get 'inventories/get_report'
+
+  get 'inventories/select_inventory_report'
+
+  get 'inventories/inventories_report'
 
   get 'tickets/index'
 

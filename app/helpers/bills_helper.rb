@@ -455,17 +455,10 @@ module BillsHelper
   end
 
   def total
-    amounts = []
-    @rows.each do |row|
-      if @bill != nil
-        amounts << row.total
-      else
-        amounts << row["total"]
-      end
-    end
-    total = amounts.inject(&:+)
-    @total = total.round(2)
-    @total
+    subtotal
+    total_taxes
+    total_discount
+    @total = @subtotal - @total_discount + @total_taxes
   end
 
   def total_discount

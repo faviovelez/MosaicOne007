@@ -151,11 +151,15 @@ class BillsController < ApplicationController
         @payments_ticket << payment unless payment.payment_type == 'crédito'
       end
     end
-    total = []
+    total = 0
     @payments_ticket.each do |pay|
-      total << pay.total
+      if pay.payment_type = 'pago'
+        total += pay.total
+      elsif pay.payment_type = 'devolución'
+        total -= pay.total
+      end
     end
-    @total_payments_ticket = total.inject(&:+)
+    @total_payments_ticket = total.round(2)
     @total_payments_ticket
   end
 
@@ -803,13 +807,15 @@ class BillsController < ApplicationController
     if objects.first.is_a?(Ticket)
       objects.each do |object|
         object.payments.each do |payment|
-          payments << [payment.payment_form.description, payment.total] unless payment.payment_type == 'crédito'
-          real_payments << payment
+          payments << [payment.payment_form.description, payment.total] if payment.payment_type == 'pago'
+          payments << [payment.payment_form.description, -payment.total] if payment.payment_type == 'devolución'
+          real_payments << payment if (payment.payment_type == 'pago' || payment.payment_type == 'devolución')
         end
         object.children.each do |children|
           children.payments.each do |pay|
-            payments << [pay.payment_form.description, pay.total] unless pay.payment_type == 'crédito'
-            real_payments << pay
+            payments << [pay.payment_form.description, pay.total] if pay.payment_type == 'pago '
+            payments << [pay.payment_form.description, -pay.total] if pay.payment_type == 'devolución'
+            real_payments << pay if (pay.payment_type == 'pago' || pay.payment_type == 'devolución')
           end
         end
       end
@@ -844,7 +850,9 @@ class BillsController < ApplicationController
   def get_returns_or_changes_(ticket)
     difference = []
     ticket.children.each do |ticket|
-      difference << ticket.total
+      if ticket.ticket_type == 'devolución'
+        difference << ticket.total
+      end
     end
     difference = difference.inject(&:+)
     difference == nil ? @difference = 0 : @difference = difference
@@ -853,7 +861,7 @@ class BillsController < ApplicationController
 
   def get_total_with_returns_or_changes_(ticket)
     get_returns_or_changes_(ticket)
-    @ticket_total = ticket.total + @difference
+    @ticket_total = ticket.total - @difference
     @ticket_total
   end
 
@@ -897,7 +905,7 @@ class BillsController < ApplicationController
   end
 
   def subtotal
-      amounts = []
+    amounts = []
     @rows.each do |row|
       if @bill != nil
         amounts << row.subtotal
@@ -1583,16 +1591,14 @@ class BillsController < ApplicationController
     @base = Rails.root.join('public', 'uploads')
 
     # Crea los directorios
-    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"`
-    `sudo chown -R ubuntu:ubuntu #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"/`
-    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"_final`
-    `sudo chown -R ubuntu:ubuntu #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"_final/`
+    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/#{@time}-"#{@p_rfc}"`
+    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/#{@time}-"#{@p_rfc}"_final`
 
     # Crea las variables de los directorios a utilizar
     @working_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}")
-    @working_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}"
+    @working_dir = Dir.pwd + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}"
     @final_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}_final")
-    @final_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
+    @final_dir = Dir.pwd + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @xml_path = "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @sat_path = Rails.root.join('lib', 'sat')
     @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
@@ -2082,12 +2088,13 @@ XML
         new_hash["taxes"] += new_tax unless o.taxes == nil
         new_hash["discount"] += o.discount_applied.round(2) unless o.discount_applied == nil
         o.children.each do |children|
-          new_tax_child = ((children.subtotal.round(2) - children.discount_applied.round(2)).round(2) * 0.16).round(2)
-          new_hash["total"] += (children.subtotal.round(2) - children.discount_applied.round(2) + new_tax_child).round(2) unless children.total == nil
-          new_hash["unit_value"] += children.subtotal.round(2) unless children.subtotal == nil
-          new_hash["subtotal"] += children.subtotal.round(2) unless children.subtotal == nil
-          new_hash["taxes"] += new_tax_child unless children.taxes == nil
-          new_hash["discount"] += children.discount_applied.round(2) unless children.discount_applied == nil
+          if children.ticket_type == 'devolución'
+            new_tax_child = ((children.subtotal.round(2) - children.discount_applied.round(2)).round(2) * 0.16).round(2)
+            new_hash["total"] -= (children.subtotal.round(2) - children.discount_applied.round(2) + new_tax_child).round(2) unless children.total == nil
+            new_hash["subtotal"] -= children.subtotal.round(2) unless children.subtotal == nil
+            new_hash["taxes"] -= new_tax_child unless children.taxes == nil
+            new_hash["discount"] -= children.discount_applied.round(2) unless children.discount_applied == nil
+          end
         end
         @rows << new_hash
       end
@@ -2191,11 +2198,11 @@ XML
               sm.discount_applied == nil ? new_hash["discount"] = 0 : new_hash["discount"] = sm.discount_applied.round(2)
               @rows << new_hash
             else
-              @rows[i]["quantity"] += sm.quantity
-              @rows[i]["total"] += sm.total.round(2)
-              @rows[i]["subtotal"] += sm.subtotal.round(2)
-              @rows[i]["taxes"] += sm.taxes.round(2)
-              @rows[i]["discount"] += sm.discount_applied.round(2)
+              @rows[i]["quantity"] -= sm.quantity
+              @rows[i]["total"] -= sm.total.round(2)
+              @rows[i]["subtotal"] -= sm.subtotal.round(2)
+              @rows[i]["taxes"] -= sm.taxes.round(2)
+              @rows[i]["discount"] -= sm.discount_applied.round(2)
             end
           end
           children.service_offereds.each do |so|
@@ -2235,11 +2242,11 @@ XML
               so.discount_applied == nil ? new_hash["discount"] = 0 : new_hash["discount"] = so.discount_applied.round(2)
               @rows << new_hash
             else
-              @rows[i]["quantity"] += so.quantity
-              @rows[i]["total"] += so.total.round(2)
-              @rows[i]["subtotal"] += so.subtotal.round(2)
-              @rows[i]["taxes"] += so.taxes.round(2)
-              @rows[i]["discount"] += so.discount_applied.round(2)
+              @rows[i]["quantity"] -= so.quantity
+              @rows[i]["total"] -= so.total.round(2)
+              @rows[i]["subtotal"] -= so.subtotal.round(2)
+              @rows[i]["taxes"] -= so.taxes.round(2)
+              @rows[i]["discount"] -= so.discount_applied.round(2)
             end
           end
         end

@@ -202,7 +202,8 @@ class ProspectsController < ApplicationController
       :store_code,
       :credit_days,
       :email_2,
-      :email_3
+      :email_3,
+      :collection_active
     )
     end
 end

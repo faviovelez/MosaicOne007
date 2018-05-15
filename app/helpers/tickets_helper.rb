@@ -154,10 +154,22 @@ module TicketsHelper
     @total_payments_ticket
   end
 
+  def get_returns_or_changes_for_ticket(ticket)
+    difference = []
+    ticket.children.each do |ticket|
+      if ticket.ticket_type != 'pago'
+        difference << ticket.total
+      end
+    end
+    difference = difference.inject(&:+)
+    difference == nil ? @difference = 0 : @difference = difference
+    @difference
+  end
+
   def get_payments_on_sales_summary(ticket)
     rows_for_ticket_show_helper(ticket)
     payments_for_ticket_show(ticket)
-  (@total_rows_ticket <= @total_payments_ticket || @total_rows_ticket - @total_payments_ticket < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(@total_rows_ticket - @total_payments_ticket)
+  ((@total_rows_ticket - @difference) <= @total_payments_ticket || @total_rows_ticket - @total_payments_ticket < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(@total_rows_ticket - @total_payments_ticket)
     @pending
   end
 
