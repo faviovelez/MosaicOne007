@@ -1591,14 +1591,16 @@ class BillsController < ApplicationController
     @base = Rails.root.join('public', 'uploads')
 
     # Crea los directorios
-    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/#{@time}-"#{@p_rfc}"`
-    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/#{@time}-"#{@p_rfc}"_final`
+    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"`
+    `sudo chown -R ubuntu:ubuntu #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"/`
+    `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"_final`
+    `sudo chown -R ubuntu:ubuntu #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"_final/`
 
     # Crea las variables de los directorios a utilizar
     @working_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}")
-    @working_dir = Dir.pwd + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}"
+    @working_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}"
     @final_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}_final")
-    @final_dir = Dir.pwd + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
+    @final_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @xml_path = "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @sat_path = Rails.root.join('lib', 'sat')
     @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
