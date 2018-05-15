@@ -20,6 +20,7 @@
       <th class="hidden"> Celular </th>
       <th class="hidden"> Correo </th>
       <th class="hidden"> Dirección </th>
+      <th> Acciones </th>
     </tr>
   </thead>
   <tbody>
@@ -45,6 +46,15 @@
         <td class="hidden"> <%= delivery_service.cellphone %> </td>
         <td class="hidden"> <%= delivery_service.email %> </td>
         <td class="hidden"> <%= delivery_service.street %> <%= delivery_service.exterior_number %> <%= delivery_service.interior_number %>, Col. <%= delivery_service.neighborhood %>, <%= delivery_service.city %>, <%= delivery_service.state %> , <%= delivery_service.country %> </td>
+        <td>
+          <%= link_to delivery_services_show_report_path(delivery_service.service_offered) do %>
+            <% if delivery_service.service_offered.total_cost == 0 %>
+              <i class="fa fa-calculator link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Cambiar costo"></i>
+            <% else %>
+              <i class="fa fa-calculator link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Ver costo y precio"></i>
+            <% end %>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </tbody>

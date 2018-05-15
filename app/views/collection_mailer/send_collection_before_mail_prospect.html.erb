@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>YA CASI Vencimiento de Crédito</title>
+  </head>
+  <body>
+    <p>
+      Estimado colaborador.
+      <br />
+      <br />
+      <br />
+      El ticket No. <%= @ticket.ticket_number %> vence el <%= l @advice.before_date, format: :short  %>.
+    </p>
+
+    <br />
+    <br />
+
+    <div class="small-address">
+      <%= image_tag 'logo-disenos-decarton.png', width: '300px', height: 'auto', alt: 'Logo Diseños de Cartón' %>
+      <br />
+      <p>
+        <strong>
+          Sucursal <%= @advice.store.store_name %>
+        </strong>
+        <br />
+        <%= @address %>
+        <br />
+        <% if @store_tel.length > 10 %>
+          Tel: <%= number_to_phone(@store_tel, area_code: true) %>
+        <% else %>
+          Tel: <%= number_to_phone(@store_tel) %>
+        <% end %>
+        <br />
+        <%= mail_to @store_email %>
+        <br />
+        <%= link_to @store_webpage, "http://#{@store_webpage}", target: "_blank" %>
+        <br />
+        <br />
+        Favor de no responder a este correo, ya que es un servicio de envío de facturas automatizado.
+      </p>
+    </div>
+
+  </body>
+</html>

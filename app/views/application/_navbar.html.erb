@@ -29,6 +29,7 @@
                 <li>
                   <%= link_to 'Cambiar contraseña', edit_user_registration_path %>
                 </li>
+
                 <% if current_user.role.name == 'store-admin' %>
                   <li>
                     <% if current_user.store.delivery_address %>
@@ -38,6 +39,13 @@
                     <% end %>
                   </li>
                 <% end %>
+
+                <% if current_user.role.name == 'store-admin' %>
+                  <li>
+                    <%= link_to 'Datos de tienda', store_path(current_user.store) %>
+                  </li>
+                <% end %>
+
               <% if current_user.role.name == 'store-admin' || current_user.role.name == 'admin-desk' %>
                 <li>
                   <% if current_user.store.business_unit.billing_address %>
@@ -47,6 +55,7 @@
                   <% end %>
                 </li>
               <% end %>
+
               <% if current_user.role.name == 'platform-admin' || current_user.role.name == 'store-admin' %>
                 <li>
                   <%= link_to 'Crear usuario', new_user_path %>
