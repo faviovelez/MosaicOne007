@@ -14,12 +14,12 @@
   <h2 class="info-title">Editar tienda</h2>
   <div class="form-container">
 
-    <div class="form-inside-style">
+    <div class="form-inside-style hidden">
       <%= f.label :nombre_de_la_tienda %>
       <%= f.text_field :store_name, class: 'form-inside' %>
     </div>
 
-    <div class="form-inside-style">
+    <div class="form-inside-style hidden">
       <%= f.label :código_de_la_tienda %>
       <%= f.text_field :store_code, value: @store.store_code, class: 'form-inside' %>
     </div>
@@ -29,7 +29,7 @@
       <%= f.select :type_of_person, options_for_select(['persona física', 'persona moral'], selected: @store.type_of_person) %>
     </div>
 
-    <div class="form-inside-style">
+    <div class="form-inside-style hidden">
       <%= f.label :tipo_de_tienda %>
       <%= f.select :store_type_id, options_for_select(StoreType.all.collect{|t| [t.store_type, t.id]}) %>
     </div>
@@ -81,14 +81,39 @@
       <%= f.text_field :zip_code, maxlength: 5, class: 'form-inside' %>
     </div>
 
-    <div class="form-inside-style">
+    <div class="form-inside-style hidden">
       <%= f.label :empresa %>
       <%= f.select :business_unit_id, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}, selected: @store.business_unit_id) %>
     </div>
 
-    <div class="form-inside-style">
+    <div class="form-inside-style hidden">
       <%= f.label :grupo_de_negocios %>
       <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}, selected: @store.business_group_id) %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :sobreprecio %>
+      <%= f.text_field :overprice, maxlength: 5, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :mail_para_comunicación %>
+      <%= f.email_field :bill_email, value: @store.bill_email, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :cobranza %>
+      <%= f.select :collection_active, options_for_select([['Activa', true], ['Inactiva', false]], selected: true) %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :dias_antes_de_vencimiento %>
+      <%= f.text_field :days_before, maxlength: 10, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label :dias_después_de_vencimiento %>
+      <%= f.text_field :days_after, maxlength: 10, class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">

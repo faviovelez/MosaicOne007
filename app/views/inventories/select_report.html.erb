@@ -8,10 +8,15 @@
 
   <div class="field">
     <%= label_tag :tipo_de_reporte %>
-    <%= select_tag :information, options_for_select([['Movimientos de Inventario'], ['Ventas y movmientos']]) %>
+    <%= select_tag :information, options_for_select([['Movimientos de inventario'], ['Ventas y movmientos'], ['Reporte de inventario']]) %>
   </div>
 
-  <div class="field">
+  <div class="field inventory-report hidden">
+    <%= label_tag :corte_de_información %>
+    <%= select_tag :what_final_date, options_for_select([['Al día de hoy'], ['Hasta una fecha']]) %>
+  </div>
+
+  <div class="field movements-report">
     <%= label_tag :opciones %>
     <%= select_tag :options, options_for_select([['Seleccionar día'], ['Mes actual'], ['Rango de fechas']]) %>
   </div>
@@ -21,20 +26,20 @@
     <%= select_tag :products, options_for_select([['Elegir producto'], ['Todos los productos']]) %>
   </div>
 
-  <div class="field product-select-2">
+  <div class="field product-select-2 movements-report">
     <%= label_tag :seleccionar_producto %>
     <%= select_tag :product_list, options_for_select(@products, selected: @products.first), {include_blank: true, multiple: true, class: 'form-inside select2-products'} %>
   </div>
 
-  <div class="field extra-margin-top">
+  <div class="field extra-margin-top hidden">
     <%= label_tag :fecha_de_reporte %>
-    <%= date_field_tag(:date, Date.today, options = {max: Date.today, min: current_user.store.store_movements.first.created_at.to_date }) %>
+    <%= date_field_tag(:date, Date.today, options = {max: Date.today, min: current_user.store.store_movements.order(:created_at).limit(1).pluck(:created_at).first.to_date }) %>
   </div>
 
   <div class="group_fields hidden">
     <div class="field">
       <%= label_tag :fecha_inicial %>
-      <%= date_field_tag(:initial_date, Date.today, options = {max: Date.today, min: current_user.store.store_movements.first.created_at.to_date }) %>
+      <%= date_field_tag(:initial_date, Date.today, options = {max: Date.today, min: current_user.store.store_movements.order(:created_at).limit(1).pluck(:created_at).first.to_date }) %>
     </div>
 
     <div class="field">

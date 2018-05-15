@@ -98,6 +98,11 @@
       <%= f.text_field :credit_days, class: 'form-inside' %>
     </div>
 
+    <div class="form-inside-style">
+      <%= f.label :cobranza %>
+      <%= f.select :collection_active, options_for_select([['Activa', true], ['Inactiva', false]], selected: true) %>
+    </div>
+
     <div class="button-container">
       <div class="actions">
         <%= f.submit :Crear, class: 'main-button' %>

@@ -175,13 +175,13 @@
       </tr>
       <tr>
         <% if @bill == nil %>
-          <td colspan="5" class="letter"> <%= number_to_letters(@total) %> <%= decimals(@total) %> </td>
+          <td colspan="5" class="letter"> <%= number_to_letters(total) %> <%= decimals(total) %> </td>
         <% else %>
           <td colspan="5" class="letter"> <%= number_to_letters(@bill.total) %> <%= decimals(@bill.total) %> </td>
         <% end %>
         <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
         <% if @bill == nil %>
-          <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@total) %> </strong> </td>
+          <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(total) %> </strong> </td>
         <% else %>
           <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
         <% end %>
@@ -233,6 +233,7 @@
         <tr class="header-main-preview">
         <th> Ticket </th>
         <th> Fecha </th>
+        <th> Tipo de pago </th>
         <th> Forma de pago </th>
         <th> Monto </th>
       </tr>
@@ -243,6 +244,7 @@
         <tr class="center">
           <td> <%= payment.ticket.ticket_number %> </td>
           <td> <%= payment.payment_date %> </td>
+          <td> <%= payment.payment_type %> </td>
           <td> <%= payment.payment_form.description %> </td>
           <td> <%= number_to_currency(payment.total) %> </td>
         </tr>
