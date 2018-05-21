@@ -75,6 +75,10 @@ module TicketsHelper
         ).where.not(pdf: nil, xml: nil)
   end
 
+  def transform_q(attribute)
+    transform = BigDecimal(attribute).truncate(2).to_s('F').to_i
+  end
+
   def rows_for_ticket_show_helper(ticket)
     @rows = []
     ticket.store_movements.each do |movement|
@@ -157,7 +161,7 @@ module TicketsHelper
   def get_returns_or_changes_for_ticket(ticket)
     difference = []
     ticket.children.each do |ticket|
-      if ticket.ticket_type != 'pago'
+      if ticket.ticket_type == 'devolución'
         difference << ticket.total
       end
     end
@@ -169,6 +173,7 @@ module TicketsHelper
   def get_payments_on_sales_summary(ticket)
     rows_for_ticket_show_helper(ticket)
     payments_for_ticket_show(ticket)
+    get_returns_or_changes_for_ticket(ticket)
   ((@total_rows_ticket - @difference) <= @total_payments_ticket || @total_rows_ticket - @total_payments_ticket < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(@total_rows_ticket - @total_payments_ticket)
     @pending
   end

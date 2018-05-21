@@ -1,4 +1,4 @@
-<% if @inventories.count >= 1 %>
+<% if @products.length >= 1 %>
   <table id="products-table">
     <thead>
       <tr class="table-titles">
@@ -10,30 +10,34 @@
         <th>Acciones</th>
       </tr>
     </thead>
-
     <tbody>
-      <% @inventories.each do |inventory| %>
+      <% @products.each do |product| %>
         <tr>
-          <td class="col-md-1"><%= inventory.product.unique_code %></td>
-          <td class="col-md-2"><%= inventory.product.description %></td>
-          <td class="col-md-1"><%= inventory.product.exterior_color_or_design %></td>
-          <td class="col-md-2"><%= inventory.product.line %></td>
-          <td class="col-md-1"><%= number_to_currency(show_price_with_overprice(inventory)) %></td>
+          <td class="col-md-1"> <%= product.unique_code %></td>
+          <td class="col-md-2"> <%= product.description %></td>
+          <td class="col-md-1"> <%= product.exterior_color_or_design&.capitalize %></td>
+          <td class="col-md-2"> <%= product.line&.capitalize %></td>
+          <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+            <td class="col-md-1"> <%= number_to_currency(product.product_price) %></td>
+          <% else %>
+            <td class="col-md-1"> <%= number_to_currency(product.price) %></td>
+          <% end %>
           <td class="col-md-1">
-            <%= link_to inventory.product do %>
+            <%= link_to product do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
             <% end %>
-              <% role = current_user.role.name %>
-              <% user_bg = current_user.store.business_unit.business_group %>
-              <% product_bg = inventory.product.business_unit.business_group %>
-              <% if (((role == 'product-admin' || role == 'product-staff') && inventory.product.shared == true) || current_user.role.name == 'store-admin' && inventory.product.store == current_user.store) %>
-                <%= link_to edit_product_path(inventory.product) do %>
-                  <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
-                <% end %>
+            <% if ((current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff') && product.store_id == nil) %>
+              <%= link_to edit_product_path(product) do %>
+                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
               <% end %>
+            <% elsif (current_user.role.name == 'store-admin' && product.store_id == current_user.store_id) %>
+              <%= link_to edit_product_path(product) do %>
+                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
+              <% end %>
+            <% end %>
           </td>
         </tr>
-    <% end %>
+      <% end %>
     </tbody>
   </table>
 <% else %>

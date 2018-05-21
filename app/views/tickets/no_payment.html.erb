@@ -1,59 +1,68 @@
-<%= form_tag({ controller: 'bills', action: 'select_info' }, method: 'post', class: 'form-data-tables') do %>
-  <table id="tickets">
-    <thead>
-      <tr class="table-titles">
-        <th> </th>
-        <th class="col-md-1">No.</th>
-        <th> Fecha </th>
-        <th> Cliente </th>
-        <th> Subtotal </th>
-        <th> Devoluciones </th>
-        <th> Total </th>
-        <th> Saldo </th>
-        <th> Estatus </th>
-        <th> Factura </th>
-        <th> Detalles </th>
-      </tr>
-    </thead>
-    <tbody>
-        <% @tickets.each do |ticket| %>
-          <tr>
-            <% if (ticket.bill == nil || (ticket.bill != nil && ticket.bill.status == 'cancelada')) %>
-              <td> <%= check_box_tag "tickets[]", "#{ticket.id}", false, { multiple: true, id: "tickets[#{ticket.id}]" }%> </td>
-            <% else %>
-              <td> </td>
-            <% end %>
+
+<table id="tickets">
+  <thead>
+    <tr class="table-titles">
+      <th class="col-md-1">No.</th>
+      <th> Fecha </th>
+      <th> Cliente </th>
+      <th> Subtotal </th>
+      <th> Devoluciones </th>
+      <th> Total </th>
+      <th> Saldo </th>
+      <th> Estatus </th>
+      <th> Factura </th>
+      <th> Detalles </th>
+    </tr>
+  </thead>
+  <tbody>
+      <% @tickets.each do |ticket| %>
+        <tr>
+          <% if ticket.ticket_type == 'cancelado' %>
+            <td class="canceled-ticket"> <%= ticket.ticket_number %> </td>
+          <% else %>
             <td> <%= ticket.ticket_number %> </td>
-            <td> <%= l ticket.created_at.to_date, format: :short %> </td>
-            <td> <%= show_non_blank_field(ticket.prospect&.legal_or_business_name) %> </td>
-            <td> <%= number_to_currency(ticket.total) %> </td>
-            <td> <%= number_to_currency(get_returns_or_changes(ticket)) %> </td>
-            <td> <%= number_to_currency(get_total_with_returns_or_changes(ticket)) %> </td>
-            <td> <%= get_payments_on_sales_summary(ticket) %> </td>
-            <td> <%= get_bill_status(ticket) %> </td>
-            <% if ticket.bill == nil %>
-              <td> - </td>
-            <% else %>
-              <td> <%= ticket.bill.folio %> </td>
+          <% end %>
+          <td> <%= l ticket.created_at.to_date, format: :short %> </td>
+          <td> <%= show_non_blank_field(ticket.prospect&.legal_or_business_name) %> </td>
+          <td> <%= number_to_currency(ticket.total) %> </td>
+          <td> <%= number_to_currency(get_returns_or_changes(ticket)) %> </td>
+          <td> <%= number_to_currency(get_total_with_returns_or_changes(ticket)) %> </td>
+          <td> <%= get_payments_on_sales_summary(ticket) %> </td>
+          <td> <%= get_bill_status(ticket) %> </td>
+          <% if ticket.bill == nil %>
+            <td> - </td>
+          <% else %>
+            <td> <%= ticket.bill.folio %> </td>
+          <% end %>
+          <td>
+            <%= link_to ticket_details_path(ticket) do %>
+              <i class="fa fa-book link-to-price" aria-hidden="true"></i>
+              <span class="link-to-price"> Detalles </span>
             <% end %>
-            <td>
-              <%= link_to ticket_details_path(ticket) do %>
-                <i class="fa fa-book link-to-price" aria-hidden="true"></i>
-                <span class="link-to-price"> Detalles </span>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-    </tbody>
-  </table>
+          </td>
+        </tr>
+      <% end %>
+  </tbody>
+</table>
 
-  <div class="actions">
-    <%= submit_tag 'Seleccionar datos', class: 'main-button' %>
-  </div>
-  <br /><br />
+<br/>
+<div>
+  <%= link_to tickets_sales_summary_path, class: 'space-between-links' do  %>
+    Resumen de ventas
+    <i class="fa fa-columns" aria-hidden="true"></i>
+  <% end %>
 
-<% end %>
+  <%= link_to tickets_cancelled_tickets_path, class: 'space-between-links' do  %>
+    Tickets cancelados
+    <i class="fa fa-calendar-times-o" aria-hidden="true"></i>
+  <% end %>
 
+  <%= link_to tickets_saved_path, class: 'space-between-links' do  %>
+    Tickets guardados
+    <i class="fa fa-save" aria-hidden="true"></i>
+  <% end %>
+</div>
+<br/><br/><br/>
 
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'datatables.min' %>

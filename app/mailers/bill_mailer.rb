@@ -1,6 +1,8 @@
 class BillMailer < ApplicationMailer
 
   default from: "facturas@plataforma-dc.com"
+  #  default from: "faviovelez29@gmail.com"
+
   layout 'mailer'
 
   def address

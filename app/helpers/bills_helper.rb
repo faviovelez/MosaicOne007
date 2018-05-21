@@ -331,7 +331,7 @@ module BillsHelper
   def get_returns_or_changes(ticket)
     difference = []
     ticket.children.each do |ticket|
-      if ticket.ticket_type != 'pago'
+      if ticket.ticket_type == 'devolución'
         difference << ticket.total
       end
     end

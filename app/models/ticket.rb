@@ -22,4 +22,25 @@ class Ticket < ActiveRecord::Base
     self.update(web_id: self.id, web: true)
   end
 
+  def sum_payments
+    total = 0
+    self.payments.each do |pay|
+      if pay.payment_type == 'pago'
+        total += pay.total
+      elsif pay.payment_type == 'devolución'
+        total -= pay.total
+      end
+    end
+    self.children.each do |ticket|
+      ticket.payments.each do |pay|
+        if pay.payment_type == 'pago'
+          total += pay.total
+        elsif pay.payment_type == 'devolución'
+          total -= pay.total
+        end
+      end
+    end
+    return total
+  end
+
 end
