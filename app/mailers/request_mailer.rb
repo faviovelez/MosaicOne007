@@ -1,6 +1,8 @@
 class RequestMailer < ApplicationMailer
 
-  default from: "faviovelez29@gmail.com"
+  default from: "notificaciones@plataforma-dc.com"
+#  default from: "faviovelez29@gmail.com"
+
   layout 'mailer'
 
   def status_cost_assigned(request)

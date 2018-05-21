@@ -20,6 +20,7 @@ class Prospect < ActiveRecord::Base
   has_many :tickets
   has_many :estimate_docs
   has_many :date_advises
+  has_many :payments, through: :tickets
 
   after_create :save_web_id
 
@@ -33,6 +34,56 @@ class Prospect < ActiveRecord::Base
 
   def save_web_id
     self.update(web_id: self.id)
+  end
+
+  def first_purchase
+    date = self.tickets&.order(:created_at).pluck(:created_at).first&.to_date
+    if date == nil
+      return 'Sin compras'
+    else
+      return date
+    end
+  end
+
+  def last_purchase
+    date = self.tickets&.order(created_at: :desc).pluck(:created_at).first&.to_date
+    if date == nil
+      return 'Sin compras'
+    else
+      return date
+    end
+  end
+
+  def sales_number
+    self.tickets.where(ticket_type: 'venta').count
+  end
+
+  def average_sale
+    if (total_sales / sales_number).nan?
+      return 0
+    else
+      return (total_sales / sales_number).round(2)
+    end
+  end
+
+  def total_sales
+    return self.store_movements.where(movement_type: 'venta').sum(:total) - self.store_movements.where(movement_type: 'devolución').sum(:total) + self.service_offereds.where(service_type: 'venta').sum(:total) - self.service_offereds.where(service_type: 'devolución').sum(:total)
+  end
+
+  def total_discounts
+    return self.store_movements.where(movement_type: 'venta').sum(:discount_applied) - self.store_movements.where(movement_type: 'devolución').sum(:discount_applied) + self.service_offereds.where(service_type: 'venta').sum(:discount_applied) - self.service_offereds.where(service_type: 'devolución').sum(:discount_applied)
+  end
+
+  def total_units
+    return self.store_movements.where(movement_type: 'venta').sum(:quantity) - self.store_movements.where(movement_type: 'devolución').sum(:quantity) + self.service_offereds.where(service_type: 'venta').sum(:quantity) - self.service_offereds.where(service_type: 'devolución').sum(:quantity)
+  end
+
+  def total_payments
+    return self.payments.where(payment_type: 'pago').sum(:total) - self.payments.where(payment_type: 'devolución').sum(:total)
+  end
+
+  def balance
+    return total_sales - total_payments
   end
 
   def create_update_change_table

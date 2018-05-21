@@ -24,18 +24,18 @@ class PosController < ApplicationController
         'users',
         'billing_addresses',
         'prospects',
-        'cash_registers',
         'tickets',
         'tickets_children',
         'terminals',
-        'payments',
         'store_movements',
-        'stores_inventories',
         'service_offereds',
         'delivery_services',
+        'payments',
+        'stores_inventories',
         'expenses',
         'deposits',
-        'withdrawals'
+        'withdrawals',
+        'cash_registers'
       ]
     end
 

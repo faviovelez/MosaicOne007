@@ -1,7 +1,7 @@
 class ProspectsController < ApplicationController
   # Este controller es para los prospectos, todas las personas que se atienden deben ir aquí. Se liga su información con la Request (cada request debe pertenecer a un prospect).
   before_action :authenticate_user!
-  before_action :set_prospect, only: [:show, :edit, :update, :destroy]
+  before_action :set_prospect, only: [:show, :edit, :update, :destroy, :sales_view]
   before_action :set_store, only: [:index, :new, :create, :update]
 
   # GET /prospects
@@ -77,12 +77,15 @@ class ProspectsController < ApplicationController
   end
 
   def store_prospects
-    @prospects = current_user.store.prospects
+    @prospects = prospects = Prospect.select('prospects.id, prospects.legal_or_business_name, prospects.prospect_type, prospects.business_type, COUNT(requests.id) as request_count, COUNT(tickets.id) as ticket_count').joins('LEFT JOIN requests ON requests.prospect_id = prospects.id LEFT JOIN tickets ON tickets.prospect_id = prospects.id').where(store_id: current_user.store.id).group('prospects.id').order(:id)
   end
 
   def save_store_prospect(user = current_user)
     store = user.store
     @prospect.store = store
+  end
+
+  def sales_view
   end
 
   private

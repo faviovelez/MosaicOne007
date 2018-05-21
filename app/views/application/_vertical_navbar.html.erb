@@ -179,7 +179,7 @@
           <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
             </li>
 
-          <% if (params[:controller] == 'bills' && params[:action] == 'select_tickets') %>
+          <% if ((params[:controller] == 'bills' && params[:action] == 'select_tickets') || (params[:controller] == 'tickets' && (params[:action] == 'sales' || params[:action] == 'sales_summary' || params[:action] == 'no_payment' || params[:action] == 'cancelled_tickets' || params[:action] == 'saved'))) %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
@@ -188,40 +188,13 @@
           <%= link_to 'Resumen de ventas', tickets_sales_summary_path, class: 'text-link' %>
             </li>
 
-          <% if (params[:controller] == 'tickets' && params[:action] == 'no_payment') %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-          <i class="fa fa-warning other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Ventas no liquidadas', tickets_no_payment_path, class: 'text-link' %>
-            </li>
-
           <% if (params[:controller] == 'tickets' && params[:action] == 'select_day') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
           <% end %>
           <i class="fa fa-calendar other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Ventas por día', tickets_select_day_path, class: 'text-link' %>
-            </li>
-
-          <% if (params[:controller] == 'tickets' && params[:action] == 'cancelled_tickets') %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-          <i class="fa fa-calendar-times-o other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Tickets cancelados', tickets_cancelled_tickets_path, class: 'text-link' %>
-            </li>
-
-          <% if (params[:controller] == 'tickets' && params[:action] == 'saved') %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-          <i class="fa fa-save other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Tickets guardados', tickets_saved_path, class: 'text-link' %>
+          <%= link_to 'Reportes de ventas', tickets_select_day_path, class: 'text-link' %>
             </li>
 
           <% if params[:controller] == 'delivery_services' %>
@@ -240,33 +213,6 @@
           <% end %>
           <i class="fa fa-file-pdf-o other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Facturas', bills_path, class: 'text-link' %>
-            </li>
-
-          <% if (params[:controller] == 'bills' && params[:action] == 'cancelled') %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-          <i class="fa fa-eraser other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Facturas Canceladas', bills_cancelled_path, class: 'text-link' %>
-            </li>
-
-          <% if (params[:controller] == 'bills' && params[:action] == 'form') %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-          <i class="fa fa-file-pdf-o other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Formulario de factura', bills_form_path, class: 'text-link' %>
-            </li>
-
-          <% if (params[:controller] == 'bills' && params[:action] == 'global_form') %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-          <i class="fa fa-file-pdf-o other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Formulario Fact Global', bills_global_form_path, class: 'text-link' %>
             </li>
 
         <% end %>

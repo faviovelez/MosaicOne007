@@ -169,6 +169,10 @@ class ServiceOffered < ActiveRecord::Base
           quantity: object.quantity.to_i + quantity,
         )
       end
+    elsif (!id_changed? && changes['total_cost'] != nil)
+      object.update_attributes(
+        cost: object.cost.to_f + cost
+      )
     end
   end
 

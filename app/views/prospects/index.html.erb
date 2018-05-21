@@ -1,4 +1,4 @@
-<% if @prospects.count >= 1 %>
+<% if @prospects.length >= 1 %>
   <table id="prosp">
     <thead>
       <tr class="table-titles">
@@ -12,8 +12,8 @@
       <% @prospects.each do |prospect| %>
       <tr>
         <td> <%= prospect.legal_or_business_name %> </td>
-        <td> <%= prospect.business_type %> </td>
         <td> <%= prospect.prospect_type %> </td>
+        <td> <%= prospect.business_type %> </td>
         <td class="col-md-2 flex-table left-align">
           <%= link_to prospect do %>
             <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
@@ -30,7 +30,13 @@
             <span class="link-to-price hidden">Cotizar</span>
           <% end %>
 
-          <% if prospect.requests.count >= 1 %>
+          <% if prospect.ticket_count > 0 %>
+            <%= link_to prospects_sales_view_path(prospect) do %>
+              <i class="fa fa-book alter-color" aria-hidden="true"></i>
+            <% end %>
+          <% end %>
+
+          <% if prospect.request_count > 0 %>
             <%= link_to prospect_requests_path(prospect) do %>
               <i class="fa fa-book link-to-details" aria-hidden="true"></i>
               <span>Cotizaciones</span>
@@ -43,6 +49,7 @@
               <span class="link-to-price hidden">Pedido</span>
             <% end %>
           <% end %>
+
 
         </td>
       </tr>

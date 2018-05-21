@@ -79,6 +79,25 @@
       </tbody>
     </table>
 
+    <br/>
+    <div>
+      <%= link_to bills_cancelled_path, class: 'space-between-links' do  %>
+        Ver facturas canceladas
+        <i class="fa fa-eraser" aria-hidden="true"></i>
+      <% end %>
+
+      <%= link_to bills_form_path, class: 'space-between-links' do  %>
+        Formulario de factura cliente
+        <i class="fa fa-wpforms" aria-hidden="true"></i>
+      <% end %>
+
+      <%= link_to bills_global_form_path, class: 'space-between-links' do  %>
+        Formulario Fact Global
+        <i class="fa fa-folder-open" aria-hidden="true"></i>
+      <% end %>
+    </div>
+    <br/>
+
     <!-- Este formulario es para crear NC / ND / DEV / PAGOS -->
     <div class="actions">
       <%= submit_tag 'Modificar / cancelar factura', class: 'main-button' %>

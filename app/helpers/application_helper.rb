@@ -4,6 +4,11 @@ module ApplicationHelper
     object.collection_active ? @collection_response = 'Activa' : @collection_response = 'Inactiva'
   end
 
+  def convert_balance(object)
+    object.balance < 1 ? @balance = content_tag(:span, 'pagado', class: 'label label-success') : @balance = number_to_currency(object.balance)
+    @balance
+  end
+
   def address_for_delivery(store = object.store)
     @address = store.delivery_address.street + ' ' + store.delivery_address.exterior_number + ' '
     @address += 'Int. ' + store.delivery_address.interior_number + ' ' unless store.delivery_address.interior_number.blank?
