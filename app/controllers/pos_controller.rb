@@ -21,7 +21,7 @@ class PosController < ApplicationController
 
     def tables_orders
       [
-        'cash_registers'
+        'cash_registers',
         'users',
         'billing_addresses',
         'prospects',
