@@ -21,9 +21,13 @@ module ProductsHelper
     store = current_user.store
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       manual_price = inventory.manual_price
-      if (manual_price == nil || manual_price == 0)
-        overp = ('%.2f' % (inventory.product.price * (1 + (inventory.store.overprice / 100)))).to_f
-        @price = (overp * 1.16).round(2)
+      if ((manual_price == nil || manual_price == 0))
+        if inventory.product.store == nil
+          overp = ('%.2f' % (inventory.product.price * (1 + (inventory.store.overprice / 100)))).to_f
+          @price = (overp * 1.16).round(2)
+        else
+          @price = (inventory.product.price * 1.16).round(2)
+        end
       else
         @price = manual_price * 1.16
       end

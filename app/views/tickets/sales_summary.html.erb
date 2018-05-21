@@ -46,6 +46,26 @@
       <% end %>
     </tbody>
   </table>
+
+  <br/>
+  <div>
+    <%= link_to tickets_no_payment_path, class: 'space-between-links' do  %>
+      Tickets pendientes de pago
+      <i class="fa fa-warning" aria-hidden="true"></i>
+    <% end %>
+
+    <%= link_to tickets_cancelled_tickets_path, class: 'space-between-links' do  %>
+      Tickets cancelados
+      <i class="fa fa-calendar-times-o" aria-hidden="true"></i>
+    <% end %>
+
+    <%= link_to tickets_saved_path, class: 'space-between-links' do  %>
+      Tickets guardados
+      <i class="fa fa-save" aria-hidden="true"></i>
+    <% end %>
+  </div>
+  <br/><br/><br/>
+
 <% else %>
   <p class="individual-font"> No hay ventas registradas </p>
 <% end %>

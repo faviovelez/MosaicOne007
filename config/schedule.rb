@@ -5,9 +5,7 @@
 
 env :PATH, ENV['PATH']
 
-set :environment, 'development'
-
-every :day, at: '07:00am' do
+every :day, at: '07:30am' do
  rake 'send_collection_email'
 end
 

@@ -3,9 +3,9 @@ task send_collection_email: :environment do
   today_beginning = Date.today.beginning_of_day
   today_end = Date.today.end_of_day
   today = Date.today.to_date
-  on_date_advise = DateAdvise.where(date: today_beginning..today_end)
-  before_date_advise = DateAdvise.where(before_date: today_beginning..today_end)
-  after_date_advise = DateAdvise.where(after_date: today_beginning..today_end)
+  on_date_advise = DateAdvise.where(date: today_beginning..today_end, active: true)
+  before_date_advise = DateAdvise.where(before_date: today_beginning..today_end, active: true)
+  after_date_advise = DateAdvise.where(after_date: today_beginning..today_end, active: true)
   advises = [before_date_advise, on_date_advise, after_date_advise]
   advises.each do |array|
     if array != []

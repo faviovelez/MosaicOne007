@@ -28,6 +28,10 @@ table#payment-average {
   margin-right: 1.5rem;
 }
 
+.alter-color {
+  color: #0EACF3;
+}
+
 .head-blue {
   background-color: #00B3D3;
   color: #fff;
@@ -1021,6 +1025,10 @@ tr.image-tr:hover {
   opacity: 1;
 }
 
+.canceled-ticket {
+  color: #D72638;
+  text-decoration: none;
+}
 
 .link-to-price {
   color: #D72638;

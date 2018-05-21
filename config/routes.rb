@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   get 'movements/edit'
 
+  get 'prospects/sales_view/:id', to: 'prospects#sales_view', as: 'prospects_sales_view'
+
   get 'delivery_services/select_report'
 
   get 'delivery_services/delivery_services_database'
@@ -23,8 +25,6 @@ Rails.application.routes.draw do
   get 'delivery_services/show_database/:id', to: 'delivery_services#show_database', as: 'delivery_services_show_database'
 
   match '/search_suggestions', to: 'search_suggestions#index', via: :get
-
-  get 'pages/index'
 
   get 'filtered_requests/current_view'
 
@@ -58,11 +58,17 @@ Rails.application.routes.draw do
 
   get 'products/special'
 
+  get 'tickets/prospect_view/:id', to: 'tickets#prospect_view', as: 'tickets_prospect_view'
+
   get 'tickets/tickets_closure_day_pdf'
 
   get 'tickets/no_payment'
 
   get 'tickets/saved'
+
+  get 'tickets/ticket_sales'
+
+  get 'tickets/product_sales'
 
   get 'bills/download_pdf/:id', to: 'bills#download_pdf', as: 'download_pdf'
 

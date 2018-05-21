@@ -16,11 +16,107 @@ class Payment < ActiveRecord::Base
 
   before_update :create_update_summary
 
-  after_create :save_web_id_and_set_web_true
-
+  after_create :save_web_id_and_set_web_true, :create_update_date_advise
 
   # Crear o modificar objeto y si pertenece al mismo ticket dejar solo uno y borrar los demás (borrar los viejos)
   # Buscar y modificar los que pertenezcan al mismo ticket y desactivarlas y/o borrarlas (DateAdvise) ON CREATE Y ON UPDATE?
+
+  def dont_exist_date_advise
+    @parent = false
+    @ticket = self.ticket
+    if @ticket.parent == nil
+      !!(DateAdvise.where(ticket: @ticket).first.nil?)
+    else
+      @parent = true
+      !!(DateAdvise.where(ticket: @ticket.parent).first.nil?)
+    end
+  end
+
+  def create_update_date_advise
+    if dont_exist_date_advise
+      create_date_advise unless @parent
+    else
+      update_date_advise
+    end
+  end
+
+  def create_date_advise
+    ticket = @ticket
+    results = find_balance(@ticket)
+    balance = results[:total] - results[:payments]
+    if balance > 1 && self.payment_type == 'crédito'
+      if ticket.prospect == nil
+        DateAdvise.create(ticket: ticket, date: results[:date], before_date: results[:date] - self.store.days_before.days, after_date: results[:date] + results[:days].days + self.store.days_after.days, payment: self)
+      else
+        DateAdvise.create(ticket: ticket, date: results[:date], before_date: results[:date] - self.store.days_before.days, after_date: results[:date] + results[:days].days + self.store.days_after.days, payment: self, prospect: ticket.prospect)
+      end
+    end
+  end
+
+  def update_date_advise
+    if @ticket.parent == nil
+      advise = DateAdvise.where(ticket: @ticket).first
+      ticket = @ticket
+    else
+      advise = DateAdvise.where(ticket: @ticket.parent).first
+      ticket = @ticket.parent
+    end
+    results = find_balance(ticket)
+    balance = results[:total] - results[:payments]
+    if balance < 1
+      advise.update(active: false, date: results[:date], before_date: results[:date] - self.store.days_before.days, after_date: results[:date] + results[:days].days + self.store.days_after.days, payment: self)
+    else
+      advise.update(active: true, date: results[:date], before_date: results[:date] - self.store.days_before.days, after_date: results[:date] + results[:days].days + self.store.days_after.days, payment: self)
+    end
+  end
+
+  def find_balance(ticket)
+    credit_payments = []
+    @results = {payments: 0.0, total: 0.0, date: '', days: 0}
+    ticket.payments.each do |pay|
+      @results[:payments] += pay.total.to_f if pay.payment_type == 'pago'
+      @results[:payments] -= pay.total.to_f if pay.payment_type == 'devolución'
+      if pay.payment_type == 'crédito'
+        credit = pay.credit_days.to_i
+        credit_payments << [pay.created_at, pay.credit_days.to_i, pay.created_at.to_date + credit.days] unless credit_payments.include?(pay)
+      end
+    end
+    ticket.store_movements.each do |sm|
+      @results[:total] += sm.total if sm.movement_type == 'venta'
+      @results[:total] -= sm.total if sm.movement_type == 'devolución'
+    end
+    ticket.service_offereds.each do |so|
+      @results[:total] += sm.total if so.service_type == 'venta'
+      @results[:total] -= sm.total if so.service_type == 'devolución'
+    end
+    ticket.children.each do |t|
+      t.store_movements.each do |sm|
+        @results[:total] += sm.total if sm.movement_type == 'venta'
+        @results[:total] -= sm.total if sm.movement_type == 'devolución'
+      end
+      t.service_offereds.each do |so|
+        @results[:total] += sm.total if so.service_type == 'venta'
+        @results[:total] -= sm.total if so.service_type == 'devolución'
+      end
+      t.payments.each do |pay|
+        @results[:payments] += pay.total.to_f if pay.payment_type == 'pago'
+        @results[:payments] -= pay.total.to_f if pay.payment_type == 'devolución'
+        if pay.payment_type == 'crédito'
+          credit = pay.credit_days.to_i
+          credit_payments << [pay.created_at, pay.credit_days.to_i, pay.created_at.to_date + credit.days] unless credit_payments.include?(pay)
+        end
+      end
+    end
+    if credit_payments != []
+      credit_payments.sort! do |a, b|
+        a[0] <=> b[0]
+      end
+      @results[:date] = credit_payments.last[2]
+      @results[:days] = credit_payments.last[1]
+    end
+
+    return @results
+  end
 
   def save_web_id_and_set_web_true
     self.update(web_id: self.id, web: true)

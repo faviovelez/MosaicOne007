@@ -22,7 +22,11 @@
           <td> <%= movement.created_at.strftime("%I:%M%p") %> </td>
           <td> <%= movement.movement_type %> </td>
           <td> <%= movement.quantity %> </td>
-          <td> <%= movement.reason %> </td>
+          <% if (movement.movement_type == 'alta' || movement.movement_type == 'baja' || movement.movement_type == 'alta automática' || movement.movement_type == 'baja automática') %>
+            <td> <%= movement.reason %> </td>
+          <% else %>
+            <td> <%= movement.ticket.ticket_number %> </td>
+          <% end %>
         </tr>
     <% end %>
   </tbody>

@@ -2,15 +2,16 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>YA CASI Vencimiento de Crédito</title>
+    <title>Se acerca vencimiento de crédito</title>
   </head>
   <body>
     <p>
-      Estimado colaborador.
+      Estimado cliente, <%= @ticket.prospect.legal_or_business_name %>
       <br />
       <br />
       <br />
-      El ticket No. <%= @ticket.ticket_number %> vence el <%= l @advice.before_date, format: :short  %>.
+      El ticket No. <%= @ticket.ticket_number %> por <%= number_to_currency(@total) %>, de Diseños de Cartón sucursal <%= @advice.store.store_name %> por <%= number_to_currency(@balance) %> pesos vence el <%= l @advice.before_date, format: :short  %>
+      y tiene un saldo de <%= number_to_currency(@balance) %> pesos.
     </p>
 
     <br />
@@ -37,7 +38,7 @@
         <%= link_to @store_webpage, "http://#{@store_webpage}", target: "_blank" %>
         <br />
         <br />
-        Favor de no responder a este correo, ya que es un servicio de envío de facturas automatizado.
+        Servicio de envío de facturas automatizado. Favor de no responder a este correo.
       </p>
     </div>
 
