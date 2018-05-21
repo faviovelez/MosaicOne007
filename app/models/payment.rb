@@ -86,8 +86,8 @@ class Payment < ActiveRecord::Base
       @results[:total] -= sm.total if sm.movement_type == 'devolución'
     end
     ticket.service_offereds.each do |so|
-      @results[:total] += sm.total if so.service_type == 'venta'
-      @results[:total] -= sm.total if so.service_type == 'devolución'
+      @results[:total] += so.total if so.service_type == 'venta'
+      @results[:total] -= so.total if so.service_type == 'devolución'
     end
     ticket.children.each do |t|
       t.store_movements.each do |sm|
@@ -95,8 +95,8 @@ class Payment < ActiveRecord::Base
         @results[:total] -= sm.total if sm.movement_type == 'devolución'
       end
       t.service_offereds.each do |so|
-        @results[:total] += sm.total if so.service_type == 'venta'
-        @results[:total] -= sm.total if so.service_type == 'devolución'
+        @results[:total] += so.total if so.service_type == 'venta'
+        @results[:total] -= so.total if so.service_type == 'devolución'
       end
       t.payments.each do |pay|
         @results[:payments] += pay.total.to_f if pay.payment_type == 'pago'
