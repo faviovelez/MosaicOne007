@@ -2049,16 +2049,8 @@ XML
             end
           end
         else
-          @objects.update(bill: bill)
-          @objects.payments.each do |payment|
-            payment.update(bill: bill)
-          end
-          @objects.store_movements.each do |mov|
-            mov.update(bill: bill)
-          end
-          @objects.service_offereds.each do |serv|
-            serv.update(bill: bill)
-          end
+          # Object is a Bill
+          @objects.children << bill
         end
       end
     else
