@@ -8,12 +8,10 @@ class RequestMailer < ApplicationMailer
 
   def status_cost_assigned(request)
     @request = request
-    @request.store.users.each do |user|
-      @user = user
-    end
-    list = request.store.users
+    @user_email = @request.store.bill_email
+    @user = request.users.first
       mail(
-        bcc: list.map(&:email).uniq,
+        to: @user_email,
         subject: "Costo asignado en pedido especial #{request.id}"
       )
   end

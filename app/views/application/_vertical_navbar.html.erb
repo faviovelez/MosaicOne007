@@ -26,6 +26,24 @@
               <%= link_to 'Inicio', root_path, class: 'text-link'  %>
             </li>
 
+          <% if params[:controller] == 'prospects' && params[:action] == 'new' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-user-plus other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Alta de prospectos', new_business_group_prospect_path(current_user.store.business_unit.business_group), class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'prospects' && params[:action] == 'index' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-users other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Lista de prospectos', business_group_prospects_path(current_user.store.business_unit.business_group), class: 'text-link'  %>
+            </li>
+
           <% if params[:action] == 'unassigned_view' %>
             <%-# Aplica formato si está seleccionada %>
             <li class="vertical-link actual-vertical-link">
@@ -81,7 +99,7 @@
             <li class="vertical-link">
           <% end %>
               <i class="fa fa-send-o other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Nuevo pedido', new_store_order_path(current_user.store), class: 'text-link'  %>
+              <%= link_to 'Nuevo pedido de línea', new_store_order_path(current_user.store), class: 'text-link'  %>
             </li>
 
           <% if params[:controller] == 'orders' && params[:action] == 'index' %>
@@ -109,27 +127,7 @@
             <li class="vertical-link">
           <% end %>
               <i class="fa fa-window-restore other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Cotizaciones activas', filtered_requests_current_view_path, class: 'text-link'  %>
-            </li>
-
-          <% if params[:action] == 'saved_view' %>
-            <%-# Aplica formato si está seleccionada %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-              <i class="fa fa-file-text other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Cotizaciones guardadas', filtered_requests_saved_view_path, class: 'text-link'  %>
-            </li>
-
-          <% if params[:action] == 'inactive_view' %>
-            <%-# Aplica formato si está seleccionada %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-            <% end %>
-              <i class="fa fa-snowflake-o other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Cotizaciones inactivas', filtered_requests_inactive_view_path, class: 'text-link'  %>
+              <%= link_to 'Pedidos especiales', filtered_requests_current_view_path, class: 'text-link'  %>
             </li>
 
           <% if params[:controller] == 'prospects' && params[:action] == 'new' %>
@@ -170,15 +168,6 @@
           <%= link_to 'Lista de productos', products_path, class: 'text-link' %>
             </li>
 
-          <% if params[:controller] == 'inventories' %>
-            <li class="vertical-link actual-vertical-link">
-          <% else %>
-            <li class="vertical-link">
-          <% end %>
-          <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
-            </li>
-
           <% if ((params[:controller] == 'bills' && params[:action] == 'select_tickets') || (params[:controller] == 'tickets' && (params[:action] == 'sales' || params[:action] == 'sales_summary' || params[:action] == 'no_payment' || params[:action] == 'cancelled_tickets' || params[:action] == 'saved'))) %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
@@ -204,6 +193,15 @@
           <% end %>
           <i class="fa fa-plane other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Servicios de Mensajería', delivery_services_select_report_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'inventories' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
             </li>
 
           <% if (params[:controller] == 'bills' && params[:action] == 'select_bills') %>

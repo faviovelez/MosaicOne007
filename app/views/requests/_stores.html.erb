@@ -9,7 +9,7 @@
 <% end %>
 
 <% if @object.count >= 1 %>
-  <table>
+  <table class="dataTableFour">
     <thead>
       <tr class="table-titles">
         <th class="folio col-md-1">Folio</th>
@@ -19,6 +19,7 @@
         <th class="date-created col-md-1">Solicitada</th>
         <th class="delivery-date col-md-1">Entregar</th>
         <th class="status col-md-2">Estatus</th>
+        <th class="status col-md-2">Acciones</th>
       </tr>
     </thead>
 
@@ -26,7 +27,7 @@
       <% @object.each do |request| %>
         <tr>
           <td class="folio"> <%= request.id %></td>
-          <td class="quantity"><%= number_with_delimiter(request.quantity) %></td>
+          <td class="quantity"> <%= number_with_delimiter(request.quantity) %></td>
           <td class="product">
             <% if request.product_type == 'otro'%>
               <%= request.name_type %>
@@ -53,7 +54,7 @@
           <td class="status"> <%= request.status %></td>
           <td>
             <%= link_to request do %>
-              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver detalles"></i>
             <% end %>
           </td>
           <% if request.status == 'costo asignado'  %>
@@ -85,3 +86,4 @@
 <% else %>
   <p class="individual-font">No hay solicitudes en esta bandeja</p>
 <% end %>
+<%= render 'dataTables' %>
