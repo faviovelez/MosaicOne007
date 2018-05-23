@@ -7,7 +7,25 @@
   <body>
     <p>
       Estimado(a) <%= @user.first_name %> <%= @user.last_name %>.
-      A la solicitud <%= @request.id %> se le ha asignado un costo de venta de <%= number_to_currency(@request.internal_price) %> pesos.
+      Al pedido especial <%= @request.id %> se le ha asignado un costo de venta de <%= number_to_currency(@request.internal_price) %> pesos.
     </p>
+
+    <div class="small-address">
+      <%= image_tag 'logo-disenos-decarton.png', width: '300px', height: 'auto', alt: 'Logo Diseños de Cartón' %>
+      <br />
+      <p>
+        <strong>
+          Diseños de Cartón
+        </strong>
+        <br />
+        Más que cajas... Soluciones.
+        <br />
+        <%= link_to @store_webpage, "http://#{@store_webpage}", target: "_blank" %>
+        <br />
+        <br />
+        Servicio automatizado de envío de correo. Favor de no responder a este correo.
+      </p>
+    </div>
+
   </body>
 </html>

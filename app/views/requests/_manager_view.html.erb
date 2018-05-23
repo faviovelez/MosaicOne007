@@ -2,19 +2,26 @@
 
   <%= form_for(@request) do |f| %>
 
-    <div class="form-container">
+    <div class="form-container flex-start">
 
       <div class="field form-inside-style">
-        <%= f.label :costo_de_venta %>
+        <%= f.label :costo_de_venta, class: 'bigger-p extra-margin-left' %>
         <%= f.text_field :internal_cost, class: 'form-inside' %>
       </div>
 
       <div class="field form-inside-style">
-        <%= f.label :precio_para_la_tienda %>
+        <%= f.label :precio_para_la_tienda, class: 'bigger-p' %>
         <%= f.text_field :internal_price, class: 'form-inside' %>
       </div>
 
+      <div class="field form-inside-style">
+        <br />
+        <%= f.label :desarrollo, class: 'bigger-p extra-margin-left' %>
+        <%= f.text_area :develop, class: 'form-inside observations-notes' %>
+      </div>
+
       <div class="button-container" id="confirm-cost-div">
+        <br />
         <div class="actions">
           <%= f.submit :confirmar_costo, name: 'actualizar', class: 'main-button capitalize' %>
         </div>
@@ -27,9 +34,10 @@
 
       <h3>¿Solicitud incompleta?</h3>
       <%= form_for(@request) do |t| %>
-        <div class="form-container">
+        <div class="form-container flex-start">
           <div class="field form-inside-style">
-            <%= t.label :notas_para_la_tienda %>
+            <br />
+            <%= t.label :notas_para_la_tienda, class: 'bigger-p extra-margin-left' %>
             <%= t.text_area :notes, class: 'form-inside observations-notes' %>
           </div>
 

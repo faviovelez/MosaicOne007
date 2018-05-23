@@ -35,7 +35,7 @@
             <% end %>
           </td>
           <% if request.prospect.present? %>
-            <td class="prospect"><%= request.prospect.legal_or_business_name %></td>
+            <td class="prospect"> <%= request.prospect.legal_or_business_name %></td>
           <% end %>
           <% @days = (Date.today - request.created_at.to_date).to_i %>
           <% if @days < 1 %>

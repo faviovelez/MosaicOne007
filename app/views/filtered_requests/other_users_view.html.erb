@@ -1,29 +1,34 @@
 <% if @assigned_to_others.count >= 1 %>
-    <table>
+    <table class="dataTableFour">
       <thead>
         <tr class="table-titles">
+          <th class="col-md-1">Folio</th>
           <th class="col-md-2">Tienda</th>
           <th class="quantity col-md-1">Cantidad</th>
           <th class="product col-md-1">Producto</th>
+          <th class="product col-md-1">Material</th>
           <th class="date col-md-1">Solicitada</th>
           <th class="delivery-date col-md-1">Entregar</th>
           <th class="col-md-1">Cotiza</th>
           <th class="status col-md-2">Estatus</th>
+          <th class="status col-md-2">Acciones</th>
         </tr>
         </tr>
       </thead>
       <tbody>
       <% @assigned_to_others.each do |request| %>
         <tr>
-          <td> <%= request.store.store_code %> - <%= request.store.store_name %> </td>
-          <td><%= number_with_delimiter(request.quantity) %></td>
+          <td> <%= request.id %> </td>
+          <td> <%= request.store.store_name %> </td>
+          <td> <%= number_with_delimiter(request.quantity) %></td>
           <td>
             <% if request.product_type == 'otro'%>
-              <%= request.name_type %>
+              <%= request.name_type.capitalize %>
             <% elsif request.product_type != 'otro'%>
-              <%= request.product_type %>
+              <%= request.product_type.capitalize %>
             <% end %>
           </td>
+          <td> <%= request.main_material.capitalize %> </td>
           <% @days = (Date.today - request.created_at.to_date).to_i %>
           <% if @days < 1 %>
             <td> hoy </td>
@@ -42,7 +47,7 @@
             <%= @follower.first_name %>
             <%= @follower.last_name %>
           </td>
-          <td> <%= request.status %></td>
+          <td> <%= request.status.capitalize %></td>
           <td class="col-md-1">
             <%= link_to request do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
@@ -56,3 +61,4 @@
 <% else %>
   <p class="individual-font">No hay solicitudes activas</p>
 <% end %>
+<%= render 'dataTables' %>

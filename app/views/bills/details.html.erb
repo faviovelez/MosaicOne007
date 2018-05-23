@@ -46,10 +46,10 @@
           <td class="space-preview"> <%= row.sat_unit_key %> </strong> </td>
           <td class="space-preview"> <%= row.sat_unit_description %> </td>
           <td class="space-preview"> <%= row.description %> </td>
-          <td class="space-preview"> <%= row.unit_value %> </td>
+          <td class="space-preview"> <%= number_to_currency(row.unit_value) %> </td>
           <td class="space-preview"> <%= number_to_currency(row.discount) %> </td>
           <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
-          <td class="space-preview"> <%= number_to_currency(row.subtotal) %> </td>
+          <td class="space-preview text-right"> <%= number_to_currency(row.subtotal) %> </td>
         </tr>
       <% end %>
       <tr>
@@ -62,22 +62,22 @@
         <td></td>
         <td colspan="3" class="center"></td>
         <td></td>
-        <td colspan="3" class="final-total"> SubTotal </td>
+        <td colspan="3" class="final-total text-left"> SubTotal </td>
         <td colspan="2" class="final-total right"> <%= number_to_currency(@bill.subtotal) %> </td>
       </tr>
       <tr>
         <td colspan="5"></td>
-        <td colspan="3" class="final-total "> Descuento </td>
+        <td colspan="3" class="final-total text-left"> Descuento </td>
         <td colspan="2" class="final-total right"> <%= number_to_currency(@bill.discount_applied) %> </td>
       </tr>
       <tr>
         <td colspan="5" class="letter"></td>
-        <td colspan="3" class="final-total"> Total Impuestos Trasladados </td>
+        <td colspan="3" class="final-total text-left"> Total Impuestos Trasladados </td>
         <td colspan="2" class="final-total right"> <%= number_to_currency(@bill.taxes) %> </td>
       </tr>
       <tr>
         <td colspan="5" class="letter"></td>
-        <td colspan="3" class="final-total border-top"> <strong> Total </strong> </td>
+        <td colspan="3" class="final-total border-top text-left"> <strong> Total </strong> </td>
         <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
       </tr>
       <tr>
@@ -145,13 +145,13 @@
         </tr>
         <tr>
           <td colspan="8"> </td>
-          <td> <strong> Total Fact: </strong> </td>
-          <td> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
+          <td class="text-left"> <strong> Total Fact: </strong> </td>
+          <td class="text-right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
         </tr>
         <tr>
           <td colspan="8"> </td>
-          <td> <strong> Total NC / Dev: </strong> </td>
-          <td> <strong> <%= number_to_currency(sum_children(@bill)) %> </strong> </td>
+          <td class="text-left"> <strong> Total NC / Dev: </strong> </td>
+          <td class="text-right"> <strong> <%= number_to_currency(sum_children(@bill)) %> </strong> </td>
         </tr>
         <tr>
           <td colspan="5"> </td>
@@ -159,8 +159,8 @@
         </tr>
         <tr>
           <td colspan="8"> </td>
-          <td> <strong> Total Neto: </strong> </td>
-          <td> <strong> <%= number_to_currency(real_total(@bill)) %> </strong> </td>
+          <td class="text-left"> <strong> Total Neto: </strong> </td>
+          <td class="text-right"> <strong> <%= number_to_currency(real_total(@bill)) %> </strong> </td>
         </tr>
       <% end %>
       <tr>

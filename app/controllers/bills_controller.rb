@@ -98,6 +98,7 @@ class BillsController < ApplicationController
 
   def details_global
     @bill = Bill.find(params[:bill])
+    payments_for_bill_show
   end
 
   def select_action
@@ -2048,9 +2049,6 @@ XML
               end
             end
           end
-        else
-          # Object is a Bill
-          @objects.children << bill
         end
       end
     else

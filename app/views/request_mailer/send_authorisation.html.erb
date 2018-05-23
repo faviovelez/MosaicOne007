@@ -6,11 +6,11 @@
   </head>
   <body>
     <p>
-      Estimado cliente <%= @ticket.prospect.legal_or_business_name %>
+      Estimado cliente <%= @request.prospect.legal_or_business_name %>
       <br />
       <br />
       <br />
-      El ticket No. <%= @ticket.ticket_number %> por <%= number_to_currency(@total) %>, de Diseños de Cartón sucursal <%= @advice.store.store_name.capitalize %> presenta un saldo vencido de <%= number_to_currency(@balance) %> pesos.
+      Le envío para su revisión y autorización el pedido para iniciar con la producción de la cotización solicitada.
     </p>
 
     <br />
@@ -21,20 +21,20 @@
       <br />
       <p>
         <strong>
-          Sucursal <%= @advice.store.store_name.capitalize %>
+          Sucursal <%= @request.store.store_name.capitalize %>
         </strong>
         <br />
         <%= @address %>
         <br />
-        <% if @store_tel.length > 10 %>
-          Tel: <%= number_to_phone(@store_tel, area_code: true) %>
+        <% if @request.store.direct_phone.length > 10 %>
+          Tel: <%= number_to_phone(@request.store.direct_phone, area_code: true) %>
         <% else %>
-          Tel: <%= number_to_phone(@store_tel) %>
+          Tel: <%= number_to_phone(@request.store.direct_phone) %>
         <% end %>
         <br />
-        <%= mail_to @store_email %>
+        <%= mail_to @request.store.email %>
         <br />
-        <%= link_to @store_webpage, "http://#{@store_webpage}", target: "_blank" %>
+        <%= link_to 'www.disenosdecarton.com.mx', "http://#{@store_webpage}", target: "_blank" %>
         <br />
         <br />
         Servicio automatizado de envío de correo. Favor de responder al correo de la tienda.
