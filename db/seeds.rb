@@ -287,7 +287,8 @@ materials = [
   { name: 'papel bond' },
   { name: 'papel arroz' },
   { name: 'celofán' },
-  { name: 'acetato' }
+  { name: 'acetato' },
+  { name: 'liner bond' } # Este aplica para papel arroz
 ]
 
 materials.each do |hash|
@@ -296,8 +297,7 @@ end
 
 [
   { name: 'kraft' },
-  { name: 'blanco' },
-  { name: 'transparente' }
+  { name: 'blanco' }
 
 ].each do |hash|
   InteriorColor.find_or_create_by(hash)
@@ -318,6 +318,7 @@ end
   { name: '180 grs' },
   { name: '275 grs' },
   { name: '300 grs' },
+  { name: '400 grs' },
   { name: 'flauta e' },
   { name: '20 ECT' },
   { name: '23 ECT' },
@@ -361,7 +362,6 @@ designs.each do |hash|
 end
 
 finshings = [
-  { name: 'Barniz' },
   { name: 'Mikelman' },
   { name: 'Barniz a registro' },
   { name: 'Barniz de máquina' },
@@ -384,14 +384,14 @@ materials.each do |material|
     material.children << Material.find_by_name('celofán')
     material.children << Material.find_by_name('acetato')
   end
-  material.children << Material.find_by_name('papel arroz') if (material.name == 'liner' || material.name == 'single face')
+  material.children << Material.find_by_name('papel arroz') if (material.name == 'liner' || material.name == 'single face' || material.name == 'liner bond')
 
-  material.exterior_colors << ExteriorColor.find_by_name('kraft') unless (material.name == 'papel bond' || material.name == 'acetato' || material.name == 'sulfatada' || material.name == 'multicapa' || material.name == 'caple')
+  material.exterior_colors << ExteriorColor.find_by_name('kraft') unless (material.name == 'papel bond' || material.name == 'acetato' || material.name == 'sulfatada' || material.name == 'multicapa' || material.name == 'caple' || material.name == 'liner bond')
   material.exterior_colors << ExteriorColor.find_by_name('blanco') unless (material.name == 'liner' || material.name == 'acetato')
-  material.exterior_colors << ExteriorColor.find_by_name('transparente') if material.name == 'acetato'
+#  material.exterior_colors << ExteriorColor.find_by_name('transparente') if material.name == 'acetato'
 
-  material.interior_colors << InteriorColor.find_by_name('transparente') if material.name == 'acetato'
-  material.interior_colors << InteriorColor.find_by_name('kraft') unless (material.name == 'papel bond' || material.name == 'acetato' || material.name == 'sulfatada' || material.name == 'multicapa')
+#  material.interior_colors << InteriorColor.find_by_name('transparente') if material.name == 'acetato'
+  material.interior_colors << InteriorColor.find_by_name('kraft') unless (material.name == 'papel bond' || material.name == 'acetato' || material.name == 'sulfatada' || material.name == 'multicapa' || material.name == 'liner bond')
   material.interior_colors << InteriorColor.find_by_name('blanco') unless (material.name == 'liner' || material.name == 'cartón rígido' || material.name == 'acetato')
 
   designs = DesignLike.all
@@ -440,7 +440,7 @@ calibres = Resistance.where("name LIKE ?", "%calibre%")
 resistance_180 = Resistance.find_by_name('180 grs')
 
 plegadizo = Material.where(name: ['caple', 'multicapa', 'sulfatada'])
-liner = Material.where(name: 'liner')
+liner = Material.where(name: ['liner', 'liner bond'])
 corrugado = Material.where(name: 'corrugado')
 doble_corrugado = Material.where(name: 'doble corrugado')
 bond = Material.find_by_name('papel bond')

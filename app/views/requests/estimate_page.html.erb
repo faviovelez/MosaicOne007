@@ -7,13 +7,17 @@
 
 <strong>
   <p> <%= @request.prospect.legal_or_business_name %> </p>
-  <p>
-    Atención:
-    <%=@request.prospect.contact_first_name %>
-    <%=@request.prospect.contact_middle_name %>
-    <%=@request.prospect.contact_last_name %>
-    <%=@request.prospect.second_last_name %>
-  </p>
+
+  <% if @request.prospect.contact_first_name.present? %>
+    <p>
+      Atención:
+      <%=@request.prospect.contact_first_name %>
+      <%=@request.prospect.contact_middle_name %>
+      <%=@request.prospect.contact_last_name %>
+      <%=@request.prospect.second_last_name %>
+    </p>
+  <% end %>
+  
 </strong>
 
 <p>Por medio de la presente le envió la cotización solicitada, con la siguiente descripción: </p>

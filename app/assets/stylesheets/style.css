@@ -37,6 +37,23 @@ table#payment-average {
   color: #fff;
 }
 
+.after-margin {
+  margin-right: 2rem;
+}
+
+.extra-margin-right {
+  margin-right: 8rem;
+  margin-top: 0.8rem;
+}
+
+.flex-start {
+  justify-content: flex-start !important;
+}
+
+.extra-margin-left {
+  margin-left: 3.5rem;
+}
+
 [id^=redAddOn] {
   padding-bottom: 7px;
   background-color: #D72638;
@@ -551,6 +568,10 @@ p.info > strong {
   vertical-align: middle;
 }
 
+.bigger-width {
+  width: 150%;
+}
+
 .img-carousel {
   width: 15vw;
   height: auto;
@@ -569,10 +590,10 @@ p.info > strong {
 
 .bolsa,
 .outer,
+.outer-prod,
 .inner,
 .exhibidor,
 .otros,
-.product,
 .ahotirisation,
 .impresssion-second-div,
 .impression {
@@ -581,8 +602,16 @@ p.info > strong {
   justify-content: center;
 }
 
+.bigger-label {
+  font-size: 1.8rem !important;
+}
+
 .padding-top {
   padding-top: 3rem;
+}
+
+input#request_quantity {
+    width: 100px;
 }
 
 .observations-notes, .observations-notes > textarea {
@@ -701,7 +730,7 @@ label#label-form-que-desea {
 
 .form-inside-style {
   text-align: left;
-  margin-left: 5rem;
+  margin-left: 3rem;
 }
 
 select {
@@ -714,6 +743,7 @@ select {
     padding-left: 1rem;
     border-radius: 10px;
     color: #009CB7;
+    border: 1px solid darkgray;
 }
 
 .form-inside {
@@ -728,7 +758,17 @@ select {
   border-bottom: 3px;
   text-align: left;
   border-radius: 10px;
+  border: 1px solid darkgray;
 }
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
 
 .long-sign-in {
   width: 30vw;
@@ -891,11 +931,33 @@ select {
   vertical-align: middle;
 }
 
+.third-button-small {
+  margin-left: 2rem;
+  font-size: 1.2rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 15px;
+  box-shadow: none;
+  background-color: #D72638;
+  color: #fff;
+  vertical-align: middle;
+}
+
+
 .main-button:hover,
 .secondary-button:hover,
 .secondary-button-small:hover,
-.third-button:hover {
+.third-button:hover,
+.third-button-small:hover {
   color: #0288D1;
+}
+
+.impresssion-div.radio-1 {
+    margin-top: 0.8rem;
+}
+
+.impresssion-div.radio-2 {
+    margin-top: 0.6rem;
 }
 
 .container-log-in {
@@ -977,7 +1039,51 @@ a.link {
 }
 
 .title-request {
-color: #0288D1;
+  color: #0288D1;
+}
+
+.request-no-margin {
+  width: 100%;
+}
+
+.request-no-margin > tbody > tr > td {
+  text-align: justify;
+}
+
+.title-request-table {
+  color: #0288D1;
+  font-size: 2.5rem;
+  text-align: justify;
+}
+
+
+
+.bigger-p {
+  font-size: 1.8rem !important;
+}
+
+.margin-right-p {
+  line-height: 3.5;
+}
+
+.flex-div-requests {
+  margin-top: -6rem;
+  display: flex;
+  flex-wrap: wrap;
+  width: 96%;
+  justify-content: flex-start;
+}
+
+.margin-right-p {
+  margin-right: 8rem;
+}
+
+.color333 {
+  color: #555A68;
+}
+
+.table-request {
+  margin-top: 3rem;
 }
 
 .custom-link-bottom {

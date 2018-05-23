@@ -42,6 +42,10 @@ Rails.application.routes.draw do
 
   get 'filtered_requests/product_view'
 
+  get 'requests/send_estimate_mail/:id', to: 'requests#send_estimate_mail', as: 'send_estimate_mail'
+
+  get 'requests/send_authorisation_mail/:id', to: 'requests#send_authorisation_mail', as: 'send_authorisation_mail'
+
   get 'stores/download_products_example'
 
   get 'stores/download_prospects_example'
@@ -222,9 +226,13 @@ Rails.application.routes.draw do
 
   get 'requests/authorisation_page/:id', to: 'requests#authorisation_page'
 
+  get 'requests/authorisation_mail_doc/:id', to: 'requests#authorisation_mail_doc', as: 'request_authorisation_mail'
+
   get 'requests/estimate_doc/:id', to: 'requests#estimate_doc', as: 'request_estimate'
 
   get 'requests/estimate_page/:id', to: 'requests#estimate_page'
+
+  get 'requests/estimate_mail_doc/:id', to: 'requests#estimate_mail_doc', as: 'request_estimate_mail'
 
   get 'requests/confirm/:id', to: 'requests#confirm', as: 'confirm_requests'
 

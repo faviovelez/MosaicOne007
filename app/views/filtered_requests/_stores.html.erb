@@ -9,7 +9,7 @@
 <% end %>
 
 <% if @object.count >= 1 %>
-  <table>
+  <table class="dataTableFour">
     <thead>
       <tr class="table-titles">
         <th class="folio col-md-1">Folio</th>
@@ -19,6 +19,7 @@
         <th class="date-created col-md-1">Solicitada</th>
         <th class="delivery-date col-md-1">Entregar</th>
         <th class="status col-md-2">Estatus</th>
+        <th class="status col-md-2">Acciones</th>
       </tr>
     </thead>
 
@@ -29,9 +30,9 @@
           <td class="quantity"><%= number_with_delimiter(request.quantity) %></td>
           <td class="product">
             <% if request.product_type == 'otro'%>
-              <%= request.name_type %>
+              <%= request.name_type.capitalize %>
             <% elsif request.product_type != 'otro'%>
-              <%= request.product_type %>
+              <%= request.product_type.capitalize %>
             <% end %>
           </td>
           <% if request.prospect.present? %>
@@ -50,40 +51,34 @@
           <% else %>
           <td class="delivery-date"> - </td>
             <% end %>
-          <td class="status"> <%= request.status %></td>
-          <td>
+          <td class="status"> <%= request.status.capitalize %></td>
+          <td class="text-left">
             <%= link_to request do %>
-              <i class="fa fa-plus-square link-to-details extra-padding" aria-hidden="true"></i>
+              <i class="fa fa-plus-square link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver detalles"></i>
             <% end %>
-          </td>
           <% if request.status == 'costo asignado'  %>
-          <td>
             <%= link_to requests_price_path(request) do %>
-              <i class="fa fa-calculator link-to-price" aria-hidden="true"></i>
-              <span class="link-to-price"> Precio </span>
+              <i class="fa fa-calculator link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Asignar Precio"></i>
             <% end %>
-          </td>
           <% elsif request.status == 'precio asignado' || request.status == 'confirmada' %>
-            <td>
               <%= link_to request_estimate_path(format: :pdf, id: request), target: '_blank' do %>
-                <i class="fa fa-file-pdf-o link-to-details extra-padding" aria-hidden="true"></i>
+                <i class="fa fa-file-pdf-o link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver cotización"></i>
               <% end %>
-            </td>
-            <td>
+              <%= link_to send_estimate_mail_path(request) do %>
+                <i class="fa fa-send link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Enviar cotización"></i>
+              <% end %>
               <%= link_to request_authorisation_path(format: :pdf, id: request), target: '_blank' do %>
-                <i class="fa fa-file-pdf-o link-to-price extra-padding" aria-hidden="true"></i>
+                <i class="fa fa-file-pdf-o link-to-price extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
               <% end %>
-            </td>
-            <td>
+              <%= link_to send_authorisation_mail_path(request) do %>
+                <i class="fa fa-send-o link-to-price extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Enviar pedido"></i>
+              <% end %>
               <%= link_to confirm_requests_path(request) do %>
-                <i class="fa fa-check-circle link-to-confirm extra-padding" aria-hidden="true"></i>
+                <i class="fa fa-check-circle link-to-confirm extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Confirmar pedido"></i>
                <% end %>
-            </td>
           <% elsif request.status == 'devuelta'  %>
-            <td>
               <%= link_to edit_request_path(request) do %>
-               <i class="fa fa-pencil link-to-confirm extra-padding" aria-hidden="true"></i>
-               <span class="link-to-confirm"> Modificar </span>
+               <i class="fa fa-pencil link-to-confirm extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar cotización"></i>
              <% end %>
             </td>
           <% end %>
