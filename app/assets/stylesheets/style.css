@@ -37,6 +37,11 @@ table#payment-average {
   color: #fff;
 }
 
+.autocomplete-selected {
+  background-color: #A9D164 !important;
+  color: #fff !important;
+}
+
 .after-margin {
   margin-right: 2rem;
 }

@@ -1,6 +1,6 @@
 var actionForRequest = $("body.requests.new") || $("body.requests.edit") || $('body.products.new') || $('body.products.edit');
 
-actionForRequest.ready(function() {
+$(document).ready(function() {
 
 /* Este método esconde o muestra las opciones, dependiendo de la elección del tipo de producto, por ejepmlo: medidas externas, medidas de bolsa, medidas de exhibidor, etc. */
   $("#request_product_type").bind('change', function() {
@@ -333,7 +333,6 @@ actionForRequest.ready(function() {
       $("#agregar_material").addClass('hidden');
     }
   });
-
 
   $("#quitar_material").click(function () {
     event.preventDefault();

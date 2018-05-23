@@ -86,6 +86,32 @@
       <% end %>
     </tbody>
   </table>
+
+  <br/>
+  <div>
+    <% unless params[:action] == 'current_view' %>
+      <%= link_to filtered_requests_current_view_path, class: 'space-between-links' do  %>
+        Cotizaciones activas
+        <i class="fa fa-window-restore" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+
+    <% unless params[:action] == 'saved_view' %>
+      <%= link_to filtered_requests_saved_view_path, class: 'space-between-links' do  %>
+        Cotizaciones guardadas
+        <i class="fa fa-file-text" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+
+    <% unless params[:action] == 'inactive_view' %>
+      <%= link_to filtered_requests_inactive_view_path, class: 'space-between-links' do  %>
+        Cotizaciones inactivas
+        <i class="fa fa-snowflake-o" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  </div>
+  <br/><br/><br/>
+
 <% else %>
   <p class="individual-font">No hay solicitudes en esta bandeja</p>
 <% end %>
