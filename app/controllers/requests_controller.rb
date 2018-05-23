@@ -77,6 +77,55 @@ class RequestsController < ApplicationController
     end
   end
 
+  def send_authorisation_mail
+    request = Request.find(params[:id])
+    if (!request.prospect.email.present? && !request.prospect.email_2.present? && !request.prospect.email_3.present?)
+      redirect_to filtered_requests_current_view_path, alert: 'El cliente no tiene correo registrado'
+    else
+      RequestMailer.send_authorisation(request).deliver_now
+      redirect_to filtered_requests_current_view_path, notice: 'Se ha enviado el correo de autorización'
+    end
+  end
+
+  def send_estimate_mail
+    request = Request.find(params[:id])
+    if (!request.prospect.email.present? && !request.prospect.email_2.present? && !request.prospect.email_3.present?)
+      redirect_to filtered_requests_current_view_path, alert: 'El cliente no tiene correo registrado'
+    else
+      RequestMailer.send_estimate(request).deliver_now
+      redirect_to filtered_requests_current_view_path, notice: 'Se ha enviado el correo de cotización'
+    end
+  end
+
+  def authorisation_mail_doc
+    filename = "pedido-#{@request.store.store_name}-#{@request.id}"
+    respond_to do |format|
+      format.html
+      format.pdf {
+        render template: 'requests/authorisation_doc',
+        pdf: filename,
+        page_size: 'Letter',
+        layout: 'authorisation.html',
+        show_as_html: params[:debug].present?
+      }
+    end
+  end
+
+  def estimate_mail_doc
+    filename = "cotización-#{@request.store.store_name}-#{@request.id}"
+    respond_to do |format|
+      format.html
+      format.pdf {
+        render template: 'requests/estimate_doc',
+        pdf: filename,
+        page_size: 'Letter',
+        layout: 'estimate.html',
+        show_as_html: params[:debug].present?
+      }
+    end
+  end
+
+
   # GET /requests/1
   # GET /requests/1.json
   def show
@@ -123,6 +172,10 @@ class RequestsController < ApplicationController
   # POST /requests.json
   def create
     @request = Request.new(request_params)
+    params[:request][:impression_finishing].sort!.reverse!.pop
+    params[:request][:impression_finishing].each do |item|
+      @request.impression_finishing << item
+    end
     # Esta parte es para evitar que el campo se guarde en blanco.
     if params[:request][:how_many] == ''
       @request.how_many = nil
@@ -583,6 +636,8 @@ class RequestsController < ApplicationController
        :authorisation,
        :sensitive_fields_changed,
        :authorised,
-       :last_status)
+       :last_status,
+       :has_window,
+       :develop)
     end
 end

@@ -6,11 +6,11 @@
   </head>
   <body>
     <p>
-      Estimado cliente, <%= @ticket.prospect.legal_or_business_name %>
+      Estimado cliente <%= @ticket.prospect.legal_or_business_name %>
       <br />
       <br />
       <br />
-      El ticket No. <%= @ticket.ticket_number %> de Diseños de Cartón sucursal <%= @advice.store.store_name %> por <%= number_to_currency(@total) %>
+      El ticket No. <%= @ticket.ticket_number %> de Diseños de Cartón sucursal <%= @advice.store.store_name.capitalize %> por <%= number_to_currency(@total) %>
       vence hoy y presenta un saldo de <%= number_to_currency(@balance) %> pesos.
     </p>
 
@@ -22,7 +22,7 @@
       <br />
       <p>
         <strong>
-          Sucursal <%= @advice.store.store_name %>
+          Sucursal <%= @advice.store.store_name.capitalize %>
         </strong>
         <br />
         <%= @address %>
@@ -38,7 +38,7 @@
         <%= link_to @store_webpage, "http://#{@store_webpage}", target: "_blank" %>
         <br />
         <br />
-        Servicio de envío de facturas automatizado. Favor de no responder a este correo.
+        Servicio automatizado de envío de correo. Favor de responder al correo de la tienda.
       </p>
     </div>
 

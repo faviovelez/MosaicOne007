@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180421231245) do
+ActiveRecord::Schema.define(version: 20180523170607) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -340,6 +340,26 @@ ActiveRecord::Schema.define(version: 20180421231245) do
     t.integer  "decimals"
   end
 
+  create_table "date_advises", force: :cascade do |t|
+    t.integer  "store_id"
+    t.integer  "prospect_id"
+    t.date     "date"
+    t.integer  "ticket_id"
+    t.integer  "order_id"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.date     "before_date"
+    t.date     "after_date"
+    t.integer  "payment_id"
+    t.boolean  "active",      default: true
+  end
+
+  add_index "date_advises", ["order_id"], name: "index_date_advises_on_order_id", using: :btree
+  add_index "date_advises", ["payment_id"], name: "index_date_advises_on_payment_id", using: :btree
+  add_index "date_advises", ["prospect_id"], name: "index_date_advises_on_prospect_id", using: :btree
+  add_index "date_advises", ["store_id"], name: "index_date_advises_on_store_id", using: :btree
+  add_index "date_advises", ["ticket_id"], name: "index_date_advises_on_ticket_id", using: :btree
+
   create_table "delivery_addresses", force: :cascade do |t|
     t.string   "street"
     t.string   "exterior_number"
@@ -638,11 +658,11 @@ ActiveRecord::Schema.define(version: 20180421231245) do
 
   create_table "inventories", force: :cascade do |t|
     t.integer  "product_id"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
     t.integer  "quantity",    default: 0
     t.string   "unique_code"
-    t.boolean  "alert"
+    t.boolean  "alert",       default: false
     t.string   "alert_type"
   end
 
@@ -806,6 +826,7 @@ ActiveRecord::Schema.define(version: 20180421231245) do
     t.float    "cost"
     t.integer  "boxes"
     t.boolean  "deliver_complete",    default: false
+    t.boolean  "payed",               default: false
   end
 
   add_index "orders", ["bill_id"], name: "index_orders_on_bill_id", using: :btree
@@ -1144,6 +1165,7 @@ ActiveRecord::Schema.define(version: 20180421231245) do
     t.integer  "web_id"
     t.string   "email_2"
     t.string   "email_3"
+    t.boolean  "collection_active",      default: true
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
@@ -1196,14 +1218,13 @@ ActiveRecord::Schema.define(version: 20180421231245) do
     t.string   "resistance_third_material"
     t.string   "impression"
     t.integer  "inks"
-    t.string   "impression_finishing"
     t.date     "delivery_date"
     t.float    "maximum_sales_price"
     t.text     "observations"
     t.text     "notes"
     t.integer  "prospect_id"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
     t.integer  "final_quantity"
     t.boolean  "payment_uploaded"
     t.boolean  "authorisation_signed"
@@ -1252,6 +1273,9 @@ ActiveRecord::Schema.define(version: 20180421231245) do
     t.float    "third_sales_price"
     t.integer  "price_selected"
     t.float    "inner_height"
+    t.boolean  "has_window",                    default: false
+    t.string   "impression_finishing",          default: [],                 array: true
+    t.text     "develop"
   end
 
   add_index "requests", ["estimate_doc_id"], name: "index_requests_on_estimate_doc_id", using: :btree
@@ -1491,7 +1515,7 @@ ActiveRecord::Schema.define(version: 20180421231245) do
     t.integer  "store_id"
     t.string   "month"
     t.string   "year"
-    t.float    "cost"
+    t.float    "cost",       default: 0.0
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
     t.float    "discount",   default: 0.0
@@ -1568,6 +1592,9 @@ ActiveRecord::Schema.define(version: 20180421231245) do
     t.string   "current_inventory"
     t.string   "prospects_file"
     t.string   "bill_email"
+    t.integer  "days_before",              default: 3
+    t.integer  "days_after",               default: 5
+    t.boolean  "collection_active",        default: true
   end
 
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree
@@ -1593,6 +1620,7 @@ ActiveRecord::Schema.define(version: 20180421231245) do
     t.float    "manual_price"
     t.integer  "pos_id"
     t.integer  "web_id"
+    t.float    "total_cost",          default: 0.0
   end
 
   add_index "stores_inventories", ["product_id"], name: "index_stores_inventories_on_product_id", using: :btree
@@ -1916,6 +1944,11 @@ ActiveRecord::Schema.define(version: 20180421231245) do
   add_foreign_key "change_tickets", "bills"
   add_foreign_key "change_tickets", "stores"
   add_foreign_key "change_tickets", "tickets"
+  add_foreign_key "date_advises", "orders"
+  add_foreign_key "date_advises", "payments"
+  add_foreign_key "date_advises", "prospects"
+  add_foreign_key "date_advises", "stores"
+  add_foreign_key "date_advises", "tickets"
   add_foreign_key "delivery_addresses", "stores"
   add_foreign_key "delivery_attempts", "movements"
   add_foreign_key "delivery_attempts", "orders"

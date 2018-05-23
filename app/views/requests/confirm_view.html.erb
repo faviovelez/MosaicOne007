@@ -9,3 +9,7 @@
   <%= render 'confirm_with_data' %>
 
 </body>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'application' %>
+<% end %>

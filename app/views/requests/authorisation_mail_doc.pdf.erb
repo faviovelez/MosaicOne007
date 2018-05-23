@@ -52,9 +52,9 @@
         <tbody>
           <tr class="first-row">
             <td class="data first-row-data"> <%= number_with_delimiter(@request.quantity) %> </td>
-            <td class="data description-table first-row-data"> <%= description(@request) %> </td>
+            <td class="data description-table first-row-data"> <%= @description %> </td>
             <td class="data first-row-data"> <%= number_to_currency(@request.sales_price) %> </td>
-            <td class="data first-row-data"> <%= number_to_currency(product_total(@request)) %> </td>
+            <td class="data first-row-data"> <%= number_to_currency(@product_total) %> </td>
           </tr>
           <tr>
             <td class="column-left"></td>
@@ -64,13 +64,13 @@
               </strong>
             </td>
             <td class="data column-subtotal"> Subtotal: </td>
-            <td class="data column-right"> <%= number_to_currency(product_total(@request)) %> </td>
+            <td class="data column-right"> <%= number_to_currency(@product_total) %> </td>
           </tr>
           <tr>
             <td class="column-left"></td>
             <td class="left data padding">Recibí la cantidad de: $_________________   pesos por concepto del presente pedido.</td>
             <td class="data column-subtotal"> IVA: </td>
-            <td class="data column-right"> <%= number_to_currency(calculate_tax(@request)) %> </td>
+            <td class="data column-right"> <%= number_to_currency(@taxes) %> </td>
           </tr>
           <tr class="last-row">
             <td class="column-left"></td>
@@ -84,7 +84,7 @@
             </td>
             <td class="data column-right">
               <strong>
-                <%= number_to_currency(sum_total(@request)) %>
+                <%= number_to_currency(@total) %>
               </strong>
             </td>
           </tr>
@@ -96,7 +96,7 @@
         <p class="right doc-p">
           <br /><br />
           <strong>Saldo pendiente: </strong>
-          <%= number_to_currency(sum_total(@request))%><br /><br />
+          <%= number_to_currency(@total)%><br /><br />
         </p>
 
       </div>
@@ -133,7 +133,7 @@
     <p> Diseños de Cartón, más que cajas... soluciones. </p>
   </strong>
     <p> Sucursal <%= @request.store.store_name.capitalize %> </p>
-    <p> <%= address(@request) %> </p>
+    <p> <%= @address %> </p>
     <p> Tel. <%= number_to_phone(@request.store.direct_phone, area_code: true) %> </p>
     <p> <%= @request.store.email %> </p>
     <p> www.disenosdecarton.com.mx </p>
