@@ -194,30 +194,45 @@ class Request < ActiveRecord::Base
 
   # Envía un correo elecrónico notificando que se asignó el costo a su solicitud
   def send_mail_to_store_users_cost
-    RequestMailer.status_cost_assigned(self).deliver_now
+    if !@sent
+      RequestMailer.status_cost_assigned(self).deliver_now
+      @sent = true
+    end
   end
 
   # Envía un correo elecrónico notificando que se asignó el precio de venta a la solicitud
   def send_mail_to_manager_price
-    RequestMailer.status_price_assigned(self).deliver_now
+    if !@sent
+      RequestMailer.status_price_assigned(self).deliver_now
+      @sent = true
+    end
   end
 
   # Envía un correo elecrónico notificando que la tienda autorizó la solicitud
   def send_mail_to_manager_authorised
-    RequestMailer.status_authorised(self).deliver_now
+    if !@sent
+      RequestMailer.status_authorised(self).deliver_now
+      @sent = true
+    end
   end
 
   # Envía un correo elecrónico notificando que la tienda canceló la solicitud
   def send_mail_to_manager_cancelled
-    RequestMailer.status_cancelled(self).deliver_now
+    if !@sent
+      RequestMailer.status_cancelled(self).deliver_now
+      @sent = true
+    end
   end
 
   def send_mail_to_manager_reactivated
-    RequestMailer.request_reactivated(self).deliver_now
+    if !@sent
+      RequestMailer.request_reactivated(self).deliver_now
+      @sent = true
+    end
   end
   # Valida que se haya hecho una transición de cotizando a costo asignado
   def status_changed_to_cost_assigned
-    (status == 'costo asignado' && status_was == 'cotizando' && internal_price.present?)
+    (status == 'costo asignado' && internal_price.present?)
   end
 
   # Valida que se haya hecho una transición de costo asignado a precio asignado

@@ -10,11 +10,7 @@ class ProspectsController < ApplicationController
   # Crea la vista de todos los prospectos que le pertenecen a una tienda, ya que una tienda puede tener varios usuarios, no queremos ligar solamente el prospecto al usuario, también a la tienda.
   def index
     user = current_user.role.name
-    if user == 'store' || user == 'store-admin'
-      store_prospects
-    else
-      business_group_prospects
-    end
+    store_prospects
   end
 
   # GET /prospects/1
@@ -73,7 +69,9 @@ class ProspectsController < ApplicationController
   end
 
   def business_group_prospects(bg = current_user.store.business_unit.business_group)
-    @prospects = bg.prospects
+    # NO USAR ESTE, SON DEMASIADOS
+    store_id = BusinessGroup.find(current_user.store.business_unit.business_group.id).stores.pluck(:id)
+    @prospects = prospects = Prospect.select('prospects.id, prospects.legal_or_business_name, prospects.prospect_type, prospects.business_type, COUNT(requests.id) as request_count, COUNT(tickets.id) as ticket_count').joins('LEFT JOIN requests ON requests.prospect_id = prospects.id LEFT JOIN tickets ON tickets.prospect_id = prospects.id').where(store_id: store_id).group('prospects.id').order(:id)
   end
 
   def store_prospects
