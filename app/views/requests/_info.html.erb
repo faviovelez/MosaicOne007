@@ -157,6 +157,16 @@
     </p>
   <% end %>
 
+  <% if @request.has_window == true %>
+    <p class="bigger-p margin-right-p"><strong>Ventana: </strong>
+      Sí
+    </p>
+  <% else %>
+    <p class="bigger-p margin-right-p"><strong>Ventana: </strong>
+      No
+    </p>
+  <% end %>
+
   <% unless @request.secondary_material.blank? %>
     <p class="bigger-p margin-right-p"><strong>Segundo material: </strong>
       <%= @request.secondary_material.capitalize %>
@@ -233,6 +243,12 @@
   <% if @request.date_finished.present? %>
     <p class="bigger-p margin-right-p"><strong>Fecha de finalización de la producción: </strong>
       <%= l @request.date_finished format: :short %>
+    </p>
+  <% end %>
+
+  <% if params[:action] == 'manager_view' %>
+    <p class="bigger-p margin-right-p"><strong>Desarrollo: </strong>
+      <%= @request.develop %>
     </p>
   <% end %>
 
