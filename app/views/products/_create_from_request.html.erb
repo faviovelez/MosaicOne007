@@ -154,6 +154,13 @@
         </div>
       </div>
 
+      <h4>Medidas</h4>
+
+      <div class="form-inside-style">
+        <%= f.label :medidas %>
+        <%= f.text_field :only_measure, value: @product.only_measure, class: 'form-inside' %>
+      </div>
+
       <h3>Material y Resistencia</h3>
 
       <div class="form-inside-style">
@@ -230,12 +237,12 @@
 
       <div class="form-inside-style">
         <%= f.label 'Código de producto SAT' %>
-        <%= f.text_field :sat_key_id, class: 'form-inside' %>
+        <%= f.select :sat_key_id, options_for_select(get_sat_keys, selected: @product.sat_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-keys' %>
       </div>
 
       <div class="form-inside-style">
         <%= f.label 'Unidad SAT' %>
-        <%= f.text_field :sat_unit_key_id, class: 'form-inside' %>
+        <%= f.select :sat_unit_key_id, options_for_select(get_sat_unit_keys, selected: @product.sat_unit_key_id), {include_blank: true}, multiple: true, class: 'form-inside select2-sat-unit-keys' %>
       </div>
 
       <div class="form-inside-style">
@@ -265,7 +272,7 @@
 
       <div class="form-inside-style hidden">
         <%= f.label :tienda %>
-        <%= f.select :store_id, options_for_select(@request.store.id) %>
+        <%= f.select :store_id, options_for_select([[@request.store.store_name, @request.store.id]]) %>
       </div>
 
       <div class="form-inside-style">
@@ -275,8 +282,34 @@
 
       <div class="form-inside-style">
         <%= f.label :almacén %>
-        <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+        <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+          <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+        <% else %>
+          <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.warehouses.where.not('name LIKE ?', '%Almacén%').collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+        <% end %>
       </div>
+
+      <div class="form-inside-style">
+        <%= f.label :precio_de_venta %>
+        <%= f.text_field :price, value: @request.sales_price, class: 'form-inside', readonly: true  %>
+      </div>
+
+      <div class="form-inside-style">
+        <%= f.label :costo %>
+        <%= f.text_field :cost, value: @request.internal_cost, class: 'form-inside', readonly: true  %>
+      </div>
+
+      <% if (@request.store.store_type.store_type == 'tienda propia' || @request.store.store_type.store_type == 'corporativo') %>
+        <div class="form-inside-style">
+          <%= f.label :descuento_para_tiendas %>
+          <%= f.text_field :discount_for_stores, value: ((1 - (@request.internal_price / @request.sales_price)) * 100).round(1), class: 'form-inside', readonly: true %>
+        </div>
+      <% elsif @request.store.store_type.store_type == 'franquicia' %>
+        <div class="form-inside-style">
+          <%= f.label :descuento_para_franquicias %>
+          <%= f.text_field :discount_for_franchises, value: ((1 - (@request.internal_price / @request.sales_price)) * 100).round(1), class: 'form-inside', readonly: true %>
+        </div>
+      <% end %>
 
       <div class="form-inside-style">
         <%= f.label :imágenes %><br>
@@ -295,3 +328,13 @@
   <% end %>
 
 </body>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'products_select' %>
+<% end %>

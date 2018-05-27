@@ -1,5 +1,9 @@
 <% if params[:request_id] %>
-  <%= render 'create_from_request' %>
+  <% if Request.find(params[:request_id]).product == nil%>
+    <%= render 'create_from_request' %>
+  <% else %>
+    <% controller.redirect_to root_path, notice: 'El producto ya fue creado' %>
+  <% end %>
 <% else %>
   <%= render 'form' %>
 <% end %>

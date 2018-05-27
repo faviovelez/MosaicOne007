@@ -112,7 +112,7 @@
     </div>
 
     <div class="exhibidor hidden">
-      <h4>Medidas exhibidor</h4>
+      <h4>Medidas del exhibidor</h4>
       <div class="field form-inside-style">
         <br />
         <%= f.text_field :exhibitor_height, placeholder: 'altura', class: 'form-inside' %>
@@ -143,7 +143,7 @@
     </div>
 
     <div class="bolsa hidden impresssion-div">
-      <h4>Medidas bolsa</h4>
+      <h4>Medidas de la bolsa</h4>
       <div class="field form-inside-style">
         <%= f.text_field :bag_length, placeholder: 'largo', class: 'form-inside' %>
         cm
@@ -208,16 +208,14 @@
       <%= f.select :interior_material_color, options_for_select(interior_color_options, selected: @request.interior_material_color) %>
     </div>
 
-    <div class="rigid hidden">
-      <div class="field form-inside-style">
-        <%= f.label 'color del papel (cartón rígido)', class: 'bigger-label' %>
-        <%= f.text_field :rigid_color, class: 'form-inside' %>
-      </div>
+    <div class="field form-inside-style rigid hidden">
+      <%= f.label 'color del papel (cartón rígido)', class: 'bigger-label' %>
+      <%= f.text_field :rigid_color, class: 'form-inside' %>
+    </div>
 
-      <div class="field form-inside-style">
-        <%= f.label :tipo_de_papel, class: 'bigger-label' %>
-        <%= f.text_field :paper_type_rigid, class: 'form-inside' %>
-      </div>
+    <div class="field form-inside-style rigid hidden">
+      <%= f.label :tipo_de_papel, class: 'bigger-label' %>
+      <%= f.text_field :paper_type_rigid, class: 'form-inside' %>
     </div>
 
     <div class="impresssion-div radio-2">

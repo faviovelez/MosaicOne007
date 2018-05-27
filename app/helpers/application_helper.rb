@@ -4,12 +4,21 @@ module ApplicationHelper
     object.collection_active ? @collection_response = 'Activa' : @collection_response = 'Inactiva'
   end
 
+  def get_sat_keys
+    @sat_keys = SatKey.joins(:products).select(:sat_key, :id).distinct.pluck(:sat_key, :id)
+  end
+
+  def get_sat_unit_keys
+    @sat_unit_keys = SatUnitKey.joins(:products).select(:description, :id).distinct.pluck(:description, :id)
+  end
+
   def convert_balance(object)
     object.balance < 1 ? @balance = content_tag(:span, 'pagado', class: 'label label-success') : @balance = number_to_currency(object.balance)
     @balance
   end
 
-  def address_for_delivery(store = object.store)
+  def address_for_delivery(order)
+    store = order.store
     @address = store.delivery_address.street + ' ' + store.delivery_address.exterior_number + ' '
     @address += 'Int. ' + store.delivery_address.interior_number + ' ' unless store.delivery_address.interior_number.blank?
     @address += 'Col. ' + store.delivery_address.neighborhood + '.' + ' ' + store.delivery_address.city + ',' + ' ' + store.delivery_address.state

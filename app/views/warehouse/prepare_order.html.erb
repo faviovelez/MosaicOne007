@@ -35,10 +35,10 @@
     <% @order.product_requests.where(status: 'asignado').each do |product_request| %>
       <tr>
         <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
-        <td><%= product_request.product.exterior_color_or_design %></td>
+        <td><%= show_non_blank_field(product_request.product.exterior_color_or_design) %> </td>
         <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
         <td><%= product_request.product.warehouse.name %></td>
-        <% if (product_request.product.rack.nil? && product_request.product.level.nil?) %>
+        <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
           <td class="center-text"> - </td>
         <% else %>
           <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
@@ -46,7 +46,7 @@
         <td>
           <% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role_name == 'warehouse-admin') && @order.status != 'preparado') %>
             <a href="#" id="iconLink_<%= product_request.id %>">
-              <i class="fa fa-warning red-icon" aria-hidden="true"></i>
+              <i class="fa fa-warning red-icon" aria-hidden="true"data-toggle="tooltip" data-placement="left" title="Notas" ></i>
             </a>
             <div id="myWrapper_<%= product_request.id %>" class="hidden">
               <div class="input-group">

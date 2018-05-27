@@ -29,25 +29,63 @@
           <td> <%= request.main_material.capitalize %> </td>
           <% @days = (Date.today - request.created_at.to_date).to_i %>
           <% if @days < 1 %>
-            <td> hoy </td>
+            <td class="date-created">
+              <span class="label label-success">
+                hoy
+              </span>
+            </td>
           <% elsif @days == 1 %>
-            <td> 1 día </td>
+            <td class="date-created">
+              <span class="label label-warning">
+                1 día
+              </span>
+            </td>
           <% else @days > 1 %>
-            <td> <%= @days %> días </td>
+            <td class="date-created">
+              <span class="label label-danger">
+                <%= @days %> días
+              </span>
+            </td>
           <% end %>
           <% if request.delivery_date.present? %>
             <td> <%= I18n.l request.delivery_date, format: :short %></td>
           <% else %>
-          <td> - </td>
+            <td> - </td>
+          <% end %>
+          <td class="status">
+            <% if request.status == 'precio asignado' %>
+              <span class="label label-primary">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif (request.status == 'solicitada' || request.status == 'modificada') %>
+              <span class="label label-danger">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'costo asignado' %>
+              <span class="label label-warning">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'autorizada' %>
+              <span class="label label-success">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'cancelada' %>
+              <span class="label label-default">
+                <%= request.status.capitalize %>
+              </span>
+              <% elsif (request.status == 'mercancía asignada' || request.status == 'código asignado') %>
+                <span class="label label-info">
+                  <%= request.status.capitalize %>
+                </span>
             <% end %>
-            <td> <%= request.status.capitalize %></td>
-          <% if request.internal_price.blank? %>
-            <td class="col-md-1">
-              <%= link_to manager_requests_path(request) do %>
-                <i class="fa fa-calculator link-to-price" aria-hidden="true"></i>
-                <span class="link-to-price">Cotizar</span>
-              <% end %>
           </td>
+        <% if request.internal_price.blank? %>
+          <td class="col-md-1">
+            <%= link_to manager_requests_path(request) do %>
+              <i class="fa fa-calculator link-to-price" aria-hidden="true"></i>
+              <span class="link-to-price">Cotizar</span>
+            <% end %>
+        </td>
           <% elsif request.sensitive_fields_changed %>
             <td class="col-md-1">
               <%= link_to manager_view_requests_path(request) do %>

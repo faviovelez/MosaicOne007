@@ -17,11 +17,23 @@
             <td> <%= request.design_type %></td>
             <% @days = (Date.today - request.created_at.to_date).to_i %>
             <% if @days < 1 %>
-              <td> hoy </td>
+              <td class="date-created">
+                <span class="label label-success">
+                  hoy
+                </span>
+              </td>
             <% elsif @days == 1 %>
-              <td> 1 día </td>
+              <td class="date-created">
+                <span class="label label-warning">
+                  1 día
+                </span>
+              </td>
             <% else @days > 1 %>
-              <td> <%= @days %> días </td>
+              <td class="date-created">
+                <span class="label label-danger">
+                  <%= @days %> días
+                </span>
+              </td>
             <% end %>
             <td> <%= request.status.capitalize %></td>
             <td class="col-md-1">

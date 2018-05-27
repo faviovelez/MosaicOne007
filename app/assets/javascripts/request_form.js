@@ -130,14 +130,22 @@ $(document).ready(function() {
       $(".main.otros").addClass('hidden');
       $(".main.rigid").addClass('hidden');
 
-    } else if (material == 'cartón rígido' ||
-      material == 'single face' ||
+    } else if (material == 'single face' ||
       material == 'microcorrugado' ||
       material == 'acetato' ||
       material == 'contraencolado' ||
       material == 'papel kraft' ||
       material == 'papel bond') {
+      $(".main.otros").removeClass('hidden');
+      $(".main.plegadizo").addClass('hidden');
+      $(".sometimes").addClass('hidden');
+      $(".main.corrugado").addClass('hidden');
+      $(".main.doble_corrugado").addClass('hidden');
+      $(".main.liner").addClass('hidden');
+
+    } else if (material == 'cartón rígido') {
       $(".main.rigid").removeClass('hidden');
+      $(".rigid").removeClass('hidden');
       $(".main.otros").removeClass('hidden');
       $(".main.plegadizo").addClass('hidden');
       $(".sometimes").addClass('hidden');
@@ -363,22 +371,32 @@ $("#request_impression_no").click(function () {
       $("#resistencia_como").addClass('hidden');
     };
   });
+
 /* Este método esconde o muestra el checkbox de autorizaciones manuales */
   var authorisation = $('#request_authorisation');
   var payment = $('#request_payment');
-  authorisation.bind('change', function() {
-    if (authorisation != '' ){
-      $('.authorised_without_doc').addClass('hidden');
-    };
+  var authorisedWithoutDoc = $('#request_authorised_without_doc');
+  var authorisedWithoutPay = $('#request_authorised_without_pay');
+
+  authorisedWithoutDoc.bind('change', function() {
+    if (authorisedWithoutDoc.is(":checked")) {
+      if (authorisation != '' ){
+        $('.upload_authorisation').addClass('hidden');
+      }
+    } else {
+      $('.upload_authorisation').removeClass('hidden');
+    }
   });
 
-  if (typeof payment !== 'undefined') {
-    payment.bind('change', function() {
+  authorisedWithoutPay.bind('change', function() {
+    if (authorisedWithoutPay.is(":checked")) {
       if (payment != '' ){
-        $('.authorised_without_pay').addClass('hidden');
+        $('.upload_payment').addClass('hidden');
       }
-    });
-  }
+    } else {
+      $('.upload_payment').removeClass('hidden');
+    }
+  });
 
   if (($("body").hasClass('requests') && $("body").hasClass('new')) || ($("body").hasClass('requests') && $("body").hasClass('edit'))) {
     $('.select2-finishing').select2({
@@ -387,6 +405,5 @@ $("#request_impression_no").click(function () {
        maximumSelectionLength: 2
     });
   }
-
 
 });

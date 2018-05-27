@@ -97,6 +97,78 @@ class OrdersController < ApplicationController
     @order = Order.find(params[:id])
   end
 
+  def confirm_received
+    order = Order.find(params[:order_id])
+    if params[:order_complete]
+      order.update(status: 'entregado', deliver_complete: true)
+      requests = order.product_requests
+      requests.each do |request|
+        request.update(status: 'entregado')
+        request.movements.each do |mov|
+          new_mov = mov.as_json
+          new_mov.delete("id")
+          new_mov.delete("created_at")
+          new_mov.delete("updated_at")
+          new_mov.delete("identifier")
+          new_mov.delete("seller_user_id")
+          new_mov.delete("buyer_user_id")
+          new_mov.delete("business_unit_id")
+          new_mov.delete("unique_code")
+          new_mov.delete("entry_movement_id")
+          new_mov.delete("discount_rule_id")
+          new_mov.delete("confirm")
+          new_mov.delete("maximum_date")
+          new_mov.delete("kg")
+          new_mov["web"] = true
+          new_mov["pos"] = false
+          new_mov["reason"] = "Pedido #{order.id}"
+          new_mov["movement_type"] = 'alta automática'
+          new_mov["store_id"] = current_user.store.id
+          StoreMovement.create(new_mov)
+        end
+      end
+    else
+      requests = ProductRequest.find(params[:id])
+      complete = true
+      alert = ""
+      requests.each_with_index do |request,index|
+        complete = false if (params[:excess][index].to_i != 0 || params[:surplus][index].to_i != 0)
+        if params[:excess][index].to_i != 0
+          alert = "Sobran #{params[:excess][index].to_i} piezas"
+        elsif params[:surplus][index].to_i != 0
+          alert = "Faltan #{params[:surplus][index].to_i} piezas"
+        end
+        # Posiblemente un mailer que avise de los faltantes
+        request.update(status: 'entregado', quantity: request.quantity.to_i + params[:excess][index].to_i - params[:surplus][index].to_i, alert: alert)
+        request.movements.each do |mov|
+          new_mov = mov.as_json
+          new_mov.delete("id")
+          new_mov.delete("created_at")
+          new_mov.delete("updated_at")
+          new_mov.delete("identifier")
+          new_mov.delete("seller_user_id")
+          new_mov.delete("buyer_user_id")
+          new_mov.delete("business_unit_id")
+          new_mov.delete("unique_code")
+          new_mov.delete("entry_movement_id")
+          new_mov.delete("discount_rule_id")
+          new_mov.delete("confirm")
+          new_mov.delete("maximum_date")
+          new_mov.delete("kg")
+          new_mov["web"] = true
+          new_mov["pos"] = false
+          new_mov["reason"] = "Pedido #{order.id}"
+          new_mov["movement_type"] = 'alta automática'
+          new_mov["store_id"] = current_user.store.id
+          new_mov["quantity"] = new_mov["quantity"].to_i + params[:excess][index].to_i - params[:surplus][index].to_i
+          StoreMovement.create(new_mov)
+        end
+      end
+      order.update(status: 'entregado', deliver_complete: complete)
+    end
+    redirect_to store_orders_path(current_user.store), notice: "El pedido #{order.id} ha sido confirmado como entregado"
+  end
+
   def get_product
     product = Product.find(params[:product])
     if product.present?
@@ -235,6 +307,7 @@ class OrdersController < ApplicationController
     @order = Order.create(
                             store: current_user.store,
                             category: 'de línea',
+                            status: 'en espera',
                             delivery_address: current_user.store.delivery_address,
                             prospect: @prospect
                           )
@@ -304,6 +377,7 @@ class OrdersController < ApplicationController
     @order = Order.create(
                             store: current_user.store,
                             category: 'de línea',
+                            status: 'en espera',
                             delivery_address: current_user.store.delivery_address,
                             prospect: @prospect
                           )
@@ -491,7 +565,7 @@ class OrdersController < ApplicationController
       movement_type: 'venta',
       user: current_user,
       cost: cost,
-      total: unit_price,
+      total: unit_price * 1.16,
       taxes: unit_price * 0.16,
       subtotal: product.price,
       business_unit: store.business_unit,

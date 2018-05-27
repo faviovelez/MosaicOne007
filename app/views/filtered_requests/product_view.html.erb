@@ -1,51 +1,95 @@
 <% if @confirmed.count >= 1 %>
-  <table>
+  <table class="dataTableFour">
     <thead>
       <tr class="table-titles">
+        <th class="col-md-1">Folio</th>
         <th class="col-md-2">Tienda</th>
         <th class="quantity col-md-1">Cantidad</th>
         <th class="product col-md-1">Producto</th>
+        <th class="product col-md-1">Material</th>
         <th class="date col-md-1">Solicitada</th>
         <th class="delivery-date col-md-1">Entregar</th>
-        <th class="status col-md-1">Estatus</th>
+        <th class="status col-md-2">Estatus</th>
+        <th class="status col-md-2">Acciones</th>
       </tr>
     </thead>
     <tbody>
-    <% @confirmed.each do |request| %>
-      <tr>
-        <td> <%= request.store.store_name %> </td>
-        <td> <%= number_with_delimiter(request.quantity) %></td>
-        <td>
-          <% if request.product_type == 'otro'%>
-            <%= request.name_type %>
-          <% elsif request.product_type != 'otro'%>
-            <%= request.product_type %>
+      <% @confirmed.each do |request| %>
+        <tr>
+          <td> <%= request.id %> </td>
+          <td> <%= request.store.store_name %> </td>
+          <td> <%= number_with_delimiter(request.quantity) %></td>
+          <td>
+            <% if request.product_type == 'otro'%>
+              <%= request.name_type.capitalize %>
+            <% elsif request.product_type != 'otro'%>
+              <%= request.product_type.capitalize %>
+            <% end %>
+          </td>
+          <td> <%= request.main_material.capitalize %> </td>
+          <% @days = (Date.today - request.created_at.to_date).to_i %>
+          <% if @days < 1 %>
+            <td class="date-created">
+              <span class="label label-success">
+                hoy
+              </span>
+            </td>
+          <% elsif @days == 1 %>
+            <td class="date-created">
+              <span class="label label-warning">
+                1 día
+              </span>
+            </td>
+          <% else @days > 1 %>
+            <td class="date-created">
+              <span class="label label-danger">
+                <%= @days %> días
+              </span>
+            </td>
           <% end %>
-        </td>
-        <% @days = (Date.today - request.created_at.to_date).to_i %>
-        <% if @days < 1 %>
-          <td> hoy </td>
-        <% elsif @days == 1 %>
-          <td> 1 día </td>
-        <% else @days > 1 %>
-          <td> <%= @days %> días </td>
-        <% end %>
-        <% if request.delivery_date.present? %>
-          <td> <%= I18n.l request.delivery_date, format: :short %></td>
-        <% else %>
-        <td> - </td>
-          <% end %>
-          <td> <%= request.status.capitalize %></td>
-        <td class="col-md-1">
-          <%= link_to new_request_product_path(request) do %>
-            <i class="fa fa-book link-to-confirm" aria-hidden="true"></i>
-            <span class="link-to-confirm">Nuevo</span>
-          <% end %>
-        </td>
-      </tr>
+          <% if request.delivery_date.present? %>
+            <td> <%= I18n.l request.delivery_date, format: :short %></td>
+          <% else %>
+            <td> - </td>
+            <% end %>
+          <td class="status">
+            <% if request.status == 'precio asignado' %>
+              <span class="label label-primary">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif (request.status == 'solicitada' || request.status == 'modificada') %>
+              <span class="label label-danger">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'costo asignado' %>
+              <span class="label label-warning">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'autorizada' %>
+              <span class="label label-success">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'cancelada' %>
+              <span class="label label-default">
+                <%= request.status.capitalize %>
+              </span>
+              <% elsif (request.status == 'mercancía asignada' || request.status == 'código asignado') %>
+                <span class="label label-info">
+                  <%= request.status.capitalize %>
+                </span>
+            <% end %>
+          </td>
+          <td class="col-md-1">
+            <%= link_to new_request_product_path(request) do %>
+              <i class="fa fa-book link-to-confirm" aria-hidden="true"></i>
+              <span class="link-to-confirm">Nuevo</span>
+            <% end %>
+          </td>
+        </tr>
       <% end %>
     </tbody>
   </table>
 <% else %>
   <p class="individual-font">No hay solicitudes activas</p>
 <% end %>
+<%= render 'dataTables' %>
