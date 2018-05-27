@@ -29,7 +29,24 @@ module ApplicationHelper
   def requests_store_user_name(request)
     user = request.users.first
     @name = user.first_name + ' '
-    @name += user.middle_name if !user.middle_name.blank?
+    @name += user.middle_name + ' ' if !user.middle_name.blank?
+    @name += user.last_name
+    @name
+  end
+
+
+  def order_request_user(order)
+    user = order.request_user
+    @name = user.first_name + ' '
+    @name += user.middle_name + ' ' if !user.middle_name.blank?
+    @name += user.last_name
+    @name
+  end
+
+  def order_confirm_user(order)
+    user = order.confirm_user
+    @name = user.first_name + ' '
+    @name += user.middle_name + ' ' if !user.middle_name.blank?
     @name += user.last_name
     @name
   end

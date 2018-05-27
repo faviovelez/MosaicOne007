@@ -100,7 +100,7 @@ class OrdersController < ApplicationController
   def confirm_received
     order = Order.find(params[:order_id])
     if params[:order_complete]
-      order.update(status: 'entregado', deliver_complete: true)
+      order.update(status: 'entregado', deliver_complete: true, confirm_user: current_user)
       requests = order.product_requests
       requests.each do |request|
         request.update(status: 'entregado')
@@ -164,7 +164,7 @@ class OrdersController < ApplicationController
           StoreMovement.create(new_mov)
         end
       end
-      order.update(status: 'entregado', deliver_complete: complete)
+      order.update(status: 'entregado', deliver_complete: complete, confirm_user: current_user)
     end
     redirect_to store_orders_path(current_user.store), notice: "El pedido #{order.id} ha sido confirmado como entregado"
   end
@@ -306,6 +306,7 @@ class OrdersController < ApplicationController
     pend_movs = []
     @order = Order.create(
                             store: current_user.store,
+                            request_user: current_user,
                             category: 'de línea',
                             status: 'en espera',
                             delivery_address: current_user.store.delivery_address,
@@ -328,6 +329,7 @@ class OrdersController < ApplicationController
           pend_movs << mov
         end
         @new_order = Order.create(store: current_user.store,
+          request_user: current_user,
           category: 'de línea',
           delivery_address: current_user.store.delivery_address,
           status: 'en espera',
@@ -376,6 +378,7 @@ class OrdersController < ApplicationController
     pend_movs = []
     @order = Order.create(
                             store: current_user.store,
+                            request_user: current_user,
                             category: 'de línea',
                             status: 'en espera',
                             delivery_address: current_user.store.delivery_address,
@@ -398,6 +401,7 @@ class OrdersController < ApplicationController
           pend_movs << mov
         end
         @new_order = Order.create(store: current_user.store,
+          request_user: current_user,
           category: 'de línea',
           delivery_address: current_user.store.delivery_address,
           status: 'en espera',
