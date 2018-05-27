@@ -40,12 +40,12 @@ class ProductsController < ApplicationController
 
   def catalogue
     filter_products
-    @inventories = @inventories.where(classification: 'de línea')
+    @products = @products.where(classification: 'de línea')
   end
 
   def special
     filter_products
-    @inventories = @inventories.where(classification: 'especial')
+    @products = @products.where(classification: 'especial')
   end
 
   # GET /products/1
@@ -234,13 +234,18 @@ class ProductsController < ApplicationController
   end
 
   def save_product_from_request_related_models
-    @order = Order.create(status: 'en espera', category: 'especial', prospect: @request.prospect, request: @request, store: @request.store, delivery_address: current_user.store.delivery_address)
-    @order.users  << @finded_user
+    real_price = @request.sales_price
+    price = @request.internal_price
+    cost = @request.internal_cost
+    discount = @request.sales_price - @request.internal_price
+    quantity = @request.quantity
+    @order = Order.create(status: 'en espera', category: 'especial', prospect: @request.prospect, request: @request, store: @request.store, delivery_address: current_user.store.delivery_address, cost: (cost * quantity).round(2), subtotal: (real_price * quantity).round(2), discount_applied: (discount * quantity).round(2), taxes: (price * quantity * 0.16).round(2), total: (price * quantity * 1.16).round(2))
+    @order.users << @finded_user
     @order.save
     @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date, status: 'sin asignar')
     @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
     store_inventory = StoresInventory.create(product: @product, store: @finded_user.store)
-    @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, order: @order, unique_code: @product.unique_code, product_request: @product_request, initial_price: @request.internal_price, buyer_user: @finded_user)
+    @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, movement_type: 'venta', order: @order, unique_code: @product.unique_code, product_request: @product_request, buyer_user: @finded_user, store: @request.store, initial_price: real_price, final_price: price, cost: 0, total_cost: nil, subtotal: real_price, discount_applied: discount, automatic_discount: discount, taxes: price * 0.16, total: price* 1.16)
   end
 
   def find_user

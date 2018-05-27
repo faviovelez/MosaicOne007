@@ -16,7 +16,7 @@
       <% @orders.each do |order| %>
         <tr>
           <td> <%= order.id %> </td>
-          <td> <%= order.store.store_code %> - <%= order.store.store_name %> </td>
+          <td> <%= order.store.store_name %> </td>
           <% if order.category == 'de línea' %>
               <td>
                 <span class="label label-primary">

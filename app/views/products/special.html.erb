@@ -1,4 +1,4 @@
-<table>
+<table class="dataTableFour">
   <thead>
     <tr class="table-titles">
       <th>Código</th>
@@ -6,32 +6,28 @@
       <th>Color/Diseño</th>
       <th>Línea de producto</th>
       <th>Precio</th>
+      <th>Acciones</th>
     </tr>
   </thead>
 
   <tbody>
-    <% @inventories.each do |inventory| %>
+    <% @products.each do |product| %>
       <tr>
-        <td class="col-md-1"><%= inventory.product.unique_code %></td>
-        <td class="col-md-2"><%= inventory.product.description %></td>
-        <td class="col-md-1"><%= inventory.product.exterior_color_or_design %></td>
-        <td class="col-md-2"><%= inventory.product.line %></td>
-        <td class="col-md-1"><%= number_to_currency(inventory.product.price) %></td>
+        <td class="col-md-1"><%= product.unique_code %></td>
+        <td class="col-md-2"><%= product.description %></td>
+        <td class="col-md-1"><%= product.exterior_color_or_design %></td>
+        <td class="col-md-2"><%= product.line %></td>
+        <td class="col-md-1"><%= number_to_currency(product.price) %></td>
         <td class="col-md-1">
-          <%= link_to inventory.product do %>
-            <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-            <span>Ver</span>
+          <%= link_to product do %>
+            <i class="fa fa-plus-square link-to-details" aria-hidden="true"  data-toggle="tooltip" data-placement="left" title="Ver"></i>
             <% end %>
-        </td>
-        <td class="col-md-1">
-          <%= link_to edit_product_path(inventory.product) do %>
-            <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
-            <span class="link-to-confirm">Modificar</span>
+          <%= link_to edit_product_path(product) do %>
+            <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar"></i>
             <% end %>
         </td>
       </tr>
   <% end %>
-
   </tbody>
-
 </table>
+<%= render 'dataTables' %>

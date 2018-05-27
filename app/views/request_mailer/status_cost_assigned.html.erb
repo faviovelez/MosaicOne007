@@ -7,8 +7,14 @@
   <body>
     <p>
       Estimado(a) <%= @user.first_name %> <%= @user.last_name %>.
+      <br />
+      <br />
+      <br />
       Al pedido especial <%= @request.id %> se le ha asignado un costo de venta de <%= number_to_currency(@request.internal_price) %> pesos.
     </p>
+
+    <br />
+    <br />
 
     <div class="small-address">
       <%= image_tag 'logo-disenos-decarton.png', width: '300px', height: 'auto', alt: 'Logo Diseños de Cartón' %>

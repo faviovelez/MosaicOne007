@@ -8,6 +8,7 @@
         <th> Total </th>
         <th> Producto </th>
         <th> Acciones </th>
+        <th> Confirmar </th>
       </tr>
     </thead>
     <tbody>
@@ -34,40 +35,42 @@
               </span>
             <% end %>
           </td>
+          <% if (@order.status == 'en espera' || @order.status == 'mercancía asignada' && (@order.bill == nil)) %>
+            <td class="col-md-1">
+              <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+                <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+              <% end %>
+            </td>
+          <% end %>
           <td class="col-md-2">
             <% if (@order.users.count >= 1 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
-              <div class="all-hide hidden">
-                <span class="for-hide" id="for-hide_<%= product_request.id %>">
-                  ¿Completo?
-                  <%= check_box_tag "complete[]", true, false, { multiple: true, id: "product_requests[#{product_request.id}]", class: 'for-hide-checkbox for-hide'} %>
-                  <%= check_box_tag "complete[]", false, true, { multiple: true, id: "product_requests[#{product_request.id}]", class: "for-hide-checkbox for-hide hidden second-check_#{product_request.id}"} %>
-                </span>
-                <%= text_field_tag 'id[]', product_request.id, {class: 'hidden'} %>
-                <a href="#" id="redLink_<%= product_request.id %>">
-                  <i class="fa fa-warning red-icon" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Producto faltante"></i>
-                </a>
-                <a href="#" id="greenLink_<%= product_request.id %>">
-                  <i class="fa fa-warning green-icon" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Producto en exceso"></i>
-                </a>
-                <div id="redWrapper_<%= product_request.id %>" class="hidden">
-                  <div class="input-group">
-                    <%= text_field_tag 'surplus[]', nil, {class: 'form-control'} %>
-                    <span class="input-group-btn">
-                      <button class="btn" id="redAddOn_<%= product_request.id %>">Ocultar</button>
-                    </span>
-                  </div>
-                </div>
-                <div id="greenWrapper_<%= product_request.id %>" class="hidden">
-                  <div class="input-group">
-                    <%= text_field_tag 'excess[]', nil, {class: 'form-control'} %>
-                    <span class="input-group-btn">
-                      <button class="btn" id="greenAddOn_<%= product_request.id %>">Ocultar</button>
-                    </span>
-                  </div>
+             <span class="for-hide" id="for-hide_<%= product_request.id %>">
+               ¿Completo?
+               <%= check_box_tag "complete[]", true, false, { multiple: true, id: "product_requests[#{product_request.id}]", class: 'for-hide-checkbox'} %>
+             </span>
+             <%= text_field_tag 'id[]', product_request.id, {class: 'hidden'} %>
+              <a href="#" id="redLink_<%= product_request.id %>">
+                <i class="fa fa-warning red-icon" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Producto faltante"></i>
+              </a>
+              <a href="#" id="greenLink_<%= product_request.id %>">
+                <i class="fa fa-warning green-icon" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Producto en exceso"></i>
+              </a>
+              <div id="redWrapper_<%= product_request.id %>" class="hidden">
+                <div class="input-group">
+                  <%= text_field_tag 'surplus[]', nil, {class: 'form-control'} %>
+                  <span class="input-group-btn">
+                    <button class="btn" id="redAddOn_<%= product_request.id %>">Ocultar</button>
+                  </span>
                 </div>
               </div>
-            <% else %>
-              -
+              <div id="greenWrapper_<%= product_request.id %>" class="hidden">
+                <div class="input-group">
+                  <%= text_field_tag 'excess[]', nil, {class: 'form-control'} %>
+                  <span class="input-group-btn">
+                    <button class="btn" id="greenAddOn_<%= product_request.id %>">Ocultar</button>
+                  </span>
+                </div>
+              </div>
             <% end %>
           </td>
         </tr>
@@ -83,15 +86,10 @@
 
   <% if (@order.users.count > 1 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
       <div class="actions">
-        ¿Pedido completo?
-        <%= check_box_tag :order_complete, true, true, { multiple: true, class: 'for-hide-checkbox'} %>
-        <%= text_field_tag :order_id, @order.id, {class: 'hidden'} %>
-      </div>
-      <div class="actions">
-        <%= submit_tag 'Confirmar', class: 'main-button', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
+        <%= submit_tag 'Confirmar ', class: 'main-button', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
       </div><br /><br />
     <% end %>
-  <% end %>
+<% end %>
 
 <br /> <br /> <br />
 <%= render 'modal_delivery_address' %>

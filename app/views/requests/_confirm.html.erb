@@ -6,7 +6,7 @@
 
     <div class="authorisation">
     <% unless @request.authorisation_signed %>
-      <div class="field form-inside-style">
+      <div class="field form-inside-style upload_authorisation">
         <%= f.label :pedido_autorizado %>
         <%= f.file_field :authorisation %>
       </div>
@@ -25,7 +25,7 @@
 
     <div class="authorisation">
     <% unless @request.payment_uploaded %>
-      <div class="field form-inside-style">
+      <div class="field form-inside-style upload_payment">
         <%= f.label :ficha_de_depósito %>
         <%= f.file_field :payment %>
       </div>

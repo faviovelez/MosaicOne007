@@ -270,6 +270,16 @@ class Movement < ActiveRecord::Base
     pendings = PendingMovement.where(product: product)
     pendings.each do |pending|
       unless pending.quantity <= 0
+        if self.product.classification == 'especial'
+          pending.update(quantity: self.quantity)
+          pending.product_request.order.request.update(status: 'mercancía asignada')
+          if self.quantity > pending.product_request.quantity
+            pending.product_request.update(excess: self.quantity - pending.product_request.quantity, quantity: self.quantity)
+          elsif self.quantity < pending.product_request.quantity
+            # surplus va a ser escasés o faltante (lo contrario de su significado real)
+            pending.product_request.update(surplus: pending.product_request.quantity - self.quantity, quantity: self.quantity)
+          end
+        end
         if quantity >= pending.quantity
           generate_objects_instance(pending)
           pending.destroy

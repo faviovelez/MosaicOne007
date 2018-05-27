@@ -1,0 +1,39 @@
+<% if @drivers.count >= 1 %>
+  <table class="dataTableFour">
+    <thead>
+      <tr class="table-titles">
+        <th> Nombre </th>
+        <th> Estatus </th>
+        <th> Acciones </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @drivers.each do |driver| %>
+        <tr>
+          <td> <%= driver.first_name %> <%= driver.last_name %> </td>
+          <% if driver.active %>
+            <td>
+              <span class="label label-success">
+                Activo
+              </span>
+            </td>
+          <% else %>
+            <td>
+              <span class="label label-danger">
+                Inactivo
+              </span>
+            </td>
+          <% end %>
+          <td >
+            <%= link_to edit_driver_path(driver) do %>
+              <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar datos"></i>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render 'dataTables' %>
+<% else %>
+  <p class="individual-font">No hay choferes registrados</p>
+<% end %>

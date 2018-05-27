@@ -198,6 +198,8 @@ Rails.application.routes.draw do
 
   get 'products/show_product_csv'
 
+  post 'orders/confirm_received'
+
   get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
 
   get 'orders/delete_product_from_order/:id', to: 'orders#delete_product_from_order', as: 'delete_product_from_order'
@@ -381,6 +383,10 @@ Rails.application.routes.draw do
   get 'warehouse/prepare_order/:id', to: 'warehouse#prepare_order', as: 'warehouse_prepare_order'
 
   get 'warehouse/show_prepared_order/:id', to: 'warehouse#show_prepared_order', as: 'warehouse_show_prepared_order'
+
+  post 'warehouse/assign_driver'
+
+  resources :drivers
 
   post 'pos/received_data', to: 'pos#received_data', as: 'received_data'
 

@@ -14,9 +14,15 @@
   <body>
     <p>
       Estimado(a) <%= @manager.first_name %> <%= @manager.last_name %>.
+      <br />
+      <br />
+      <br />
       La tienda <%= @request.store.store_name %> ha cancelado  el pedido especial número <%= @request.id %> por <%= number_with_delimiter(@request.quantity) %> piezas.
       Tipo de producto: <%= @value %>.
     </p>
+
+    <br />
+    <br />
 
     <div class="small-address">
       <%= image_tag 'logo-disenos-decarton.png', width: '300px', height: 'auto', alt: 'Logo Diseños de Cartón' %>

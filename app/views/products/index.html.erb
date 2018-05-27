@@ -24,15 +24,11 @@
           <% end %>
           <td class="col-md-1">
             <%= link_to product do %>
-              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true"  data-toggle="tooltip" data-placement="left" title="Ver"></i>
             <% end %>
-            <% if ((current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff') && product.store_id == nil) %>
+            <% if (((current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff') && product.store_id == nil) || (current_user.role.name == 'store-admin' && product.store_id == current_user.store_id)) %>
               <%= link_to edit_product_path(product) do %>
-                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
-              <% end %>
-            <% elsif (current_user.role.name == 'store-admin' && product.store_id == current_user.store_id) %>
-              <%= link_to edit_product_path(product) do %>
-                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true"></i>
+                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar"></i>
               <% end %>
             <% end %>
           </td>

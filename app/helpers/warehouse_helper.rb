@@ -50,9 +50,17 @@ module WarehouseHelper
     if delivery == nil
       name = content_tag(:span, 'sin asignar', class: 'label label-danger')
     else
-      name = delivery.driver.first_name.capitalize + " " + user.last_name.capitalize
+      name = delivery.driver.first_name.capitalize + " " + delivery.driver.last_name.capitalize
     end
     name
+  end
+
+  def driver_names
+    @drivers = []
+    Driver.all.select("CONCAT(first_name, ' ', last_name) AS name, id").each do |driver|
+      @drivers << [driver.name, driver.id]
+    end
+    @drivers
   end
 
 # CONFIRMAR SI VOY A USAR ESTE MÉTODO (ES PARA USARLO EN LA PREPARACIÓN DE ALMACÉN PARA ACCEDER A AGREGAR PAQUETES AL DELIVERY)

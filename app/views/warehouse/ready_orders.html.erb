@@ -16,7 +16,7 @@
       <% @orders.each do |order| %>
         <tr>
           <td> <%= order.id %> </td>
-          <td> <%= order.store.store_code %> - <%= order.store.store_name %> </td>
+          <td> <%= order.store.store_name %> </td>
           <% if order.category == 'de línea' %>
               <td>
                 <span class="label label-primary">
@@ -63,6 +63,6 @@
     </tbody>
   </table>
 <% else %>
-  <p class="individual-font">No hay pedidos en listos para entregarse.</p>
+  <p class="individual-font">No hay pedidos listos para entregarse.</p>
 <% end %>
 <%= render 'dataTables'%>

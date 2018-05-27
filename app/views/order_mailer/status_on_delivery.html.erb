@@ -1,28 +1,17 @@
-<% @value = '' %>
-<% if @request.product_type == 'otro' %>
-  <% @value = @request.name_type %>
-<% else %>
-  <% @value = @request.product_type %>
-<% end %>
-
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Solicitud confirmada</title>
+    <title>Costo de Venta asignado</title>
   </head>
   <body>
     <p>
-      Estimado(a) <%= @manager.first_name %> <%= @manager.last_name %>.
+      Estimado(a) <%= @user.first_name %> <%= @user.last_name %>.
       <br />
       <br />
       <br />
-      La tienda <%= @request.store.store_name %> ha confirmado el pedido especial número <%= @request.id %> por <%= number_with_delimiter(@request.quantity) %> piezas.
-      Tipo de producto: <%= @value %>.
+      El pedido <%= @order.id %> está en camino para entregarse.
     </p>
-
-    <br />
-    <br />
 
     <div class="small-address">
       <%= image_tag 'logo-disenos-decarton.png', width: '300px', height: 'auto', alt: 'Logo Diseños de Cartón' %>
