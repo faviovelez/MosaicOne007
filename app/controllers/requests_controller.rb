@@ -276,7 +276,7 @@ class RequestsController < ApplicationController
   # Este método valida si ya se ha asignado el costo, es el que permite o niega el acceso a la vista de confirm.
   def check_price
     if @request.status != 'costo asignado'
-      redirect_to requests_path(@request)
+      redirect_to request_path(@request)
     end
   end
 

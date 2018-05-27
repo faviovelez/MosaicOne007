@@ -83,6 +83,7 @@ class WarehouseController < ApplicationController
       end
       n += 1
     end
+    ## Posiblemente un mailer que avise del Alert
     redirect_to warehouse_show_prepared_order_path(@order.id), notice: "Se actualizó el pedido #{@order.id}."
   end
 
@@ -96,6 +97,20 @@ class WarehouseController < ApplicationController
       }
     else
       render json: {product: false}
+    end
+  end
+
+  def assign_driver
+    order = Order.find(params[:id])
+    if params[:commit] == 'Confirmar entrega a chofer'
+      order.update(status: 'en ruta')
+      OrderMailer.status_on_delivery(order).deliver_now
+      driver = order.delivery_attempt.driver
+      redirect_to warehouse_ready_orders_path, notice: "Se ha entregado a #{driver&.first_name.capitalize} #{driver&.last_name.capitalize} el pedido #{order.id} para entrega"
+    else
+      driver = Driver.find(params[:driver])
+      DeliveryAttempt.create(driver: driver, order: order)
+      redirect_to warehouse_ready_orders_path, notice: "Se ha asignado el pedido #{order.id} a #{driver&.first_name.capitalize} #{driver&.last_name.capitalize} para entrega"
     end
   end
 

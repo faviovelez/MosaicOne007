@@ -1,49 +1,74 @@
-<table class="table dataTableNoPaginationNoButton">
-  <thead>
-    <tr class="table-titles">
-      <th> Producto </th>
-      <th> Color </th>
-      <th> Paquetes </th>
-      <th> Almacén </th>
-      <th> Ubicación </th>
-      <th> Notas </th>
-      <th class="hidden"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="boxes"></td>
-      <td class="boxes"></td>
-      <td class="boxes"></td>
-      <td class="boxes"></td>
-      <td class="boxes"></td>
-      <td class="boxes">
-        <strong>
-          Cajas:
-        </strong>
-        <%= @order.boxes %>
-      </td>
-      <td class="hidden"></td>
-    </tr>
-    <% @order.product_requests.where(status: 'asignado').each do |product_request| %>
-      <tr>
-        <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
-        <td><%= product_request.product.exterior_color_or_design %></td>
-        <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
-        <td><%= product_request.product.warehouse.name %></td>
-        <% if (product_request.product.rack.nil? && product_request.product.level.nil?) %>
-          <td class="center-text"> - </td>
-        <% else %>
-          <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
+<%= form_tag({ controller: 'warehouse', action: 'assign_driver' }, method: 'post', class: 'form-data-tables') do %>
+
+  <table class="table dataTableNoPaginationNoButton">
+    <thead>
+      <tr class="table-titles">
+        <th> Producto </th>
+        <th> Color </th>
+        <th> Paquetes </th>
+        <th> Almacén </th>
+        <th> Ubicación </th>
+        <th> Notas </th>
+        <% if (current_user.role.name == 'admin-desk' && @order.delivery_attempt == nil) %>
+          <th> Asignar chofer </th>
+        <% elsif (current_user.role.name == 'admin-desk' && @order.delivery_attempt != nil) %>
+          <th> Chofer </th>
+        <% elsif ((current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') && @order.delivery_attempt != nil) %>
+          <th> Chofer </th>
         <% end %>
-        <td> <%= product_request.alert %> </td>
-        <td class="hidden">
-        </td>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @order.product_requests.where(status: 'asignado').each do |product_request| %>
+        <tr>
+          <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
+          <td><%= show_non_blank_field(product_request.product.exterior_color_or_design) %></td>
+          <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
+          <td><%= product_request.product.warehouse.name %></td>
+          <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
+            <td class="center-text"> - </td>
+          <% else %>
+            <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
+          <% end %>
+          <td> <%= product_request.alert %> </td>
+          <% if (current_user.role.name == 'admin-desk' && @order.delivery_attempt == nil) %>
+            <td>
+              Por confirmar
+            </td>
+          <% elsif (current_user.role.name == 'admin-desk' && @order.delivery_attempt != nil) %>
+            <td> <%= @order.delivery_attempt.driver&.first_name %> <%= @order.delivery_attempt.driver&.last_name %> </td>
+          <% elsif ((current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') && @order.delivery_attempt != nil) %>
+            <td>
+              <%= @order.delivery_attempt.driver&.first_name %> <%= @order.delivery_attempt.driver&.last_name %>
+              <%= text_field_tag :id, params[:id], {class: 'hidden'} %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
 <br /> <br />
+
+  <% if (current_user.role.name == 'admin-desk' && @order.delivery_attempt == nil) %>
+    <div class="actions">
+      <br />
+      <%= select_tag :driver, options_for_select(driver_names), class: 'form-control center-text width-reduced' %>
+      <%= text_field_tag :id, params[:id], {class: 'hidden'} %>
+      <br />
+    </div>
+    <div class="actions">
+      <%= submit_tag 'Asignar', class: 'main-button' %>
+    </div>
+    <br /><br />
+  <% elsif ((current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') && (@order.delivery_attempt != nil && @order.status != 'en ruta')) %>
+    <div class="actions">
+      <%= submit_tag 'Confirmar entrega a chofer', class: 'main-button' %>
+    </div>
+    <br /><br />
+  <% end %>
+
+<% end %>
 
   <p>
     Este pedido fue preparado por <%= warehouse_name(@order) %>

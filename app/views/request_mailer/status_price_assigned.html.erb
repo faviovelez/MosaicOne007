@@ -7,8 +7,14 @@
   <body>
     <p>
       Estimado(a) <%= @manager.first_name %> <%= @manager.last_name %>.
+      <br />
+      <br />
+      <br />
       La tienda <%= @request.store.store_name %> ha asignado un precio de venta de <%= number_to_currency(@request.sales_price) %> pesos a  el pedido especial número <%= @request.id %>.
     </p>
+
+    <br />
+    <br />
 
     <div class="small-address">
       <%= image_tag 'logo-disenos-decarton.png', width: '300px', height: 'auto', alt: 'Logo Diseños de Cartón' %>

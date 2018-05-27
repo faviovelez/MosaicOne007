@@ -108,7 +108,7 @@
             <li class="vertical-link">
           <% end %>
               <i class="fa fa-truck other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Pedidos en espera', store_orders_path(current_user.store), class: 'text-link'  %>
+              <%= link_to 'Pedidos por entregar', store_orders_path(current_user.store), class: 'text-link'  %>
             </li>
 
           <% if params[:controller] == 'orders' && params[:action] == 'history' %>
@@ -393,50 +393,50 @@
           <%= link_to 'Salida de mercancía', warehouse_remove_inventory_path, class: 'text-link' %>
             </li>
 
-            <% if params[:controller] == 'warehouse' && (params[:action] == 'orders' || params[:action] == 'prepare_order')  %>
-              <li class="vertical-link actual-vertical-link">
-            <% else %>
-              <li class="vertical-link">
-            <% end %>
-            <i class="fa fa-cubes other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Pedidos con disponibilidad', warehouse_orders_path, class: 'text-link' %>
-              </li>
+          <% if params[:controller] == 'warehouse' && (params[:action] == 'orders' || params[:action] == 'prepare_order')  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-cubes other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Pedidos con disponibilidad', warehouse_orders_path, class: 'text-link' %>
+            </li>
 
-            <% if params[:controller] == 'warehouse' && (params[:action] == 'pending_orders' || params[:action] == 'pending_products')  %>
-              <li class="vertical-link actual-vertical-link">
-            <% else %>
-              <li class="vertical-link">
-            <% end %>
-            <i class="fa fa-calendar-times-o other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Pedidos sin disponibilidad', warehouse_pending_orders_path, class: 'text-link' %>
-              </li>
+          <% if params[:controller] == 'warehouse' && (params[:action] == 'pending_orders' || params[:action] == 'pending_products')  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-calendar-times-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Pedidos sin disponibilidad', warehouse_pending_orders_path, class: 'text-link' %>
+            </li>
 
-            <% if params[:controller] == 'warehouse' && (params[:action] == 'waiting_orders' || params[:action] == 'waiting_products')  %>
-              <li class="vertical-link actual-vertical-link">
-            <% else %>
-              <li class="vertical-link">
-            <% end %>
-            <i class="fa fa-hand-paper-o other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Pedidos en espera', warehouse_waiting_orders_path, class: 'text-link' %>
-              </li>
+          <% if params[:controller] == 'warehouse' && (params[:action] == 'waiting_orders' || params[:action] == 'waiting_products')  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-hand-paper-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Pedidos en espera', warehouse_waiting_orders_path, class: 'text-link' %>
+            </li>
 
-            <% if (params[:controller] == 'warehouse' && (params[:action] == 'ready_orders'))  %>
-              <li class="vertical-link actual-vertical-link">
-            <% else %>
-              <li class="vertical-link">
-            <% end %>
-            <i class="fa fa-truck other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Pedidos listos para entrega', warehouse_ready_orders_path, class: 'text-link' %>
-              </li>
+          <% if (params[:controller] == 'warehouse' && (params[:action] == 'ready_orders'))  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-truck other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Pedidos listos para entrega', warehouse_ready_orders_path, class: 'text-link' %>
+            </li>
 
-            <% if params[:controller] == 'inventories' && (params[:action] == 'index' || params[:action] == 'order_suggestions')  %>
-              <li class="vertical-link actual-vertical-link">
-            <% else %>
-              <li class="vertical-link">
-            <% end %>
-            <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
-            <%= link_to 'Inventario', inventories_index_path, class: 'text-link' %>
-              </li>
+          <% if params[:controller] == 'inventories' && (params[:action] == 'index' || params[:action] == 'order_suggestions')  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Inventario', inventories_index_path, class: 'text-link' %>
+            </li>
 
         <% end %>
         <%-# Aquí termina el área que muestra los links para warehouse-staff o warehouse-admin %>
@@ -576,13 +576,31 @@
               <%= link_to 'Lista de prospectos', business_group_prospects_path(current_user.store.business_unit.business_group), class: 'text-link'  %>
             </li>
 
-          <% if params[:controller] == 'orders' && params[:action] == 'index' %>
+          <% if (params[:controller] == 'warehouse' && (params[:action] == 'ready_orders'))  %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
           <% end %>
-              <i class="fa fa-truck other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Pedidos en espera', store_orders_path(current_user.store), class: 'text-link'  %>
+          <i class="fa fa-truck other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Pedidos listos para entrega', warehouse_ready_orders_path, class: 'text-link' %>
+            </li>
+
+          <% if (params[:controller] == 'drivers' && (params[:action] == 'index'))  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-address-book other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Lista de choferes', drivers_path, class: 'text-link' %>
+            </li>
+
+          <% if (params[:controller] == 'drivers' && (params[:action] == 'new'))  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-id-card other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Registrar chofer', new_driver_path, class: 'text-link' %>
             </li>
 
         <% end %>

@@ -40,18 +40,56 @@
           <% end %>
           <% @days = (Date.today - request.created_at.to_date).to_i %>
           <% if @days < 1 %>
-            <td class="date-created"> hoy </td>
+            <td class="date-created">
+              <span class="label label-success">
+                hoy
+              </span>
+            </td>
           <% elsif @days == 1 %>
-            <td class="date-created"> 1 día </td>
+            <td class="date-created">
+              <span class="label label-warning">
+                1 día
+              </span>
+            </td>
           <% else @days > 1 %>
-            <td class="date-created"> <%= @days %> días </td>
+            <td class="date-created">
+              <span class="label label-danger">
+                <%= @days %> días
+              </span>
+            </td>
           <% end %>
           <% if request.delivery_date.present? %>
             <td class="delivery-date"> <%= I18n.l request.delivery_date, format: :short %></td>
           <% else %>
           <td class="delivery-date"> - </td>
             <% end %>
-          <td class="status"> <%= request.status.capitalize %></td>
+          <td class="status">
+            <% if request.status == 'precio asignado' %>
+              <span class="label label-primary">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif (request.status == 'solicitada' || request.status == 'modificada') %>
+              <span class="label label-danger">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'costo asignado' %>
+              <span class="label label-warning">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'autorizada' %>
+              <span class="label label-success">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'cancelada' %>
+              <span class="label label-default">
+                <%= request.status.capitalize %>
+              </span>
+              <% elsif (request.status == 'mercancía asignada' || request.status == 'código asignado') %>
+                <span class="label label-info">
+                  <%= request.status.capitalize %>
+                </span>
+            <% end %>
+          </td>
           <td class="text-left">
             <%= link_to request do %>
               <i class="fa fa-plus-square link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver detalles"></i>

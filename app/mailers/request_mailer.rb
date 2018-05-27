@@ -27,9 +27,15 @@ class RequestMailer < ApplicationMailer
 
   def status_authorised(request)
     @request = request
+    @mails = []
     identify_manager_and_request(request)
+    @mails << @manager.email
+    product_mails = User.joins(:role).where(roles: {name: ['product-admin', 'product-staff']}).pluck(:email)
+    product_mails.each do |pm|
+      @mails << pm
+    end
       mail(
-        to: @manager.email,
+        bcc: @mails,
         subject: "El pedido especial #{request.id} ha sido confirmado"
       )
   end

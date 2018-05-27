@@ -1,30 +1,30 @@
 class ApiController < ApplicationController
 
   def get_all_products
-    products =  Product.where(classification: 'de línea').where(current: true, shared: true).where(child: nil).has_inventory(
+    products =  Product.where(classification: 'de línea').where(current: true, shared: true, child: nil).has_inventory(
       params[:q]
     ).collect do |p|
       words = p.description.split(' ') [0..5]
-      ["#{p.unique_code} #{words.join(' ')} #{p.exterior_color_or_design}", p.id ]
+      ["#{p.unique_code} #{words.join(' ')} #{p.exterior_color_or_design} #{p.only_measure.to_s}", p.id ]
     end
     render json: { products: products }
   end
 
   def get_all_products_for_bill
-    products =  Product.where(classification: 'de línea').where(current: true, shared: true).where(child: nil)
+    products =  Product.where(classification: 'de línea').where(current: true, shared: true, child: nil)
     store_products = Product.where(store: current_user.store)
     services = Service.where(current: true)
     options = []
     products.each do |product|
       words = product.description.split(' ') [0..5]
       words_clean = words.join(' ')
-      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s
+      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s + ' ' + product.only_measure.to_s
       options << { "value" => string, "data" => product.id }
     end
     store_products.each do |product|
       words = product.description.split(' ') [0..5]
       words_clean = words.join(' ')
-      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s
+      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s + ' ' + product.only_measure.to_s
       options << { "value" => string, "data" => product.id }
     end
     services.each do |service|
@@ -37,19 +37,19 @@ class ApiController < ApplicationController
   end
 
   def get_just_products
-    products =  Product.where(classification: 'de línea').where(current: true, shared: true)
+    products =  Product.where(classification: ['de línea', 'especial']).where(current: true, shared: true)
     store_products = Product.where(store: current_user.store)
     options = []
     products.each do |product|
       words = product.description.split(' ') [0..5]
       words_clean = words.join(' ')
-      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s
+      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s + ' ' + product.only_measure.to_s
       options << { "value" => string, "data" => product.id }
     end
     store_products.each do |product|
       words = product.description.split(' ') [0..5]
       words_clean = words.join(' ')
-      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s
+      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s + ' ' + product.only_measure.to_s
       options << { "value" => string, "data" => product.id }
     end
     render json: { suggestions: options }

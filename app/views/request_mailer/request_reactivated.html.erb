@@ -14,6 +14,9 @@
   <body>
     <p>
       Estimado(a) <%= @manager.first_name %> <%= @manager.last_name %>.
+      <br />
+      <br />
+      <br />
       La tienda <%= @request.store.store_name %> ha reactivado el pedido especial número <%= @request.id %> por <%= number_with_delimiter(@request.quantity) %> piezas, el estatus es <%=@request.status %>.
       Tipo de producto: <%= @value %>.
     </p>

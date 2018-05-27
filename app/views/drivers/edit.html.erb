@@ -1,0 +1,28 @@
+<%= form_for(@driver) do |f| %>
+
+  <h2 class="info-title"> Editar datos de chofer </h2>
+  <div class="form-container">
+
+    <div class="form-inside-style">
+      <%= f.label 'nombre(s)' %>
+      <%= f.text_field :first_name, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label 'apellidos(s)' %>
+      <%= f.text_field :last_name, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label '¿Activo?' %>
+      <%= f.select :active, options_for_select([['Activo', true], ['Inactivo', false]], selected: true), class: 'form-inside' %>
+    </div>
+
+    <div class="button-container">
+      <div class="actions">
+        <%= f.submit :registrar, class: 'main-button' %>
+      </div>
+    </div>
+
+  </div>
+<% end %>

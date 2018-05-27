@@ -79,9 +79,9 @@ module OrdersHelper
     end
     @order.pending_movements.each do |pm|
       if pm.product.group
-        tot = ((pm.total * pm.quantity * pm.product.average) * 1.16).round(2)
+        tot = ((pm.total * pm.quantity * pm.product.average)).round(2)
       else
-        tot = ((pm.total * pm.quantity) * 1.16).round(2)
+        tot = ((pm.total * pm.quantity)).round(2)
       end
       @total += tot if prod_req_result == pm.product_id
     end
