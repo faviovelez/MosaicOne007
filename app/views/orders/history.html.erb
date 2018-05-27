@@ -7,6 +7,7 @@
         <th class="col-md-1">Productos</th>
         <th class="col-md-1">Piezas</th>
         <th class="col-md-1">Estatus</th>
+        <th class="col-md-2">Confirmó</th>
         <th class="col-md-1">Acciones</th>
       </tr>
     </thead>
@@ -49,6 +50,9 @@
                 <%= order.status %>
               </span>
             <% end %>
+          </td>
+          <td class="col-md-2">
+            <%= order_confirm_user(order) %>
           </td>
           <td class="col-md-1">
             <%= link_to orders_show_for_store_path(order), class: 'link-extra-space' do %>
