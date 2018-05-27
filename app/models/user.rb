@@ -24,6 +24,8 @@ class User < ActiveRecord::Base
   has_many :delivery_attempts
   has_many :deposits
   has_many :payments
+  has_many :orders, foreign_key: 'request_user_id'
+  has_many :orders, foreign_key: 'confirm_user_id'
 
   after_create :save_web_id_and_set_web_true
 

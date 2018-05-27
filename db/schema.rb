@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180523170607) do
+ActiveRecord::Schema.define(version: 20180527232109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -827,14 +827,18 @@ ActiveRecord::Schema.define(version: 20180523170607) do
     t.integer  "boxes"
     t.boolean  "deliver_complete",    default: false
     t.boolean  "payed",               default: false
+    t.integer  "request_user_id"
+    t.integer  "confirm_user_id"
   end
 
   add_index "orders", ["bill_id"], name: "index_orders_on_bill_id", using: :btree
   add_index "orders", ["billing_address_id"], name: "index_orders_on_billing_address_id", using: :btree
   add_index "orders", ["carrier_id"], name: "index_orders_on_carrier_id", using: :btree
+  add_index "orders", ["confirm_user_id"], name: "index_orders_on_confirm_user_id", using: :btree
   add_index "orders", ["delivery_address_id"], name: "index_orders_on_delivery_address_id", using: :btree
   add_index "orders", ["prospect_id"], name: "index_orders_on_prospect_id", using: :btree
   add_index "orders", ["request_id"], name: "index_orders_on_request_id", using: :btree
+  add_index "orders", ["request_user_id"], name: "index_orders_on_request_user_id", using: :btree
   add_index "orders", ["store_id"], name: "index_orders_on_store_id", using: :btree
 
   create_table "orders_users", force: :cascade do |t|

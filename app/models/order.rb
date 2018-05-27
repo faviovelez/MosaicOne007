@@ -17,6 +17,8 @@ class Order < ActiveRecord::Base
   has_many :payments
   belongs_to :order
   has_many :date_advises
+  belongs_to :request_user, class_name: 'User'
+  belongs_to :confirm_user, class_name: 'User'
 
   def all_movements
     self.movements + self.pending_movements
