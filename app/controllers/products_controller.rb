@@ -234,18 +234,26 @@ class ProductsController < ApplicationController
   end
 
   def save_product_from_request_related_models
+    corporate_stores = Store.where(store_type: StoreType.find_by_store_type('corporativo')).pluck(:id)
     real_price = @request.sales_price
     price = @request.internal_price
     cost = @request.internal_cost
     discount = @request.sales_price - @request.internal_price
     quantity = @request.quantity
-    @order = Order.create(status: 'en espera', category: 'especial', prospect: @request.prospect, request: @request, store: @request.store, delivery_address: current_user.store.delivery_address, cost: (cost * quantity).round(2), subtotal: (real_price * quantity).round(2), discount_applied: (discount * quantity).round(2), taxes: (price * quantity * 0.16).round(2), total: (price * quantity * 1.16).round(2))
+    @order = Order.new(status: 'en espera', category: 'especial', request: @request, store: @request.store, delivery_address: current_user.store.delivery_address, cost: (cost * quantity).round(2), subtotal: (real_price * quantity).round(2), discount_applied: (discount * quantity).round(2), taxes: (price * quantity * 0.16).round(2), total: (price * quantity * 1.16).round(2))
+    @pending_movement = PendingMovement.new(product: @product, quantity: @request.quantity, movement_type: 'venta', order: @order, unique_code: @product.unique_code, product_request: @product_request, buyer_user: @finded_user, store: @request.store, initial_price: real_price, final_price: price, cost: 0, total_cost: nil, subtotal: real_price, discount_applied: discount, automatic_discount: discount, taxes: price * 0.16, total: price* 1.16)
+    if corporate_stores.include?(@request.store.id)
+      @order.update(prospect: @request.prospect)
+      @pending_movement.update(prospect: @request.prospect)
+    else
+      @order.update(prospect: @request.store.store_prospect)
+      @pending_movement.update(prospect: @request.store.store_prospect)
+    end
     @order.users << @finded_user
     @order.save
     @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date, status: 'sin asignar')
     @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
     store_inventory = StoresInventory.create(product: @product, store: @finded_user.store)
-    @pending_movement = PendingMovement.create(product: @product, quantity: @request.quantity, movement_type: 'venta', order: @order, unique_code: @product.unique_code, product_request: @product_request, buyer_user: @finded_user, store: @request.store, initial_price: real_price, final_price: price, cost: 0, total_cost: nil, subtotal: real_price, discount_applied: discount, automatic_discount: discount, taxes: price * 0.16, total: price* 1.16)
   end
 
   def find_user
@@ -277,7 +285,7 @@ class ProductsController < ApplicationController
       @store = current_user.store
       if role == 'store-admin' || role == 'store'
         overp = Store.find(current_user.store.id).overprice / 100 + 1
-        @products = Product.select("products.id, products.store_id, products.shared, products.unique_code, products.description, products.exterior_color_or_design, products.line, CASE WHEN (stores_inventories.manual_price IS null OR stores_inventories.manual_price = 0) AND products.store_id IS null THEN products.price * #{overp} * 1.16 WHEN (stores_inventories.manual_price IS null OR stores_inventories.manual_price = 0) AND products.store_id IS NOT null THEN products.price * 1.16 WHEN (stores_inventories.manual_price IS NOT null OR stores_inventories.manual_price != 0) AND products.store_id IS NOT null THEN stores_inventories.manual_price * 1.16 ELSE stores_inventories.manual_price * #{overp} * 1.16 END AS product_price").joins('RIGHT JOIN stores_inventories ON products.id = stores_inventories.product_id').where(stores_inventories: {store_id: 3}, products: {child_id: nil}).order(:id)
+        @products = Product.select("products.id, products.store_id, products.shared, products.unique_code, products.description, products.exterior_color_or_design, products.line, CASE WHEN (stores_inventories.manual_price IS null OR stores_inventories.manual_price = 0) AND products.store_id IS null THEN products.price * #{overp} * 1.16 WHEN (stores_inventories.manual_price IS null OR stores_inventories.manual_price = 0) AND products.store_id IS NOT null THEN products.price * 1.16 WHEN (stores_inventories.manual_price IS NOT null OR stores_inventories.manual_price != 0) AND products.store_id IS NOT null THEN stores_inventories.manual_price * 1.16 ELSE stores_inventories.manual_price * #{overp} * 1.16 END AS product_price").joins('RIGHT JOIN stores_inventories ON products.id = stores_inventories.product_id').where(stores_inventories: {store_id: current_user.store.id}, products: {child_id: nil}).order(:id)
       else
         @products = Product.where(current: true, shared: true).select(:id, :unique_code, :description, :exterior_color_or_design, :line, :price, :shared, :store_id)
       end
