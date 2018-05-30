@@ -13,7 +13,7 @@ class InventoriesController < ApplicationController
     @inventories = []
     role = current_user.role.name
     @store = current_user.store
-    if role == 'store-admin' || role == 'store'
+    if (role == 'store-admin' || role == 'store' || (!(role == 'store-admin' || role == 'store') && current_user.store.store_type.store_type == 'corporativo' && current_user.store.id != 1))
       @dc_products = StoresInventory.includes(:product).where(store: @store, products: {current: true, shared: true})
       @store_products = StoresInventory.includes(:product).where(products: {store_id: @store})
       if @store_products == []
@@ -62,10 +62,11 @@ class InventoriesController < ApplicationController
         date = Date.parse(params[:date]) unless (params[:date] == nil || params[:date] == '')
         initial_date = date.midnight + 6.hours
         final_date = date.end_of_day + 6.hours
-        if params[:information] == 'Movimientos de Inventario'
+        if params[:information] == 'Movimientos de inventario'
           if params[:products] == 'Elegir producto'
             movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja'], product: params[:product_list]).where.not(quantity: 0)
           else
+            debugger
             movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja']).where.not(quantity: 0)
           end
         else
@@ -78,7 +79,7 @@ class InventoriesController < ApplicationController
       elsif params[:options] == 'Mes actual'
         initial_date = Date.today.beginning_of_month.midnight + 6.hours
         final_date = Date.today + 6.hours
-        if params[:information] == 'Movimientos de Inventario'
+        if params[:information] == 'Movimientos de inventario'
           if params[:products] == 'Elegir producto'
             movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, product: params[:product_list], movement_type: ['alta', 'baja']).where.not(quantity: 0)
           else
@@ -94,7 +95,7 @@ class InventoriesController < ApplicationController
       else
         initial_date = Date.parse(params[:initial_date]).midnight + 6.hours unless (params[:initial_date] == nil || params[:initial_date] == '')
         final_date = Date.parse(params[:final_date]).end_of_day + 6.hours unless (params[:final_date] == nil || params[:final_date] == '')
-        if params[:information] == 'Movimientos de Inventario'
+        if params[:information] == 'Movimientos de inventario'
           if params[:products] == 'Elegir producto'
             movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, product: params[:product_list], movement_type: ['alta', 'baja']).where.not(quantity: 0)
           else

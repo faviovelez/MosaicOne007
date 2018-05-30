@@ -304,8 +304,8 @@
 
     <div class="button-container">
       <div class="actions">
-        <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button' %>
-        <%= f.submit :guardar_para_después, name: 'guardar', class: 'secondary-button' %>
+        <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
+        <%= f.submit :guardar_para_después, name: 'guardar', class: 'secondary-button', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
       </div>
     </div>
 

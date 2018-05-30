@@ -23,7 +23,7 @@
       <div class="button-container" id="confirm-cost-div">
         <br />
         <div class="actions">
-          <%= f.submit :confirmar_costo, name: 'actualizar', class: 'main-button capitalize' %>
+          <%= f.submit :confirmar_costo, name: 'actualizar', class: 'main-button capitalize', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
 
           <div class="button-container" id="dudas-div">
             <div class="actions">
-              <%= t.submit :enviar_dudas, name: 'enviar_dudas', class: 'third-button capitalize' %>
+              <%= t.submit :enviar_dudas, name: 'enviar_dudas', class: 'third-button capitalize', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
             </div>
           </div>
         </div>

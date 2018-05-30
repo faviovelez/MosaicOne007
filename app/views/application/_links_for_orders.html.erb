@@ -1,16 +1,18 @@
 <div>
 
-    <% if !(params[:controller] == 'orders' && params[:action] == 'index') %>
-      <% if (current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') %>
+    <% if (current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') %>
+      <% if !(params[:controller] == 'warehouse' && params[:action] == 'orders') %>
         <%= link_to warehouse_orders_path, class: 'space-between-links' do  %>
           Pedidos con disponibilidad
           <i class="fa fa-dropbox" aria-hidden="true"></i>
         <% end %>
-      <% else %>
+      <% end %>
+    <% else %>
+      <% if !(params[:controller] == 'orders' && params[:action] == 'index') %>
         <%= link_to store_orders_path(current_user.store), class: 'space-between-links' do  %>
           Pedidos por entregar
           <i class="fa fa-dropbox" aria-hidden="true"></i>
-          <% end %>
+        <% end %>
       <% end %>
     <% end %>
 

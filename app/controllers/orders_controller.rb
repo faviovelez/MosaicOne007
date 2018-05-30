@@ -387,6 +387,7 @@ class OrdersController < ApplicationController
 
   def save_products_for_prospects
     @prospect = Prospect.find(params[:prospect_id])
+    corporate = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).first
     status = []
     prod_req = []
     movs = []
@@ -394,7 +395,7 @@ class OrdersController < ApplicationController
     @order = Order.create(
                             store: current_user.store,
                             request_user: current_user,
-                            corporate: current_user.store,
+                            corporate: corporate,
                             category: 'de línea',
                             status: 'en espera',
                             delivery_address: current_user.store.delivery_address,
@@ -419,7 +420,7 @@ class OrdersController < ApplicationController
         @new_order = Order.create(store: current_user.store,
           request_user: current_user,
           category: 'de línea',
-          corporate: current_user.store,
+          corporate: corporate,
           delivery_address: current_user.store.delivery_address,
           status: 'en espera',
           prospect: @prospect

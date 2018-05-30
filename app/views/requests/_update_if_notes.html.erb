@@ -346,7 +346,7 @@
 
       <div class="button-container" id="edit-request-button-container">
         <div class="actions">
-          <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button'%>
+          <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
         </div>
       </div>
     <% end %>
