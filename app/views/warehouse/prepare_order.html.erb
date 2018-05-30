@@ -5,6 +5,8 @@
       <th> Producto </th>
       <th> Color </th>
       <th> Paquetes </th>
+      <th> Piezas </th>
+      <th> Producto </th>
       <th> Almacén </th>
       <th> Ubicación </th>
       <th> Notas </th>
@@ -14,6 +16,8 @@
   <tbody>
     <% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role_name == 'warehouse-admin') && @order.status != 'preparado') %>
       <tr>
+        <td class="boxes"></td>
+        <td class="boxes"></td>
         <td class="boxes"></td>
         <td class="boxes"></td>
         <td class="boxes"></td>
@@ -34,10 +38,26 @@
     <% end %>
     <% @order.product_requests.where(status: 'asignado').each do |product_request| %>
       <tr>
-        <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
-        <td><%= show_non_blank_field(product_request.product.exterior_color_or_design) %> </td>
-        <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
-        <td><%= product_request.product.warehouse.name %></td>
+        <td> <%= product_request.product.unique_code %> <%= product_request.product.description %> </td>
+        <td> <%= show_non_blank_field(product_request.product.exterior_color_or_design) %> </td>
+        <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
+        <td> <%= number_with_delimiter(product_request.quantity) %> </td>
+        <td>
+          <% if product_request.status == 'asignado' %>
+          <span class="label label-info">
+            <%= product_request.status%>
+          </span>
+          <% elsif product_request.status == 'sin asignar' %>
+            <span class="label label-warning">
+              <%= product_request.status%>
+            </span>
+          <% elsif product_request.status == 'entregado' %>
+            <span class="label label-success">
+              <%= product_request.status%>
+            </span>
+          <% end %>
+        </td>
+        <td> <%= show_non_blank_field(product_request.product&.warehouse&.name) %> </td>
         <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
           <td class="center-text"> - </td>
         <% else %>
@@ -46,7 +66,7 @@
         <td>
           <% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role_name == 'warehouse-admin') && @order.status != 'preparado') %>
             <a href="#" id="iconLink_<%= product_request.id %>">
-              <i class="fa fa-warning red-icon" aria-hidden="true"data-toggle="tooltip" data-placement="left" title="Notas" ></i>
+              <i class="fa fa-warning red-icon" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Notas"></i>
             </a>
             <div id="myWrapper_<%= product_request.id %>" class="hidden">
               <div class="input-group">

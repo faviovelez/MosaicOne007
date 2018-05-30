@@ -1,0 +1,118 @@
+  <table class="table dataTableNoPaginationNoButton">
+    <thead>
+      <tr class="table-titles">
+        <th> Producto </th>
+        <th> Color </th>
+        <th> Paquetes </th>
+        <th> Almacén </th>
+        <th> Ubicación </th>
+        <th> Estatus </th>
+        <th> Notas </th>
+        <th> Chofer </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @order.bill == nil %>
+        <% @order.product_requests.where.not(status: 'cancelada').each do |product_request| %>
+        <tr>
+          <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
+          <td><%= show_non_blank_field(product_request.product.exterior_color_or_design) %></td>
+          <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
+          <td><%= show_non_blank_field(product_request.product&.warehouse&.name) %></td>
+          <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
+            <td class="center-text"> - </td>
+          <% else %>
+            <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
+          <% end %>
+          <td>
+            <% if product_request.status == 'asignado' %>
+            <span class="label label-info">
+              <%= product_request.status%>
+            </span>
+            <% elsif product_request.status == 'sin asignar' %>
+              <span class="label label-warning">
+                <%= product_request.status%>
+              </span>
+            <% elsif product_request.status == 'entregado' %>
+              <span class="label label-success">
+                <%= product_request.status%>
+              </span>
+              <% elsif product_request.status == 'cancelada' %>
+                <span class="label label-danger">
+                  <%= product_request.status%>
+                </span>
+            <% end %>
+          </td>
+          <td> <%= product_request.alert %> </td>
+          <% if (current_user.role.name == 'admin-desk' && @order.delivery_attempt == nil) %>
+            <td>
+              Por confirmar
+            </td>
+          <% elsif (current_user.role.name == 'admin-desk' && @order.delivery_attempt != nil) %>
+            <td> <%= @order.delivery_attempt.driver&.first_name %> <%= @order.delivery_attempt.driver&.last_name %> </td>
+          <% end %>
+        </tr>
+        <% end %>
+      <% else %>
+        <% @order.product_requests.each do |product_request| %>
+          <tr>
+            <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
+            <td><%= show_non_blank_field(product_request.product.exterior_color_or_design) %></td>
+            <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
+            <td><%= show_non_blank_field(product_request.product&.warehouse&.name) %></td>
+            <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
+              <td class="center-text"> - </td>
+            <% else %>
+              <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
+            <% end %>
+            <td>
+              <% if product_request.status == 'asignado' %>
+              <span class="label label-info">
+                <%= product_request.status%>
+              </span>
+              <% elsif product_request.status == 'sin asignar' %>
+                <span class="label label-warning">
+                  <%= product_request.status%>
+                </span>
+              <% elsif product_request.status == 'entregado' %>
+                <span class="label label-success">
+                  <%= product_request.status%>
+                </span>
+                <% elsif product_request.status == 'cancelada' %>
+                  <span class="label label-danger">
+                    <%= product_request.status%>
+                  </span>
+              <% end %>
+            </td>
+            <td> <%= product_request.alert %> </td>
+            <% if (current_user.role.name == 'admin-desk' && @order.delivery_attempt == nil) %>
+              <td>
+                Por confirmar
+              </td>
+            <% elsif (current_user.role.name == 'admin-desk' && @order.delivery_attempt != nil) %>
+              <td> <%= @order.delivery_attempt.driver&.first_name %> <%= @order.delivery_attempt.driver&.last_name %> </td>
+            <% end %>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+
+<br /> <br />
+
+  <p>
+    Este pedido fue preparado por <%= warehouse_name(@order) %>
+  </p>
+
+<br /> <br />
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'tableLoader' %>
+  <%= javascript_include_tag 'prepareOrder' %>
+<% end %>

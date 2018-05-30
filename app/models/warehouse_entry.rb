@@ -3,6 +3,7 @@ class WarehouseEntry < ActiveRecord::Base
   belongs_to :product
   belongs_to :user
   belongs_to :movement
+  belongs_to :store
 
   before_save :check_products
 

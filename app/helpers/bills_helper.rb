@@ -217,6 +217,7 @@ module BillsHelper
       @quantity_in_letters << ' pesos '
     end
     @quantity_in_letters.gsub!('y pesos', ' pesos')
+    @quantity_in_letters.gsub!('y  pesos', ' pesos')
     @quantity_in_letters.gsub!('  ', ' ')
     @quantity_in_letters.capitalize
   end
@@ -265,26 +266,10 @@ module BillsHelper
   end
 
   def select_prospect(role = current_user.role.name)
-    store = current_user.store
-    @prospects = []
-    if (role == 'store' || role == 'store-admin')
-      prospects = store.prospects
-      prospects.each do |prospect|
-        @prospects << [prospect.legal_or_business_name, prospect.id]
-      end
-    else
-      b_us = BusinessUnit.find_by_name(['Comercializadora de Cartón y Diseño', 'Diseños de Cartón'])
-      if b_us.is_a?(BusinessUnit)
-        b_us.prospects.each do |prospect|
-          @prospects << [prospect.legal_or_business_name, prospect.id]
-        end
-      else
-        b_us.each do |bu|
-          bu.prospects.each do |prospect|
-            @prospects << [prospect.legal_or_business_name, prospect.id]
-          end
-        end
-      end
+    @prospects = Prospect.where(store_id: current_user.store.id).pluck(:legal_or_business_name, :id)
+    corporate = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).pluck(:id)
+    Store.all.each do |store|
+      @prospects << [store.store_prospect.legal_or_business_name, store.store_prospect.id] if corporate.include?(current_user.store.id)
     end
     @prospects
   end
@@ -518,6 +503,12 @@ module BillsHelper
   def real_total(bill)
     sum_children(bill)
     bill.total + @sum
+  end
+
+  def get_order_payments(order)
+    order.payments == [] ? pay = 0 : order.payments.sum(:total).round(2)
+    (order.total.to_f <= pay || order.total - pay < 1) ? @balance = content_tag(:span, 'pagado', class: 'label label-success') : @balance = number_to_currency(order.total - pay)
+    @balance
   end
 
 end

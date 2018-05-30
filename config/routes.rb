@@ -200,6 +200,8 @@ Rails.application.routes.draw do
 
   post 'orders/confirm_received'
 
+  get 'orders/cancelled'
+
   get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
 
   get 'orders/delete_product_from_order/:id', to: 'orders#delete_product_from_order', as: 'delete_product_from_order'
@@ -334,6 +336,8 @@ Rails.application.routes.draw do
 
   get 'warehouse/new_own_entry'
 
+  get 'warehouse/sales_for_billing'
+
   get 'warehouse/remove_inventory'
 
   post 'warehouse/remove_product', to: 'warehouse#remove_product', as: 'warehouse_remove_product'
@@ -379,6 +383,8 @@ Rails.application.routes.draw do
   patch 'warehouse/assign_warehouse_admin/:id', to: 'warehouse#assign_warehouse_admin', as: 'assign_warehouse_admin', controller: 'orders'
 
   get 'warehouse/pending_orders'
+
+  get 'warehouse/show_order/:id', to: 'warehouse#show_order', as: 'warehouse_show_order'
 
   get 'warehouse/prepare_order/:id', to: 'warehouse#prepare_order', as: 'warehouse_prepare_order'
 
