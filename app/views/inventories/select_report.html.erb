@@ -31,7 +31,7 @@
     <%= select_tag :product_list, options_for_select(@products, selected: @products.first), {include_blank: true, multiple: true, class: 'form-inside select2-products'} %>
   </div>
 
-  <div class="field extra-margin-top hidden">
+  <div class="field extra-margin-top">
     <%= label_tag :fecha_de_reporte %>
     <%= date_field_tag(:date, Date.today, options = {max: Date.today, min: current_user.store.store_movements.order(:created_at).limit(1).pluck(:created_at).first.to_date }) %>
   </div>
