@@ -31,11 +31,17 @@ $(document).ready(function(){
     buttons: [
       {
         extend: 'excel',
+        orientation: 'landscape',
         title: 'Base de datos de mensajerías:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs'
       },
       {
         extend: 'pdf',
-        title: 'Base de datos de mensajerías:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs'
+        orientation: 'landscape',
+        pageSize: 'LEGAL',
+        title: 'Base de datos de mensajerías:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs',
+        exportOptions: {
+          columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+        },
       },
     ]
   });
@@ -71,11 +77,18 @@ $(document).ready(function(){
     buttons: [
       {
         extend: 'excel',
-        title: 'Reporte de ventas mensajerías:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs'
+        title: 'Reporte de ventas mensajerías:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs',
+        exportOptions: {
+          columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        },
       },
       {
         extend: 'pdf',
-        title: 'Reporte de ventas de mensajerías:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs'
+        orientation: 'landscape',
+        title: 'Reporte de ventas de mensajerías:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs',
+        exportOptions: {
+          columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        },
       },
     ]
   });
