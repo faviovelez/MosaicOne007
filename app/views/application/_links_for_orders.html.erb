@@ -1,0 +1,62 @@
+<div>
+
+    <% if !(params[:controller] == 'orders' && params[:action] == 'index') %>
+      <% if (current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') %>
+        <%= link_to warehouse_orders_path, class: 'space-between-links' do  %>
+          Pedidos con disponibilidad
+          <i class="fa fa-dropbox" aria-hidden="true"></i>
+        <% end %>
+      <% else %>
+        <%= link_to store_orders_path(current_user.store), class: 'space-between-links' do  %>
+          Pedidos por entregar
+          <i class="fa fa-dropbox" aria-hidden="true"></i>
+          <% end %>
+      <% end %>
+    <% end %>
+
+  <% if !(params[:controller] == 'warehouse' && params[:action] == 'ready_orders') %>
+    <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin') %>
+      <%= link_to warehouse_ready_orders_path, class: 'space-between-links' do  %>
+        Pedidos listos para entrega
+        <i class="fa fa-truck" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if !(params[:controller] == 'orders' && params[:action] == 'cancelled') %>
+    <% if (current_user.role.name != 'warehouse-admin' && current_user.role.name != 'warehouse-staff') %>
+      <%= link_to orders_cancelled_path, class: 'space-between-links' do  %>
+        Pedidos cancelados
+        <i class="fa fa-calendar-times-o" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if !(params[:controller] == 'orders' && params[:action] == 'history') %>
+    <% if (current_user.role.name != 'warehouse-admin' && current_user.role.name != 'warehouse-staff') %>
+      <%= link_to orders_history_path(current_user.store), class: 'space-between-links' do  %>
+        Historial de pedidos
+        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if !(params[:controller] == 'warehouse' && params[:action] == 'pending_orders') %>
+    <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin' && current_user.role.name != 'admin-desk') %>
+      <%= link_to warehouse_pending_orders_path, class: 'space-between-links' do  %>
+        Pedidos sin disponibilidad
+        <i class="fa fa-folder-open-o" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if !(params[:controller] == 'warehouse' && params[:action] == 'waiting_orders') %>
+    <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin' && current_user.role.name != 'admin-desk') %>
+      <%= link_to warehouse_waiting_orders_path, class: 'space-between-links' do  %>
+        Pedidos en espera
+        <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+
+</div>

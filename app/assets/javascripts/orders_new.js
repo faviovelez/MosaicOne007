@@ -21,6 +21,7 @@ $(document).ready(function() {
           $("#unique_code_").val('');
           $("#totalRow").removeClass("hidden");
           isKgProduct = response.response[0][9]["kg"];
+          isArmedProduct = response.response[0][12]["armed"];
           product_count = $("#row" + suggestion.data).length;
           if (product_count < 1) {
             var clone = newRows.clone();
@@ -41,6 +42,11 @@ $(document).ready(function() {
               "#discount_",
               "#status_",
               "#total_",
+              "#armed_",
+              "#armed_discount_",
+              "#armed_price_",
+              "#normal_discount_",
+              "#normal_price_"
             ]
             fields.forEach(function(field) {
               if ($(field).attr('id') == 'description_') {
@@ -53,27 +59,61 @@ $(document).ready(function() {
                 $(field).html(response.response[0][3]["inventory"]);
               } else if ($(field).attr('id') == 'discount_') {
                 if (action == 'new_order_for_prospects') {
-                  discountRow = 0;
+                  discountRow = parseFloat($("#discountForProspect").html());
                   $(field).val(discountRow);
                 } else {
                   discountRow = response.response[0][6]["discount"].toFixed(1);
                   $(field).html(discountRow + " %");
+                }
+              } else if ($(field).attr('id') == 'normal_discount_') {
+                if (action == 'new_order_for_prospects') {
+                  discountRow = 0;
+                  $(field).val(discountRow);
+                } else {
+                  discountRow = response.response[0][6]["discount"].toFixed(1);
+                  $(field).html(discountRow);
                 }
               } else if ($(field).attr('id') == 'unit_price_') {
                 unitPrice = response.response[0][1]["price"].toFixed(2)
                 .replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
                 $(field).html("$ " + unitPrice);
               } else if ($(field).attr('id') == 'base_unit_price_') {
-                unitPrice = response.response[0][1]["price"].toFixed(2)
-                .replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-                $(field).html("$ " + unitPrice);
+                unitPrice = response.response[0][1]["price"].toFixed(2);
+                $(field).html(unitPrice);
+              } else if ($(field).attr('id') == 'normal_price_') {
+                unitPrice = response.response[0][1]["price"].toFixed(2);
+                $(field).html(unitPrice);
               } else if ($(field).attr('id') == 'pieces_per_package_') {
                 $(field).html(response.response[0][4]["packages"]);
+              } else if ($(field).attr('id') == 'armed_price_') {
+                $(field).html(response.response[0][13]["armed_price"]);
+              } else if ($(field).attr('id') == 'armed_discount_') {
+                $(field).html(response.response[0][14]["armed_discount"]);
               }
               $(field).attr('id', field.replace("#", "") + this_id);
             });
+            checkSelector = $('#row' + this_id).find('.checkboxes');
+            checkSelector.attr('id', 'armed-group_' + this_id);
+            checkSelector.attr('class', 'checkboxes hidden armed-group_' + this_id);
+            visibleCheck = checkSelector.find('.armed-check');
+            invisibleCheck = checkSelector.find('.second-check_');
+            visibleCheck.attr('id', 'armed-group_' + this_id);
+            invisibleCheck.attr('id', 'armed_' + this_id);
+            visibleCheck.attr('class', 'armed-check alter-hidden hidden armed-group_' + this_id);
+            invisibleCheck.attr('class', 'alter-hidden second-check_' + this_id);
+            if (!($('.armed-group-title').hasClass('hidden'))) {
+              $('.checkboxes').removeClass('hidden');
+            }
             if (isKgProduct) {
               kgProducts[this_id] = response.response[0][10]["availability"];
+            } else if (isArmedProduct) {
+              $('.total-row').attr('colspan', '10');
+              $('.armed-group-title').removeClass('hidden');
+              $('.checkboxes').removeClass('hidden');
+              $('.armed-group_' + this_id).removeClass('alter-hidden');
+              $('.armed-group_' + this_id).removeClass('hidden');
+              $('.armed-group_' + this_id).addClass('armed-check');
+              $(".second-check_" + this_id).addClass('alter-hidden');
             }
           }
           rowTotal(this_id);
@@ -83,6 +123,41 @@ $(document).ready(function() {
       } // onSelect function(suggestion)
     }); // autocomplete
   }); // done function (response) first ajax
+
+// AGREGAR QUE JALE AUTOMÁTICAMENTE EL PORCENTAJE DE DESCUENTO DEL CLIENTE
+// PARA ESO HAY QUE CREAR UN NUEVO CLIENTE EN TIENDA 1
+
+  $("body").on('change', 'input[type="checkbox"]', function() {
+    var armedId = $(this).attr('id').replace('armed-group_', '');
+    var armedCheck = $(this);
+    if (action != 'new_order_for_prospects') {
+      if (armedCheck.is(":checked")) {
+        armedPrice = $('#armed_price_' + armedId).html();
+        armedDiscount = $('#armed_discount_' + armedId).html();
+        $('#discount_' + armedId).html(parseFloat(armedDiscount).toFixed(1) + ' %');
+        $('#unit_price_' + armedId).html("$ " + parseFloat(armedPrice).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        $('#base_unit_price_' + armedId).html("$ " + parseFloat(armedPrice).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        $('.second-check_' + armedId).prop("checked", false);
+        rowTotal(armedId);
+        realTotal();
+      } else {
+        unarmedPrice = $('#normal_price_' + armedId).html();
+        unarmedDiscount = $('#normal_discount_' + armedId).html();
+        $('#discount_' + armedId).html(parseFloat(unarmedDiscount).toFixed(1) + ' %');
+        $('#unit_price_' + armedId).html("$ " + parseFloat(unarmedPrice).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        $('#base_unit_price_' + armedId).html("$ " + parseFloat(unarmedPrice).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        $('.second-check_' + armedId).prop("checked", true);
+        rowTotal(armedId);
+        realTotal();
+      }
+    } else {
+      if (armedCheck.is(":checked")) {
+        $('.second-check_' + armedId).prop("checked", false);
+      } else {
+        $('.second-check_' + armedId).prop("checked", true);
+      }
+    }
+  });
 
   function addEvents(idProd){
     $("#close_icon_" + idProd).on("click", function(event) {
@@ -99,7 +174,6 @@ $(document).ready(function() {
     $("#discount_" + idProd).keyup(function(){
       rowTotal(idProd);
     });
-
   }
 
   function disableButton(){
@@ -157,8 +231,7 @@ $(document).ready(function() {
       }
       if (idRow in kgProducts) {
         if (total_quantity != 0) {
-          unit_p = (parseFloat($("#base_unit_price_" + idRow).html()
-          .replace("$ ", "").replace(/,/g,'')) * (1 - discount)).toFixed(2);
+          unit_p = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2);
           if (total_quantity <= (kgProducts[idRow].length - 1)) {
             for(var index = 0; index < total_quantity; index++) {
               sum += parseFloat(Object.values(kgProducts[idRow][index]));
@@ -172,8 +245,7 @@ $(document).ready(function() {
           price = "0.00";
         }
       } else {
-        price = (parseFloat($("#base_unit_price_" + idRow).html()
-          .replace("$ ", "").replace(/,/g,'')) * (1 - discount)).toFixed(2);
+        price = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2);
       }
       $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
 

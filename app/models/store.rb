@@ -1,19 +1,20 @@
 class Store < ActiveRecord::Base
   # Para crear o modificar nuevas tiendas.
+  belongs_to :delivery_address
+  belongs_to :cost_type
+  belongs_to :business_unit
+  belongs_to :business_group
+  belongs_to :store_type
   has_many :users
   has_many :requests
   has_many :prospects
   has_many :orders
   has_many :movements
   has_many :pending_movements
-  belongs_to :delivery_address
   has_many :delivery_addresses
   has_many :store_sales
-  belongs_to :business_unit
-  belongs_to :business_group
-  belongs_to :store_type
   has_many :warehouses
-  belongs_to :cost_type
+  has_many :warehouse_entries
   has_many :suppliers
   has_many :bills
   has_many :discount_rules
@@ -53,6 +54,7 @@ class Store < ActiveRecord::Base
   has_many :deposits
   has_many :delivery_services
   has_many :date_advises
+  has_many :orders, foreign_key: 'corporate_id'
 
   mount_uploader :certificate, SatCertificateUploader
   mount_uploader :key, SatKeyUploader

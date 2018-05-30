@@ -21,10 +21,11 @@
       <th> Precio unitario </th>
       <th> Piezas </th>
       <th class="hidden"> Inventario </th>
+      <th class="hidden armed-group-title"> ¿Armado? </th>
       <th> Paquetes </th>
       <th> Pedido </th>
       <th> Estatus </th>
-      <th> Total </th>
+      <th class="col-md-1"> Total </th>
     </tr>
   </thead>
 
@@ -58,6 +59,8 @@
 </table>
 
 <div class="hidden" id="action"><%= params[:action] %></div>
+
+<p class="hidden" id="discountForProspect"> <%= @prospect.discount %> </p>
 
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'formValidation.min' %>

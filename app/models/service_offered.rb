@@ -8,6 +8,7 @@ class ServiceOffered < ActiveRecord::Base
   belongs_to :tax
   belongs_to :ticket
   belongs_to :prospect
+  belongs_to :order
 
   after_create :save_web_id_and_set_web_true
 

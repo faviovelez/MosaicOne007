@@ -38,36 +38,59 @@ class OrdersController < ApplicationController
       discount = 0
       taxes = 0
       total = 0
-      if order.pending_movements == []
+      if order.movements != []
         order.movements.each do |mov|
           if mov.quantity == nil
             mov.delete
           else
-            cost += mov.total_cost.to_f
-            subtotal += mov.subtotal.to_f
-            discount += mov.discount_applied.to_f
-            taxes += mov.taxes.to_f
-            total += mov.total.to_f
+            if mov.movement_type == 'venta'
+              cost += mov.total_cost.to_f
+              subtotal += mov.subtotal.to_f
+              discount += mov.discount_applied.to_f
+              taxes += mov.taxes.to_f
+              total += mov.total.to_f
+            elsif mov.movement_type == 'devolución'
+              cost -= mov.total_cost.to_f
+              subtotal -= mov.subtotal.to_f
+              discount -= mov.discount_applied.to_f
+              taxes -= mov.taxes.to_f
+              total -= mov.total.to_f
+            end
           end
         end
-      else
-        order.pending_movements.each do |mov|
-          if mov.quantity == nil
-            mov.delete
-          else
-            product = mov.product
-            if product.group
+      end
+      order.pending_movements.each do |mov|
+        if mov.quantity == nil
+          mov.delete
+        else
+          product = mov.product
+          if product.group
+            if mov.movement_type == 'venta'
               cost += mov.total_cost.to_f * mov.quantity * product.average
               subtotal += mov.subtotal.to_f * mov.quantity * product.average
               discount += mov.discount_applied.to_f * mov.quantity * product.average
               taxes += mov.taxes.to_f * mov.quantity * product.average
               total += (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
-            else
+            elsif mov.movement_type == 'devolución'
+              cost -= mov.total_cost.to_f * mov.quantity * product.average
+              subtotal -= mov.subtotal.to_f * mov.quantity * product.average
+              discount -= mov.discount_applied.to_f * mov.quantity * product.average
+              taxes -= mov.taxes.to_f * mov.quantity * product.average
+              total -= (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
+            end
+          else
+            if mov.movement_type == 'venta'
               cost += mov.total_cost.to_f * mov.quantity
               subtotal += mov.subtotal.to_f * mov.quantity
               discount += mov.discount_applied.to_f * mov.quantity
               taxes += mov.taxes.to_f * mov.quantity
               total += (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
+            elsif mov.movement_type == 'devolución'
+              cost -= mov.total_cost.to_f * mov.quantity
+              subtotal -= mov.subtotal.to_f * mov.quantity
+              discount -= mov.discount_applied.to_f * mov.quantity
+              taxes -= mov.taxes.to_f * mov.quantity
+              total -= (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
             end
           end
         end
@@ -101,7 +124,7 @@ class OrdersController < ApplicationController
     order = Order.find(params[:order_id])
     if params[:order_complete]
       order.update(status: 'entregado', deliver_complete: true, confirm_user: current_user)
-      requests = order.product_requests
+      requests = order.product_requests.where.not(status: 'cancelada')
       requests.each do |request|
         request.update(status: 'entregado')
         request.movements.each do |mov|
@@ -224,17 +247,13 @@ class OrdersController < ApplicationController
         mov.delete
       end
     end
-    if request.order.bill == nil
-      request.delete
-    else
-      request.update(status: 'cancelada')
-    end
-    if order.product_requests.count < 1
-      order.delete
-      redirect_to root_path, notice: 'Se eliminó por completo el pedido.'
+    request.update(status: 'cancelada')
+    if order.product_requests.where.not(status: 'cancelada').count < 1
+      order.update(status: 'cancelado')
+      redirect_to root_path, notice: 'Se canceló por completo el pedido.'
     else
       order.update(total: total, subtotal: subtotal, taxes: taxes, discount_applied: discount_applied)
-      redirect_to orders_show_for_store_path(order), notice: 'Se eliminó este producto de su pedido.'
+      redirect_to orders_show_for_store_path(order), notice: 'Se canceló este producto de su pedido.'
     end
   end
 
@@ -273,15 +292,11 @@ class OrdersController < ApplicationController
       discount_applied -= mov.discount_applied
       mov.delete if mov.product == product
     end
-    request.delete
-    if order.product_requests.count < 1
-      orders_users = OrdersUser.find_by_order_id(order.id)
-      orders_users.delete
-      order.delete
-      redirect_to root_path, notice: 'Se eliminó por completo el pedido.'
+    request.update(status: 'cancelada')
+    if order.product_requests.where.not(status: 'cancelada').count < 1
+      order.update(status: 'cancelado')
     else
       order.update(total: total, subtotal: subtotal, taxes: taxes, discount_applied: discount_applied)
-      redirect_to orders_show_for_store_path(@id), notice: 'Se eliminó este producto de su pedido.'
     end
   end
 
@@ -293,13 +308,14 @@ class OrdersController < ApplicationController
     end
     orders_users = OrdersUser.find_by_order_id(order.id)
     orders_users.delete
-    order.delete
-    redirect_to root_path, notice: 'Se eliminó por completo el pedido.'
+    order.update(status: 'cancelado')
+    redirect_to root_path, notice: 'Se canceló por completo el pedido.'
   end
 
   def save_products
     @store = Store.find(params[:store_id])
     @prospect = Prospect.find_by_store_prospect_id(current_user.store)
+    corporate = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).first
     status = []
     prod_req = []
     movs = []
@@ -308,6 +324,7 @@ class OrdersController < ApplicationController
                             store: current_user.store,
                             request_user: current_user,
                             category: 'de línea',
+                            corporate: corporate,
                             status: 'en espera',
                             delivery_address: current_user.store.delivery_address,
                             prospect: @prospect
@@ -316,12 +333,12 @@ class OrdersController < ApplicationController
     @order.users << current_user
     @order.save
     create_product_requests
-    if @order.deliver_complete
-      @order.product_requests.each do |pr|
-        status << [pr.status]
-        prod_req << pr
-      end
-      if status.uniq.length != 1
+    @order.product_requests.each do |pr|
+      status << [pr.status]
+      prod_req << pr
+    end
+    if status.uniq.length != 1
+      if !(@order.deliver_complete)
         @order.movements.each do |mov|
           movs << mov
         end
@@ -331,6 +348,7 @@ class OrdersController < ApplicationController
         @new_order = Order.create(store: current_user.store,
           request_user: current_user,
           category: 'de línea',
+          corporate: corporate,
           delivery_address: current_user.store.delivery_address,
           status: 'en espera',
           prospect: @prospect
@@ -345,7 +363,7 @@ class OrdersController < ApplicationController
             unassigned_pr << pr if (pm.product_id == pr.product_id && (unassigned_pr.include?(pr) == false))
           end
           movs.each do |mov|
-            assigned_mov << mov if (pr.product_id == mov.product_id && (movs.include?(mov) == false))
+            assigned_mov << mov if (pr.product_id == mov.product_id && (assigned_mov.include?(mov) == false))
             assigned_pr << pr if (pr.product_id == mov.product_id && (assigned_pr.include?(pr) == false))
           end
         end
@@ -355,13 +373,10 @@ class OrdersController < ApplicationController
         unassigned_pr.each do |pr|
           ProductRequest.find(pr.id).update(order: @new_order)
         end
+      end
+    else
+      if status.first == ['asignado']
         @order.update(status: 'mercancía asignada')
-      else
-        if status.first == ['asignado']
-          @order.update(status: 'mercancía asignada')
-        else
-          @order.update(status: 'en espera')
-        end
       end
     end
     @orders = []
@@ -379,6 +394,7 @@ class OrdersController < ApplicationController
     @order = Order.create(
                             store: current_user.store,
                             request_user: current_user,
+                            corporate: current_user.store,
                             category: 'de línea',
                             status: 'en espera',
                             delivery_address: current_user.store.delivery_address,
@@ -388,12 +404,12 @@ class OrdersController < ApplicationController
     @order.users << current_user
     @order.save
     create_product_requests
-    if @order.deliver_complete
-      @order.product_requests.each do |pr|
-        status << [pr.status]
-        prod_req << pr
-      end
-      if status.uniq.length != 1
+    @order.product_requests.each do |pr|
+      status << [pr.status]
+      prod_req << pr
+    end
+    if status.uniq.length != 1
+      if !(@order.deliver_complete)
         @order.movements.each do |mov|
           movs << mov
         end
@@ -403,6 +419,7 @@ class OrdersController < ApplicationController
         @new_order = Order.create(store: current_user.store,
           request_user: current_user,
           category: 'de línea',
+          corporate: current_user.store,
           delivery_address: current_user.store.delivery_address,
           status: 'en espera',
           prospect: @prospect
@@ -417,7 +434,7 @@ class OrdersController < ApplicationController
             unassigned_pr << pr if (pm.product_id == pr.product_id && (unassigned_pr.include?(pr) == false))
           end
           movs.each do |mov|
-            assigned_mov << mov if (pr.product_id == mov.product_id && (movs.include?(mov) == false))
+            assigned_mov << mov if (pr.product_id == mov.product_id && (assigned_mov.include?(mov) == false))
             assigned_pr << pr if (pr.product_id == mov.product_id && (assigned_pr.include?(pr) == false))
           end
         end
@@ -427,13 +444,10 @@ class OrdersController < ApplicationController
         unassigned_pr.each do |pr|
           ProductRequest.find(pr.id).update(order: @new_order)
         end
+      end
+    else
+      if status.first == ['asignado']
         @order.update(status: 'mercancía asignada')
-      else
-        if status.first == ['asignado']
-          @order.update(status: 'mercancía asignada')
-        else
-          @order.update(status: 'en espera')
-        end
       end
     end
     @orders = []
@@ -480,27 +494,49 @@ class OrdersController < ApplicationController
   end
 
   def current_orders
-    @orders = current_user.store.orders.where.not(status: ['entregado', 'cancelada', 'expirada']).order(:created_at)
+    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+      @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(store: current_user.store).order(:created_at)
+    else
+      @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(corporate: current_user.store).order(:created_at)
+    end
   end
 
   def delivered_orders
-    @orders = current_user.store.orders.where(status:'entregado').order(:created_at)
+    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+      @orders = Order.where(status:'entregado', store: current_user.store).order(:created_at)
+    else
+      @orders = Order.where(status:'entregado', corporate: current_user.store).order(:created_at)
+    end
   end
 
   def history
     delivered_orders
   end
 
+  def cancelled
+    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+      @orders = Order.where(store: current_user.store, status: 'cancelado')
+    else
+      @orders = Order.where(status: 'cancelado', corporate: current_user.store)
+    end
+  end
+
+
   private
 
   def create_product_requests
     counter = params[:products].count
     n = 0
+    converted_armed = false
+    if params[:armed][n] == 'true'
+      converted_armed = true
+    end
     counter.times do
       product = Product.find(params[:products][n])
       product_request = ProductRequest.create(
         product: product,
         quantity: params[:request][n],
+        armed: converted_armed,
         order: @order
       )
       if product_request.save
@@ -515,10 +551,14 @@ class OrdersController < ApplicationController
     inventory = product_request.product.inventory
     product = product_request.product
     if @prospect.store_prospect != nil
-      if @prospect.store_prospect.store_type.store_type == 'tienda propia'
-        discount = product.discount_for_stores / 100
-      elsif @prospect.store_prospect.store_type.store_type == 'franquicia'
-        discount = product.discount_for_franchises / 100
+      if (product.armed && params[:armed][n] == 'true')
+        discount = product.armed_discount / 100
+      else
+        if @prospect.store_prospect.store_type.store_type == 'tienda propia'
+          discount = product.discount_for_stores / 100
+        elsif @prospect.store_prospect.store_type.store_type == 'franquicia'
+          discount = product.discount_for_franchises / 100
+        end
       end
     else
       discount = params[:discount][n].to_f / 100
@@ -543,10 +583,14 @@ class OrdersController < ApplicationController
     store = Store.find_by_store_name('Corporativo Compresor')
     prospect = @prospect
     if prospect.store_prospect != nil
-      if prospect.store_prospect.store_type.store_type == 'tienda propia'
-        discount = product.discount_for_stores / 100
-      elsif prospect.store_prospect.store_type.store_type == 'franquicia'
-        discount = product.discount_for_franchises / 100
+      if (product.armed && params[:armed][n] == 'true')
+        discount = product.armed_discount / 100
+      else
+        if prospect.store_prospect.store_type.store_type == 'tienda propia'
+          discount = product.discount_for_stores / 100
+        elsif prospect.store_prospect.store_type.store_type == 'franquicia'
+          discount = product.discount_for_franchises / 100
+        end
       end
     else
       discount = params[:discount][n].to_f / 100

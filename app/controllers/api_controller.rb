@@ -61,12 +61,33 @@ class ApiController < ApplicationController
     if current_user.store.store_type.store_type == 'franquicia'
       price_with_discount = (p.price * (1 - (p.discount_for_franchises / 100))).round(2)
       discount = p.discount_for_franchises
+      if p.armed
+        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_discount = p.armed_discount
+      else
+        armed_price = price_with_discount
+        armed_discount = discount
+      end
     elsif current_user.store.store_type.store_type == 'tienda propia'
       price_with_discount = (p.price * (1 - (p.discount_for_stores / 100))).round(2)
       discount = p.discount_for_stores
+      if p.armed
+        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_discount = p.armed_discount
+      else
+        armed_price = price_with_discount
+        armed_discount = discount
+      end
     else
       discount = 0
       price_with_discount = p.price.round(2)
+      if p.armed
+        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_discount = p.armed_discount
+      else
+        armed_price = price_with_discount
+        armed_discount = discount
+      end
     end
     images = []
     unless p.images == []
@@ -100,7 +121,10 @@ class ApiController < ApplicationController
       { total_inventory: separated + p.quantity},
       { kg: p.group },
       { availability: kg_available },
-      { pending: pending_orders}
+      { pending: pending_orders},
+      { armed: p.armed},
+      { armed_price: armed_price},
+      { armed_discount: armed_discount}
   ]
   render json: {response: product_info}
   end

@@ -4,6 +4,9 @@
       <tr class="table-titles">
         <th class="col-md-3">Pedido</th>
         <th class="col-md-1">Tipo</th>
+        <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin')%>
+          <th class="col-md-3"> Cliente </th>
+        <% end %>
         <th class="col-md-1">Productos</th>
         <th class="col-md-1">Piezas</th>
         <th class="col-md-1">Estatus</th>
@@ -26,8 +29,11 @@
               </span>
             <% end %>
           </td>
-          <td> <%= order.product_requests.count %> </td>
-          <td> <%= number_with_delimiter(sum_quantity(order)) %> </td>
+          <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin')%>
+            <td> <%= show_non_blank_field(order.prospect&.legal_or_business_name) %> </td>
+          <% end %>
+          <td> <%= order.product_requests.where.not(status: 'cancelada').count %> </td>
+          <td> <%= number_with_delimiter(sum_quantity_order(order)) %> </td>
           <td>
             <% if (order.status == 'mercancía asignada' || order.status == 'preparando') %>
               <span class="label label-info">
@@ -45,7 +51,7 @@
               <span class="label label-success">
                 <%= order.status %>
               </span>
-            <% elsif order.status == 'cancelada' %>
+            <% elsif order.status == 'cancelado' %>
               <span class="label label-danger">
                 <%= order.status %>
               </span>
@@ -66,4 +72,9 @@
 <% else %>
   <p class="individual-font">No tienes pedidos entregados todavía.</p>
 <% end %>
+
+<br /><br />
+  <%= render 'links_for_orders' %>
+<br/><br/><br/>
+
 <%= render 'dataTables' %>

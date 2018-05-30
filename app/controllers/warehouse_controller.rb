@@ -13,11 +13,11 @@ class WarehouseController < ApplicationController
   end
 
   def current_orders
-    orders = Order.where.not(status: ['enviado', 'entregado'])
+    orders = Order.where.not(status: ['enviado', 'entregado', 'cancelado']).where(corporate: current_user.store)
     @orders = []
     orders.each do |order|
       @status = []
-      order.product_requests.each do |pr|
+      order.product_requests.where.not(status:'cancelada').each do |pr|
         @status << pr.status
       end
       if (@status.uniq.length == 1 && @status.first == 'asignado')
@@ -29,11 +29,11 @@ class WarehouseController < ApplicationController
   end
 
   def pending_orders
-    orders = Order.where.not(status: ['enviado', 'entregado'])
+    orders = Order.where.not(status: ['enviado', 'entregado', 'cancelado']).where(corporate: current_user.store)
     @orders = []
     orders.each do |order|
       @status = []
-      order.product_requests.each do |pr|
+      order.product_requests.where.not(status:'cancelada').each do |pr|
         @status << pr.status
       end
       if (@status.uniq.length == 1 && @status.first == 'sin asignar')
@@ -45,11 +45,11 @@ class WarehouseController < ApplicationController
   end
 
   def waiting_orders
-    orders = Order.where.not(status: ['enviado', 'entregado'])
+    orders = Order.where.not(status: ['enviado', 'entregado', 'cancelado']).where(corporate: current_user.store)
     @orders = []
     orders.each do |order|
       @status = []
-      order.product_requests.each do |pr|
+      order.product_requests.where.not(status:'cancelada').each do |pr|
         @status << pr.status
       end
       if @status.uniq.length != 1
@@ -58,6 +58,14 @@ class WarehouseController < ApplicationController
     end
     @orders = @orders.sort_by {|obj| obj.id}
     @orders
+  end
+
+  def ready_orders
+    @orders = Order.where(status: 'preparado', corporate: current_user.store)
+  end
+
+  def sales_for_billing
+    @orders = Order.joins('LEFT JOIN bills ON orders.bill_id = bills.id').where("bills.status = 'cancelada' OR orders.bill_id IS null").where(corporate: current_user.store).where.not(status: 'cancelado')
   end
 
   def prepare_order
@@ -70,6 +78,95 @@ class WarehouseController < ApplicationController
   end
 
   def pending_products
+  end
+
+  def update_order_total
+    if params[:ids].present?
+      @orders = Order.find(params[:ids].split('/'))
+    else
+      @orders = Order.where(id:params[:id])
+    end
+    @orders.each do |order|
+      cost = 0
+      subtotal = 0
+      discount = 0
+      taxes = 0
+      total = 0
+      if order.movements != []
+        order.movements.each do |mov|
+          if mov.quantity == nil
+            mov.delete
+          else
+            if mov.movement_type == 'venta'
+              cost += mov.total_cost.to_f
+              subtotal += mov.subtotal.to_f
+              discount += mov.discount_applied.to_f
+              taxes += mov.taxes.to_f
+              total += mov.total.to_f
+            elsif mov.movement_type == 'devolución'
+              cost -= mov.total_cost.to_f
+              subtotal -= mov.subtotal.to_f
+              discount -= mov.discount_applied.to_f
+              taxes -= mov.taxes.to_f
+              total -= mov.total.to_f
+            end
+          end
+        end
+      end
+      order.pending_movements.each do |mov|
+        if mov.quantity == nil
+          mov.delete
+        else
+          product = mov.product
+          if product.group
+            if mov.movement_type == 'venta'
+              cost += mov.total_cost.to_f * mov.quantity * product.average
+              subtotal += mov.subtotal.to_f * mov.quantity * product.average
+              discount += mov.discount_applied.to_f * mov.quantity * product.average
+              taxes += mov.taxes.to_f * mov.quantity * product.average
+              total += (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
+            elsif mov.movement_type == 'devolución'
+              cost -= mov.total_cost.to_f * mov.quantity * product.average
+              subtotal -= mov.subtotal.to_f * mov.quantity * product.average
+              discount -= mov.discount_applied.to_f * mov.quantity * product.average
+              taxes -= mov.taxes.to_f * mov.quantity * product.average
+              total -= (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
+            end
+          else
+            if mov.movement_type == 'venta'
+              cost += mov.total_cost.to_f * mov.quantity
+              subtotal += mov.subtotal.to_f * mov.quantity
+              discount += mov.discount_applied.to_f * mov.quantity
+              taxes += mov.taxes.to_f * mov.quantity
+              total += (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
+            elsif mov.movement_type == 'devolución'
+              cost -= mov.total_cost.to_f * mov.quantity
+              subtotal -= mov.subtotal.to_f * mov.quantity
+              discount -= mov.discount_applied.to_f * mov.quantity
+              taxes -= mov.taxes.to_f * mov.quantity
+              total -= (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
+            end
+          end
+        end
+      end
+      subtotal = subtotal.round(2)
+      discount = discount.round(2)
+      taxes = taxes.round(2)
+      cost = cost.round(2)
+      total = total.round(2)
+      order.update(
+        subtotal: subtotal,
+        discount_applied: discount,
+        taxes: taxes,
+        total: total,
+        cost: cost
+      )
+    end
+    orders_total = 0
+    @orders.each do |order|
+      orders_total += order.total
+    end
+    @orders_total = orders_total
   end
 
   def complete_preparation
@@ -112,6 +209,11 @@ class WarehouseController < ApplicationController
       DeliveryAttempt.create(driver: driver, order: order)
       redirect_to warehouse_ready_orders_path, notice: "Se ha asignado el pedido #{order.id} a #{driver&.first_name.capitalize} #{driver&.last_name.capitalize} para entrega"
     end
+  end
+
+  def show_order
+    update_order_total
+    @order = Order.find(params[:id])
   end
 
   def save_own_product
@@ -217,10 +319,6 @@ class WarehouseController < ApplicationController
     else
       redirect_to warehouse_prepare_order_path, alert: 'No se pudo asignar el pedido.'
     end
-  end
-
-  def ready_orders
-    @orders = Order.where(status: 'preparado')
   end
 
   def change_status

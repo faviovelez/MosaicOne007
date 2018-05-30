@@ -6,7 +6,7 @@ class DeliveryServicesController < ApplicationController
       initial_date = date.midnight + 6.hours
       final_date = date.end_of_day + 6.hours
     elsif params[:options] == 'Mes actual'
-      intial_date = Date.today.beginning_of_month.midnight + 6.hours
+      initial_date = Date.today.beginning_of_month.midnight + 6.hours
       final_date = Date.today + 6.hours
     else
       initial_date = Date.parse(params[:initial_date]).midnight + 6.hours unless (params[:initial_date] == nil || params[:initial_date] == '')
