@@ -1,0 +1,98 @@
+<%= form_tag({ controller: 'bills', action: 'select_info' }, method: 'post', class: 'form-data-tables') do %>
+  <table id="tickets">
+    <thead>
+      <tr class="table-titles">
+        <th> </th>
+        <th class="col-md-1">No.</th>
+        <th> Fecha </th>
+        <th class="col-md-3"> Cliente / Tienda </th>
+        <th> Tipo </th>
+        <th> Estatus </th>
+        <th> Productos </th>
+        <th> Total </th>
+        <th> Saldo </th>
+        <th> Detalles </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+        <tr>
+          <% if (order.bill == nil || (order.bill != nil && order.bill.status == 'cancelada')) %>
+            <td> <%= check_box_tag "orders[]", "#{order.id}", false, { multiple: true, id: "orders[#{order.id}]" }%> </td>
+          <% else %>
+            <td> </td>
+          <% end %>
+          <td> <%= order.id %> </td>
+          <td> <%= l order.created_at.to_date, format: :short %> </td>
+          <td> <%= show_non_blank_field(order.prospect&.legal_or_business_name) %> </td>
+          <% if order.category == 'de línea' %>
+            <td>
+              <span class="label label-primary">
+                <%= order.category %>
+              </span>
+            </td>
+          <% elsif order.category == 'especial' %>
+            <td>
+              <span class="label label-success">
+                <%= order.category %>
+              </span>
+            </td>
+          <% end %>
+          <td>
+            <% if order.status == 'mercancía asignada' %>
+              <span class="label label-warning">
+                <%= order.status %>
+              </span>
+              <% elsif order.status == 'preparando' %>
+                <span class="label label-info">
+                  <%= order.status %>
+                </span>
+            <% elsif order.status == 'en espera' %>
+              <span class="label label-warning">
+                <%= order.status %>
+              </span>
+            <% elsif (order.status == 'preparado' || order.status == 'en ruta') %>
+              <span class="label label-primary">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'entregado' %>
+              <span class="label label-success">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'cancelado' %>
+              <span class="label label-danger">
+                <%= order.status %>
+              </span>
+            <% end %>
+          </td>
+          <td> <%= order.product_requests.where.not(status: 'cancelada').count %> </td>
+          <td> <%= number_to_currency(order.total.to_f) %> </td>
+          <td> <%= get_order_payments(order) %> </td>
+          <td>
+            <%= link_to warehouse_show_order_path(order) do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver detalles"></i>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <br/>
+
+  <div class="actions">
+    <%= submit_tag 'Seleccionar pedidos', class: 'main-button' %>
+  </div>
+  <br /><br />
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'tickets' %>
+<% end %>

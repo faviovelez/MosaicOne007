@@ -1,10 +1,11 @@
 <table class="table" id="productsList">
   <thead>
     <tr class="table-titles">
-      <th>Producto</th>
-      <th>Color</th>
-      <th>Cantidad</th>
-      <th>Total</th>
+      <th> Producto</th>
+      <th> Color</th>
+      <th> Estatus </th>
+      <th> Cantidad</th>
+      <th> Total</th>
     </tr>
   </thead>
   <tbody>
@@ -13,6 +14,25 @@
       <tr id="trForProduct<%= pr.product_id %>">
         <td> <%= pr.product.unique_code %> <%= pr.product.description %></td>
         <td> <%= pr.product.exterior_color_or_design %> </td>
+        <td>
+          <% if pr.status == 'asignado' %>
+          <span class="label label-info">
+            <%= pr.status%>
+          </span>
+          <% elsif pr.status == 'sin asignar' %>
+            <span class="label label-warning">
+              <%= pr.status%>
+            </span>
+          <% elsif pr.status == 'entregado' %>
+            <span class="label label-success">
+              <%= pr.status%>
+            </span>
+            <% elsif pr.status == 'cancelada' %>
+              <span class="label label-danger">
+                <%= pr.status%>
+              </span>
+          <% end %>
+        </td>
         <td> <%= number_with_delimiter(pr.quantity) %> </td>
         <td> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
       </tr>
@@ -21,6 +41,7 @@
         <td></td>
         <td></td>
         <td> <strong> Total: </strong> </td>
+        <td> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
         <td> <strong> <%= number_to_currency(get_total) %> </strong> </td>
         <td></td>
       </tr>

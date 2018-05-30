@@ -247,6 +247,12 @@
         </div>
 
         <div class="form-inside-style">
+          <%= f.label '¿Costo_diferente_si_es_armado?' %>
+          <%= f.select :armed, options_for_select([['sí', true], ['no', false]], selected: false), class: 'form-inside' %>
+        </div>
+
+
+        <div class="form-inside-style">
           <%= f.label '¿venta por kg?' %>
           <%= f.select :group, options_for_select([['sí', true], ['no', false]], selected: false), class: 'form-inside' %>
         </div>

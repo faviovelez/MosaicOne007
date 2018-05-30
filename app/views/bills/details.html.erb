@@ -164,13 +164,23 @@
         </tr>
       <% end %>
       <tr>
+        <% if @bill.tickets != [] %>
+          <td colspan="10">
+            <% @bill.tickets.each do |ticket| %>
+              <span>
+                <%= link_to "Ticket #{ticket.ticket_number}", ticket_details_path(ticket) %> <%= get_bill_status(ticket) %>
+              </span>
+            <% end %>
+          </td>
+        <% elsif @bill.orders != [] %>
         <td colspan="10">
-          <% @bill.tickets.each do |ticket| %>
+          <% @bill.orders.each do |order| %>
             <span>
-              <%= link_to "Ticket #{ticket.ticket_number}", ticket_details_path(ticket) %> <%= get_bill_status(ticket) %>
+              <%= link_to "Pedido #{order.id}", warehouse_show_order_path(order) %> <%= get_bill_status_order(order) %>
             </span>
           <% end %>
         </td>
+        <% end %>
       </tr>
       <tr>
         <td colspan="10">

@@ -8,51 +8,51 @@ class Movement < ActiveRecord::Base
   belongs_to :business_unit
   belongs_to :prospect
   belongs_to :bill
-  has_one :warehouse_entry
-  has_many :delivery_attempts
   belongs_to :product_request
+  belongs_to :ticket
+  belongs_to :tax
   belongs_to :discount_rule
   belongs_to :seller_user, class_name: 'User', foreign_key: 'seller_user_id'
   belongs_to :buyer_user, class_name: 'User', foreign_key: 'buyer_user_id'
+  belongs_to :entry_movement, class_name: 'Movement', foreign_key: 'entry_movement_id'
+  has_one :warehouse_entry
+  has_many :delivery_attempts
   has_many :stores, through: :stores_warehouse_entries
   has_many :products, through: :stores_warehouse_entries
   has_many :stores_warehouse_entries
-  belongs_to :ticket
-  belongs_to :tax
   has_many :sales, through: :sales_movements, foreign_key: 'sales_id'
   has_many :sales_movements
-  belongs_to :entry_movement, class_name: 'Movement', foreign_key: 'entry_movement_id'
 
   after_create :create_update_summary
   after_create :vinculate_warehouse, :check_for_pendings, if: :is_entry_movement
 
   def create_update_summary
     if (self.movement_type == 'venta' || self.movement_type == 'devolución')
-      if dont_exist_prospect_sale
-        create_prospect_report
-      else
-        update_prospect_report
-      end
-      if dont_exist_product_sale
-        create_product_report
-      else
-        update_product_report
-      end
+#      if dont_exist_prospect_sale
+#        create_prospect_report
+#      else
+#        update_prospect_report
+#      end
+#      if dont_exist_product_sale
+#        create_product_report
+#      else
+#        update_product_report
+#      end
       if dont_exist_store_sale
         create_store_report
       else
         update_store_report
       end
-      if dont_exist_business_unit_sale
-        create_business_unit_report
-      else
-        update_business_unit_report
-      end
-      if dont_exist_business_group_sale
-        create_business_group_report
-      else
-        update_business_group_report
-      end
+#      if dont_exist_business_unit_sale
+#        create_business_unit_report
+#      else
+#        update_business_unit_report
+#      end
+#      if dont_exist_business_group_sale
+#        create_business_group_report
+#      else
+#        update_business_group_report
+#      end
     end
   end
 

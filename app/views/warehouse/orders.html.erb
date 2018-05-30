@@ -1,9 +1,9 @@
 <% if @orders.count >= 1 %>
-  <table class="dataTable">
+  <table class="tableFive">
     <thead>
       <tr class="table-titles">
         <th>Pedido</th>
-        <th>Tienda</th>
+        <th class="col-md-3"> Cliente / Tienda </th>
         <th>Tipo</th>
         <th>Productos</th>
         <th>Piezas</th>
@@ -16,7 +16,7 @@
       <% @orders.each do |order| %>
         <tr>
           <td> <%= order.id %> </td>
-          <td> <%= order.store.store_name %> </td>
+          <td> <%= show_non_blank_field(order.prospect&.legal_or_business_name) %> </td>
           <% if order.category == 'de línea' %>
               <td>
                 <span class="label label-primary">
@@ -30,8 +30,8 @@
                 </span>
               </td>
             <% end %>
-          <td> <%= order.product_requests.count %> </td>
-          <td> <%= number_with_delimiter(sum_quantity(order)) %> </td>
+          <td> <%= order.product_requests.where.not(status: 'cancelada').count %> </td>
+          <td> <%= number_with_delimiter(sum_quantity_order(order)) %> </td>
           <td>
             <% if order.status == 'mercancía asignada' %>
               <span class="label label-warning">
@@ -53,7 +53,7 @@
               <span class="label label-success">
                 <%= order.status %>
               </span>
-            <% elsif order.status == 'cancelada' %>
+            <% elsif order.status == 'cancelado' %>
               <span class="label label-danger">
                 <%= order.status %>
               </span>
@@ -73,4 +73,9 @@
 <% else %>
   <p class="individual-font">No hay pedidos en espera.</p>
 <% end %>
+
+<br /><br />
+  <%= render 'links_for_orders' %>
+<br/><br/><br/>
+
 <%= render 'dataTables'%>

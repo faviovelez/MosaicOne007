@@ -5,7 +5,10 @@
         <th>Código</th>
         <th>Descripción</th>
         <th>Color/Diseño</th>
-        <th>Línea de producto</th>
+        <th>Línea</th>
+        <% if (current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin')  %>
+          <th>Almacén</th>
+        <% end %>
         <th>Precio</th>
         <th>Acciones</th>
       </tr>
@@ -17,6 +20,9 @@
           <td class="col-md-2"> <%= product.description %></td>
           <td class="col-md-1"> <%= product.exterior_color_or_design&.capitalize %></td>
           <td class="col-md-2"> <%= product.line&.capitalize %></td>
+          <% if (current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin')  %>
+            <td class="col-md-1"> <%= show_non_blank_field(product&.warehouse&.name&.capitalize) %></td>
+          <% end %>
           <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
             <td class="col-md-1"> <%= number_to_currency(product.product_price) %></td>
           <% else %>

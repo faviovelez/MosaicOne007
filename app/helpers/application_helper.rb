@@ -93,6 +93,14 @@ module ApplicationHelper
     @result
   end
 
+  def sum_quantity_order(order)
+    @sum = 0
+    order.product_requests.where.not(status: 'cancelada').each do |pr|
+      @sum += pr.quantity
+    end
+    @sum
+  end
+
 # Inicia la sección de métodos utilizados por formularios en Products y Requests
   def product_line_options
     options = [['seleccione', '']]
@@ -236,6 +244,18 @@ module ApplicationHelper
     end
     @bill_status
   end
+
+  def get_bill_status_order(order)
+    if (order.bill != nil && order.bill.status == 'creada')
+      @bill_status = content_tag(:span, 'facturado', class: 'label label-success')
+    elsif (order.bill != nil && order.bill.status == 'cancelada')
+      @bill_status = content_tag(:span, 'fact-cancelada', class: 'label label-danger')
+    else
+      @bill_status = content_tag(:span, 'por facturar', class: 'label label-warning')
+    end
+    @bill_status
+  end
+
 
 # Aquí inicia la sección para los documentos de Request (pedido - authorisation_doc y cotización - estimate_doc)
 

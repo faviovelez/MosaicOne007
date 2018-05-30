@@ -21,7 +21,7 @@
         <td class="col-md-1">
           <% if current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff' %>
             <%= link_to warehouse_edit_entry_path(entry) do %>
-              <i class="fa fa-money link-to-details" aria-hidden="true"></i>
+              <i class="fa fa-money link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Editar"></i>
             <% end %>
           <% end %>
         </td>

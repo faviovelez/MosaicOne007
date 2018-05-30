@@ -552,17 +552,7 @@ class BillsController < ApplicationController
       end
       select_store if @bill == nil
       if @bill == nil
-        if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
-          @store = current_user.store
-        else
-          if @objects.first.pending_movements != []
-            @store = @objects.first.pending_movements.first.product.business_unit.stores.first
-          elsif @objects.first.movements != []
-            @store = @objects.first.movements.first.product.business_unit.stores.first
-          elsif @objects.first.service_offereds != []
-            @store = @objects.first.service_offereds.first.service.business_unit.stores.first
-          end
-        end
+        @store = current_user.store
       else
         @store = @bill.store
       end
@@ -1275,7 +1265,7 @@ class BillsController < ApplicationController
       if params[:bill] != nil
         @bill = Bill.find(params[:bill])
       end
-      params[:tickets] == nil ? tickets = nil : tickets = Ticket.where(id: params[:tickets].split("/"))
+      (params[:tickets] == nil || params[:tickets] == "") ? tickets = nil : tickets = Ticket.where(id: params[:tickets].split("/"))
       (params[:orders] == nil || params[:orders] == "") ? orders = nil : orders = Order.find(params[:orders].split("/"))
       tickets == nil ? @objects = orders : @objects = tickets
       if (tickets == nil && @bill == nil)
@@ -1292,17 +1282,7 @@ class BillsController < ApplicationController
         get_series_and_folio
       end
       if @bill == nil
-        if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
-          @store = current_user.store
-        else
-          if @objects.first.pending_movements != []
-            @store = @objects.first.pending_movements.first.product.business_unit.stores.first
-          elsif @objects.first.movements != []
-            @store = @objects.first.movements.first.product.business_unit.stores.first
-          elsif @objects.first.service_offereds != []
-            @store = @objects.first.service_offereds.first.service.business_unit.stores.first
-          end
-        end
+        @store = current_user.store
       else
         @store = @bill.store
       end
@@ -1644,13 +1624,7 @@ class BillsController < ApplicationController
       hash["Descuento"] = '%.2f' % @total_discount if @discount_any
       hash["Moneda"] = 'MXN'
       hash["TipoCambio"] = '1'
-#      @calculated_taxes = ((@subtotal - @total_discount) * 0.16).round(2)
-#      if @calculated_taxes != @total_taxes
-#        @total = @subtotal - @total_discount + @calculated_taxes
-#        hash["Total"] = '%.2f' % @total
-#      else
         hash["Total"] = '%.2f' % @total
-#      end
       hash["TipoDeComprobante"] = @type_of_bill_key
       hash["MetodoPago"] = @method_key
       hash["LugarExpedicion"] = b.zipcode
@@ -1717,9 +1691,6 @@ class BillsController < ApplicationController
             end
           end
         end
-#        if @calculated_taxes != @total_taxes
-#          @total_taxes = @calculated_taxes
-#        end
         xml['cfdi'].Impuestos('TotalImpuestosTrasladados'=> @total_taxes) do
           xml['cfdi'].Traslados do
             xml['cfdi'].Traslado(total_transfer)
@@ -2273,65 +2244,68 @@ XML
       end
     else
       objects.each do |o|
-        o.movements.each do |mov|
-          new_hash = Hash.new.tap do |hash|
-            hash["product_id"] = ''
-            hash["unique_code"] = ''
-            hash["quantity"] = 0
-            hash["unit_value"] = 0
-            hash["ticket"] = ''
-            hash["sat_key"] = ''
-            hash["sat_unit_key"] = ''
-            hash["description"] = ''
-            hash["total"] = 0
-            hash["subtotal"] = 0
-            hash["taxes"] = 0
-            hash["discount"] = 0
+        o.product_requests.where.not(status: 'cancelada').each do |pr|
+          pr.movements.each do |mov|
+            new_hash = Hash.new.tap do |hash|
+              hash["product_id"] = ''
+              hash["unique_code"] = ''
+              hash["quantity"] = 0
+              hash["unit_value"] = 0
+              hash["ticket"] = ''
+              hash["sat_key"] = ''
+              hash["sat_unit_key"] = ''
+              hash["description"] = ''
+              hash["total"] = 0
+              hash["subtotal"] = 0
+              hash["taxes"] = 0
+              hash["discount"] = 0
+            end
+            new_hash["product_id"] = mov.product.id
+            new_hash["ticket"] = mov.order.id
+            new_hash["quantity"] = mov.quantity
+            new_hash["unit_value"] = mov.initial_price.round(2)
+            new_hash["sat_key"] = mov.product.sat_key.sat_key
+            new_hash["sat_unit_key"] = mov.product.sat_unit_key.unit
+            new_hash["sat_unit_description"] = mov.product.sat_unit_key.description
+            new_hash["description"] = mov.product.description.capitalize
+            new_hash["unique_code"] = mov.product.unique_code
+            new_hash["total"] = mov.total.round(2)
+            new_hash["subtotal"] = mov.subtotal.round(2)
+            new_hash["taxes"] = mov.taxes.round(2)
+            new_hash["discount"] += mov.discount_applied.round(2) unless mov.discount_applied == nil
+            @rows << new_hash
           end
-          new_hash["product_id"] = mov.product.id
-          new_hash["ticket"] = mov.order.id
-          new_hash["quantity"] = mov.quantity
-          new_hash["unit_value"] = mov.initial_price.round(2)
-          new_hash["sat_key"] = mov.product.sat_key.sat_key
-          new_hash["sat_unit_key"] = mov.product.sat_unit_key.unit
-          new_hash["sat_unit_description"] = mov.product.sat_unit_key.description
-          new_hash["description"] = mov.product.description.capitalize
-          new_hash["unique_code"] = mov.product.unique_code
-          new_hash["total"] = mov.total.round(2)
-          new_hash["subtotal"] = mov.subtotal.round(2)
-          new_hash["taxes"] = mov.taxes.round(2)
-          new_hash["discount"] += mov.discount_applied.round(2) unless mov.discount_applied == nil
-          @rows << new_hash
-        end
-        o.pending_movements.each do |mov|
-          new_hash = Hash.new.tap do |hash|
-            hash["product_id"] = ''
-            hash["unique_code"] = ''
-            hash["quantity"] = 0
-            hash["unit_value"] = 0
-            hash["ticket"] = ''
-            hash["sat_key"] = ''
-            hash["sat_unit_key"] = ''
-            hash["description"] = ''
-            hash["total"] = 0
-            hash["subtotal"] = 0
-            hash["taxes"] = 0
-            hash["discount"] = 0
+          mov = pr.pending_movement
+          if mov != nil
+            new_hash = Hash.new.tap do |hash|
+              hash["product_id"] = ''
+              hash["unique_code"] = ''
+              hash["quantity"] = 0
+              hash["unit_value"] = 0
+              hash["ticket"] = ''
+              hash["sat_key"] = ''
+              hash["sat_unit_key"] = ''
+              hash["description"] = ''
+              hash["total"] = 0
+              hash["subtotal"] = 0
+              hash["taxes"] = 0
+              hash["discount"] = 0
+            end
+            new_hash["product_id"] = mov.product.id
+            new_hash["ticket"] = mov.order.id
+            new_hash["quantity"] = mov.quantity
+            new_hash["unit_value"] = mov.initial_price.round(2)
+            new_hash["sat_key"] = mov.product.sat_key.sat_key
+            new_hash["sat_unit_key"] = mov.product.sat_unit_key.unit
+            new_hash["sat_unit_description"] = mov.product.sat_unit_key.description
+            new_hash["description"] = mov.product.description.capitalize
+            new_hash["unique_code"] = mov.product.unique_code
+            new_hash["total"] = mov.total.round(2)
+            new_hash["subtotal"] = mov.subtotal.round(2)
+            new_hash["taxes"] = mov.taxes.round(2)
+            new_hash["discount"] += mov.discount_applied.round(2) unless mov.discount_applied == nil
+            @rows << new_hash
           end
-          new_hash["product_id"] = mov.product.id
-          new_hash["ticket"] = mov.order.id
-          new_hash["quantity"] = mov.quantity
-          new_hash["unit_value"] = mov.initial_price.round(2)
-          new_hash["sat_key"] = mov.product.sat_key.sat_key
-          new_hash["sat_unit_key"] = mov.product.sat_unit_key.unit
-          new_hash["sat_unit_description"] = mov.product.sat_unit_key.description
-          new_hash["description"] = mov.product.description.capitalize
-          new_hash["unique_code"] = mov.product.unique_code
-          new_hash["total"] = mov.total.round(2)
-          new_hash["subtotal"] = mov.subtotal.round(2)
-          new_hash["taxes"] = mov.taxes.round(2)
-          new_hash["discount"] += mov.discount_applied.round(2) unless mov.discount_applied == nil
-          @rows << new_hash
         end
       end
     end

@@ -3,7 +3,7 @@ class StoresController < ApplicationController
   before_action :authenticate_user!
   before_action :set_store, only: [:show, :edit, :update, :show_settings, :settings, :download_products_example, :download_prospects_example]
   before_action :allow_only_platform_admin_role, only: :new
-  before_action :allow_store_admin_or_platform_admin_role, only: :edit
+#  before_action :allow_store_admin_or_platform_admin_role, only: :edit
 
   require 'csv'
   require 'open-uri'

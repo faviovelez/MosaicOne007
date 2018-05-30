@@ -5,16 +5,36 @@
       <th> Color </th>
       <th> Paquetes </th>
       <th> Almacén </th>
+      <th> Estatus </th>
       <th> Ubicación </th>
     </tr>
   </thead>
   <tbody>
-    <% @order.product_requests.each do |product_request| %>
+    <% @order.product_requests.where.not(status: 'cancelada').each do |product_request| %>
       <tr>
         <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
         <td><%= show_non_blank_field(product_request.product.exterior_color_or_design) %> </td>
         <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
-        <td><%= product_request.product.warehouse.name %></td>
+        <td><%= show_non_blank_field(product_request.product&.warehouse&.name) %></td>
+        <td>
+          <% if product_request.status == 'asignado' %>
+          <span class="label label-info">
+            <%= product_request.status%>
+          </span>
+          <% elsif product_request.status == 'sin asignar' %>
+            <span class="label label-warning">
+              <%= product_request.status%>
+            </span>
+          <% elsif product_request.status == 'entregado' %>
+            <span class="label label-success">
+              <%= product_request.status%>
+            </span>
+            <% elsif product_request.status == 'cancelada' %>
+              <span class="label label-danger">
+                <%= product_request.status%>
+              </span>
+          <% end %>
+        </td>
         <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
           <td class="center-text"> - </td>
         <% else %>

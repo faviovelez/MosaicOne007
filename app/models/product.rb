@@ -116,7 +116,11 @@ class Product < ActiveRecord::Base
   end
 
   def create_corporate_inventory
-    inventory_corp = Inventory.create(product: self, unique_code: self.unique_code)
+    inventory_corp = Inventory.create(product: self, unique_code: self.unique_code) if Inventory.where(product: self) == []
+    stores = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).where.not(id: 1)
+    stores.each do |store|
+      StoresInventory.create(product: self, store: store)
+    end
   end
 
   def price_present

@@ -11,14 +11,6 @@ module OrdersHelper
     l date
   end
 
-  def sum_quantity(order)
-    @sum = 0
-    order.product_requests.each do |pr|
-      @sum += pr.quantity
-    end
-    @sum
-  end
-
   def delivery_options(order)
     options = [['seleccione', '']]
     p_address = order.prospect.delivery_address unless order.prospect.nil?

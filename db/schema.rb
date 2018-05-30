@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180527232109) do
+ActiveRecord::Schema.define(version: 20180530031229) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -829,12 +829,14 @@ ActiveRecord::Schema.define(version: 20180527232109) do
     t.boolean  "payed",               default: false
     t.integer  "request_user_id"
     t.integer  "confirm_user_id"
+    t.integer  "corporate_id",        default: 1
   end
 
   add_index "orders", ["bill_id"], name: "index_orders_on_bill_id", using: :btree
   add_index "orders", ["billing_address_id"], name: "index_orders_on_billing_address_id", using: :btree
   add_index "orders", ["carrier_id"], name: "index_orders_on_carrier_id", using: :btree
   add_index "orders", ["confirm_user_id"], name: "index_orders_on_confirm_user_id", using: :btree
+  add_index "orders", ["corporate_id"], name: "index_orders_on_corporate_id", using: :btree
   add_index "orders", ["delivery_address_id"], name: "index_orders_on_delivery_address_id", using: :btree
   add_index "orders", ["prospect_id"], name: "index_orders_on_prospect_id", using: :btree
   add_index "orders", ["request_id"], name: "index_orders_on_request_id", using: :btree
@@ -983,9 +985,9 @@ ActiveRecord::Schema.define(version: 20180527232109) do
     t.integer  "order_id"
     t.string   "urgency_level"
     t.date     "maximum_date"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.boolean  "armed"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.boolean  "armed",         default: false
     t.integer  "surplus"
     t.integer  "excess"
     t.string   "alert"
@@ -1161,7 +1163,7 @@ ActiveRecord::Schema.define(version: 20180527232109) do
     t.string   "store_code"
     t.integer  "store_type_id"
     t.integer  "store_prospect_id"
-    t.integer  "credit_days"
+    t.integer  "credit_days",            default: 0
     t.boolean  "pos",                    default: false
     t.boolean  "web",                    default: true
     t.date     "date"
@@ -1170,6 +1172,7 @@ ActiveRecord::Schema.define(version: 20180527232109) do
     t.string   "email_2"
     t.string   "email_3"
     t.boolean  "collection_active",      default: true
+    t.float    "discount",               default: 0.0
   end
 
   add_index "prospects", ["billing_address_id"], name: "index_prospects_on_billing_address_id", using: :btree
@@ -1407,9 +1410,11 @@ ActiveRecord::Schema.define(version: 20180527232109) do
     t.integer  "bill_id"
     t.integer  "pos_id"
     t.integer  "web_id"
+    t.integer  "order_id"
   end
 
   add_index "service_offereds", ["bill_id"], name: "index_service_offereds_on_bill_id", using: :btree
+  add_index "service_offereds", ["order_id"], name: "index_service_offereds_on_order_id", using: :btree
   add_index "service_offereds", ["prospect_id"], name: "index_service_offereds_on_prospect_id", using: :btree
   add_index "service_offereds", ["service_id"], name: "index_service_offereds_on_service_id", using: :btree
   add_index "service_offereds", ["store_id"], name: "index_service_offereds_on_store_id", using: :btree
@@ -1865,10 +1870,10 @@ ActiveRecord::Schema.define(version: 20180527232109) do
     t.integer  "product_id"
     t.integer  "quantity"
     t.integer  "entry_number"
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.integer  "movement_id"
-    t.integer  "store_id"
+    t.integer  "store_id",              default: 1
     t.integer  "retail_units_per_unit"
     t.integer  "units_used"
   end
@@ -2080,6 +2085,7 @@ ActiveRecord::Schema.define(version: 20180527232109) do
   add_foreign_key "sales_movements", "movements"
   add_foreign_key "sales_targets", "stores"
   add_foreign_key "service_offereds", "bills"
+  add_foreign_key "service_offereds", "orders"
   add_foreign_key "service_offereds", "prospects"
   add_foreign_key "service_offereds", "services"
   add_foreign_key "service_offereds", "stores"

@@ -24,7 +24,7 @@
           <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
           <td><%= show_non_blank_field(product_request.product.exterior_color_or_design) %></td>
           <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
-          <td><%= product_request.product.warehouse.name %></td>
+          <td><%= show_non_blank_field(product_request.product&.warehouse&.name) %></td>
           <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
             <td class="center-text"> - </td>
           <% else %>
