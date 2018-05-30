@@ -13,8 +13,8 @@
       <th> Descuento </th>
       <th> IVA </th>
       <th> Total </th>
-      <th> Costo de venta </th>
-      <th> Margen $</th>
+      <th class="col-md-1"> Costo de venta </th>
+      <th class="col-md-1"> Margen $</th>
       <th> Acciones</th>
     </tr>
   </thead>
@@ -52,7 +52,7 @@
       <td> </td>
       <td> </td>
       <td> <strong> Total </strong> </td>
-      <td> <strong> <%= number_to_currency(@day_quantity) %> </strong> </td>
+      <td> <strong> <%= number_with_delimiter(@day_quantity) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_subtotal) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_discount) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_taxes) %> </strong> </td>

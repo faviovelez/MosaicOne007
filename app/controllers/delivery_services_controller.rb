@@ -22,6 +22,13 @@ class DeliveryServicesController < ApplicationController
       if @delivery_services == []
         redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
       else
+        @day_quantity = @delivery_services.sum(:quantity)
+        @day_subtotal = @delivery_services.sum(:subtotal)
+        @day_discount = @delivery_services.sum(:discount_applied)
+        @day_taxes = @delivery_services.sum(:taxes)
+        @day_total = @delivery_services.sum(:total)
+        @day_total_cost = (@delivery_services.sum(:total_cost) * 1.16).round(2)
+        @day_total_margin = (@delivery_services.sum(:total) - (@delivery_services.sum(:total_cost) * 1.16).round(2)).round(2)
         render 'delivery_services_report'
       end
     elsif params[:report_type] == 'Base de datos'
