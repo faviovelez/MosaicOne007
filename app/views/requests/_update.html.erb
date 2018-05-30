@@ -360,10 +360,10 @@
     <div class="button-container" id="edit-request-button-container">
       <div class="actions">
         <% if @request.status == 'creada' %>
-          <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button'%>
-          <%= f.submit :guardar_para_después, name: 'guardar', class: 'secondary-button'%>
+          <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
+          <%= f.submit :guardar_para_después, name: 'guardar', class: 'secondary-button', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
         <% else %>
-          <%= f.submit :modificar_cotización, name: 'modificar_cotización', class:'main-button' %>
+          <%= f.submit :modificar_cotización, name: 'modificar_cotización', class:'main-button', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
         <% end %>
       </div>
     </div>

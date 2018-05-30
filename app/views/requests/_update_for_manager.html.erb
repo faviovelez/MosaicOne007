@@ -336,9 +336,9 @@
     <div class="button-container">
       <div class="actions">
         <% if @request.status == 'creada' %>
-          <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button capitalize'%>
+          <%= f.submit :enviar_cotización, name: 'enviar', class: 'main-button capitalize', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
         <% else %>
-          <%= f.submit :modificar_cotización, name: 'modificar_cotización', class: 'third-button capitalize' %>
+          <%= f.submit :modificar_cotización, name: 'modificar_cotización', class: 'third-button capitalize', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
         <% end %>
       </div>
     </div>

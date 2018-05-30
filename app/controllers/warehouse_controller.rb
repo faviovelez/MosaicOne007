@@ -335,15 +335,20 @@ class WarehouseController < ApplicationController
   def attach_entry(product, quantity)
     update_inventory(product, quantity)
     WarehouseEntry.create(
+      store: current_user.store,
       product:  product,
       quantity: quantity
     )
   end
 
   def update_inventory(product, quantity)
-    product.inventory.set_quantity(
-      quantity
-    )
+    if current_user.store.id == 1
+      product.inventory.set_quantity(
+        quantity
+      )
+    else
+      
+    end
   end
 
   def attach_bill_received
