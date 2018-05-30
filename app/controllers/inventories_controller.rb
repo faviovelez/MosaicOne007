@@ -66,7 +66,6 @@ class InventoriesController < ApplicationController
           if params[:products] == 'Elegir producto'
             movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja'], product: params[:product_list]).where.not(quantity: 0)
           else
-            debugger
             movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja']).where.not(quantity: 0)
           end
         else
