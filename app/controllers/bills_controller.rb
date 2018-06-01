@@ -1584,8 +1584,7 @@ class BillsController < ApplicationController
     @final_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @xml_path = "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @sat_path = Rails.root.join('lib', 'sat')
-    @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
-  end
+    @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")  end
 
   #FACTURA GENERAL:
     # SIEMPRE 'I' (TipoDeComprobante) TypeOfBill.find(1).key
