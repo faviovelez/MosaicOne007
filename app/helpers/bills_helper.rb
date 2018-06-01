@@ -269,7 +269,9 @@ module BillsHelper
     @prospects = Prospect.where(store_id: current_user.store.id).pluck(:legal_or_business_name, :id)
     corporate = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).pluck(:id)
     Store.all.each do |store|
-      @prospects << [store.store_prospect.legal_or_business_name, store.store_prospect.id] if corporate.include?(current_user.store.id)
+      unless @prospects.include?([store.store_prospect.legal_or_business_name, store.store_prospect.id])
+        @prospects << [store.store_prospect.legal_or_business_name, store.store_prospect.id] if corporate.include?(current_user.store.id)
+      end
     end
     @prospects
   end
