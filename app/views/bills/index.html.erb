@@ -26,7 +26,11 @@
             <td> <%= number_to_currency(sum_children(bill)) %> </td>
             <td> <%= number_to_currency(real_total(bill)) %> </td>
             <td> <%= get_payments_on_sales_summary_bill(bill) %> </td>
-            <td> <%= bill.status %> </td>
+              <td>
+                <span class="label label-success">
+                  <%= bill.status %>
+                </span>
+              </td>
             <td style="width: 100px">
               <% unless bill.pdf_url == nil %>
                 <%= link_to download_pdf_path(bill), download: "Factura.pdf" do %>
