@@ -79,12 +79,6 @@ class StoreMovement < ActiveRecord::Base
       create_reports_data(
         StoreSale
       )
-      object = StoreSale.where(month: self.created_at.to_date.month, year: self.created_at.to_date.year, store: store).first
-      if (object != [] || object != nil)
-      object.update(
-        store: store
-      )
-      end
     end
   end
 
@@ -215,6 +209,7 @@ class StoreMovement < ActiveRecord::Base
     if id_changed?
       if self.movement_type == 'venta'
         object.create(
+          store: store,
           subtotal: subtotal,
           discount: discount,
           taxes: taxes,
@@ -226,6 +221,7 @@ class StoreMovement < ActiveRecord::Base
         )
       elsif self.movement_type == 'devolución'
         object.create(
+          store: store,
           subtotal: - subtotal,
           discount: - discount,
           taxes: - taxes,
@@ -239,6 +235,7 @@ class StoreMovement < ActiveRecord::Base
     elsif (!id_changed? && changes['movement_type'] != nil)
       if (changes['movement_type'][0] == 'venta' && self.movement_type == 'cancelado')
         object.create(
+          store: store,
           subtotal: - subtotal,
           discount: - discount,
           taxes: - taxes,
@@ -250,6 +247,7 @@ class StoreMovement < ActiveRecord::Base
         )
       elsif (changes['movement_type'][0] == 'devolución' && self.movement_type == 'cancelado')
         object.create(
+          store: store,
           subtotal: subtotal,
           discount: discount,
           taxes: taxes,
