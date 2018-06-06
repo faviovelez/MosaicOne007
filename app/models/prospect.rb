@@ -24,7 +24,7 @@ class Prospect < ActiveRecord::Base
 
   after_create :save_web_id
 
-  after_save :create_update_change_table
+#  after_save :create_update_change_table
 
   after_create :update_web_true
 
