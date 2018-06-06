@@ -1,0 +1,33 @@
+<%= form_tag({ controller: 'warehouse', action: 'product_selected' }, method: 'post', class: 'form-data-tables') do %>
+
+  <br /><br />
+
+  <h2 class="blue-title"> Seleccione el producto para ver los pedidos vigentes</h2>
+
+  <br /><br />
+
+  <div class="field product-select-2 movements-report">
+    <%= label_tag :seleccionar_producto %>
+    <%= select_tag :product_list, options_for_select(@products), {include_blank: true, multiple: true, class: 'form-inside select2-products'} %>
+  </div>
+
+  <br /><br />
+
+  <div class="actions">
+    <%= submit_tag 'Ver pedidos', class: 'main-button' %>
+  </div>
+
+  <br /><br />
+
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'products_select' %>
+  <%= javascript_include_tag 'reports' %>
+<% end %>

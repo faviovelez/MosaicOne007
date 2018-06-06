@@ -21,11 +21,19 @@
           <td> <%= l movement.created_at.to_date %> </td>
           <td> <%= movement.created_at.strftime("%I:%M%p") %> </td>
           <td> <%= movement.movement_type %> </td>
-          <td> <%= movement.quantity %> </td>
-          <% if (movement.movement_type == 'alta' || movement.movement_type == 'baja' || movement.movement_type == 'alta automática' || movement.movement_type == 'baja automática') %>
-            <td> <%= movement.reason %> </td>
+          <td> <%= number_with_delimiter(movement.quantity) %> </td>
+          <% if [1,2].include?(current_user.store.id) %>
+            <% if (movement.movement_type == 'alta' || movement.movement_type == 'baja' || movement.movement_type == 'alta automática' || movement.movement_type == 'baja automática') %>
+              <td> <%= movement.reason %> </td>
+            <% else %>
+              <td> <%= movement.order.id %> </td>
+            <% end %>
           <% else %>
-            <td> <%= movement.ticket.ticket_number %> </td>
+            <% if (movement.movement_type == 'alta' || movement.movement_type == 'baja' || movement.movement_type == 'alta automática' || movement.movement_type == 'baja automática') %>
+              <td> <%= movement.reason %> </td>
+            <% else %>
+              <td> <%= movement.ticket.ticket_number %> </td>
+            <% end %>
           <% end %>
         </tr>
     <% end %>

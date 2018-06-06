@@ -37,8 +37,10 @@
           </td>
           <% if (@order.status == 'en espera' || @order.status == 'mercancía asignada' && (@order.bill == nil)) %>
             <td class="col-md-1">
-              <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
-                <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+              <% if current_user.role.name == 'admin-desk' %>
+                <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+                  <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+                <% end %>
               <% end %>
             </td>
           <% end %>

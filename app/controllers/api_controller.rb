@@ -78,6 +78,16 @@ class ApiController < ApplicationController
         armed_price = price_with_discount
         armed_discount = discount
       end
+    elsif current_user.store.store_type.store_type == 'corporativo'
+      discount = Store.find(1).store_prospect.discount.to_f
+      price_with_discount = (p.price * (1 - discount / 100)).round(2)
+      if p.armed
+        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_discount = p.armed_discount
+      else
+        armed_price = price_with_discount
+        armed_discount = discount
+      end
     else
       discount = 0
       price_with_discount = p.price.round(2)
@@ -97,7 +107,8 @@ class ApiController < ApplicationController
     end
     separated = 0
     pending_orders = 0
-    ProductRequest.where(product: p).where.not(status: "entregado").each do |request|
+    product_requests = ProductRequest.where(product: p, corporate_id: params[:store_id].to_i).where.not(status: ['entregado', 'cancelada'])
+    product_requests.each do |request|
       if request.status == "asignado"
         separated += request.quantity.to_i
       elsif request.status == "sin asignar"
@@ -105,20 +116,25 @@ class ApiController < ApplicationController
       end
     end
     kg_available = []
-    WarehouseEntry.where(product: p).order(:id).each do |we|
+    WarehouseEntry.where(product: p, store_id: params[:store_id].to_i).order(:id).each do |we|
       kg_available << {we.movement.identifier => we.movement.kg}
     end
     kg_available << {"avg" => (p.average || 100)}
+    if params[:store_id].to_i == 1
+      quantity = Inventory.where(product: p).first.quantity.to_i
+    else
+      quantity = StoresInventory.where(product: p, store_id: params[:store_id].to_i).first.quantity.to_i
+    end
     product_info << [
       { description: "#{p.unique_code} #{p.description}" },
       { price: price_with_discount },
       { color: p.exterior_color_or_design },
-      { inventory: p.quantity.to_i },
+      { inventory: quantity },
       { packages: p.pieces_per_package },
       { images: images },
       { discount: discount },
       { separated: separated},
-      { total_inventory: separated + p.quantity},
+      { total_inventory: separated + quantity},
       { kg: p.group },
       { availability: kg_available },
       { pending: pending_orders},

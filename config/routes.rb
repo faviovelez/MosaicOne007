@@ -74,6 +74,8 @@ Rails.application.routes.draw do
 
   get 'tickets/product_sales'
 
+  get 'bills/pending'
+
   get 'bills/download_pdf/:id', to: 'bills#download_pdf', as: 'download_pdf'
 
   get 'bills/download_xml/:id', to: 'bills#download_xml', as: 'download_xml'
@@ -93,6 +95,8 @@ Rails.application.routes.draw do
   get 'bills/preview'
 
   post 'bills/preview'
+
+  post 'bills/confirm_payments'
 
   get 'bills/cancelled'
 
@@ -222,9 +226,21 @@ Rails.application.routes.draw do
 
   get 'orders/show_for_store/:id', to: 'orders#show_for_store', as: 'orders_show_for_store'
 
+  get 'orders/show_for_differences/:id', to: 'orders#show_for_differences', as: 'orders_show_for_differences'
+
   post 'orders/confirm/:ids', to: 'orders#confirm', as: 'orders_confirm'
 
   get 'orders/history'
+
+  get 'orders/for_delivery'
+
+  get 'orders/differences'
+
+  get 'orders/differences_history'
+
+  post 'orders/solve_differences'
+
+  get 'orders/new_corporate/:store_id', to: 'orders#new_corporate', as: 'orders_new_corporate'
 
   get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc', as: 'request_authorisation'
 
@@ -324,13 +340,19 @@ Rails.application.routes.draw do
 
   get '/api/get_just_products', to: 'api#get_just_products'
 
-  get '/api/get_info_from_product/:id', to: 'api#get_info_from_product', as: "get_info_from_product"
+  get '/api/get_info_from_product/:id/:store_id', to: 'api#get_info_from_product', as: "get_info_from_product"
 
   get '/api/get_prospects_for_store', to: 'api#get_prospects_for_store'
 
   get 'api/select_prospects_info'
 
   get '/api/get_all_suppliers_for_corporate', to: 'api#get_all_suppliers_for_corporate'
+
+  get 'warehouse/select_product'
+
+  post 'warehouse/product_selected'
+
+  get 'warehouse/product_requests_by_product'
 
   post 'warehouse/complete_preparation'
 

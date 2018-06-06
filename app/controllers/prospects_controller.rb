@@ -10,7 +10,9 @@ class ProspectsController < ApplicationController
   # Crea la vista de todos los prospectos que le pertenecen a una tienda, ya que una tienda puede tener varios usuarios, no queremos ligar solamente el prospecto al usuario, también a la tienda.
   def index
     user = current_user.role.name
-    store_prospects
+    @store_ids = [current_user.store.id]
+    @store_ids << nil if [1,2].include?(current_user.store.id)
+    prospects
   end
 
   # GET /prospects/1
@@ -68,14 +70,9 @@ class ProspectsController < ApplicationController
     end
   end
 
-  def business_group_prospects(bg = current_user.store.business_unit.business_group)
-    # NO USAR ESTE, SON DEMASIADOS
-    store_id = BusinessGroup.find(current_user.store.business_unit.business_group.id).stores.pluck(:id)
-    @prospects = prospects = Prospect.select('prospects.id, prospects.legal_or_business_name, prospects.prospect_type, prospects.business_type, COUNT(requests.id) as request_count, COUNT(tickets.id) as ticket_count').joins('LEFT JOIN requests ON requests.prospect_id = prospects.id LEFT JOIN tickets ON tickets.prospect_id = prospects.id').where(store_id: store_id).group('prospects.id').order(:id)
-  end
-
-  def store_prospects
-    @prospects = prospects = Prospect.select('prospects.id, prospects.legal_or_business_name, prospects.prospect_type, prospects.business_type, COUNT(requests.id) as request_count, COUNT(tickets.id) as ticket_count').joins('LEFT JOIN requests ON requests.prospect_id = prospects.id LEFT JOIN tickets ON tickets.prospect_id = prospects.id').where(store_id: current_user.store.id).group('prospects.id').order(:id)
+  def prospects
+    @prospects = prospects = Prospect.select('prospects.id, prospects.legal_or_business_name, prospects.prospect_type, prospects.business_type, COUNT(requests.id) as request_count, COUNT(tickets.id) as ticket_count').joins('LEFT JOIN requests ON requests.prospect_id = prospects.id LEFT JOIN tickets ON tickets.prospect_id = prospects.id').where(store_id: @store_ids).group('prospects.id').order(:id)
+    @prospects
   end
 
   def save_store_prospect(user = current_user)

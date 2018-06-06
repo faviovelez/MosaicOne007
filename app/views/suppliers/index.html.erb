@@ -1,12 +1,13 @@
 <% if @suppliers.count >= 1 %>
-  <table>
+  <table class="dataTableFour">
     <thead>
       <tr class="table-titles">
-        <th class="col-md-2">Nombre del proveedor</th>
+        <th class="col-md-3">Nombre del proveedor</th>
         <th class="col-md-2">Contacto</th>
         <th class="col-md-1">Correo</th>
-        <th class="col-md-1">Teléfono</th>
+        <th class="col-md-2">Teléfono</th>
         <th class="col-md-1">Celular</th>
+        <th class="col-md-1">Acciones</th>
       </tr>
     </thead>
 
@@ -30,7 +31,11 @@
           </td>
           <td>
             <% if supplier.direct_phone.present?%>
-              <%= supplier.direct_phone %> Ext: <%= supplier.extension %>
+              <%= supplier.direct_phone %>
+              <% if supplier.extension.present? %>
+                Ext:
+                <%= supplier.extension %>
+              <% end %>
             <% else %>
               -
             <% end %>
@@ -43,19 +48,15 @@
             <% end %>
           </td>
           <td>
-            <%= link_to  supplier do %>
-              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-              <span class="link-to-details">Ver</span>
+            <%= link_to supplier, class: 'link-extra-space' do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver"></i>
             <% end %>
-          </td>
-          <td>
-            <%= link_to edit_supplier_path(supplier) do %>
-              <i class="fa fa-plus-square link-to-confirm" aria-hidden="true"></i>
-              <span class="link-to-confirm">Modificar</span>
+            <% if current_user.store.id == supplier.store_id || current_user.role.name == 'platform-admin' %>
+              <%= link_to edit_supplier_path(supplier), class: 'link-extra-space' do %>
+                <i class="fa fa-plus-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar"></i>
+              <% end %>
             <% end %>
-          </td>
-          <td>
-            <%= link_to supplier, method: :delete, data: { confirm: '¿Está seguro que desea eliminar este Proveedor?' } do %>
+            <% link_to supplier, method: :delete, data: { confirm: '¿Está seguro que desea eliminar este Proveedor?' } do %>
               <i class="fa fa-plus-square link-to-price" aria-hidden="true"></i>
               <span class="link-to-price">Eliminar</span>
             <% end %>
@@ -67,3 +68,4 @@
 <% else %>
   <p class="individual-font">No hay proveedores dados de alta </p>
 <% end %>
+<%= render 'dataTables' %>

@@ -25,6 +25,17 @@ class RequestMailer < ApplicationMailer
       )
   end
 
+  def status_unassigned(request)
+    @advise_list = User.joins(:role).where(store_id: request.corporate_id, roles: {name: ['admin-desk']}).pluck(:email)
+    @advise_list << request.order.store.bill_email
+    @request = request
+    mail(
+      bcc: @advise_list,
+      subject: "El producto #{request.product.unique_code} del pedido #{request.order.id} ya no está asignado"
+    )
+
+  end
+
   def status_authorised(request)
     @request = request
     @mails = []

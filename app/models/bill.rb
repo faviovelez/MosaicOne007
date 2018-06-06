@@ -5,13 +5,19 @@ class Bill < ActiveRecord::Base
   has_many :orders
   has_many :movements
   has_many :pending_movements
+  has_many :documents
+  has_many :store_movements
+  has_many :service_offereds
+  has_many :tickets
+  has_many :payments
+  has_many :children, through: :bills_child, foreign_key: 'children_id'
+  has_many :bills_child
+  has_many :rows
   belongs_to :store
   belongs_to :prospect
+  belongs_to :parent, class_name: 'Bill', foreign_key: 'parent_id'
   belongs_to :issuing_company, class_name: 'BillingAddress'
   belongs_to :receiving_company, class_name: 'BillingAddress'
-  mount_uploader :pdf, BillUploader
-  mount_uploader :xml, BillUploader
-  mount_uploader :cancel_receipt, BillUploader
   belongs_to :expedition_zip
   belongs_to :payment_method
   belongs_to :payment_form
@@ -23,14 +29,9 @@ class Bill < ActiveRecord::Base
   belongs_to :pac
   belongs_to :relation_type
   belongs_to :type_of_bill
-  has_many :store_movements
-  has_many :service_offereds
-  has_many :tickets
-  has_many :payments
-  has_many :children, through: :bills_child, foreign_key: 'children_id'
-  has_many :bills_child
-  belongs_to :parent, class_name: 'Bill', foreign_key: 'parent_id'
-  has_many :rows
+  mount_uploader :pdf, BillUploader
+  mount_uploader :xml, BillUploader
+  mount_uploader :cancel_receipt, BillUploader
 
   after_create :send_mail_prospect_email_fields, on: :create
 

@@ -5,4 +5,5 @@ class ProductRequest < ActiveRecord::Base
   belongs_to :delivery_package
   has_many :movements
   has_one :pending_movement
+  belongs_to :corporate, class_name: 'Store'
 end

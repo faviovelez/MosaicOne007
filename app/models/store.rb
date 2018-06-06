@@ -23,10 +23,7 @@ class Store < ActiveRecord::Base
   has_many :stores_suppliers
   has_many :prospects
   has_many :products
-  has_many :products, through: :stores_inventories
   has_many :stores_inventories
-  has_many :products, through: :stores_warehouse_entries
-  has_many :movements, through: :stores_warehouse_entries
   has_many :stores_warehouse_entries
   has_many :bill_sales
   has_many :services
@@ -55,6 +52,7 @@ class Store < ActiveRecord::Base
   has_many :delivery_services
   has_many :date_advises
   has_many :orders, foreign_key: 'corporate_id'
+  has_many :product_requests, foreign_key: 'corporate_id'
 
   mount_uploader :certificate, SatCertificateUploader
   mount_uploader :key, SatKeyUploader

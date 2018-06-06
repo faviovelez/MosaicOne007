@@ -1,0 +1,128 @@
+<%= form_tag({ controller: 'bills', action: 'confirm_payments' }, method: 'post') do %>
+  <% if @bills.count >= 1 %>
+    <table id="bills">
+      <thead>
+        <tr class="table-titles">
+          <th> Folio </th>
+          <th> Fecha </th>
+          <th class="col-md-2"> Cliente </th>
+          <th class="col-md-1"> Total </th>
+          <th class="col-md-1"> NC / Dev </th>
+          <th class="col-md-1"> Neto </th>
+          <th class="col-md-1"> Saldo / Pagos </th>
+          <th> Estatus </th>
+          <th class="col-md-2"> Detalles </th>
+          <th> Pago </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @bills.each do |bill| %>
+          <tr>
+            <td> <%= bill.folio %> </td>
+            <td> <%= l bill.created_at.to_date, format: :short %> </td>
+            <td> <%= show_non_blank_field(bill.receiving_company.business_name) %> </td>
+            <td> <%= number_to_currency(bill.total) %> </td>
+            <td> <%= number_to_currency(sum_children(bill)) %> </td>
+            <td> <%= number_to_currency(real_total(bill)) %> </td>
+            <td id="balance_<%=bill.id%>"> <%= get_payments_on_sales_summary_bill(bill) %> </td>
+            <td>
+              <span class="label label-success">
+                <%= bill.status %>
+              </span>
+            </td>
+            <td style="width: 100px">
+              <% unless bill.pdf_url == nil %>
+                <%= link_to download_pdf_path(bill), download: "Factura.pdf" do %>
+                  <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+              <% unless bill.xml_url == nil %>
+                <%= link_to download_xml_path(bill), download: "Factura.xml" do %>
+                  <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+              <% unless bill.cancel_receipt_url == nil %>
+                <%= link_to download_xml_receipt_path(bill), download: "Acuse.xml" do %>
+                  <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+              <% if bill.bill_type == 'global' %>
+                <%= link_to details_global_path(bill) do %>
+                  <%= image_tag '/assets/packaging.png', alt: 'Box icon', class: 'download-icon-table' %>
+                <% end %>
+              <% else %>
+                <%= link_to details_path(bill) do %>
+                  <%= image_tag '/assets/packaging.png', alt: 'Box icon', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+            </td>
+            <td class="col-md-1">
+              <%= text_field_tag 'payments[]', nil, {id: "payments_#{bill.id}", class: 'form-control center-text'} %>
+              <%= text_field_tag 'id[]', bill.id, {class: 'form-control center-text hidden'} %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <br/>
+    <div>
+      <%= link_to bills_cancelled_path, class: 'space-between-links' do  %>
+        Ver facturas canceladas
+        <i class="fa fa-eraser" aria-hidden="true"></i>
+      <% end %>
+
+      <%= link_to bills_form_path, class: 'space-between-links' do  %>
+        Formulario de factura cliente
+        <i class="fa fa-wpforms" aria-hidden="true"></i>
+      <% end %>
+
+      <%= link_to bills_global_form_path, class: 'space-between-links' do  %>
+        Formulario Fact Global
+        <i class="fa fa-folder-open" aria-hidden="true"></i>
+      <% end %>
+    </div>
+    <br/>
+
+    <div class="form-inside-style center-field file-field">
+      <div class="ind-form form-inside-style">
+        <%= label_tag :comprobante %>
+        <%= file_field_tag :image %><br>
+      </div>
+
+      <div class="ind-form form-inside-style">
+        <%= label_tag :fecha_de_pago %>
+        <%= date_field_tag :date, nil, {class: 'form-control center-text', max: Date.today} %>
+      </div>
+
+      <div class="ind-form form-inside-style">
+        <%= label_tag :total_comprobante %>
+        <%= text_field_tag :total_payment, nil, {class: 'form-control center-text', readonly: true} %><br>
+      </div>
+
+      <div class="ind-form form-inside-style">
+        <%= label_tag :forma_de_pago %>
+        <%= select_tag :payment_form, options_for_select(payment_forms), {class: 'form-control center-text'} %>
+      </div>
+    </div>
+
+    <div class="actions">
+      <%= submit_tag 'Confirmar pago(s)', class: 'main-button' %>
+    </div><br /><br />
+
+  <% else %>
+    <p class="individual-font"> No hay facturas pendientes de pago </p>
+  <% end %>
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'datatables.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'pdfmake.min' %>
+  <%= javascript_include_tag 'vfs_fonts.js' %>
+  <%= javascript_include_tag 'datatables.min.js' %>
+  <%= javascript_include_tag 'bills_data_tables' %>
+  <%= javascript_include_tag 'limitQuantity' %>
+<% end %>

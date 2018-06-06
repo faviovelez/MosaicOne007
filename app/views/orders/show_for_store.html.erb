@@ -6,7 +6,10 @@
         <th> Color </th>
         <th> Estatus </th>
         <th> Cantidad </th>
-        <th> Total </th>
+        <th> Solicitado </th>
+        <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
+          <th> Total </th>
+        <% end %>
         <th> Acciones </th>
       </tr>
     </thead>
@@ -38,7 +41,12 @@
             <% end %>
           </td>
           <td> <%= number_with_delimiter(product_request.quantity) %> </td>
-          <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+          <td> <%= number_with_delimiter(product_request.movements.sum(:quantity)) %> </td>
+          <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
+            <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+          <% else %>
+            <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+          <% end %>
           <td class="col-md-2">
             <% if (@order.users.count >= 1 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
               <div class="all-hide hidden">
@@ -72,8 +80,10 @@
                 </div>
               </div>
             <% else %>
-              <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
-                <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+              <% if current_user.role.name == 'admin-desk' %>
+                <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+                  <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+                <% end %>
               <% end %>
             <% end %>
           </td>
@@ -106,7 +116,11 @@
             <% end %>
           </td>
           <td> <%= number_with_delimiter(product_request.quantity) %> </td>
-          <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+          <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
+            <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+          <% else %>
+            <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+          <% end %>
           <td class="col-md-2">
             <% if (@order.users.count >= 1 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
               <div class="all-hide hidden">
@@ -140,8 +154,10 @@
                 </div>
               </div>
             <% else %>
-              <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
-                <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+            <% if current_user.role.name == 'admin-desk' %>
+                <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+                  <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+                <% end %>
               <% end %>
             <% end %>
           </td>
@@ -152,7 +168,11 @@
           <td colspan="2"></td>
           <td colspan="1"> <strong> Total: </strong>  </td>
           <td colspan="1"> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
-          <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
+          <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
+            <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
+          <% else %>
+            <td colspan="1" class="hidden"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
+          <% end %>
           <td colspan="1"></td>
         </tr>
     </tbody>

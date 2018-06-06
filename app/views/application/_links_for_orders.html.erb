@@ -4,14 +4,16 @@
       <% if !(params[:controller] == 'warehouse' && params[:action] == 'orders') %>
         <%= link_to warehouse_orders_path, class: 'space-between-links' do  %>
           Pedidos con disponibilidad
-          <i class="fa fa-dropbox" aria-hidden="true"></i>
+          <i class="fa fa-cubes" aria-hidden="true"></i>
         <% end %>
       <% end %>
     <% else %>
-      <% if !(params[:controller] == 'orders' && params[:action] == 'index') %>
-        <%= link_to store_orders_path(current_user.store), class: 'space-between-links' do  %>
-          Pedidos por entregar
-          <i class="fa fa-dropbox" aria-hidden="true"></i>
+      <% if current_user.store.id != 2 %>
+        <% if !(params[:controller] == 'orders' && params[:action] == 'index') %>
+          <%= link_to store_orders_path(current_user.store), class: 'space-between-links' do  %>
+            Pedidos solicitados
+            <i class="fa fa-dropbox" aria-hidden="true"></i>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>
@@ -57,6 +59,24 @@
       <%= link_to warehouse_waiting_orders_path, class: 'space-between-links' do  %>
         Pedidos en espera
         <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if !(params[:controller] == 'orders' && (params[:action] == 'differences' || params[:action] == 'show_for_differences')) %>
+    <% if ['store', 'store-admin', 'admin-desk', 'warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) %>
+      <%= link_to orders_differences_path, class: 'space-between-links' do  %>
+        Pedidos con diferencias
+        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if (params[:controller] == 'orders' && (params[:action] == 'differences' || params[:action] == 'show_for_differences')) %>
+    <% if ['store', 'store-admin', 'admin-desk', 'warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) %>
+      <%= link_to orders_differences_history_path, class: 'space-between-links' do  %>
+        Pedidos con diferencias resueltas
+        <i class="fa fa-plus-circle" aria-hidden="true"></i>
       <% end %>
     <% end %>
   <% end %>
