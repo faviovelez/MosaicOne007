@@ -9,7 +9,13 @@ class OrdersController < ApplicationController
                        prospect: Prospect.find_by_store_prospect_id(current_user.store)
                       )
     @order.users << current_user
-    redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'store' || role == 'store-admin')
+    if (role == 'store' || role == 'store-admin')
+      current_prospect_validation
+      @due_debt = ActionController::Base.helpers.number_to_currency(@due_debt)
+      redirect_to root_path, alert: "Presenta un saldo vencido de #{@due_debt} de #{@delay} días. Favor de ponerse al corriente para reestablecer el servicio" if (@delay > 10 && @due_debt)
+    else
+      redirect_to root_path, alert: 'No cuenta con los permisos necesarios.'
+    end
   end
 
   def new_order_for_prospects(role = current_user.role.name)
@@ -19,7 +25,59 @@ class OrdersController < ApplicationController
                        prospect: @prospect
                       )
     @order.users << current_user
-    redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'admin-desk')
+    if (role == 'admin-desk')
+      current_prospect_validation
+      @due_debt = ActionController::Base.helpers.number_to_currency(@due_debt)
+      redirect_to root_path, alert: "El cliente #{@prospect.legal_or_business_name} presenta un saldo vencido de #{@due_debt} de #{@delay} días. Favor de registrar los pagos necesarios para reestablecer el servicio" if (@delay > 10 && @due_debt)
+    else
+      redirect_to root_path, alert: 'No cuenta con los permisos necesarios.'
+    end
+  end
+
+  def new_corporate(role = current_user.role.name)
+    @order = Order.new(store: Store.find(2),
+                       category: 'de línea',
+                       prospect: Prospect.find_by_store_prospect_id(current_user.store)
+                      )
+    @order.users << current_user
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'admin-desk' || role == 'product-admin' || role == 'product-staff' || role == 'warehouse-staff' || role == 'warehouse-admin')
+  end
+
+  def current_prospect_validation
+    if ['store', 'store-admin'].include?(current_user.role.name)
+      prosp = current_user.store.store_prospect
+    elsif (['admin-desk', 'product-admin', 'product-staff', 'warehouse-staff', 'warehouse-admin'].include?(current_user.role.name) && current_user.store.id == 1)
+      prosp = Prospect.find(params[:prospect_id])
+    else
+      prosp = Store.find(2).store_prospect
+    end
+    credit = prosp.credit_days.to_i
+    bills = Bill.where(payed: false, prospect: prosp).pluck(:created_at, :total, :folio, :id)
+    bills.each_with_index do |val, index|
+      bill = Bill.find(val[3])
+      bills[index] << bill.payments.sum(:total)
+    end
+
+    bills.each do |bill|
+      bill[0] = bill[0].to_date + credit.days
+    end
+
+    @due_debt = 0
+    @folios = ""
+    @delay = 0
+    bills.each_with_index do |val, index|
+      if Date.today > val[0]
+        this_delay = (Date.today - val[0]).to_i
+        @delay =  this_delay if @delay < this_delay
+        @due_debt += (val[1].to_f - val[4].to_f).round(2)
+        if index == (bills.length - 1)
+          string = val[2]
+        else
+          string = val[2] + "," + " "
+        end
+        @folios += string
+      end
+    end
   end
 
   def show
@@ -120,6 +178,20 @@ class OrdersController < ApplicationController
     @order = Order.find(params[:id])
   end
 
+  def show_for_differences
+    update_order_total
+    @order = Order.find(params[:id])
+  end
+
+  def solve_differences
+    params[:id].each_with_index do |val, index|
+      pr = ProductRequest.find(val)
+      params[:solved][index] == 'true' ? solved = true : solved = false
+      pr.update(solved: solved)
+    end
+    redirect_to orders_differences_path, notice: "Se ha actualizado el pedido #{product_requests.first.order.id}"
+  end
+
   def confirm_received
     order = Order.find(params[:order_id])
     if params[:order_complete]
@@ -132,29 +204,46 @@ class OrdersController < ApplicationController
           new_mov.delete("id")
           new_mov.delete("created_at")
           new_mov.delete("updated_at")
-          new_mov.delete("identifier")
-          new_mov.delete("seller_user_id")
-          new_mov.delete("buyer_user_id")
-          new_mov.delete("business_unit_id")
-          new_mov.delete("unique_code")
-          new_mov.delete("entry_movement_id")
-          new_mov.delete("discount_rule_id")
-          new_mov.delete("confirm")
-          new_mov.delete("maximum_date")
-          new_mov.delete("kg")
-          new_mov["web"] = true
-          new_mov["pos"] = false
+          new_mov["cost"] = new_mov["cost"].to_f * new_mov["quantity"]
+          new_mov["total_cost"] = new_mov["cost"].to_f
           new_mov["reason"] = "Pedido #{order.id}"
           new_mov["movement_type"] = 'alta automática'
           new_mov["store_id"] = current_user.store.id
-          StoreMovement.create(new_mov)
+          if (current_user.store.id == 1 || current_user.store.id == 2)
+            new_mov.delete("product_request_id")
+            Movement.create(new_mov)
+            if current_user.store.id == 1
+              inventory = Inventory.where(product: mov.product).first
+              inventory.update(quantity: inventory.quantity + mov.quantity)
+            else
+              inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+              inventory.update(quantity: inventory.quantity + mov.quantity)
+            end
+          else
+            new_mov.delete("identifier")
+            new_mov.delete("seller_user_id")
+            new_mov.delete("buyer_user_id")
+            new_mov.delete("business_unit_id")
+            new_mov.delete("unique_code")
+            new_mov.delete("entry_movement_id")
+            new_mov.delete("discount_rule_id")
+            new_mov.delete("confirm")
+            new_mov.delete("maximum_date")
+            new_mov.delete("kg")
+            new_mov.delete("return_billed")
+            new_mov["web"] = true
+            new_mov["pos"] = false
+            new_mov["cost"] = new_mov["final_price"]
+            new_mov["total_cost"] = new_mov["cost"] * new_mov["cost"].quantity.to_i
+            StoreMovement.create(new_mov)
+          end
         end
       end
     else
-      requests = ProductRequest.find(params[:id])
       complete = true
       alert = ""
-      requests.each_with_index do |request,index|
+      params[:id].each_with_index do |val,index|
+        request = ProductRequest.find(val)
         complete = false if (params[:excess][index].to_i != 0 || params[:surplus][index].to_i != 0)
         if params[:excess][index].to_i != 0
           alert = "Sobran #{params[:excess][index].to_i} piezas"
@@ -162,29 +251,46 @@ class OrdersController < ApplicationController
           alert = "Faltan #{params[:surplus][index].to_i} piezas"
         end
         # Posiblemente un mailer que avise de los faltantes
-        request.update(status: 'entregado', quantity: request.quantity.to_i + params[:excess][index].to_i - params[:surplus][index].to_i, alert: alert)
+        request.update(status: 'entregado', quantity: request.quantity.to_i + params[:excess][index].to_i - params[:surplus][index].to_i, alert: alert, excess: params[:excess][index].to_i, surplus: params[:surplus][index].to_i)
         request.movements.each do |mov|
           new_mov = mov.as_json
           new_mov.delete("id")
           new_mov.delete("created_at")
           new_mov.delete("updated_at")
-          new_mov.delete("identifier")
-          new_mov.delete("seller_user_id")
-          new_mov.delete("buyer_user_id")
-          new_mov.delete("business_unit_id")
-          new_mov.delete("unique_code")
-          new_mov.delete("entry_movement_id")
-          new_mov.delete("discount_rule_id")
-          new_mov.delete("confirm")
-          new_mov.delete("maximum_date")
-          new_mov.delete("kg")
-          new_mov["web"] = true
-          new_mov["pos"] = false
+          new_mov["cost"] = new_mov["cost"].to_f * new_mov["quantity"]
+          new_mov["total_cost"] = new_mov["cost"].to_f
           new_mov["reason"] = "Pedido #{order.id}"
           new_mov["movement_type"] = 'alta automática'
           new_mov["store_id"] = current_user.store.id
           new_mov["quantity"] = new_mov["quantity"].to_i + params[:excess][index].to_i - params[:surplus][index].to_i
-          StoreMovement.create(new_mov)
+          if (current_user.store.id == 1 || current_user.store.id == 2)
+            new_mov.delete("product_request_id")
+            Movement.create(new_mov)
+            if current_user.store.id == 1
+              inventory = Inventory.where(product: mov.product).first
+              inventory.update(quantity: inventory.quantity + mov.quantity)
+            else
+              inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+              inventory.update(quantity: inventory.quantity + mov.quantity)
+            end
+          else
+            new_mov.delete("identifier")
+            new_mov.delete("seller_user_id")
+            new_mov.delete("buyer_user_id")
+            new_mov.delete("business_unit_id")
+            new_mov.delete("unique_code")
+            new_mov.delete("entry_movement_id")
+            new_mov.delete("discount_rule_id")
+            new_mov.delete("confirm")
+            new_mov.delete("maximum_date")
+            new_mov.delete("kg")
+            new_mov.delete("return_billed")
+            new_mov["web"] = true
+            new_mov["pos"] = false
+            new_mov["cost"] = new_mov["final_price"]
+            new_mov["total_cost"] = new_mov["cost"] * new_mov["cost"].quantity.to_i
+            StoreMovement.create(new_mov)
+          end
         end
       end
       order.update(status: 'entregado', deliver_complete: complete, confirm_user: current_user)
@@ -209,8 +315,29 @@ class OrdersController < ApplicationController
     @product = Product.find(params[:product])
   end
 
+  def differences
+    if ['store', 'store-admin'].include?(current_user.role.name)
+      @orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved != true').where(store: current_user.store, status: 'entregado')
+    elsif ['admin-desk', 'warehouse-admin', 'warehouse-staff'].include?(current_user.role.name)
+      @orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved != true').where(corporate: current_user.store, status: 'entregado')
+    else
+      redirect_to root_path, alert: 'No cuenta con los permisos para ver esta pantalla'
+    end
+  end
+
+  def differences_history
+    if ['store', 'store-admin'].include?(current_user.role.name)
+      @orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved = true').where(store: current_user.store, status: 'entregado')
+    elsif ['admin-desk', 'warehouse-admin', 'warehouse-staff'].include?(current_user.role.name)
+      @orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved = true').where(corporate: current_user.store, status: 'entregado')
+    else
+      redirect_to root_path, alert: 'No cuenta con los permisos para ver esta pantalla'
+    end
+  end
+
   def delete_product_from_order
     # Este método funciona independientemente de si ya se facturó
+    status = []
     request = ProductRequest.find(params[:id])
     product = request.product
     order = request.order
@@ -248,6 +375,10 @@ class OrdersController < ApplicationController
       end
     end
     request.update(status: 'cancelada')
+    order.product_requests.each do |pr|
+      status << pr.status
+    end
+    order.update(status: 'mercancía asignada') if (status.uniq.length == 1 && status.first == 'asignado' && order.status == 'en espera')
     if order.product_requests.where.not(status: 'cancelada').count < 1
       order.update(status: 'cancelado')
       redirect_to root_path, notice: 'Se canceló por completo el pedido.'
@@ -315,7 +446,8 @@ class OrdersController < ApplicationController
   def save_products
     @store = Store.find(params[:store_id])
     @prospect = Prospect.find_by_store_prospect_id(current_user.store)
-    corporate = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).first
+    corporate = Store.find(params[:corporate_store])
+    @corporate = corporate
     status = []
     prod_req = []
     movs = []
@@ -495,11 +627,18 @@ class OrdersController < ApplicationController
   end
 
   def current_orders
+    permited_roles_corp = ['warehouse-staff', 'warehouse-admin', 'admin-desk']
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(store: current_user.store).order(:created_at)
+    elsif (permited_roles_corp.include?(current_user.role.name) && current_user.store.id == 1)
+      @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(store: current_user.store, corporate_id: 2).order(:created_at)
     else
       @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(corporate: current_user.store).order(:created_at)
     end
+  end
+
+  def for_delivery
+    @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(corporate: current_user.store).order(:created_at)
   end
 
   def delivered_orders
@@ -537,6 +676,7 @@ class OrdersController < ApplicationController
       product_request = ProductRequest.create(
         product: product,
         quantity: params[:request][n],
+        corporate: @corporate,
         armed: converted_armed,
         order: @order
       )
@@ -549,13 +689,17 @@ class OrdersController < ApplicationController
 
   def passing_validation(product_request, n)
     order_quantity = product_request.quantity
-    inventory = product_request.product.inventory
+    if @corporate.id == 1
+      inventory = product_request.product.inventory
+    else
+      inventory = StoresInventory.where(product: product_request.product, store_id: @corporate.id).first
+    end
     product = product_request.product
     if @prospect.store_prospect != nil
       if (product.armed && params[:armed][n] == 'true')
         discount = product.armed_discount / 100
       else
-        if @prospect.store_prospect.store_type.store_type == 'tienda propia'
+        if (@prospect.store_prospect.store_type.store_type == 'tienda propia' || @prospect.store_prospect.store_type.store_type == 'corporativo')
           discount = product.discount_for_stores / 100
         elsif @prospect.store_prospect.store_type.store_type == 'franquicia'
           discount = product.discount_for_franchises / 100
@@ -564,7 +708,7 @@ class OrdersController < ApplicationController
     else
       discount = params[:discount][n].to_f / 100
     end
-    if order_quantity > inventory.fix_quantity
+    if order_quantity > inventory.quantity
       product_request.update(status: 'sin asignar')
       q = product_request.quantity
       mov = create_movement(PendingMovement, n, product_request)
@@ -574,20 +718,21 @@ class OrdersController < ApplicationController
         current_user,
         'venta',
         discount,
-        @prospect
+        @prospect,
+        @corporate
         )
     end
   end
 
   def create_movement(object, n, product_request)
     product = product_request.product
-    store = Store.find_by_store_name('Corporativo Compresor')
+    store = Store.find_by_store_name(@corporate.store_name)
     prospect = @prospect
     if prospect.store_prospect != nil
       if (product.armed && params[:armed][n] == 'true')
         discount = product.armed_discount / 100
       else
-        if prospect.store_prospect.store_type.store_type == 'tienda propia'
+        if (prospect.store_prospect.store_type.store_type == 'tienda propia' || prospect.store_prospect.store_type.store_type == 'corporativo')
           discount = product.discount_for_stores / 100
         elsif prospect.store_prospect.store_type.store_type == 'franquicia'
           discount = product.discount_for_franchises / 100

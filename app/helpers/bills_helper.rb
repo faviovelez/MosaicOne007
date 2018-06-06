@@ -334,18 +334,7 @@ module BillsHelper
   end
 
   def payments_for_bill_show(bill)
-    @payments_bill = []
-    @total_payments_bill = 0
-    bill.payments.each do |payment|
-      unless payment.payment_type == 'crédito'
-        @payments_bill << payment
-        if payment.payment_type == 'pago'
-          @total_payments_bill += payment.total
-        elsif payment.payment_type == 'devolución'
-          @total_payments_bill -= payment.total
-        end
-      end
-    end
+    @total_payments_bill = (bill.payments.where(payment_type: 'pago').sum(:total) - bill.payments.where(payment_type: 'devolución').sum(:total)).round(2)
     @total_payments_bill
   end
 
@@ -511,6 +500,10 @@ module BillsHelper
     order.payments == [] ? pay = 0 : order.payments.sum(:total).round(2)
     (order.total.to_f <= pay || order.total - pay < 1) ? @balance = content_tag(:span, 'pagado', class: 'label label-success') : @balance = number_to_currency(order.total - pay)
     @balance
+  end
+
+  def payment_forms
+    @pay_forms = [["Efectivo", 1], ["Cheque", 2], ["Transferencia", 3], ["T. Crédito", 4], ["T. Débito", 18], ["Compensación", 12]]
   end
 
 end

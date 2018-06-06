@@ -1,0 +1,44 @@
+<table class="dataTableFour">
+  <thead>
+    <tr class="table-titles">
+      <th class="col-md-1"> Pedido </th>
+      <th class="col-md-2"> Tienda / Cliente </th>
+      <th class="col-md-2"> Producto </th>
+      <th> Color </th>
+      <th> Estatus </th>
+      <th> Cantidad </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @product_requests.each do |pr| %>
+      <tr id="trForProduct<%= pr.product_id %>">
+        <td> <%= pr.order.id %> </td>
+        <td> <%= show_non_blank_field(pr.order.prospect&.legal_or_business_name) %> </td>
+        <td> <%= pr.product.unique_code %> <%= pr.product.description %> </td>
+        <td> <%= pr.product.exterior_color_or_design %> </td>
+        <td>
+          <% if pr.status == 'asignado' %>
+          <span class="label label-info">
+            <%= pr.status%>
+          </span>
+          <% elsif pr.status == 'sin asignar' %>
+            <span class="label label-warning">
+              <%= pr.status%>
+            </span>
+          <% elsif pr.status == 'entregado' %>
+            <span class="label label-success">
+              <%= pr.status%>
+            </span>
+            <% elsif pr.status == 'cancelada' %>
+              <span class="label label-danger">
+                <%= pr.status%>
+              </span>
+          <% end %>
+        </td>
+        <td> <%= number_with_delimiter(pr.quantity) %> </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render 'dataTables'%>

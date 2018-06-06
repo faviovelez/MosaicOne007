@@ -20,7 +20,7 @@
         <td> <%= show_non_blank_field(inventory.product.line) %> </td>
         <td> <%= packages(inventory) %> </td>
         <td> <%= inventory.product.pieces_per_package %> </td>
-        <td> <%= inventory.quantity %> </td>
+        <td> <%= number_with_delimiter(inventory.quantity) %> </td>
         <td> <%= inventory_alert(inventory) %> </td>
       </tr>
     <% end %>

@@ -17,12 +17,19 @@
       <th> Producto </th>
       <th> Cantidad </th>
       <th class="weightKg hidden"> Peso </th>
+      <th> Motivo / Folio </th>      
     </tr>
   </thead>
 
   <tbody id="fields_for_warehouse_entries">
   </tbody>
   </table>
+
+  <% if current_user.store.id == 1 %>
+    <p class="hidden"><%= text_field_tag :corporate_store, 1 %></p>
+  <% else %>
+    <p class="hidden"><%= text_field_tag :corporate_store, 2 %></p>
+  <% end %>
 
   <div class="actions">
     <%= submit_tag 'Entrada de Mercancía', class: 'main-button', id: 'generateEntry', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>

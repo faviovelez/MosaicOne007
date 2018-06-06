@@ -6,14 +6,33 @@ class BillsController < ApplicationController
   require 'savon'
   require 'base64'
 
-  # GET /bills@type_of_bill
-  # GET /bills.json
   def index
     @bills = Bill.includes(:payments, :receiving_company, :children).where(store: current_user.store, parent: nil).where.not(status: 'cancelada', receiving_company: nil, total: nil)
   end
 
-  # GET /bills/1
-  # GET /bills/1.json
+  def pending
+    if ['store', 'store-admin'].include?(current_user.role.name)
+      @bills = Bill.includes(:payments, :receiving_company, :children).where(prospect: current_user.store.store_prospect, parent: nil, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil)
+    else
+      @bills = Bill.includes(:payments, :receiving_company, :children).where(store: current_user.store, parent: nil, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil)
+    end
+  end
+
+  def confirm_payments
+    params[:id].each_with_index do |val, i|
+      bill = Bill.find(val)
+      unless params[:payments][i].to_f == 0
+        pn = bill.payments.count + 1
+        pay = Payment.create(payment_type: 'pago', total: params[:payments][i].to_f, payment_number: pn, payment_form_id: params[:payment_form].to_i, payment_date: Date.parse(params[:date]), date: Date.today, bill: bill)
+        total_pay = bill.payments.where(payment_type: 'pago').sum(:total) - bill.payments.where(payment_type: 'devolución').sum(:total)
+        total_bill = bill.total
+        (total_bill - total_pay < 1) ? bill.update(payed: true) : bill.update(payed: false)
+        Document.create(document_type: 'pago', bill: bill, document: params[:image])
+      end
+    end
+    redirect_to bills_pending_path, notice: 'Su pago ha sido registrado'
+  end
+
   def show
   end
 
@@ -1584,7 +1603,8 @@ class BillsController < ApplicationController
     @final_dir = "/home/ubuntu/MosaicOne007" + "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @xml_path = "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @sat_path = Rails.root.join('lib', 'sat')
-    @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")  end
+    @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
+  end
 
   #FACTURA GENERAL:
     # SIEMPRE 'I' (TipoDeComprobante) TypeOfBill.find(1).key
@@ -2524,7 +2544,12 @@ XML
       :exchange_rate,
       :country_id,
       :taxes_trasnferred,
-      :taxes_witheld
+      :taxes_witheld,
+      :payments,
+      :payment_form,
+      :image,
+      :total_payment,
+      :date
       )
     end
 end

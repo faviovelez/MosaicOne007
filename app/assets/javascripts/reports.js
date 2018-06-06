@@ -1,5 +1,15 @@
 $(document).ready(function(){
 
+  function validateDate(){
+    if ($("#what_final_date").val() == 'Al día de hoy') {
+      $("#date").addClass("hidden");
+      $(".date-field-report").addClass("hidden");
+    } else {
+      $("#date").removeClass("hidden");
+      $(".date-field-report").removeClass("hidden");
+    }
+  }
+
   $("#options").bind('change', function() {
     var options = $(this).val();
     if (options == 'Seleccionar día') {
@@ -20,10 +30,12 @@ $(document).ready(function(){
       $('#products option:contains("Todos los productos")').prop('selected', true);
       $(".movements-report").addClass("hidden");
       $(".inventory-report").removeClass("hidden");
+      validateDate();
     } else {
       $('#products option:contains("Elegir producto")').prop('selected', true);
       $(".movements-report").removeClass("hidden");
       $(".inventory-report").addClass("hidden");
+      validateDate();
     }
   });
 
@@ -31,8 +43,10 @@ $(document).ready(function(){
     var whatFinalDate = $(this).val();
     if (whatFinalDate == 'Al día de hoy') {
       $(".extra-margin-top").addClass("hidden");
+      $("#date").addClass("hidden");
     } else {
       $(".extra-margin-top").removeClass("hidden");
+      $("#date").removeClass("hidden");
     }
   });
 
@@ -57,7 +71,6 @@ $(document).ready(function(){
 
   $('.select2-products').select2({
      placeholder: 'Seleccione un producto',
-     tags: true,
      language: "es"
   });
 

@@ -34,6 +34,19 @@ module ApplicationHelper
     @name
   end
 
+  def order_warehouse_user(order, array = ['warehouse-staff', 'warehouse-admin'])
+    user = order.users.where(role: Role.where(name: array)).first
+    @name = user.first_name + ' '
+    @name += user.middle_name + ' ' if !user.middle_name.blank?
+    @name += user.last_name
+    @name
+  end
+
+  def order_driver(order)
+    user = order.delivery_attempt.driver
+    @name = user.first_name + ' ' + user.last_name
+    @name
+  end
 
   def order_request_user(order)
     user = order.request_user
@@ -254,6 +267,53 @@ module ApplicationHelper
       @bill_status = content_tag(:span, 'por facturar', class: 'label label-warning')
     end
     @bill_status
+  end
+
+  def user_role_options(user)
+    store = user.store
+    role = user.role.name
+    role_options = {
+      'platform-admin' => [
+        ['Administrador de plataforma', 1],
+        ['Jefe de tienda', 5],
+        ['Auxiliar de Tienda', 4],
+        ['Jefe de almacén', 8],
+        ['Auxiliar de almacén', 9],
+        ['Jefe de producto', 6],
+        ['Auxiliar de producto', 7],
+        ['Director', 2],
+        ['Gerente', 3],
+        ['Jefe de diseñadores', 11],
+        ['Diseñador', 12],
+        ['Soporte', 14],
+        ['Administrativo', 10]
+      ],
+      'store-admin' => [['Jefe de tienda', 5], ['Auxiliar de Tienda', 4]],
+      'store' => [['Auxiliar de Tienda', 4]],
+      'warehouse-admin' => [['Jefe de almacén', 8], ['Auxiliar de almacén', 9]],
+      'warehouse-staff' => [['Auxiliar de almacén', 9]],
+      'product-admin' => [['Auxiliar de producto', 7], ['Jefe de producto', 6]],
+      'product-staff' => [['Auxiliar de producto', 7]],
+      'director' => [['Director', 2], ['Gerente', 3]],
+      'manager' => [['Gerente', 3]],
+      'designer-admin' => [['Jefe de diseñadores', 11], ['Diseñador', 12]],
+      'designer' => [['Diseñador', 12]],
+      'viewer' => [['Soporte', 14]],
+      'admin-desk' => [['Administrativo', 10]]
+    }
+    @role_options = role_options[role]
+  end
+
+  def user_store_options(user)
+    if user.role.name == 'platform-admin'
+      @store_options = []
+      Store.all.each do |store|
+        @store_options << [store.store_name, store.id]
+      end
+    else
+      @store_options = [[user.store.store_name, user.store.id]]
+    end
+    @store_options
   end
 
 

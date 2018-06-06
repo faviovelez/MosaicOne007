@@ -185,7 +185,9 @@
       <tr>
         <td colspan="10">
           <div class="actions">
-            <%= submit_tag 'Modificar / cancelar factura', class: 'main-button' %>
+            <% if @bill.store == current_user.store %>
+              <%= submit_tag 'Modificar / cancelar factura', class: 'main-button' %>
+            <% end %>
           </div><br /><br />
         </td>
       </tr>

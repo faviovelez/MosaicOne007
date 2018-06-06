@@ -266,18 +266,76 @@ class Movement < ActiveRecord::Base
 
   def check_for_pendings
     product = self.product
-    quantity = product.inventory.quantity
-    pendings = PendingMovement.where(product: product)
+    if self.store.id == 1
+      quantity = product.inventory.quantity
+    else
+      quantity = StoresInventory.where(product: product, store: self.store).first.quantity
+    end
+    pendings = PendingMovement.where(product: product, store: self.store).order(:created_at)
     pendings.each do |pending|
       unless pending.quantity <= 0
         if self.product.classification == 'especial'
           pending.update(quantity: self.quantity)
           pending.product_request.order.request.update(status: 'mercancía asignada')
           if self.quantity > pending.product_request.quantity
-            pending.product_request.update(excess: self.quantity - pending.product_request.quantity, quantity: self.quantity)
+            pending.product_request.update(special_excess: self.quantity - pending.product_request.quantity, quantity: self.quantity)
           elsif self.quantity < pending.product_request.quantity
-            # surplus va a ser escasés o faltante (lo contrario de su significado real)
-            pending.product_request.update(surplus: pending.product_request.quantity - self.quantity, quantity: self.quantity)
+            pending.product_request.update(special_shortage: pending.product_request.quantity - self.quantity, quantity: self.quantity)
+          end
+        end
+        if quantity >= pending.quantity
+          generate_objects_instance(pending)
+          pending.destroy
+        end
+      end
+    end
+  end
+
+  def check_for_product_requests
+    product = self.product
+    if self.store.id == 1
+      quantity = product.inventory.quantity
+    else
+      quantity = StoresInventory.where(product: product, store: self.store).first.quantity
+    end
+    if self.quantity > quantity
+      to_reduce = self.quantity - quantity
+      product_requests = ProductRequest.where(product: product, corporate_id: self.store.id, status: 'asignado').order(:id)
+      product_requests.each do |request|
+        request.movements.each do |mov|
+          new_mov = mov.attributes
+          new_mov.delete("id")
+          new_mov.delete("confirm")
+          new_mov.delete("rule_could_be")
+          new_mov.delete("entry_movement_id")
+          new_mov.delete("reason")
+          new_mov.delete("kg")
+          new_mov.delete("identifier")
+          new_mov.delete("return_billed")
+          new_mov["discount_applied"] = new_mov["discount_applied"] / new_mov["quantity"]
+          new_mov["taxes"] = new_mov["taxes"] / new_mov["quantity"]
+          new_mov["total_cost"] = new_mov["total_cost"] / new_mov["quantity"]
+          new_mov["total"] = new_mov["total"] / new_mov["quantity"]
+          new_mov["subtotal"] = new_mov["subtotal"] / new_mov["quantity"]
+          PendingMovement.create(new_mov)
+          mov.delete
+        end
+        request.update(status: 'sin asignar')
+        to_reduce -= request.quantity
+        RequestMailer.status_unassigned(request).deliver_now
+        break if to_reduce < 1
+      end
+    end
+
+    pendings.each do |pending|
+      unless pending.quantity <= 0
+        if self.product.classification == 'especial'
+          pending.update(quantity: self.quantity)
+          pending.product_request.order.request.update(status: 'mercancía asignada')
+          if self.quantity > pending.product_request.quantity
+            pending.product_request.update(special_excess: self.quantity - pending.product_request.quantity, quantity: self.quantity)
+          elsif self.quantity < pending.product_request.quantity
+            pending.product_request.update(special_shortage: pending.product_request.quantity - self.quantity, quantity: self.quantity)
           end
         end
         if quantity >= pending.quantity
@@ -314,8 +372,13 @@ class Movement < ActiveRecord::Base
     end
     hash_1 = hash.dup
     total_quantity = hash_1["quantity"]
-    product.inventory.update(quantity: product.inventory.quantity - total_quantity)
-    WarehouseEntry.where(product: product).order(:id).each do |entry|
+    if hash_1["store_id"] == 1
+      product.inventory.update(quantity: product.inventory.quantity - total_quantity)
+    else
+      inventory = StoresInventory.where(product: product, store_id: hash_1["store_id"]).first
+      inventory.update(quantity: inventory.quantity - total_quantity)
+    end
+    WarehouseEntry.where(product: product, store_id: hash_1["store_id"]).order(:id).each do |entry|
       hash_1 = hash.dup
       mov_sales = entry.movement.sales
       mov = entry.movement
@@ -325,7 +388,7 @@ class Movement < ActiveRecord::Base
         hash_1["identifier"] = mov.identifier
       end
       cost = ('%.2f' % mov.cost.to_f).to_f
-        if total_quantity >= entry.fix_quantity
+      if total_quantity >= entry.fix_quantity
         q = entry.fix_quantity
         hash_1["quantity"] = q
         hash_1["cost"] = cost
@@ -384,7 +447,7 @@ class Movement < ActiveRecord::Base
         entry.update(quantity: entry.quantity - total_quantity)
         total_quantity -= Movement.last.quantity
       end
-      break if total_quantity == 0
+      break if total_quantity < 1
     end
     return @model_collection
   end
@@ -420,8 +483,13 @@ class Movement < ActiveRecord::Base
       hash_1 = hash.dup
       total_quantity = hash_1["quantity"]
       product = hash_1["product"]
-      product.inventory.update(quantity: product.inventory.quantity - total_quantity)
-      WarehouseEntry.where(product: product).order(:id).each do |entry|
+      if hash_1["store"].id == 1
+        product.inventory.update(quantity: product.inventory.quantity - total_quantity)
+      else
+        inventory = StoresInventory.where(product: product, store: hash_1["store"]).first
+        inventory.update(quantity: inventory.quantity.to_i - total_quantity)
+      end
+      WarehouseEntry.where(product: product, store: hash_1["store"]).order(:id).each do |entry|
         hash_1 = hash.dup
         mov_sales = entry.movement.sales
         mov = entry.movement
@@ -503,9 +571,9 @@ class Movement < ActiveRecord::Base
       return @model_collection
     end
 
-    def new_object(product_request, user, type, discount, prospect)
+    def new_object(product_request, user, type, discount, prospect, corporate)
       product = product_request.product
-      store = Store.find_by_store_name('Corporativo Compresor')
+      store = Store.find_by_store_name(corporate.store_name)
       prospect = prospect
       price = ('%.2f' % product.price).to_f
       disc_app = ('%.2f' % (product.price * discount)).to_f

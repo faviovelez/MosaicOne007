@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
+  
   def process_product_request
     @entries = WarehouseEntry.where(
       product: @product_request.product
@@ -48,6 +49,48 @@ class ApplicationController < ActionController::Base
     true
   rescue
     return false
+  end
+
+  def banned_prospects_validation
+    bills = Bill.where(payed: false, store_id: [1, 2]).pluck(:created_at, :total, :folio, :id)
+    bills.each_with_index do |val, index|
+      bill = Bill.find(val[3])
+      bills[index] << bill.payments.sum(:total)
+      bills[index] << bill.prospect.id
+      bills[index] << bill.prospect.credit_days.to_i
+    end
+
+    bills.each do |bill|
+      prospect = bill
+      bill[0] = bill[0].to_date + bill[6].days
+    end
+
+    @banned_prospects = []
+    bills.each_with_index do |val, index|
+      if Date.today > val[0]
+        if (val[1].to_f - val[4].to_f).round(2) > 1
+          @banned_prospects << val[5] unless @banned_prospects.include?(val[5])
+        end
+      end
+    end
+  end
+
+  def products_for_report
+    @products = []
+    role = current_user.role.name
+    @store = current_user.store
+    Product.where(current: true, shared: true).each do |product|
+      @products << ["#{product.unique_code} #{product.description}", product.id]
+    end
+    if role == 'store-admin' || role == 'store'
+      @store_products = Product.where(store: @store)
+      if @store_products != []
+        @store_products.each do |p|
+          @products << ["#{p.unique_code} #{p.description}", p.id]
+        end
+      end
+    end
+    @products
   end
 
   protected

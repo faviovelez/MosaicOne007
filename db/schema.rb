@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180530031229) do
+ActiveRecord::Schema.define(version: 20180602011637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -537,8 +537,10 @@ ActiveRecord::Schema.define(version: 20180530031229) do
     t.string   "document_type"
     t.integer  "design_request_id"
     t.string   "document"
+    t.integer  "bill_id"
   end
 
+  add_index "documents", ["bill_id"], name: "index_documents_on_bill_id", using: :btree
   add_index "documents", ["design_request_id"], name: "index_documents_on_design_request_id", using: :btree
   add_index "documents", ["request_id"], name: "index_documents_on_request_id", using: :btree
 
@@ -787,6 +789,7 @@ ActiveRecord::Schema.define(version: 20180530031229) do
     t.text     "reason"
     t.float    "kg"
     t.string   "identifier"
+    t.boolean  "return_billed",      default: false
   end
 
   add_index "movements", ["bill_id"], name: "index_movements_on_bill_id", using: :btree
@@ -985,14 +988,19 @@ ActiveRecord::Schema.define(version: 20180530031229) do
     t.integer  "order_id"
     t.string   "urgency_level"
     t.date     "maximum_date"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
-    t.boolean  "armed",         default: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.boolean  "armed",            default: false
     t.integer  "surplus"
     t.integer  "excess"
     t.string   "alert"
+    t.integer  "corporate_id",     default: 1
+    t.boolean  "solved",           default: false
+    t.integer  "special_shortage"
+    t.integer  "special_excess"
   end
 
+  add_index "product_requests", ["corporate_id"], name: "index_product_requests_on_corporate_id", using: :btree
   add_index "product_requests", ["order_id"], name: "index_product_requests_on_order_id", using: :btree
   add_index "product_requests", ["product_id"], name: "index_product_requests_on_product_id", using: :btree
 
@@ -1975,6 +1983,7 @@ ActiveRecord::Schema.define(version: 20180530031229) do
   add_foreign_key "discount_rules", "business_units"
   add_foreign_key "discount_rules", "stores"
   add_foreign_key "discount_rules", "users"
+  add_foreign_key "documents", "bills"
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"
   add_foreign_key "estimate_docs", "prospects"
