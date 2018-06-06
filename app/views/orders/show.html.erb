@@ -5,7 +5,9 @@
       <th> Color</th>
       <th> Estatus </th>
       <th> Cantidad</th>
-      <th> Total</th>
+      <% if (['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) || ['store-admin', 'store'].include?(current_user.role.name)) %>
+        <th> Total </th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -34,7 +36,11 @@
           <% end %>
         </td>
         <td> <%= number_with_delimiter(pr.quantity) %> </td>
-        <td> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
+        <% if (['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) || ['store-admin', 'store'].include?(current_user.role.name)) %>
+          <td> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
+        <% else %>
+          <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
+        <% end %>
       </tr>
       <% end %>
       <tr>
@@ -42,7 +48,11 @@
         <td></td>
         <td> <strong> Total: </strong> </td>
         <td> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
-        <td> <strong> <%= number_to_currency(get_total) %> </strong> </td>
+        <% if (['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) || ['store-admin', 'store'].include?(current_user.role.name)) %>
+          <td> <strong> <%= number_to_currency(get_total) %> </strong> </td>
+        <% else %>
+          <td class="hidden"> <strong> <%= number_to_currency(get_total) %> </strong> </td>
+        <% end %>
         <td></td>
       </tr>
   </tbody>

@@ -140,6 +140,10 @@
       <% end %>
     </div>
 
+    <% if params[:controller] == 'admin_users' && params[:action] == 'show' %>
+      <%= link_to 'Editar usuario', edit_user_path(params[:id]) %>
+    <% end %>
+
   </div>
 
 <% end %>

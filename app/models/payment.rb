@@ -16,7 +16,7 @@ class Payment < ActiveRecord::Base
 
   before_update :create_update_summary
 
-  after_create :save_web_id_and_set_web_true, :create_update_date_advise
+  after_create :save_web_id_and_set_web_true, :create_update_date_advise, :add_to_bill
 
   # Crear o modificar objeto y si pertenece al mismo ticket dejar solo uno y borrar los demás (borrar los viejos)
   # Buscar y modificar los que pertenezcan al mismo ticket y desactivarlas y/o borrarlas (DateAdvise) ON CREATE Y ON UPDATE?
@@ -24,19 +24,25 @@ class Payment < ActiveRecord::Base
   def dont_exist_date_advise
     @parent = false
     @ticket = self.ticket
-    if @ticket.parent == nil
-      !!(DateAdvise.where(ticket: @ticket).first.nil?)
-    else
-      @parent = true
-      !!(DateAdvise.where(ticket: @ticket.parent).first.nil?)
+    unless @ticket == nil
+      if @ticket.parent == nil
+        !!(DateAdvise.where(ticket: @ticket).first.nil?)
+      else
+        @parent = true
+        !!(DateAdvise.where(ticket: @ticket.parent).first.nil?)
+      end
     end
+  end
+
+  def add_to_bill
+    self.update(bill: self.ticket.bill) if (self.ticket != nil && self.ticket.bill != nil && self.payment_type != 'cancelado')
   end
 
   def create_update_date_advise
     if dont_exist_date_advise
       create_date_advise unless @parent
     else
-      update_date_advise
+      update_date_advise unless @ticket.nil?
     end
   end
 

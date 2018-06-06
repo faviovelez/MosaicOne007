@@ -6,18 +6,11 @@ class SuppliersController < ApplicationController
   # GET /suppliers.json
   def index
     user = current_user.role.name
-    if user == 'store' || user == 'store-admin'
-      @suppliers = store.suppliers
-    else
-      stores_ids = []
-      b_units = current_user.store.business_group.business_units
-      b_units.each do |bu|
-        bu.stores.each do |s|
-          stores_ids << s.id
-        end
-      end
-      @suppliers = Supplier.where(store: stores_ids)
+    current_user.store.suppliers == [] ? @suppliers = [] : @suppliers = current_user.store.suppliers
+    Supplier.find([1,2]).each do |supplier|
+      @suppliers << supplier unless @suppliers.include?(supplier)
     end
+    @suppliers
   end
 
   # GET /suppliers/1
@@ -116,7 +109,6 @@ class SuppliersController < ApplicationController
       :last_purchase_bill_date,
       :last_purhcase_folio,
       :store_id,
-      :business_unit_id,
       :business_group_id
       )
     end

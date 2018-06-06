@@ -12,8 +12,23 @@ class WarehouseController < ApplicationController
     current_orders
   end
 
+  def select_product
+    corporate_id = current_user.store.id
+    @products = Product.joins(:product_requests).where(product_requests: {status: 'asignado', corporate_id: corporate_id}).uniq.pluck("CONCAT(unique_code, ' ', description) AS description, products.id")
+  end
+
+  def product_selected
+    corporate_id = current_user.store.id
+    @product_requests = ProductRequest.includes(order: [:store, :prospect]).where(status: 'asignado', corporate_id: corporate_id, product: params[:product_list])
+    render 'product_requests_by_product'
+  end
+
+  def product_requests_by_product
+  end
+
   def current_orders
-    orders = Order.where.not(status: ['enviado', 'entregado', 'cancelado']).where(corporate: current_user.store)
+    banned_prospects_validation
+    orders = Order.where.not(status: ['enviado', 'entregado', 'cancelado']).where(corporate: current_user.store).where.not(prospect_id: @banned_prospects)
     @orders = []
     orders.each do |order|
       @status = []
@@ -45,6 +60,7 @@ class WarehouseController < ApplicationController
   end
 
   def waiting_orders
+    banned_prospects_validation
     orders = Order.where.not(status: ['enviado', 'entregado', 'cancelado']).where(corporate: current_user.store)
     @orders = []
     orders.each do |order|
@@ -52,16 +68,22 @@ class WarehouseController < ApplicationController
       order.product_requests.where.not(status:'cancelada').each do |pr|
         @status << pr.status
       end
+#      if (@status.uniq.length != 1 && order.status != 'preparado' && order.status != 'preparando')
       if @status.uniq.length != 1
         @orders << order
       end
+    end
+    add_orders = Order.where.not(status: ['enviado', 'entregado', 'cancelado']).where(corporate: current_user.store).where(prospect_id: @banned_prospects).where(status: ['preparando', 'preparado'])
+    add_orders.each do |order|
+      @orders << order unless @orders.include?(order)
     end
     @orders = @orders.sort_by {|obj| obj.id}
     @orders
   end
 
   def ready_orders
-    @orders = Order.where(status: 'preparado', corporate: current_user.store)
+    banned_prospects_validation
+    @orders = Order.where(status: 'preparado', corporate: current_user.store).where.not(prospect_id: @banned_prospects)
   end
 
   def sales_for_billing
@@ -347,7 +369,8 @@ class WarehouseController < ApplicationController
         quantity
       )
     else
-      
+      inventory = StoresInventory.where(product: product, store: current_user.store).first
+      inventory.update(quantity: inventory.quantity.to_i + quantity)
     end
   end
 
@@ -386,7 +409,7 @@ class WarehouseController < ApplicationController
       if params[:id][n].include?('_')
         valid_id = params[:id][n].slice(0..(params[:id][n].index('_') -1))
         product = Product.find(valid_id)
-        identifier = Movement.where(product: product, movement_type: "alta").count + 1
+        identifier = Movement.where(product: product, movement_type: "alta", store: current_user.store).count + 1
         if params[:identifier] != nil
           identifier_value = params[:identifier][n]
         else

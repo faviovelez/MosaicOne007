@@ -2,7 +2,7 @@
   <table class="dataTableFour">
     <thead>
       <tr class="table-titles">
-        <th class="col-md-3">Pedido</th>
+        <th class="col-md-1">Pedido</th>
         <th class="col-md-1">Tipo</th>
         <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin')%>
           <th class="col-md-3"> Cliente </th>
@@ -11,6 +11,7 @@
         <th class="col-md-1">Piezas</th>
         <th class="col-md-1">Estatus</th>
         <th class="col-md-2">Confirmó</th>
+        <th class="col-md-1"> Factura </th>
         <th class="col-md-1">Acciones</th>
       </tr>
     </thead>
@@ -60,9 +61,35 @@
           <td class="col-md-2">
             <%= order_confirm_user(order) %>
           </td>
-          <td class="col-md-1">
+          <td>
+            <% if order.bill != nil %>
+              <%= order.bill.folio %>
+            <% else %>
+              <span class="label label-warning">
+                Sin factura
+              </span>
+            <% end %>
+          </td>
+          <td class="col-md-2 text-left">
             <%= link_to orders_show_for_store_path(order), class: 'link-extra-space' do %>
               <i class="fa fa-plus-square link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
+            <% end %>
+            <% if order.bill != nil %>
+              <% unless order.bill.pdf_url == nil %>
+                <%= link_to download_pdf_path(order.bill), download: "Factura.pdf" do %>
+                  <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+              <% unless order.bill.xml_url == nil %>
+                <%= link_to download_xml_path(order.bill), download: "Factura.xml" do %>
+                  <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+              <% unless order.bill.cancel_receipt_url == nil %>
+                <%= link_to download_xml_receipt_path(order.bill), download: "Acuse.xml" do %>
+                  <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
             <% end %>
           </td>
         </tr>

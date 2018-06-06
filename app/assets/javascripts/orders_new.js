@@ -15,7 +15,7 @@ $(document).ready(function() {
       lookup: response.suggestions,
       onSelect: function (suggestion) {
         $.ajax({
-          url: '/api/get_info_from_product/' + suggestion.data,
+          url: '/api/get_info_from_product/' + suggestion.data + '/' + $('#corporate_store').val(),
           method: 'get'
         }).done(function(response) {
           $("#unique_code_").val('');

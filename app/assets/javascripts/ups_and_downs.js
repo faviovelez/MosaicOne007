@@ -15,7 +15,7 @@ $(document).ready(function() {
       lookup: response.suggestions,
       onSelect: function (suggestion) {
         $.ajax({
-          url: '../api/get_info_from_product/' + suggestion.data,
+          url: '/api/get_info_from_product/' + suggestion.data + '/' + $('#corporate_store').val(),
           method: 'get'
         }).done(function(response) {
           $("#unique_code_").val('');
@@ -171,8 +171,19 @@ $(document).ready(function() {
     }
   }
 
+  $('input#supplier_total_amount').on('keyup', function(){
+    calculateSubtotal();
+  });
+
   var calculateSubtotal = function(){
-    var total = parseFloat($('input#supplier_total_amount').val().replace(/,/,''));
+    var total = $('input#supplier_total_amount').val().replace(/,/,'');
+
+    if (isNaN(parseFloat(total))) {
+      total = 0;
+    } else {
+      total = parseFloat(total);
+    }
+
     var taxesRate = ((100 +  parseFloat($('input#supplier_taxes_rate').val()) ) / 100);
 
     if (!$('#checkPercent').is(':checked')){

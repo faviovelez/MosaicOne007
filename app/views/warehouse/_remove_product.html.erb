@@ -28,6 +28,12 @@
   </tbody>
   </table>
 
+  <% if current_user.store.id == 1 %>
+    <p class="hidden"><%= text_field_tag :corporate_store, 1 %></p>
+  <% else %>
+    <p class="hidden"><%= text_field_tag :corporate_store, 2 %></p>
+  <% end %>
+
   <div class="actions">
     <%= submit_tag 'Salida de Mercancía', class: 'main-button', id: 'generateEntry', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
   </div><br /><br />

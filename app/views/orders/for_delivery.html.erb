@@ -64,23 +64,6 @@
             <%= link_to orders_show_for_store_path(order), class: 'link-extra-space' do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
             <% end %>
-            <% if order.bill != nil %>
-              <% unless order.bill.pdf_url == nil %>
-                <%= link_to download_pdf_path(order.bill), download: "Factura.pdf" do %>
-                  <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon-table' %>
-                <% end %>
-              <% end %>
-              <% unless order.bill.xml_url == nil %>
-                <%= link_to download_xml_path(order.bill), download: "Factura.xml" do %>
-                  <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
-                <% end %>
-              <% end %>
-              <% unless order.bill.cancel_receipt_url == nil %>
-                <%= link_to download_xml_receipt_path(order.bill), download: "Acuse.xml" do %>
-                  <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
-                <% end %>
-              <% end %>
-            <% end %>
             <% if current_user.role.name == 'admin-desk' %>
               <% if (order.status == 'en espera' || order.status == 'mercancía asignada' && (order.bill == nil)) %>
                 <%= link_to delete_order_path(order), class: 'link-extra-space', data: { confirm: "Desa cancelar el pedido #{order.id}?. Esta acción no se puede deshacer." } do %>

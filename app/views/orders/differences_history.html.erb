@@ -10,7 +10,10 @@
         <th class="col-md-1"> Productos </th>
         <th class="col-md-1"> Piezas </th>
         <th class="col-md-1"> Estatus </th>
-        <th class="col-md-2"> Solicitó </th>
+        <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin')%>
+          <th class="col-md-1"> Preparó </th>
+          <th class="col-md-1"> Entregó </th>
+        <% end %>
         <th class="col-md-1"> Acciones </th>
       </tr>
     </thead>
@@ -57,26 +60,27 @@
               </span>
             <% end %>
           </td>
+          <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin')%>
+            <td> <%= order_warehouse_user(order) %> </td>
+            <td> <%= order_driver(order) %> </td>
+          <% end %>
           <td class="col-md-2">
-            <%= order_request_user(order) %>
-          </td>
-          <td class="col-md-2">
-            <%= link_to orders_show_for_store_path(order), class: 'link-extra-space' do %>
+            <%= link_to orders_show_for_differences_path(order), class: 'link-extra-space' do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
             <% end %>
             <% if order.bill != nil %>
-              <% unless order.bill.pdf_url == nil %>
-                <%= link_to download_pdf_path(order.bill), download: "Factura.pdf" do %>
+              <% unless bill.pdf_url == nil %>
+                <%= link_to download_pdf_path(bill), download: "Factura.pdf" do %>
                   <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon-table' %>
                 <% end %>
               <% end %>
-              <% unless order.bill.xml_url == nil %>
-                <%= link_to download_xml_path(order.bill), download: "Factura.xml" do %>
+              <% unless bill.xml_url == nil %>
+                <%= link_to download_xml_path(bill), download: "Factura.xml" do %>
                   <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
                 <% end %>
               <% end %>
-              <% unless order.bill.cancel_receipt_url == nil %>
-                <%= link_to download_xml_receipt_path(order.bill), download: "Acuse.xml" do %>
+              <% unless bill.cancel_receipt_url == nil %>
+                <%= link_to download_xml_receipt_path(bill), download: "Acuse.xml" do %>
                   <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
                 <% end %>
               <% end %>
@@ -85,6 +89,15 @@
               <% if (order.status == 'en espera' || order.status == 'mercancía asignada' && (order.bill == nil)) %>
                 <%= link_to delete_order_path(order), class: 'link-extra-space', data: { confirm: "Desa cancelar el pedido #{order.id}?. Esta acción no se puede deshacer." } do %>
                   <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Borrar pedido"></i>
+                <% end %>
+              <% end %>
+              <% if order.bill.bill_type == 'global' %>
+                <%= link_to details_global_path(order.bill) do %>
+                  <i class="fa fa-file-pdf-o link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver factura"></i>
+                <% end %>
+              <% else %>
+                <%= link_to details_path(order.bill) do %>
+                  <i class="fa fa-file-pdf-o link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver factura"></i>
                 <% end %>
               <% end %>
             <% end %>

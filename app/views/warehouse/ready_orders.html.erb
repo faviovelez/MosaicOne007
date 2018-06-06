@@ -30,7 +30,7 @@
                 </span>
               </td>
             <% end %>
-          <td> <%= order.boxes %> </td>
+          <td> <%= order.boxes.to_i %> </td>
           <td>
             <% if order.status == 'preparado' %>
               <span class="label label-warning">

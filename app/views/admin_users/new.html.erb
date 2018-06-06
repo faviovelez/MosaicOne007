@@ -25,21 +25,14 @@
     <%= f.email_field :email, class: 'form-inside', autofocus: true %>
   </div>
 
-  <% if current_user.role.name == 'platform-admin' %>
-    <div class="form-inside-style">
-      <%= f.label :rol_de_usuario %>
-      <%= f.select :role_id, options_for_select(Role.all.collect{|r| [r.translation, r.id]}) %>
-    </div>
-  <% elsif current_user.role.name == 'store-admin' %>
-    <div class="form-inside-style">
-      <%= f.label :rol_de_usuario %>
-      <%= f.select :role_id, options_for_select(Role.where(name: 'store').collect{|r| [r.translation, r.id]}) %>
-    </div>
-  <% end %>
+  <div class="form-inside-style">
+    <%= f.label :rol_de_usuario %>
+    <%= f.select :role_id, options_for_select(user_role_options(current_user)) %>
+  </div>
 
   <div class="form-inside-style">
     <%= f.label :tienda %>
-    <%= f.select :store_id, options_for_select(Store.all.collect{|s| [s.store_name, s.id]}) %>
+    <%= f.select :store_id, options_for_select(user_store_options(current_user)) %>
   </div>
 
   <div class="form-inside-style">

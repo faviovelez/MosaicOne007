@@ -7,8 +7,10 @@
         <th> Almacén </th>
         <th> Ubicación </th>
         <th> Estatus </th>
-        <th> Notas </th>
-        <th> Chofer </th>
+        <% unless (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+          <th> Notas </th>
+          <th> Chofer </th>
+        <% end %>
       </tr>
     </thead>
     <tbody>
@@ -84,7 +86,9 @@
                   </span>
               <% end %>
             </td>
-            <td> <%= product_request.alert %> </td>
+            <% unless (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+              <td> <%= product_request.alert %> </td>
+            <% end %>
             <% if (current_user.role.name == 'admin-desk' && @order.delivery_attempt == nil) %>
               <td>
                 Por confirmar
@@ -100,9 +104,11 @@
 
 <br /> <br />
 
-  <p>
-    Este pedido fue preparado por <%= warehouse_name(@order) %>
-  </p>
+  <% unless (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
+    <p>
+      Este pedido fue preparado por <%= warehouse_name(@order) %>
+    </p>
+  <% end %>
 
 <br /> <br />
 <%= content_for :stylesheet do %>

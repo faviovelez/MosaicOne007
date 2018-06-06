@@ -1,10 +1,11 @@
-<table>
+<table class="dataTableFour">
   <thead>
     <tr class="table-titles">
       <th class="col-md-1">Código</th>
       <th class="col-md-2">Nombre</th>
       <th class="col-md-3">Empresa</th>
       <th class="col-md-2">Grupo</th>
+      <th class="col-md-1">Acciones</th>
     </tr>
   </thead>
   <tbody>
@@ -15,18 +16,13 @@
       <td><%=warehouse.business_unit.name %></td>
       <td><%=warehouse.business_group.name %></td>
       <td class="col-md-1">
-        <%= link_to warehouse_path(warehouse) do %>
-          <i class="fa fa-eye link-to-details" aria-hidden="true"></i>
-          <span>Ver</span>
+        <%= link_to warehouse_path(warehouse), class: 'link-extra-space' do %>
+          <i class="fa fa-eye link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver"></i>
+        <% end %>
+        <%= link_to edit_warehouse_path(warehouse), class: 'link-extra-space' do %>
+          <i class="fa fa-pencil-square-o link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Editar"></i>
         <% end %>
       </td>
-
-      <td class="col-md-1">
-        <%= link_to edit_warehouse_path(warehouse) do %>
-          <i class="fa fa-pencil-square-o link-to-details" aria-hidden="true"></i>
-          <span>Editar</span>
-        <% end %>
-      </td>
-
     </tr>
   <% end %>
+  <%= render 'dataTables' %>

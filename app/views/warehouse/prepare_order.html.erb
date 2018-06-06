@@ -6,7 +6,8 @@
       <th> Color </th>
       <th> Paquetes </th>
       <th> Piezas </th>
-      <th> Producto </th>
+      <th> Estatus </th>
+      <th> ¿Armado? </th>
       <th> Almacén </th>
       <th> Ubicación </th>
       <th> Notas </th>
@@ -14,8 +15,9 @@
     </tr>
   </thead>
   <tbody>
-    <% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role_name == 'warehouse-admin') && @order.status != 'preparado') %>
+    <% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role.name == 'warehouse-admin') && @order.status != 'preparado') %>
       <tr>
+        <td class="boxes"></td>
         <td class="boxes"></td>
         <td class="boxes"></td>
         <td class="boxes"></td>
@@ -57,6 +59,7 @@
             </span>
           <% end %>
         </td>
+        <td> <%= product_request.armed ? 'Sí' : 'No' %> </td>
         <td> <%= show_non_blank_field(product_request.product&.warehouse&.name) %> </td>
         <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
           <td class="center-text"> - </td>
@@ -64,7 +67,7 @@
           <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
         <% end %>
         <td>
-          <% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role_name == 'warehouse-admin') && @order.status != 'preparado') %>
+          <% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role.name == 'warehouse-admin') && @order.status != 'preparado') %>
             <a href="#" id="iconLink_<%= product_request.id %>">
               <i class="fa fa-warning red-icon" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Notas"></i>
             </a>
@@ -86,7 +89,7 @@
   </tbody>
 </table>
 <br /> <br />
-<% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role_name == 'warehouse-admin') && @order.status != 'preparado') %>
+<% if (@order.users.count > 1 && (@order.users.include?(current_user) || current_user.role.name == 'warehouse-admin') && @order.status != 'preparado') %>
     <div class="actions">
       <%= submit_tag 'Completar ', class: 'main-button', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
     </div><br /><br />

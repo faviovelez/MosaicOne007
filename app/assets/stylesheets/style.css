@@ -24,6 +24,19 @@ table#payment-average {
   margin-bottom: 100px !important;
 }
 
+.center-field.file-field {
+    display: flex;
+    width: 80%;
+    margin: 0 auto;
+}
+
+select#payment_form {
+  margin-top: 0;
+}
+.more-margin {
+  margin-right: 1rem;
+}
+
 .space-between-links {
   margin-right: 1.5rem;
 }

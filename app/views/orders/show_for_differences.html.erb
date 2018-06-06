@@ -1,0 +1,102 @@
+<%= form_tag({ controller: 'orders', action: 'solve_differences' }, method: 'post') do %>
+  <table class="table">
+    <thead>
+      <tr class="table-titles">
+        <th> Producto </th>
+        <th> Color </th>
+        <th> Estatus </th>
+        <th> Solicitado </th>
+        <th> Diferencia </th>
+        <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
+          <th> Total </th>
+        <% end %>
+        <th> ¿Resuelto? </th>
+        <th> Acciones </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @order.product_requests.each do |product_request| %>
+        <tr>
+          <%# link_to product_details_path(product: product_request.product.id), {:remote => true,  :id => product_request.product.id, 'data-toggle' =>  "modal", 'data-target' => '#productShow'} do %>
+            <td> <%= product_request.product.unique_code %> <%= product_request.product.description %> </td>
+          <%# end %>
+          <td> <%= product_request.product.exterior_color_or_design %> </td>
+          <td>
+            <% if product_request.status == 'asignado' %>
+            <span class="label label-info">
+              <%= product_request.status%>
+            </span>
+            <% elsif product_request.status == 'sin asignar' %>
+              <span class="label label-warning">
+                <%= product_request.status%>
+              </span>
+            <% elsif product_request.status == 'entregado' %>
+              <span class="label label-success">
+                <%= product_request.status%>
+              </span>
+              <% elsif product_request.status == 'cancelada' %>
+                <span class="label label-danger">
+                  <%= product_request.status%>
+                </span>
+            <% end %>
+          </td>
+          <td> <%= number_with_delimiter(product_request.movements.sum(:quantity)) %> </td>
+          <td> <%= number_with_delimiter(product_request.quantity - product_request.movements.sum(:quantity)) %> </td>
+          <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
+            <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+          <% else %>
+            <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+          <% end %>
+          <td>
+            <% if current_user.role.name == 'admin-desk' %>
+              <%= select_tag 'solved[]', options_for_select([['No', false], ['Sí', true]]), class: 'form-control select-margin' %>
+              <%= text_field_tag 'id[]', product_request.id, class: 'hidden' %>
+            <% else %>
+              <% if product_request.solved %>
+                Sí
+              <% elsif !product_request.solved %>
+                No
+              <% else %>
+                N/A
+              <% end %>
+            <% end %>
+           </td>
+          <td class="col-md-1">
+            <% if current_user.role.name == 'admin-desk' %>
+              <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+                <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+        <tr>
+          <td colspan="3"></td>
+          <td colspan="1"> <strong> Total: </strong>  </td>
+          <td colspan="1"> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
+          <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
+            <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
+          <% else %>
+            <td colspan="1" class="hidden"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
+          <% end %>
+          <td colspan="1"></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <br />
+  <% if current_user.role.name == 'admin-desk' %>
+    <div class="actions">
+      <%= submit_tag 'Confirmar', class: 'main-button', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
+    </div><br /><br />
+  <% end %>
+<% end %>
+
+
+<br /> <br /> <br />
+<%= render 'modal_delivery_address' %>
+<%= render partial: 'product_details' %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'confirmDelivery' %>
+<% end %>
