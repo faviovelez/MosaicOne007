@@ -109,7 +109,7 @@
 
   <% elsif current_user.role.name == 'warehouse-admin' %>
     <%= form_for(@order, url: assign_warehouse_admin_path(@order)) do |f| %>
-      <%= f.select :user_ids, options_for_select(User.joins(:role).where('roles.name' => ['warehouse-staff', 'warehouse-admin']).collect{|u| [u.first_name+" "+u.last_name, u.id]})  %>
+      <%= f.select :user_ids, options_for_select(User.joins(:role).where('roles.name' => ['warehouse-staff', 'warehouse-admin']).where(store_id: current_user.store.id).collect{|u| [u.first_name+" "+u.last_name, u.id]})  %>
       <%= f.submit :guardar, name: 'guardar', class: 'main-button-small capitalize' %>
     <% end %>
   <% end %>
