@@ -1,6 +1,6 @@
 <div>
 
-    <% if (current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') %>
+    <% if (current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff' || current_user.role.name == 'admin-desk') %>
       <% if !(params[:controller] == 'warehouse' && params[:action] == 'orders') %>
         <%= link_to warehouse_orders_path, class: 'space-between-links' do  %>
           Pedidos con disponibilidad
@@ -46,7 +46,7 @@
   <% end %>
 
   <% if !(params[:controller] == 'warehouse' && params[:action] == 'pending_orders') %>
-    <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin' && current_user.role.name != 'admin-desk') %>
+    <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin') %>
       <%= link_to warehouse_pending_orders_path, class: 'space-between-links' do  %>
         Pedidos sin disponibilidad
         <i class="fa fa-folder-open-o" aria-hidden="true"></i>
@@ -55,7 +55,7 @@
   <% end %>
 
   <% if !(params[:controller] == 'warehouse' && params[:action] == 'waiting_orders') %>
-    <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin' && current_user.role.name != 'admin-desk') %>
+    <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin') %>
       <%= link_to warehouse_waiting_orders_path, class: 'space-between-links' do  %>
         Pedidos en espera
         <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
