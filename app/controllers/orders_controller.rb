@@ -661,7 +661,6 @@ class OrdersController < ApplicationController
     end
   end
 
-
   private
 
   def create_product_requests
