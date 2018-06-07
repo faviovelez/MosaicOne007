@@ -31,9 +31,15 @@
           <td> <%= order.product_requests.where.not(status: 'cancelada').count %> </td>
           <td> <%= number_with_delimiter(sum_quantity_order(order)) %> </td>
           <td class="col-md-1">
-            <%= link_to warehouse_waiting_products_path(order) do %>
-              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-              <span>Ver</span>
+            <%= link_to warehouse_waiting_products_path(order), class: 'link-extra-space' do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
+            <% end %>
+            <% if current_user.role.name == 'admin-desk' %>
+              <% if (order.status == 'en espera' || order.status == 'mercancía asignada' && (order.bill == nil)) %>
+                <%= link_to delete_order_path(order), class: 'link-extra-space', data: { confirm: "Desa cancelar el pedido #{order.id}?. Esta acción no se puede deshacer." } do %>
+                  <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Borrar pedido"></i>
+                <% end %>
+              <% end %>
             <% end %>
           </td>
         </tr>

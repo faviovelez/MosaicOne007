@@ -328,6 +328,10 @@ class OrdersController < ApplicationController
   def differences_history
     if ['store', 'store-admin'].include?(current_user.role.name)
       @orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved = true').where(store: current_user.store, status: 'entregado')
+      orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved = true').where(prospect: current_user.store.store_prospect, status: 'entregado')
+      orders.each do |order|
+        @orders << order
+      end
     elsif ['admin-desk', 'warehouse-admin', 'warehouse-staff'].include?(current_user.role.name)
       @orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved = true').where(corporate: current_user.store, status: 'entregado')
     else
@@ -520,6 +524,7 @@ class OrdersController < ApplicationController
   def save_products_for_prospects
     @prospect = Prospect.find(params[:prospect_id])
     corporate = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).first
+    @corporate = corporate
     status = []
     prod_req = []
     movs = []
@@ -630,10 +635,23 @@ class OrdersController < ApplicationController
     permited_roles_corp = ['warehouse-staff', 'warehouse-admin', 'admin-desk']
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(store: current_user.store).order(:created_at)
+      my_status = ['entregado', 'cancelado', 'expirado']
+      add_orders(my_status, false)
     elsif (permited_roles_corp.include?(current_user.role.name) && current_user.store.id == 1)
       @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(store: current_user.store, corporate_id: 2).order(:created_at)
     else
       @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(corporate: current_user.store).order(:created_at)
+    end
+  end
+
+  def add_orders(status, type)
+    if type
+      orders = Order.where(prospect: current_user.store.store_prospect, status: status)
+    else
+      orders = Order.where(prospect: current_user.store.store_prospect).where.not(status: status)
+    end
+    orders.each do |order|
+      @orders << order unless (@orders.include?(order))
     end
   end
 
@@ -644,6 +662,8 @@ class OrdersController < ApplicationController
   def delivered_orders
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       @orders = Order.where(status:'entregado', store: current_user.store).order(:created_at)
+      my_status = 'entregado'
+      add_orders(my_status, true)
     else
       @orders = Order.where(status:'entregado', corporate: current_user.store).order(:created_at)
     end
@@ -656,6 +676,8 @@ class OrdersController < ApplicationController
   def cancelled
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       @orders = Order.where(store: current_user.store, status: 'cancelado')
+      my_status = 'cancelado'
+      add_orders(my_status, true)
     else
       @orders = Order.where(status: 'cancelado', corporate: current_user.store)
     end
