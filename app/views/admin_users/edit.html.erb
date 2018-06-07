@@ -46,6 +46,11 @@
     </div>
 
     <div class="field form-inside-style">
+      <%= f.label :contraseña_actual %> <i>(Necesitamos tu password para realizar los cambios)</i>
+      <%= f.password_field :current_password, autocomplete: "off", class: 'form-inside' %>
+    </div>
+
+    <div class="field form-inside-style">
       <%= f.label :nueva_contraseña %> <i>(Déjala en blanco si no quieres cambiarla)</i>
       <% if @minimum_password_length %>
       <em>(Mínimo <%= @minimum_password_length %> caracteres)</em>
@@ -53,15 +58,10 @@
       <%= f.password_field :password, autocomplete: "off", class: 'form-inside' %>
     </div>
 
-    <div class="field form-inside-style">
-      <%= f.label :contraseña_actual %> <i>(Necesitamos tu password para realizar los cambios)</i>
-      <%= f.password_field :current_password, autocomplete: "off", class: 'form-inside' %>
+    <div class="form-inside-style">
+      <%= f.label :confirmación_de_contraseña %>
+      <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-inside' %>
     </div>
-
-  <div class="form-inside-style">
-    <%= f.label :confirmación_de_contraseña %>
-    <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-inside' %>
-  </div>
 
     <div class="button-container">
       <div class="actions">
