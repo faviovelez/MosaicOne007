@@ -6,7 +6,7 @@
         <th> Color </th>
         <th> Estatus </th>
         <th> Cantidad </th>
-        <th> Solicitado </th>
+        <th class="hidden"> Solicitado </th>
         <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
           <th> Total </th>
         <% end %>
@@ -41,7 +41,7 @@
             <% end %>
           </td>
           <td> <%= number_with_delimiter(product_request.quantity) %> </td>
-          <td> <%= number_with_delimiter(product_request.movements.sum(:quantity)) %> </td>
+          <td class="hidden"> <%= number_with_delimiter(product_request.movements.sum(:quantity)) %> </td>
           <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
             <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
           <% else %>
