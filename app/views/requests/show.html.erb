@@ -1,3 +1,7 @@
+<% @payment = @request.documents.where(document_type: 'pago') %>
+<% @authorisation = @request.documents.where(document_type: 'pedido') %>
+<% @specifications = @request.documents.where(document_type: 'especificación') %>
+
 <%= render 'info' %>
 
 <%= render 'documents_for_request' %>
