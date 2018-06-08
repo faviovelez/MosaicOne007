@@ -135,10 +135,10 @@ class InventoriesController < ApplicationController
     products_id = params[:product_list].join(',') if !(params[:product_list].blank?)
     store_id = Store.find(current_user.store.id).id
     if current_user.store.store_type.store_type == 'corporativo'
-      initial_date = Movement.where(store_id: store_id).order(:created_at).limit(1).pluck(:created_at).first.to_date.strftime('%F %H:%M:%S')
+      initial_date = Movement.where(store_id: store_id).order(:created_at).limit(1).pluck(:created_at).first&.to_date&.strftime('%F %H:%M:%S')
       current_user.store.id == 1 ? inventory = "inventories" : inventory = "stores_inventories"
     else
-      initial_date = StoreMovement.where(store_id: store_id).order(:created_at).limit(1).pluck(:created_at).first.to_date.strftime('%F %H:%M:%S')
+      initial_date = StoreMovement.where(store_id: store_id).order(:created_at).limit(1).pluck(:created_at).first&.to_date&.strftime('%F %H:%M:%S')
     end
     params[:date] == nil ? final_date = Date.today.strftime('%F 23:59:59') : final_date = Date.parse(params[:date]).strftime('%F 23:59:59')
 
