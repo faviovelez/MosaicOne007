@@ -54,7 +54,7 @@ class AdminUsersController < ApplicationController
         format.html { redirect_to user_path(@user), notice: 'El usuario fue modificado exitosamente.' }
         format.json { render :show, status: :created, location: @user }
       else
-        format.html { render :new }
+        format.html { render :edit }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end

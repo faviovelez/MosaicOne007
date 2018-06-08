@@ -33,30 +33,18 @@
 
   <div class="field extra-margin-top">
     <%= label_tag :fecha_de_reporte, nil, class: 'date-field-report' %>
-    <% if [1, 2].include?(current_user.store.id) %>
-      <%= date_field_tag(:date, Date.today, options = {max: Date.today, min: Movement.where(store_id: current_user.store.id).order(:created_at).limit(1).pluck(:created_at).first.to_date }) %>
-    <% else %>
-      <%= date_field_tag(:date, Date.today, options = {max: Date.today, min: StoreMovement.where(store_id: current_user.store.id).order(:created_at).limit(1).pluck(:created_at).first.to_date }) %>
-    <% end %>
+    <%= date_field_tag(:date, Date.today, options = {max: Date.today, min: minimum_date }) %>
   </div>
 
   <div class="group_fields hidden">
     <div class="field">
       <%= label_tag :fecha_inicial %>
-      <% if [1, 2].include?(current_user.store.id) %>
-        <%= date_field_tag(:initial_date, Date.today, options = {max: Date.today, min: Movement.where(store_id: current_user.store.id).order(:created_at).limit(1).pluck(:created_at).first.to_date }) %>
-      <% else %>
-        <%= date_field_tag(:initial_date, Date.today, options = {max: Date.today, min: StoreMovement.where(store_id: current_user.store.id).order(:created_at).limit(1).pluck(:created_at).first.to_date }) %>
-      <% end %>
+      <%= date_field_tag(:initial_date, Date.today, options = {max: Date.today, min: minimum_date }) %>
     </div>
 
     <div class="field">
       <%= label_tag :fecha_final %>
-      <% if [1, 2].include?(current_user.store.id) %>
-        <%= date_field_tag(:final_date, Date.today, options = {max: Date.today, min: Movement.where(store_id: current_user.store.id).order(:created_at).limit(1).pluck(:created_at).first.to_date }) %>
-      <% else %>
-        <%= date_field_tag(:final_date, Date.today, options = {max: Date.today, min: StoreMovement.where(store_id: current_user.store.id).order(:created_at).limit(1).pluck(:created_at).first.to_date }) %>
-      <% end %>
+      <%= date_field_tag(:final_date, Date.today, options = {max: Date.today, min: minimum_date }) %>
     </div>
   </div>
 
