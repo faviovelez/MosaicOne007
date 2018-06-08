@@ -17,6 +17,14 @@ module ApplicationHelper
     @balance
   end
 
+  def minimum_date
+    if [1, 2].include?(current_user.store.id)
+      @min_date = Movement.where(store_id: current_user.store.id).order(:created_at).limit(1).pluck(:created_at).first&.to_date || Date.today
+    else
+      @min_date = StoreMovement.where(store_id: current_user.store.id).order(:created_at).limit(1).pluck(:created_at).first&.to_date || Date.today
+    end
+  end
+
   def address_for_delivery(order)
     store = order.store
     @address = store.delivery_address.street + ' ' + store.delivery_address.exterior_number + ' '
