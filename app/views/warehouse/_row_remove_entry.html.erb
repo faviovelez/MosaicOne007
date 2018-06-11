@@ -10,5 +10,5 @@
 <td id="separatedInventory_"> </td>
 <td id="actualInventory_"> </td>
 <td> <%= text_field_tag 'quantity[]', nil, {class: 'form-control quantity center-input'} %> </td>
-<td id="kg_field_" class="hidden"> <%= text_field_tag 'kg[]', nil, {class: 'form-control kg center-input'} %> </td>
+<td id="kg_field_" class="hidden"> <%= select_tag 'kg[]', options_for_select([]), class: 'form-control kg center-input hidden' %> </td>
 <td> <%= text_field_tag 'reason[]', nil, {class: 'form-control reason center-input'} %> </td>

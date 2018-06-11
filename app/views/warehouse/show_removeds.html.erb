@@ -1,12 +1,19 @@
-<table class="table dataTable" id="productsList">
+<table class="tableSix" id="productsList">
   <thead>
     <tr>
-      <th colspan="4" class="table-titles"> Salidas de Mercancía <%= l @movements.first.created_at.to_date, format: :short %> a las <%= Time.now.strftime("%H:%M") %> HRS por el usuario <%=@movements.first.user.first_name%> <%=@movements.first.user.middle_name%> <%=@movements.first.user.last_name%></td>
+      <% if @movements.where.not(kg: nil).count > 0 %>
+        <th colspan="5" class="table-titles" id="warehouseTitle"> Salidas de Mercancía <%= l @movements.first.created_at.to_date, format: :short %> a las <%= Time.now.strftime("%H:%M") %> HRS</td>
+      <% else %>
+        <th colspan="4" class="table-titles" id="warehouseTitle"> Salidas de Mercancía <%= l @movements.first.created_at.to_date, format: :short %> a las <%= @movements.first.created_at.strftime("%H:%M") %> HRS</td>
+      <% end %>
     </tr>
     <tr>
       <th> Producto </th>
       <th> Movimiento </th>
       <th> Cantidad </th>
+      <% if @movements.where.not(kg: nil).count > 0 %>
+        <th> Peso </th>
+      <% end %>
       <th> Usuario </th>
     </tr>
   </thead>
@@ -16,6 +23,13 @@
         <td> <%= movement.product.unique_code %> <%= movement.product.description %> </td>
         <td> <%= movement.movement_type.capitalize %> </td>
         <td> <%= number_with_delimiter(movement.quantity) %></td>
+        <% if @movements.where.not(kg: nil).count > 0 %>
+          <% if movement.kg != nil %>
+            <td> <%= movement.kg %> kg </td>
+          <% else %>
+            <td> N/A </td>
+          <% end %>
+        <% end %>
         <td> <%= movement.user.first_name.capitalize %> <%= movement.user.middle_name.capitalize %> <%= movement.user.last_name.capitalize %> </td>
       </tr>
     <% end %>

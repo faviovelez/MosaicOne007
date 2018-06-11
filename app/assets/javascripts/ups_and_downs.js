@@ -65,10 +65,35 @@ $(document).ready(function() {
                 $(field).html(response.response[0][7]["separated"]);
               } else if ($(field).attr('id') == 'totalInventory_') {
                 $(field).html(response.response[0][8]["total_inventory"]);
+              } else if ($(field).attr('id') == 'quantity_') {
+                $(field).inputmask("integer");
               } else if ($(field).attr('id') == 'kg_field_') {
                 if (isKgProduct) {
                   $(field).removeClass("hidden");
                   $(".weightKg").removeClass("hidden");
+                  if (action == 'remove_inventory' && $("#totalInventory_" + this_id).html() < 1) {
+                    $("#quantity_" + this_id).val(0);
+                  } else {
+                    $("#quantity_" + this_id).val(1);
+                  }
+                  $("#kg_" + this_id).removeClass("hidden");
+                  if (action == 'remove_inventory') {
+                    var allOptionsKg = jQuery.parseJSON($("#kgArray").html());
+                    var optionsKg = allOptionsKg[parseInt(this_id)];
+                    $.each(optionsKg, function(index, value) {
+                      $("#kg_" + this_id).append($('<option>', {
+                        value: value[1],
+                        text: value[0],
+                      }));
+                    });
+                  } else {
+                    $("#kg_" + this_id).inputmask("decimal");
+                  }
+                } else {
+                  $("#kg_" + this_id).append($('<option>', {
+                    value: 0,
+                    text: 'No contar',
+                  }));
                 }
               }
               $(field).attr('id', field.replace("#", "") + this_id);
@@ -78,18 +103,94 @@ $(document).ready(function() {
 
           rowTotal(this_id);
           addEvents(this_id);
-          enableButton();
+          showKgField();
         }); //done function (response) segundo ajax
       } // onselect
     }); // autocomplete
   }); // done function (response)
 
+  function enableButton() {
+    // Falta una validación para las bajas (agregar que valide motivo para dejar agregar)
+    $("#generateEntry").prop("disabled", true);
+    validation = [];
+
+    if ($("[id^=vincularSupplier]").length > 0) {
+      $.each($("[id^=vincularSupplier]"), function(){
+        myId = $(this).attr("id").replace("vincularSupplier", "");
+        validReason = $("#reason_" + my_Id).val().length;
+        if (myId != "") {
+          myQuantity = parseInt($("#quantity_" + myId).val());
+          if ($(this).hasClass("green") && (myQuantity > 0 && !isNaN(myQuantity) ) && validReason > 3 ) {
+            validation.push(1);
+          } else {
+            validation.push(0);
+          }
+        }
+      });
+    } else {
+      $.each($("[id^=quantity_]"), function(){
+        my_Id = $(this).attr("id").replace("quantity_", "");
+        my_Quantity = parseInt($("#quantity_" + my_Id).val());
+        validReason = $("#reason_" + my_Id).val().length;
+        if (my_Id != "") {
+          if (my_Quantity > 0 && !isNaN(my_Quantity) && validReason > 3) {
+            validation.push(1);
+          } else {
+            validation.push(0);
+          }
+        }
+      });
+    }
+    if (validation.length > 0) {
+      result = !!validation.reduce(function(a, b){ return (a === b) ? a : NaN; });
+      if (result == true && validation[0] == 1) {
+        $("#generateEntry").prop("disabled", false);
+      } else  {
+        $("#generateEntry").prop("disabled", true);
+      }
+    }
+  }
+
+  function showKgField() {
+    if (!($(".weightKg").hasClass('hidden'))) {
+      $('[id^=kg_field_]').each(function() {
+        var kgId = parseInt($(this).attr('id').replace("kg_field_", ""));
+        if (kgProducts[kgId] == undefined) {
+          $(this).removeClass("hidden");
+        } else {
+          $(this).removeClass("hidden");
+          $("#kg_" + kgId).removeClass("hidden");
+        }
+      });
+      keyUpQuantity();
+      enableButton();
+    }
+  }
+
+  function keyUpQuantity() {
+    $('[id^=quantity_]').on('keyup', function(){
+      if (!($(".weightKg").hasClass('hidden'))) {
+        var kgId = parseInt($(this).attr('id').replace("quantity_", ""));
+        if (!(kgProducts[kgId] == undefined)) {
+          if (action == 'remove_inventory' && $("#totalInventory_" + this_id).html() < 1) {
+            var limitKg = 0;
+          } else {
+            var limitKg = 1;
+          }
+          var tryValue = parseInt($(this).val());
+          if (tryValue != limitKg){
+            $(this).val(limitKg);
+          }
+          addEvents(kgId);
+        }
+      }
+    });
+  }
 
   function addEvents(idProd){
     $("#close_icon_" + idProd).on("click", function(event) {
       var row = $(this).parent().parent();
       row.remove();
-      enableButton();
     });
 
     if (action == 'remove_inventory') {
@@ -105,11 +206,9 @@ $(document).ready(function() {
 
     $("#quantity_" + idProd).keyup(function(){
       rowTotal(idProd);
-      enableButton();
     });
+    enableButton();
   }
-
-
 
   $('#checkPercent').change(function(){
     calculateSubtotal();
@@ -127,47 +226,6 @@ $(document).ready(function() {
     quantity = parseInt($("#quantity_" + idRow).val());
     if (isNaN(quantity)) {
       quantity = 0;
-    }
-  }
-
-  function enableButton() {
-    // Falta una validación para las bajas (agregar que valide motivo para dejar agregar)
-
-    $("#generateEntry").prop("disabled", true);
-    validation = [];
-
-    if ($("[id^=vincularSupplier]").length > 0) {
-      $.each($("[id^=vincularSupplier]"), function(){
-        myId = $(this).attr("id").replace("vincularSupplier", "");
-        if (myId != "") {
-          myQuantity = parseInt($("#quantity_" + myId).val());
-          if ($(this).hasClass("green") && (myQuantity > 0 || !isNaN(myQuantity) ) ) {
-            validation.push(1);
-          } else {
-            validation.push(0);
-          }
-        }
-      });
-    } else {
-      $.each($("[id^=quantity_]"), function(){
-        my_Id = $(this).attr("id").replace("quantity_", "");
-        my_Quantity = parseInt($("#quantity_" + my_Id).val());
-        if (my_Id != "") {
-          if (my_Quantity > 0 || !isNaN(my_Quantity)) {
-            validation.push(1);
-          } else {
-            validation.push(0);
-          }
-        }
-      });
-    }
-    if (validation.length > 0) {
-      result = !!validation.reduce(function(a, b){ return (a === b) ? a : NaN; });
-      if (result == true && validation[0] == 1) {
-        $("#generateEntry").prop("disabled", false);
-      } else  {
-        $("#generateEntry").prop("disabled", true);
-      }
     }
   }
 
@@ -263,13 +321,16 @@ $(document).ready(function() {
         $('#supplierName').val('');
         $('#supplierModal').modal('hide');
         rowTotal(my_id);
-        enableButton();
       });
 
   });
 
   $('#myModal').on('hide.bs.modal', function (e) {
     $('.toShowOnSelect').addClass("hidden");
+  });
+
+  $("body").on('keyup', 'input[id^=reason_]', function() {
+    enableButton();
   });
 
 

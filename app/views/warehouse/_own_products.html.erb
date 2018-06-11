@@ -17,7 +17,7 @@
       <th> Producto </th>
       <th> Cantidad </th>
       <th class="weightKg hidden"> Peso </th>
-      <th> Motivo / Folio </th>      
+      <th> Motivo / Folio </th>
     </tr>
   </thead>
 
@@ -50,6 +50,8 @@
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'formValidation.min' %>
 <% end %>
+
+<%= render 'add_masks' %>
 
 <%= content_for :javascript do %>
   <%= javascript_include_tag 'jquery.autocomplete.min' %>

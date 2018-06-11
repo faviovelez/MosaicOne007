@@ -92,6 +92,10 @@ select#payment_form {
   color: #fff;
 }
 
+select[id^=kg_] {
+  margin-bottom: 1.4rem;
+}
+
 .red-icon {
   color: #D72638;
   padding-right: 5px;

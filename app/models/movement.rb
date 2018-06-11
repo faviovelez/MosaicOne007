@@ -493,6 +493,7 @@ class Movement < ActiveRecord::Base
         hash_1 = hash.dup
         mov_sales = entry.movement.sales
         mov = entry.movement
+        next if mov.kg.to_f != hash_1["kg"].to_f
         hash_1["entry_movement"] = mov
         if product.group
           hash_1["kg"] = mov.kg
@@ -546,6 +547,8 @@ class Movement < ActiveRecord::Base
               actual_subtotal = (subtotal * q * mov.kg).round(2)
               actual_discount = (discount * q * mov.kg).round(2)
               hash_1["total_cost"] = (cost * q * mov.kg).round(2)
+              hash_1["kg"] = mov.kg
+              hash_1["identifier"] = mov.identifier
             end
             hash_1["subtotal"] = actual_subtotal
             hash_1["discount_applied"] = actual_discount
@@ -571,7 +574,7 @@ class Movement < ActiveRecord::Base
       return @model_collection
     end
 
-    def new_object(product_request, user, type, discount, prospect, corporate)
+    def new_object(product_request, user, type, discount, prospect, corporate, multiple)
       product = product_request.product
       store = Store.find_by_store_name(corporate.store_name)
       prospect = prospect
@@ -581,7 +584,7 @@ class Movement < ActiveRecord::Base
       cost = ('%.2f' % product.cost.to_f).to_f
       hash = Hash.new.tap do |hash|
         hash["product"] = product
-        hash["quantity"] = product_request.quantity
+        multiple.to_i > 0 ? hash["quantity"] = 1 : hash["quantity"] = product_request.quantity
         hash["unique_code"] = product.unique_code
         hash["store"] = store
         hash["order"] = product_request.order
@@ -599,6 +602,11 @@ class Movement < ActiveRecord::Base
         hash["prospect"] = prospect
         hash["product_request"] = product_request
         hash["tax"] = Tax.find(2)
+        if product.group
+          mov = WarehouseEntry.where(product: product, store: hash["store"]).order(:id).first.movement
+          hash["kg"] = mov.kg
+          hash["identifier"] = mov.identifier
+        end
         if (user.role.name == 'store' || user.role.name == 'store-admin')
           hash["buyer_user"] = user
         else

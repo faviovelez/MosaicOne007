@@ -451,4 +451,26 @@ module ApplicationHelper
   end
 # Aquí finaliza la sección para los documentos de Request (pedido - authorisation_doc y cotización - estimate_doc)
 
+def identify_kg_products(order)
+  @has_kg_products = false
+  @kg_options = {}
+  order.movements.joins(:product).where(products: {group: true}).each do |mov|
+    if @kg_options[mov.product.id] == nil
+      @kg_options[mov.product.id] = []
+    end
+    @kg_options[mov.product.id] << ["#{mov.kg} kg"]
+    @has_kg_products = true
+  end
+  order.pending_movements.joins(:product).where(products: {group: true}).each do |mov|
+    if @kg_options[mov.product.id] == nil
+      @kg_options[mov.product.id] = []
+    end
+    mov.quantity.times do
+      @kg_options[mov.product.id] << ["#{mov.product.average} kg (estimado)"]
+      @has_kg_products = true
+    end
+  end
+  @kg_options
+end
+
 end

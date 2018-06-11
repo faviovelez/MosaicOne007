@@ -1,11 +1,15 @@
 <%= form_tag({ controller: 'warehouse', action: 'complete_preparation' }, method: 'post') do %>
 <table class="table dataTableNoPagination">
   <thead>
+    <% identify_kg_products(@order) %>
     <tr class="table-titles">
       <th> Producto </th>
       <th> Color </th>
       <th> Paquetes </th>
       <th> Piezas </th>
+      <% if @has_kg_products %>
+        <th class="col-md-1"> Peso(s) </th>
+      <% end %>
       <th> Estatus </th>
       <th> ¿Armado? </th>
       <th> Almacén </th>
@@ -44,6 +48,11 @@
         <td> <%= show_non_blank_field(product_request.product.exterior_color_or_design) %> </td>
         <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
         <td> <%= number_with_delimiter(product_request.quantity) %> </td>
+        <% if @has_kg_products && product_request.product.group %>
+          <td> <%= select_tag :kg, options_for_select(@kg_options[product_request.product.id]), class: 'form-control' %> </td>
+        <% else %>
+          <td> N/A </td>
+        <% end %>
         <td>
           <% if product_request.status == 'asignado' %>
           <span class="label label-info">
