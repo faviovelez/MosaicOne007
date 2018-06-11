@@ -1,26 +1,45 @@
 <%= form_tag({ controller: 'orders', action: 'confirm_received' }, method: 'post') do %>
-  <table class="table">
+  <table class="table dataTableNoPagination">
     <thead>
+      <% identify_kg_products(@order) %>
       <tr class="table-titles">
         <th> Producto </th>
         <th> Color </th>
+        <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+          <th> Almacén </th>
+        <% end %>
         <th> Estatus </th>
-        <th> Cantidad </th>
-        <th class="hidden"> Solicitado </th>
+        <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+          <th> Ubicación </th>
+        <% end %>
+        <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+          <th> Paquetes </th>
+        <% else %>
+          <th> Cantidad </th>
+        <% end %>
+        <% if @has_kg_products %>
+          <th class="col-md-1"> Peso(s) </th>
+        <% end %>
+        <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+          <th class="hidden"> Solicitado </th>
+        <% end %>
         <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
           <th> Total </th>
         <% end %>
-        <th> Acciones </th>
+          <th> Acciones </th>
       </tr>
     </thead>
     <tbody>
-      <% if @order.status == 'cancelado' %>
+      <% if @order.status == 'cancelado' || @order.status == 'entregado' %>
         <% @order.product_requests.each do |product_request| %>
         <tr>
           <%# link_to product_details_path(product: product_request.product.id), {:remote => true,  :id => product_request.product.id, 'data-toggle' =>  "modal", 'data-target' => '#productShow'} do %>
             <td> <%= product_request.product.unique_code %> <%= product_request.product.description %> </td>
           <%# end %>
           <td> <%= product_request.product.exterior_color_or_design %> </td>
+          <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+            <td> <%= show_non_blank_field(product_request.product&.warehouse&.name) %></td>
+          <% end %>
           <td>
             <% if product_request.status == 'asignado' %>
             <span class="label label-info">
@@ -34,13 +53,29 @@
               <span class="label label-success">
                 <%= product_request.status%>
               </span>
-              <% elsif product_request.status == 'cancelada' %>
-                <span class="label label-danger">
-                  <%= product_request.status%>
-                </span>
+            <% elsif product_request.status == 'cancelada' %>
+              <span class="label label-danger">
+                <%= product_request.status%>
+              </span>
             <% end %>
           </td>
-          <td> <%= number_with_delimiter(product_request.quantity) %> </td>
+          <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+            <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
+              <td class="center-text"> - </td>
+            <% else %>
+              <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
+            <% end %>
+          <% end %>
+          <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+            <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
+          <% else %>
+            <td> <%= number_with_delimiter(product_request.quantity) %> </td>
+          <% end %>
+          <% if @has_kg_products && product_request.product.group %>
+            <td> <%= select_tag :kg, options_for_select(@kg_options[product_request.product.id]), class: 'form-control' %> </td>
+          <% else %>
+            <td> N/A </td>
+          <% end %>
           <td class="hidden"> <%= number_with_delimiter(product_request.movements.sum(:quantity)) %> </td>
           <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
             <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
@@ -48,7 +83,7 @@
             <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
           <% end %>
           <td class="col-md-2">
-            <% if (@order.users.count >= 1 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
+            <% if (@order.users.count > 0 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
               <div class="all-hide hidden">
                 <span class="for-hide" id="for-hide_<%= product_request.id %>">
                   ¿Completo?
@@ -80,7 +115,7 @@
                 </div>
               </div>
             <% else %>
-              <% if current_user.role.name == 'admin-desk' %>
+              <% if current_user.role.name == 'admin-desk' && product_request.status != 'cancelada' %>
                 <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
                   <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
                 <% end %>
@@ -96,11 +131,14 @@
             <td> <%= product_request.product.unique_code %> <%= product_request.product.description %> </td>
           <%# end %>
           <td> <%= product_request.product.exterior_color_or_design %> </td>
+          <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+            <td> <%= show_non_blank_field(product_request.product&.warehouse&.name) %></td>
+          <% end %>
           <td>
             <% if product_request.status == 'asignado' %>
-            <span class="label label-info">
-              <%= product_request.status%>
-            </span>
+              <span class="label label-info">
+                <%= product_request.status%>
+              </span>
             <% elsif product_request.status == 'sin asignar' %>
               <span class="label label-warning">
                 <%= product_request.status%>
@@ -109,13 +147,29 @@
               <span class="label label-success">
                 <%= product_request.status%>
               </span>
-              <% elsif product_request.status == 'cancelada' %>
-                <span class="label label-danger">
-                  <%= product_request.status%>
-                </span>
+            <% elsif product_request.status == 'cancelada' %>
+              <span class="label label-danger">
+                <%= product_request.status%>
+              </span>
             <% end %>
           </td>
-          <td> <%= number_with_delimiter(product_request.quantity) %> </td>
+          <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+            <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
+              <td class="center-text"> - </td>
+            <% else %>
+              <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
+            <% end %>
+          <% end %>
+          <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+            <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
+          <% else %>
+            <td> <%= number_with_delimiter(product_request.quantity) %> </td>
+          <% end %>
+          <% if @has_kg_products && product_request.product.group %>
+            <td> <%= select_tag :kg, options_for_select(@kg_options[product_request.product.id]), class: 'form-control' %> </td>
+          <% else %>
+            <td> N/A </td>
+          <% end %>
           <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
             <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
           <% else %>
@@ -154,7 +208,7 @@
                 </div>
               </div>
             <% else %>
-            <% if current_user.role.name == 'admin-desk' %>
+              <% if current_user.role.name == 'admin-desk' && product_request.status != 'cancelada' %>
                 <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
                   <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
                 <% end %>
@@ -164,10 +218,19 @@
         </tr>
         <% end %>
       <% end %>
+      <% if ['store-admin', 'store'].include?(current_user.role.name) %>
         <tr>
-          <td colspan="2"></td>
+          <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
+            <td colspan="1"></td>
+            <td colspan="1"></td>
+          <% end %>
+          <% if @has_kg_products %>
+            <td colspan="1"> Peso(s) </td>
+          <% end %>
+          <td colspan="1"></td>
           <td colspan="1"> <strong> Total: </strong>  </td>
           <td colspan="1"> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
+          <td colspan="1"></td>
           <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
             <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
           <% else %>
@@ -175,6 +238,7 @@
           <% end %>
           <td colspan="1"></td>
         </tr>
+      <% end %>
     </tbody>
   </table>
 
@@ -190,6 +254,22 @@
     <% end %>
   <% end %>
 
+  <table class="hidden">
+    <tbody>
+      <tr>
+        <td id="date"> <%= l Date.today, format: :short %> </td>
+        <td id="store"> <%= @order.store.store_name.capitalize %> </td>
+        <td id="hour"> <%= Time.now.strftime("%H:%M") %> </td>
+        <td id="user"> <%= warehouse_name(@order) %> </td>
+        <td id="orderNumber"> <%= @order.id %> </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
 <br /> <br /> <br />
 <%= render 'modal_delivery_address' %>
 <%= render partial: 'product_details' %>
@@ -197,3 +277,4 @@
 <%= content_for :javascript do %>
   <%= javascript_include_tag 'confirmDelivery' %>
 <% end %>
+<%= render 'dataTables' %>

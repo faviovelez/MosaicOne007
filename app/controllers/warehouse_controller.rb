@@ -250,11 +250,26 @@ class WarehouseController < ApplicationController
   end
 
   def remove_inventory
+    kg_options
   end
 
   def remove_product
     create_movements('baja')
-    redirect_to warehouse_show_remove_path(@codes), notice: 'Se aplicaron las bajas solicitadas correctamente.'
+    redirect_to warehouse_show_removeds_path(@codes), notice: 'Se aplicaron las bajas solicitadas correctamente.'
+  end
+
+  def kg_options
+    @kgProducts = {}
+    products = Product.where(group: true)
+    products.each do |product|
+      if @kgProducts[product.id] == nil
+        @kgProducts[product.id] = []
+      end
+      WarehouseEntry.where(product: product, store_id: current_user.store.id).order(:id).each do |we|
+        @kgProducts[product.id] << ["#{we.movement.kg} kg" , we.movement.id]
+      end
+    end
+    @kgProducts = @kgProducts.to_json
   end
 
   def show_removeds
@@ -426,7 +441,11 @@ class WarehouseController < ApplicationController
           movement["reason"] = nil
         end
         if params[:kg] != nil
-          movement["kg"] = params[:kg][n].to_f
+          if type == 'baja' && params[:kg][n].to_f != 0
+            movement["kg"] = Movement.find(params[:kg][n]).kg.to_f
+          elsif type == 'alta'
+            movement["kg"] = params[:kg][n].to_f
+          end
         else
           movement["kg"] = nil
         end

@@ -364,7 +364,7 @@ Rails.application.routes.draw do
 
   post 'warehouse/remove_product', to: 'warehouse#remove_product', as: 'warehouse_remove_product'
 
-  get 'warehouse/show_remove/:entry_codes', to: 'warehouse#show_removeds', as: 'warehouse_show_remove'
+  get 'warehouse/show_removeds/:entry_codes', to: 'warehouse#show_removeds', as: 'warehouse_show_removeds'
 
   post 'warehouse/confirm/:entry_codes', to: 'warehouse#confirm', as: 'warehouse_confirm'
 

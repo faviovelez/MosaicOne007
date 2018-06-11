@@ -18,7 +18,7 @@
         <td> <%= show_non_blank_field(inventory.product.description) %> </td>
         <td> <%= show_non_blank_field(inventory.product.exterior_color_or_design) %> </td>
         <td> <%= show_non_blank_field(inventory.product.line) %> </td>
-        <td> <%= packages(inventory) %> </td>
+        <td> <%= number_with_delimiter(packages(inventory)) %> </td>
         <td> <%= inventory.product.pieces_per_package %> </td>
         <td> <%= number_with_delimiter(inventory.quantity) %> </td>
         <td> <%= inventory_alert(inventory) %> </td>
