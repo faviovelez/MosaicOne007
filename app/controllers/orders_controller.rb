@@ -204,8 +204,8 @@ class OrdersController < ApplicationController
           new_mov.delete("id")
           new_mov.delete("created_at")
           new_mov.delete("updated_at")
-          new_mov["cost"] = new_mov["cost"].to_f * new_mov["quantity"]
-          new_mov["total_cost"] = new_mov["cost"].to_f
+          new_mov["cost"] = new_mov["cost"].to_f
+          new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
           new_mov["reason"] = "Pedido #{order.id}"
           new_mov["movement_type"] = 'alta automática'
           new_mov["store_id"] = current_user.store.id
@@ -234,7 +234,7 @@ class OrdersController < ApplicationController
             new_mov["web"] = true
             new_mov["pos"] = false
             new_mov["cost"] = new_mov["final_price"]
-            new_mov["total_cost"] = new_mov["cost"] * new_mov["cost"].quantity.to_i
+            new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
             StoreMovement.create(new_mov)
           end
         end
@@ -257,8 +257,8 @@ class OrdersController < ApplicationController
           new_mov.delete("id")
           new_mov.delete("created_at")
           new_mov.delete("updated_at")
-          new_mov["cost"] = new_mov["cost"].to_f * new_mov["quantity"]
-          new_mov["total_cost"] = new_mov["cost"].to_f
+          new_mov["cost"] = new_mov["cost"].to_f
+          new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
           new_mov["reason"] = "Pedido #{order.id}"
           new_mov["movement_type"] = 'alta automática'
           new_mov["store_id"] = current_user.store.id
@@ -288,7 +288,7 @@ class OrdersController < ApplicationController
             new_mov["web"] = true
             new_mov["pos"] = false
             new_mov["cost"] = new_mov["final_price"]
-            new_mov["total_cost"] = new_mov["cost"] * new_mov["cost"].quantity.to_i
+            new_mov["total_cost"] = new_mov["cost"] * new_mov["quantity"].to_i
             StoreMovement.create(new_mov)
           end
         end
@@ -352,13 +352,17 @@ class OrdersController < ApplicationController
     discount_applied = order.discount_applied
     order.movements.each do |mov|
       if mov.product == product
-        number = WarehouseEntry.where(product: product).order(:id).last.entry_number.to_i
+        number = WarehouseEntry.where(product: product, store: order.store).order(:id).last.entry_number.to_i
         entry_mov = mov.entry_movement
-        entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number.next)
-        inventory = Inventory.find_by_product_id(product.id)
-        inventory_quantity = inventory.quantity
-        new_quantity = inventory_quantity + mov.quantity
-        inventory.update(quantity: new_quantity)
+        if order.status != 'entregado'
+          entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: order.store, movement: entry_mov, entry_number: number.next)
+          if order.corporate_id == 1
+            inventory = Inventory.find_by_product_id(product.id)
+          else
+            inventory = StoresInventory.where(product: product, store: order.store).first
+          end
+          inventory.update(quantity: inventory.quantity + mov.quantity)
+        end
         total -= mov.total
         subtotal -= mov.subtotal
         taxes -= mov.taxes
@@ -403,13 +407,17 @@ class OrdersController < ApplicationController
     order.movements.each do |mov|
       # Falta el proceso que los quita de los reportes
       if mov.product == product
-        number = WarehouseEntry.where(product: product).order(:id).last.entry_number.to_i
+        number = WarehouseEntry.where(product: product, store: order.store).order(:id).last.entry_number.to_i
         entry_mov = mov.entry_movement
-        entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, movement: entry_mov, entry_number: number.next)
-        inventory = Inventory.find_by_product_id(product.id)
-        inventory_quantity = inventory.quantity
-        new_quantity = inventory_quantity + mov.quantity
-        inventory.update(quantity: new_quantity)
+        if order.status != 'entregado'
+          entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: order.store, movement: entry_mov, entry_number: number.next)
+          if order.corporate_id == 1
+            inventory = Inventory.find_by_product_id(product.id)
+          else
+            inventory = StoresInventory.where(product: product, store: order.store).first
+          end
+          inventory.update(quantity: inventory.quantity + mov.quantity)
+        end
         total -= mov.total
         subtotal -= mov.subtotal
         taxes -= mov.taxes
@@ -696,6 +704,7 @@ class OrdersController < ApplicationController
       product = Product.find(params[:products][n])
       product_request = ProductRequest.create(
         product: product,
+        status: 'asignado',
         quantity: params[:request][n],
         corporate: @corporate,
         armed: converted_armed,
@@ -740,14 +749,32 @@ class OrdersController < ApplicationController
       q = product_request.quantity
       mov = create_movement(PendingMovement, n, product_request)
     else
-      Movement.new_object(
-        product_request,
-        current_user,
-        'venta',
-        discount,
-        @prospect,
-        @corporate
-        )
+      q = product_request.quantity
+      if product.group && q > 1
+        multiple = q
+        q.times do
+          Movement.new_object(
+            product_request,
+            current_user,
+            'venta',
+            discount,
+            @prospect,
+            @corporate,
+            multiple
+            )
+        end
+        # Revisar que hacer cuando haya un request de más de 1 rollo y este separarlo por cada uno y ver los pendings
+      else
+        Movement.new_object(
+          product_request,
+          current_user,
+          'venta',
+          discount,
+          @prospect,
+          @corporate,
+          multiple
+          )
+      end
     end
   end
 

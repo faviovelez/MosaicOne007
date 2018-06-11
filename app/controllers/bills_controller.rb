@@ -2319,10 +2319,10 @@ XML
             new_hash["sat_unit_description"] = mov.product.sat_unit_key.description
             new_hash["description"] = mov.product.description.capitalize
             new_hash["unique_code"] = mov.product.unique_code
-            new_hash["total"] = mov.total.round(2)
-            new_hash["subtotal"] = mov.subtotal.round(2)
-            new_hash["taxes"] = mov.taxes.round(2)
-            new_hash["discount"] += mov.discount_applied.round(2) unless mov.discount_applied == nil
+            new_hash["total"] = (mov.total * mov.quantity).round(2)
+            new_hash["subtotal"] = (mov.subtotal * mov.quantity).round(2)
+            new_hash["taxes"] = (mov.taxes * mov.quantity).round(2)
+            new_hash["discount"] += (mov.discount_applied * mov.quantity).round(2) unless mov.discount_applied == nil
             @rows << new_hash
           end
         end

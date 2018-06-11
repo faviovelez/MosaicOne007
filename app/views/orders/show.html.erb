@@ -5,13 +5,17 @@
       <th> Color</th>
       <th> Estatus </th>
       <th> Cantidad</th>
+      <% get_orders %>
+      <% identify_kg_products(@product_requests.first.order) %>
+      <% if @has_kg_products %>
+        <th class="col-md-1"> Peso(s) </th>
+      <% end %>
       <% if (['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) || ['store-admin', 'store'].include?(current_user.role.name)) %>
         <th> Total </th>
       <% end %>
     </tr>
   </thead>
   <tbody>
-    <% get_orders %>
     <% @product_requests.each do |pr| %>
       <tr id="trForProduct<%= pr.product_id %>">
         <td> <%= pr.product.unique_code %> <%= pr.product.description %></td>
@@ -36,6 +40,11 @@
           <% end %>
         </td>
         <td> <%= number_with_delimiter(pr.quantity) %> </td>
+        <% if @has_kg_products && pr.product.group %>
+          <td> <%= select_tag :kg, options_for_select(@kg_options[pr.product.id]), class: 'form-control' %> </td>
+        <% else %>
+          <td> N/A </td>
+        <% end %>
         <% if (['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) || ['store-admin', 'store'].include?(current_user.role.name)) %>
           <td> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
         <% else %>
@@ -48,6 +57,7 @@
         <td></td>
         <td> <strong> Total: </strong> </td>
         <td> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
+        <td></td>
         <% if (['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) || ['store-admin', 'store'].include?(current_user.role.name)) %>
           <td> <strong> <%= number_to_currency(get_total) %> </strong> </td>
         <% else %>

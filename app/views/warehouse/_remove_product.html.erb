@@ -49,6 +49,9 @@
 </table>
 
 <div class="hidden" id="action"><%= params[:action] %></div>
+<p class="hidden" id="kgArray"><%= @kgProducts %></p>
+
+<%= render 'add_masks' %>
 
 <%= content_for :javascript do %>
   <%= javascript_include_tag 'jquery.autocomplete.min' %>
