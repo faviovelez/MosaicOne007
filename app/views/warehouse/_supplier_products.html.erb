@@ -49,10 +49,3 @@
 <div class="hidden" id="action"><%= params[:action] %></div>
 
 <%= render 'add_masks' %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'jquery.autocomplete.min' %>
-  <%= javascript_include_tag 'jquery.mask.min' %>
-  <%= javascript_include_tag 'jquery.maskMoney.min' %>
-  <%= javascript_include_tag 'ups_and_downs' %>
-<% end %>
