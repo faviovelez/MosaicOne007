@@ -53,13 +53,7 @@
   <p class="individual-font">No hay prospectos dados de alta </p>
 <% end %>
 
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'datatables.min' %>
-<% end %>
-
+<%= render 'data_tables_another' %>
 <%= content_for :javascript do %>
-  <%= javascript_include_tag 'pdfmake.min' %>
-  <%= javascript_include_tag 'vfs_fonts.js' %>
-  <%= javascript_include_tag 'datatables.min.js' %>
   <%= javascript_include_tag 'prospects_tables' %>
 <% end %>
