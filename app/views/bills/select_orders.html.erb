@@ -1,14 +1,3 @@
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'datatables.min' %>
-<% end %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'pdfmake.min' %>
-  <%= javascript_include_tag 'vfs_fonts.js' %>
-  <%= javascript_include_tag 'datatables.min.js' %>
-  <%= javascript_include_tag 'order_bills' %>
-<% end %>
-
 <%= link_to download_pdf_path, download: "Factura.pdf" do %>
   <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon' %>
 <% end %>
@@ -59,4 +48,9 @@
 
 <% else %>
   <p class="individual-font">No hay pedidos pendientes por facturar </p>
+<% end %>
+
+<%= render 'data_tables_another' %>
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'order_bills' %>
 <% end %>

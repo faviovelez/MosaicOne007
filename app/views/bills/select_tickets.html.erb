@@ -1,14 +1,3 @@
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'datatables.min' %>
-<% end %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'pdfmake.min' %>
-  <%= javascript_include_tag 'vfs_fonts.js' %>
-  <%= javascript_include_tag 'datatables.min.js' %>
-  <%= javascript_include_tag 'tickets' %>
-<% end %>
-
 <% if @tickets.count >= 1 %>
   <%= form_tag({ controller: 'bills', action: 'select_info' }, method: 'post') do %>
     <table id="tickets">
@@ -61,4 +50,9 @@
 
 <% else %>
   <p class="individual-font">No hay tickets pendientes por facturar </p>
+<% end %>
+
+<%= render 'data_tables_another' %>
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'tickets' %>
 <% end %>

@@ -23,7 +23,7 @@
                 <%= prospect.name %>
               <% end %>
             <% else %>
-              <%= prospect.name %>            
+              <%= prospect.name %>
             <% end %>
           </td>
           <td> <%= number_with_delimiter(transform_q(prospect.quantity)) %> </td>
@@ -54,13 +54,7 @@
   </tbody>
 </table>
 
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'datatables.min' %>
-<% end %>
-
+<%= render 'data_tables_another' %>
 <%= content_for :javascript do %>
-  <%= javascript_include_tag 'pdfmake.min' %>
-  <%= javascript_include_tag 'vfs_fonts.js' %>
-  <%= javascript_include_tag 'datatables.min.js' %>
   <%= javascript_include_tag 'movements-day' %>
 <% end %>

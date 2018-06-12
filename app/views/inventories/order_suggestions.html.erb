@@ -1,13 +1,3 @@
-<%= content_for :stylesheet do %>
-  <%= stylesheet_link_tag 'datatables.min' %>
-<% end %>
-
-<%= content_for :javascript do %>
-  <%= javascript_include_tag 'pdfmake.min' %>
-  <%= javascript_include_tag 'vfs_fonts.js' %>
-  <%= javascript_include_tag 'datatables.min.js' %>
-  <%= javascript_include_tag 'data_tables' %>
-<% end %>
 
 <table id="inventory">
   <thead>
@@ -36,3 +26,8 @@
     <% end %>
   </tbody>
 </table>
+
+<%= render 'data_tables_another' %>
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'data_tables' %>
+<% end %>
