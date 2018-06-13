@@ -1,13 +1,20 @@
 <table id="delivery-services" class="table-display-details">
   <thead>
     <tr>
-      <th colspan="12" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <% if current_user.role.name == 'viewer' %>
+        <th colspan="13" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <% else %>
+        <th colspan="12" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <% end %>
     </tr>
     <tr>
       <th> Ticket </th>
       <th> Fecha </th>
       <th> Movimiento </th>
       <th> Tipo de guía </th>
+      <% if current_user.role.name == 'viewer' %>
+        <th> No. de guía </th>
+      <% end %>
       <th class="quantity-width"> Cantidad </th>
       <th> Subtotal </th>
       <th> Descuento </th>
@@ -25,6 +32,9 @@
         <td> <%= l service_offered.created_at.to_date %> </td>
         <td> <%= service_offered.service_type %> </td>
         <td> <%= service_offered.service.unique_code %> <%= service_offered.service.description %> </td>
+        <% if current_user.role.name == 'viewer' %>
+          <td> <%= service_offered.delivery_service.tracking_number %> </td>
+        <% end %>
         <td> <%= number_with_delimiter(service_offered.quantity) %> </td>
         <td> <%= number_to_currency(service_offered.subtotal) %> </td>
         <td> <%= number_to_currency(service_offered.discount_applied) %> </td>
@@ -51,6 +61,9 @@
       <td> </td>
       <td> </td>
       <td> </td>
+      <% if current_user.role.name == 'viewer' %>
+        <td> </td>
+      <% end %>
       <td> <strong> Total </strong> </td>
       <td> <strong> <%= number_with_delimiter(@day_quantity) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_subtotal) %> </strong> </td>

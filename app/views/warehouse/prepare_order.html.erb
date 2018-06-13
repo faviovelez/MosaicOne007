@@ -48,10 +48,12 @@
         <td> <%= show_non_blank_field(product_request.product.exterior_color_or_design) %> </td>
         <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
         <td> <%= number_with_delimiter(product_request.quantity) %> </td>
-        <% if @has_kg_products && product_request.product.group %>
-          <td> <%= select_tag :kg, options_for_select(@kg_options[product_request.product.id]), class: 'form-control' %> </td>
-        <% else %>
-          <td> N/A </td>
+        <% if @has_kg_products %>
+          <% if @has_kg_products && product_request.product.group %>
+            <td> <%= select_tag :kg, options_for_select(@kg_options[product_request.product.id]), class: 'form-control' %> </td>
+          <% else %>
+            <td> N/A </td>
+          <% end %>
         <% end %>
         <td>
           <% if product_request.status == 'asignado' %>

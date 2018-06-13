@@ -22,7 +22,7 @@
 
     <div class="form-container">
 
-      <% unless params[:action] == 'edit' %>
+      <% if (params[:action] == 'new' || params[:action] == 'edit' && (current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff'))  %>
         <div class="form-inside-style">
           <%= f.label :código_único %>
           <%= f.text_field :unique_code, value: @service.unique_code, class: 'form-inside' %>

@@ -6,7 +6,9 @@
       <th> Color </th>
       <th> Línea </th>
       <th> Inventario </th>
-      <th> Costo </th>
+      <% if !(current_user.store.store_type.store_type == 'tienda propia') %>
+        <th> Costo </th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -17,7 +19,9 @@
       <td> <%= show_non_blank_field(inventory.exterior_color_or_design) %> </td>
       <td> <%= show_non_blank_field(inventory.line) %> </td>
       <td> <%= number_with_delimiter(inventory.quantity) %> </td>
-      <td> <%= number_to_currency(inventory.total_cost) %> </td>
+      <% if !(current_user.store.store_type.store_type == 'tienda propia') %>
+        <td> <%= number_to_currency(inventory.total_cost) %> </td>
+      <% end %>
     </tr>
     <% end %>
     <tr>
@@ -30,11 +34,13 @@
           <%= number_with_delimiter(@total_quantity) %>
         </strong>
       </td>
-      <td>
-        <strong>
-          <%= number_to_currency(@total_cost) %>
-        </strong>
-      </td>
+      <% if !(current_user.store.store_type.store_type == 'tienda propia') %>
+        <td>
+          <strong>
+            <%= number_to_currency(@total_cost) %>
+          </strong>
+        </td>
+      <% end %>
     </tr>
   </tbody>
 </table>

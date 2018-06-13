@@ -18,7 +18,6 @@
       <th> Cantidad </th>
       <th> Motivo / Folio </th>
       <th class="weightKg hidden"> Peso </th>
-      <th> Proveedor </th>
     </tr>
   </thead>
 
@@ -32,7 +31,25 @@
     <p class="hidden"><%= text_field_tag :corporate_store, 2 %></p>
   <% end %>
 
+  <table class="hidden">
+  <tbody>
+      <tr>
+        <td> <%= text_field_tag :supplier, nil, {class: 'form-control folio supplier hidden'} %> </td>
+        <td> <%= text_field_tag :folio, nil, {class: 'form-control folio hidden'} %> </td>
+        <td> <%= date_field_tag :date_of_bill, nil, {class: 'form-control date_of_bill hidden'} %> </td>
+        <td> <%= text_field_tag :total_amount, nil, {class: 'form-control total_amount hidden'} %> </td>
+        <td> <%= text_field_tag :taxes_rate, nil, {class: 'form-control taxes_rate hidden'} %> </td>
+        <td> <%= text_field_tag :subtotal, nil, {class: 'form-control subtotal hidden'} %> </td>
+        <td> <%= text_field_tag :discount, nil, {class: 'form-control discount hidden'} %> </td>
+        <td> <%= text_field_tag :subtotal_with_discount, nil, {class: 'form-control subtotal_with_discount hidden'} %> </td>
+      </tr>
+  </tbody>
+  </table>
+
   <div class="actions">
+    <br />
+    <a href="#" data-toggle="modal" data-id="" data-target="#supplierModal" id='vincularSupplier' class='btn btn-primary'>Proveedor</a><br /><br />
+
     <%= submit_tag 'Entrada de Mercancía', class: 'main-button', id: 'generateEntry', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
   </div><br /><br />
 
@@ -48,4 +65,15 @@
 
 <div class="hidden" id="action"><%= params[:action] %></div>
 
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'formValidation.min' %>
+<% end %>
+
 <%= render 'add_masks' %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'jquery.autocomplete.min' %>
+  <%= javascript_include_tag 'jquery.mask.min' %>
+  <%= javascript_include_tag 'jquery.maskMoney.min' %>
+  <%= javascript_include_tag 'ups_and_downs' %>
+<% end %>

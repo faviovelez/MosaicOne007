@@ -6,6 +6,28 @@ Rails.application.routes.draw do
 
   get 'movements/edit'
 
+  get 'bill_receiveds/new'
+
+  get 'bill_receiveds/get_document/:id', to: 'bill_receiveds#get_document', as: 'get_document'
+
+  get 'bill_receiveds/edit/:id', to: 'bill_receiveds#edit', as: 'bill_receiveds_edit'
+
+  get 'bill_receiveds/show/:id', to: 'bill_receiveds#show', as: 'bill_receiveds_show'
+
+  get 'bill_receiveds/index'
+
+  get 'bill_receiveds/history'
+
+  post 'bill_receiveds/create'
+
+  post 'bill_receiveds/attach_payment'
+
+  post 'bill_receiveds/update'
+
+  put 'bill_receiveds/update'
+
+  patch 'bill_receiveds/update'
+
   get 'prospects/sales_view/:id', to: 'prospects#sales_view', as: 'prospects_sales_view'
 
   get 'delivery_services/select_report'
@@ -75,6 +97,8 @@ Rails.application.routes.draw do
   get 'tickets/product_sales'
 
   get 'bills/pending'
+
+  get 'bills/get_document/:id', to: 'bills#get_document', as: 'get_document_bill'
 
   get 'bills/download_pdf/:id', to: 'bills#download_pdf', as: 'download_pdf'
 
@@ -201,6 +225,10 @@ Rails.application.routes.draw do
   get 'tikets/process_incomming_data'
 
   get 'products/show_product_csv'
+
+  get 'orders/edit_discount/:id', to: 'orders#edit_discount/:id', as: 'edit_discount'
+
+  post 'orders/update_discount'
 
   post 'orders/confirm_received'
 
