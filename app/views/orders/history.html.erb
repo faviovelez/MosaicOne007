@@ -76,18 +76,25 @@
             <% end %>
             <% if order.bill != nil %>
               <% unless order.bill.pdf_url == nil %>
-                <%= link_to download_pdf_path(order.bill), download: "Factura.pdf" do %>
+                <%= link_to download_pdf_path(order.bill), download: "Factura.pdf", class: 'link-extra-space' do %>
                   <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon-table' %>
                 <% end %>
               <% end %>
               <% unless order.bill.xml_url == nil %>
-                <%= link_to download_xml_path(order.bill), download: "Factura.xml" do %>
+                <%= link_to download_xml_path(order.bill), download: "Factura.xml", class: 'link-extra-space' do %>
                   <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
                 <% end %>
               <% end %>
               <% unless order.bill.cancel_receipt_url == nil %>
-                <%= link_to download_xml_receipt_path(order.bill), download: "Acuse.xml" do %>
+                <%= link_to download_xml_receipt_path(order.bill), download: "Acuse.xml", class: 'link-extra-space' do %>
                   <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+              <% if order.bill.documents != [] %>
+                <% order.bill.documents.each do |document| %>
+                  <%= link_to get_document_path(document), download: "#{document.document_identifier}", class: 'link-extra-space' do %>
+                    <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                  <% end %>
                 <% end %>
               <% end %>
             <% end %>

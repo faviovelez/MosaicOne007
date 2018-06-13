@@ -1,8 +1,10 @@
 class BillReceived < ActiveRecord::Base
   # Tabla que registra las facturas recibidas
   belongs_to :supplier
-  belongs_to :product
+  has_many :products_bills_receiveds
+  has_many :products, through: :products_bills_receiveds
   has_many :payments
+  has_many :documents
 
   before_create :set_taxes
 

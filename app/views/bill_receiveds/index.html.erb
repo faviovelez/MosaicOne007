@@ -1,0 +1,117 @@
+<%= form_tag({ controller: 'bill_receiveds', action: 'attach_payment'}, multipart: true) do %>
+  <% if @bills.count >= 1 %>
+    <table id="bills">
+      <thead>
+        <tr class="table-titles">
+          <th> Folio </th>
+          <th class="col-md-1"> Fecha </th>
+          <th class="col-md-2"> Proveedor </th>
+          <th class="col-md-1"> Subtotal </th>
+          <th class="col-md-1"> Descuento </th>
+          <th class="col-md-1"> IVA </th>
+          <th class="col-md-1"> Total </th>
+          <th> Vencimiento </th>
+          <th class="col-md-1"> Saldo / Pagos </th>
+          <th> Estatus </th>
+          <th> Acciones </th>
+          <th> Pago </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @bills.each do |bill| %>
+          <tr>
+            <td> <%= number_with_delimiter(bill.folio) %> </td>
+            <td> <%= l bill.created_at.to_date, format: :short %> </td>
+            <td> <%= show_non_blank_field(bill.supplier.name) %> </td>
+            <td> <%= number_to_currency(bill.subtotal_with_discount) %> </td>
+            <td> <%= number_to_currency(bill.discount) %> </td>
+            <td> <%= number_to_currency(bill.taxes) %> </td>
+            <td id="balance_<%=bill.id%>"> <%= number_to_currency(bill.total_amount) %> </td>
+            <td> <%= l due_date(bill), format: :short %> </td>
+            <td> <%= number_to_currency(bill.payments.sum(:total)) %> </td>
+            <% if Date.today > due_date(bill) %>
+              <td>
+                <span class="label label-warning">
+                  Vencida
+                </span>
+              </td>
+            <% else %>
+              <td>
+                <span class="label label-success">
+                  Al corriente
+                </span>
+              </td>
+            <% end %>
+            <td>
+              <%= link_to bill_receiveds_edit_path(bill) do %>
+                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar factura"></i>
+              <% end %>
+            </td>
+            <td class="col-md-1">
+              <%= text_field_tag 'payments[]', nil, {id: "payments_#{bill.id}", class: 'form-control center-text'} %>
+              <%= text_field_tag 'id[]', bill.id, {class: 'form-control center-text hidden'} %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <div class="form-inside-style center-field file-field">
+      <div class="ind-form form-inside-style">
+        <%= label_tag :comprobante %>
+        <%= file_field_tag :image %><br>
+      </div>
+
+      <div class="ind-form form-inside-style">
+        <%= label_tag :fecha_de_pago %>
+        <%= date_field_tag :date, nil, {class: 'form-control center-text', max: Date.today} %>
+      </div>
+
+      <div class="ind-form form-inside-style">
+        <%= label_tag :total_comprobante %>
+        <%= text_field_tag :total_payment, nil, {class: 'form-control center-text', readonly: true} %><br>
+      </div>
+
+      <div class="ind-form form-inside-style">
+        <%= label_tag :forma_de_pago %>
+        <%= select_tag :payment_form, options_for_select(payment_forms), {class: 'form-control center-text'} %>
+      </div>
+    </div>
+
+    <div class="actions">
+      <%= submit_tag 'Confirmar pago(s)', class: 'main-button' %>
+    </div><br />
+
+  <% else %>
+    <p class="individual-font"> No hay facturas pendientes de pago </p>
+  <% end %>
+<% end %>
+
+<br/>
+<div>
+  <%= link_to bill_receiveds_new_path, class: 'space-between-links' do %>
+    Nueva factura
+    <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+  <% end %>
+
+  <% unless params[:action] == 'history' %>
+    <%= link_to bill_receiveds_history_path, class: 'space-between-links' do  %>
+      Facturas pagadas
+      <i class="fa fa-folder-open" aria-hidden="true"></i>
+    <% end %>
+  <% end %>
+
+  <% unless params[:action] == 'index' %>
+    <%= link_to bill_receiveds_index_path, class: 'space-between-links' do  %>
+      Facturas por pagar
+      <i class="fa fa-wpforms" aria-hidden="true"></i>
+    <% end %>
+  <% end %>
+</div>
+<br/>
+
+<%= render 'data_tables_another' %>
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'bills_data_tables' %>
+  <%= javascript_include_tag 'limitQuantity' %>
+<% end %>

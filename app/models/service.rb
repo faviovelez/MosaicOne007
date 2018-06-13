@@ -8,6 +8,8 @@ class Service < ActiveRecord::Base
   has_many :service_sales
   has_many :tickets, through: :services_tickets
 
+  validates :unique_code, uniqueness: { message: "El código de servicio no se puede repetir, ya existe un servicio con con este código." }
+
   after_create :save_web_id
 
   after_save :create_update_change_table

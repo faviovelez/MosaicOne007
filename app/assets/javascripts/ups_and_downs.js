@@ -39,14 +39,7 @@ $(document).ready(function() {
               "#close_icon_",
               "#description_",
               "#quantity_",
-              "#vincularSupplier",
               "#id_",
-              "#folio_",
-              "#date_of_bill_",
-              "#total_amount_",
-              "#taxes_rate_",
-              "#subtotal_",
-              "#supplier_",
               "#actualInventory_",
               "#separatedInventory_",
               "#totalInventory_",
@@ -98,7 +91,6 @@ $(document).ready(function() {
               }
               $(field).attr('id', field.replace("#", "") + this_id);
             });
-            $("#vincularSupplier" + this_id).attr("data-id", this_id);
           } // product_count
 
           rowTotal(this_id);
@@ -114,13 +106,13 @@ $(document).ready(function() {
     $("#generateEntry").prop("disabled", true);
     validation = [];
 
-    if ($("[id^=vincularSupplier]").length > 0) {
-      $.each($("[id^=vincularSupplier]"), function(){
-        myId = $(this).attr("id").replace("vincularSupplier", "");
-        validReason = $("#reason_" + my_Id).val().length;
+    if ($("#vincularSupplier").length > 0) {
+      $.each($("[id^=quantity_]"), function(){
+        myId = $(this).attr("id").replace("quantity_", "");
+        validReason = $("#reason_" + myId).val().length;
         if (myId != "") {
           myQuantity = parseInt($("#quantity_" + myId).val());
-          if ($(this).hasClass("green") && (myQuantity > 0 && !isNaN(myQuantity) ) && validReason > 3 ) {
+          if ($("#vincularSupplier").hasClass("green") && (myQuantity > 0 && !isNaN(myQuantity) ) && validReason > 3 ) {
             validation.push(1);
           } else {
             validation.push(0);
@@ -233,6 +225,10 @@ $(document).ready(function() {
     calculateSubtotal();
   });
 
+  $('input#supplier_discount').on('keyup', function(){
+    calculateSubtotal();
+  });
+
   var calculateSubtotal = function(){
     var total = $('input#supplier_total_amount').val().replace(/,/,'');
 
@@ -250,7 +246,21 @@ $(document).ready(function() {
     } else {
       $('#supplier_subtotal').val((total / taxesRate).toFixed(2));
     }
+
     $('#supplier_subtotal').maskMoney();
+
+    suppDiscount = parseFloat($('#supplier_discount').val());
+
+    if (isNaN(parseFloat(suppDiscount))) {
+      suppDiscount = 0;
+    } else {
+      suppDiscount = parseFloat(suppDiscount);
+    }
+
+    $('#supplier_subtotal_with_discount').val(
+      (suppDiscount + parseFloat($('#supplier_subtotal').val())).toFixed(2)
+    );
+
   };
 
   $('#supplierModal').on('show.bs.modal', function (e) {
@@ -289,40 +299,38 @@ $(document).ready(function() {
       $("#supplier_total_amount").val(
         0.0
       );
+  });
 
-      // Aquí uso .one click por el ajax que duplica o triplica las cosas
-      $('#addSupplierToForm').one('click', function() {
-        $(e.relatedTarget).addClass("green");
+  $('#addSupplierToForm').on('click', function() {
+    $("#vincularSupplier").addClass("green");
 
-        $('#folio_' + my_id).val(
-          $('#supplier_folio').val()
-        );
-        $('#date_of_bill_' + my_id).val(
-          $('#supplier_date_of_bill').val()
-        );
-        $('#subtotal_' + my_id).val(
-          $('#supplier_subtotal').val()
-        );
-        $('#taxes_rate_' + my_id).val(
-          $('#supplier_taxes_rate').val()
-        );
-        $('#total_amount_' + my_id).val(
-          $('#supplier_total_amount').val()
-        );
-        $('#supplier_' + my_id).val(
-          $('#supplierId').val()
-        );
-        $('#supplier_folio').val('');
-        $('#supplier_date_of_bill').val('');
-        $('#supplier_subtotal').val('');
-        $('#supplier_taxes_rate').val('');
-        $('#supplier_total_amount').val('');
-        $('#supplierId').val('');
-        $('#supplierName').val('');
-        $('#supplierModal').modal('hide');
-        rowTotal(my_id);
-      });
-
+    $('#folio').val(
+      $('#supplier_folio').val()
+    );
+    $('#date_of_bill').val(
+      $('#supplier_date_of_bill').val()
+    );
+    $('#subtotal').val(
+      $('#supplier_subtotal_with_discount').val()
+    );
+    $('#discount').val(
+      $('#supplier_discount').val()
+    );
+    $('#subtotal_with_discount').val(
+      $('#supplier_subtotal').val()
+    );
+    $('#taxes_rate').val(
+      $('#supplier_taxes_rate').val()
+    );
+    $('#total_amount').val(
+      $('#supplier_total_amount').val()
+    );
+    $('#supplier').val(
+      $('#supplierId').val()
+    );
+    $('#supplierModal').modal('hide');
+    rowTotal(my_id);
+    enableButton();
   });
 
   $('#myModal').on('hide.bs.modal', function (e) {

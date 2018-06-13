@@ -52,3 +52,11 @@
 <% end %>
 
 <%= render 'add_masks' %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'jquery.autocomplete.min' %>
+  <%= javascript_include_tag 'jquery.mask.min' %>
+  <%= javascript_include_tag 'jquery.maskMoney.min' %>
+  <%= javascript_include_tag 'form_validation_pack.min' %>
+  <%= javascript_include_tag 'ups_and_downs' %>
+<% end %>

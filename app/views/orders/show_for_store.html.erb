@@ -14,8 +14,9 @@
         <% end %>
         <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
           <th> Paquetes </th>
-        <% else %>
           <th> Cantidad </th>
+        <% else %>
+          <th> Paquetes </th>
         <% end %>
         <% if @has_kg_products %>
           <th class="col-md-1"> Peso(s) </th>
@@ -23,7 +24,7 @@
         <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
           <th class="hidden"> Solicitado </th>
         <% end %>
-        <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
+        <% if ['store-admin', 'admin-desk'].include?(current_user.role.name) %>
           <th> Total </th>
         <% end %>
           <th> Acciones </th>
@@ -68,16 +69,19 @@
           <% end %>
           <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
             <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
-          <% else %>
             <td> <%= number_with_delimiter(product_request.quantity) %> </td>
-          <% end %>
-          <% if @has_kg_products && product_request.product.group %>
-            <td> <%= select_tag :kg, options_for_select(@kg_options[product_request.product.id]), class: 'form-control' %> </td>
           <% else %>
-            <td> N/A </td>
+            <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
+          <% end %>
+          <% if @has_kg_products %>
+            <% if @has_kg_products && product_request.product.group %>
+              <td> <%= select_tag :kg, options_for_select(@kg_options[product_request.product.id]), class: 'form-control' %> </td>
+            <% else %>
+              <td> N/A </td>
+            <% end %>
           <% end %>
           <td class="hidden"> <%= number_with_delimiter(product_request.movements.sum(:quantity)) %> </td>
-          <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
+          <% if ['store-admin', 'admin-desk'].include?(current_user.role.name) %>
             <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
           <% else %>
             <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
@@ -162,13 +166,16 @@
           <% end %>
           <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
             <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
-          <% else %>
             <td> <%= number_with_delimiter(product_request.quantity) %> </td>
-          <% end %>
-          <% if @has_kg_products && product_request.product.group %>
-            <td> <%= select_tag :kg, options_for_select(@kg_options[product_request.product.id]), class: 'form-control' %> </td>
           <% else %>
-            <td> N/A </td>
+            <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
+          <% end %>
+          <% if @has_kg_products %>
+            <% if @has_kg_products && product_request.product.group %>
+              <td> <%= select_tag :kg, options_for_select(@kg_options[product_request.product.id]), class: 'form-control' %> </td>
+            <% else %>
+              <td> N/A </td>
+            <% end %>
           <% end %>
           <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
             <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
@@ -229,14 +236,17 @@
           <% end %>
           <td colspan="1"></td>
           <td colspan="1"> <strong> Total: </strong>  </td>
-          <td colspan="1"> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
           <td colspan="1"></td>
+          <td colspan="1"> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
           <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
             <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
           <% else %>
             <td colspan="1" class="hidden"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
           <% end %>
           <td colspan="1"></td>
+          <% if (['store-admin', 'store'].include?(current_user.role.name)) %>
+            <td colspan="1"></td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>

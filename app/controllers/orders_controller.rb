@@ -18,6 +18,13 @@ class OrdersController < ApplicationController
     end
   end
 
+  def edit_discount
+    @order = Order.find(params[:id])
+  end
+
+  def update_discount
+  end
+
   def new_order_for_prospects(role = current_user.role.name)
     @prospect = Prospect.find(params[:prospect_id])
     @order = Order.new(store: current_user.store,

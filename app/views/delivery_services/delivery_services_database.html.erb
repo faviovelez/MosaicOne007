@@ -33,7 +33,11 @@
         <td> <%= delivery_service.tracking_number %> </td>
         <td> <%= delivery_service.sender_zipcode %> </td>
         <td> <%= delivery_service.receivers_zipcode %> </td>
-        <td> <%= delivery_service.weight %> </td>
+        <% if delivery_service.weight.blank? %>
+          <td> - </td>
+        <% else %>
+          <td> <%= delivery_service.weight %> kg </td>
+        <% end %>
         <% if (delivery_service.length.blank? && delivery_service.width.blank? && delivery_service.height.blank?) %>
           <td> - </td>
         <% else %>

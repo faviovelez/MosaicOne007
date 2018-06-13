@@ -41,9 +41,19 @@
           </div>
 
           <div class="form-group">
+            <%= label_tag :descuento %>
+            <%= text_field_tag :supplier_discount, nil, {class: 'form-control center-text'} %>
+          </div>
+
+          <div class="form-group">
+            <%= label_tag :subtotal %>
+            <%= text_field_tag :supplier_subtotal_with_discount, nil, {class: 'form-control center-text', disabled: true} %>
+          </div>
+
+          <div class="form-group">
             <%= label_tag 'IVA', nil, class: 'uppercase' %>
             <%= text_field_tag :supplier_taxes_rate, nil, {class: 'form-control center-text'} %>
-
+            
             <label>
               <%= check_box_tag :checkPercent, nil, checked: true %>
               %
@@ -51,7 +61,7 @@
           </div>
 
           <div class="form-group">
-            <%= label_tag :subtotal %>
+            <%= label_tag :subtotal_con_descuento%>
             <%= text_field_tag :supplier_subtotal, nil, {class: 'form-control center-text', disabled: true} %>
           </div>
 

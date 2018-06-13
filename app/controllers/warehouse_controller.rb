@@ -390,27 +390,33 @@ class WarehouseController < ApplicationController
   end
 
   def attach_bill_received
+    unless params[:supplier] == nil
+      if (params[:supplier] == nil || params[:supplier] == "")
+        supplier = product.supplier
+      else
+        supplier = Supplier.find(params[:supplier])
+      end
+    end
     counter = params[:id].count
     n = 0
+    br = BillReceived.create(
+      folio: params[:folio],
+      date_of_bill: Date.parse(params[:date_of_bill]),
+      store_id: current_user.store.id,
+      subtotal: params[:subtotal].to_f,
+      discount: params[:discount].to_f,
+      payment_complete: false,
+      business_unit_id: current_user.store.business_unit.id,
+      subtotal_with_discount: params[:subtotal_with_discount].to_f,
+      taxes: params[:total_amount].to_f - params[:subtotal].to_f,
+      taxes_rate: params[:taxes_rate].to_f,
+      total_amount: params[:total_amount].to_f,
+      credit_days: supplier.credit_days.to_i,
+      supplier: supplier
+    )
     counter.times do
       product = Product.find(params[:id][n])
-      unless params[:supplier] == nil
-        if (params[:supplier][n] == nil || params[:supplier][n] == "")
-          supplier = product.supplier
-        else
-          supplier = Supplier.find(params[:supplier][n])
-        end
-      end
-      product = Product.find(params[:id][n])
-      BillReceived.create(
-        folio: params[:folio][n],
-        date_of_bill: params[:date_of_bill][n],
-        subtotal: params[:subtotal][n],
-        taxes_rate: params[:taxes_rate][n],
-        total_amount: params[:total_amount][n],
-        supplier: supplier,
-        product: product
-      )
+      br.products << product
       n += 1
     end
   end
@@ -458,10 +464,10 @@ class WarehouseController < ApplicationController
         movement["store"] = current_user.store
         movement["business_unit"] = current_user.store.business_unit
         unless params[:supplier] == nil
-          if (params[:supplier][n] == nil || params[:supplier][n] == "")
+          if (params[:supplier] == nil || params[:supplier] == "")
             movement["supplier"] = product.supplier
           else
-            movement["supplier"] = Supplier.find(params[:supplier][n])
+            movement["supplier"] = Supplier.find(params[:supplier])
           end
         end
         movement["cost"] = product.cost.to_f

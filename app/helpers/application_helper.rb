@@ -17,6 +17,15 @@ module ApplicationHelper
     @balance
   end
 
+  def due_date(bill)
+    @due_date = bill.created_at.to_date + bill.supplier.credit_days.to_i.days
+  end
+
+  def payment_on_time(bill)
+    due_date(bill)
+    bill.payment_day <= @due_date ? @pay_status = content_tag(:span, 'a tiempo', class: 'label label-success') : @pay_status = content_tag(:span, 'con atraso', class: 'label label-warning')
+  end
+
   def minimum_date
     if [1, 2].include?(current_user.store.id)
       @min_date = Movement.where(store_id: current_user.store.id).order(:created_at).limit(1).pluck(:created_at).first&.to_date || Date.today
