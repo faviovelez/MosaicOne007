@@ -4,7 +4,6 @@ class Product < ActiveRecord::Base
   has_many :movements, dependent: :destroy
   has_many :pending_movements, dependent: :destroy
   has_one :inventory, dependent: :destroy
-  has_many :bill_receiveds, dependent: :destroy
   has_many :products_bills, dependent: :destroy
   has_many :bills, through: :products_bills, dependent: :destroy
   has_many :product_requests, dependent: :destroy
@@ -21,6 +20,8 @@ class Product < ActiveRecord::Base
   has_many :stores, through: :stores_inventories
   has_many :stores_inventories
   has_many :stores, through: :stores_warehouse_entries
+  has_many :products_bills_receiveds
+  has_many :bill_receiveds, through: :products_bills_receiveds
   has_many :movements, through: :stores_warehouse_entries
   has_many :stores_warehouse_entries
   has_many :store_use_inventories

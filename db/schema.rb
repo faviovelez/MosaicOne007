@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180602011637) do
+ActiveRecord::Schema.define(version: 20180613181650) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,18 +47,20 @@ ActiveRecord::Schema.define(version: 20180602011637) do
     t.float    "taxes"
     t.float    "total_amount"
     t.integer  "supplier_id"
-    t.integer  "product_id"
     t.date     "payment_day"
     t.boolean  "payment_complete"
     t.boolean  "payment_on_time"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
     t.integer  "business_unit_id"
     t.integer  "store_id"
+    t.float    "discount"
+    t.float    "subtotal_with_discount"
+    t.integer  "credit_days",            default: 0
+    t.string   "status",                 default: "activa"
   end
 
   add_index "bill_receiveds", ["business_unit_id"], name: "index_bill_receiveds_on_business_unit_id", using: :btree
-  add_index "bill_receiveds", ["product_id"], name: "index_bill_receiveds_on_product_id", using: :btree
   add_index "bill_receiveds", ["store_id"], name: "index_bill_receiveds_on_store_id", using: :btree
   add_index "bill_receiveds", ["supplier_id"], name: "index_bill_receiveds_on_supplier_id", using: :btree
 
@@ -538,9 +540,11 @@ ActiveRecord::Schema.define(version: 20180602011637) do
     t.integer  "design_request_id"
     t.string   "document"
     t.integer  "bill_id"
+    t.integer  "bill_received_id"
   end
 
   add_index "documents", ["bill_id"], name: "index_documents_on_bill_id", using: :btree
+  add_index "documents", ["bill_received_id"], name: "index_documents_on_bill_received_id", using: :btree
   add_index "documents", ["design_request_id"], name: "index_documents_on_design_request_id", using: :btree
   add_index "documents", ["request_id"], name: "index_documents_on_request_id", using: :btree
 
@@ -1127,6 +1131,16 @@ ActiveRecord::Schema.define(version: 20180602011637) do
   add_index "products", ["supplier_id"], name: "index_products_on_supplier_id", using: :btree
   add_index "products", ["warehouse_id"], name: "index_products_on_warehouse_id", using: :btree
 
+  create_table "products_bills_receiveds", force: :cascade do |t|
+    t.integer  "bill_received_id"
+    t.integer  "product_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "products_bills_receiveds", ["bill_received_id"], name: "index_products_bills_receiveds_on_bill_received_id", using: :btree
+  add_index "products_bills_receiveds", ["product_id"], name: "index_products_bills_receiveds_on_product_id", using: :btree
+
   create_table "prospect_sales", force: :cascade do |t|
     t.integer  "prospect_id"
     t.float    "cost"
@@ -1678,8 +1692,8 @@ ActiveRecord::Schema.define(version: 20180602011637) do
   create_table "suppliers", force: :cascade do |t|
     t.string   "name"
     t.string   "business_type"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
     t.string   "type_of_person"
     t.string   "contact_first_name"
     t.string   "contact_middle_name"
@@ -1695,6 +1709,7 @@ ActiveRecord::Schema.define(version: 20180602011637) do
     t.integer  "store_id"
     t.string   "last_purchase_folio"
     t.integer  "business_group_id"
+    t.integer  "credit_days",             default: 0
   end
 
   add_index "suppliers", ["business_group_id"], name: "index_suppliers_on_business_group_id", using: :btree
@@ -1927,7 +1942,6 @@ ActiveRecord::Schema.define(version: 20180602011637) do
   add_foreign_key "bank_balances", "business_units"
   add_foreign_key "bank_balances", "stores"
   add_foreign_key "bill_receiveds", "business_units"
-  add_foreign_key "bill_receiveds", "products"
   add_foreign_key "bill_receiveds", "stores"
   add_foreign_key "bill_receiveds", "suppliers"
   add_foreign_key "bill_sales", "business_units"
@@ -1983,6 +1997,7 @@ ActiveRecord::Schema.define(version: 20180602011637) do
   add_foreign_key "discount_rules", "business_units"
   add_foreign_key "discount_rules", "stores"
   add_foreign_key "discount_rules", "users"
+  add_foreign_key "documents", "bill_receiveds"
   add_foreign_key "documents", "bills"
   add_foreign_key "documents", "design_requests"
   add_foreign_key "documents", "requests"
@@ -2072,6 +2087,8 @@ ActiveRecord::Schema.define(version: 20180602011637) do
   add_foreign_key "products", "stores"
   add_foreign_key "products", "suppliers"
   add_foreign_key "products", "warehouses"
+  add_foreign_key "products_bills_receiveds", "bill_receiveds"
+  add_foreign_key "products_bills_receiveds", "products"
   add_foreign_key "prospect_sales", "business_units"
   add_foreign_key "prospect_sales", "prospects"
   add_foreign_key "prospect_sales", "stores"

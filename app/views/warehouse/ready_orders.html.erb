@@ -9,6 +9,9 @@
         <th>Estatus</th>
         <th>Chofer</th>
         <th>Entregar en</th>
+        <% if current_user.role.name == 'admin-desk' %>
+          <th> Factura </th>
+        <% end %>
         <th>Acciones</th>
       </tr>
     </thead>
@@ -52,10 +55,21 @@
           </td>
           <td> <%= driver_name(order) %> </td>
           <td> <%= address_for_delivery(order) %> </td>
+          <% if current_user.role.name == 'admin-desk' %>
+            <% if (order.bill != nil && order.bill.status != 'cancelada') %>
+              <td> <%= order.bill.folio %> </td>
+            <% else %>
+              <td> Pendiente </td>
+            <% end %>
+          <% end %>
           <td class="col-md-1">
-            <%= link_to warehouse_prepare_order_path(order) do %>
-              <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-              <span>Ver</span>
+            <%= link_to warehouse_prepare_order_path(order), class: 'link-extra-space' do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
+            <% end %>
+            <% if (current_user.role.name == 'admin-desk' && (order.bill == nil || order.bill.status == 'cancelada')) %>
+              <%= link_to edit_discount_path(order), class: 'link-extra-space' do %>
+                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar descuento"></i>
+              <% end %>
             <% end %>
           </td>
         </tr>

@@ -1,0 +1,88 @@
+  <% if @bills.count >= 1 %>
+    <table id="bills">
+      <thead>
+        <tr class="table-titles">
+          <th> Folio </th>
+          <th> Fecha </th>
+          <th class="col-md-2"> Proveedor </th>
+          <th class="col-md-1"> Subtotal </th>
+          <th class="col-md-1"> Descuento </th>
+          <th class="col-md-1"> IVA </th>
+          <th class="col-md-1"> Total </th>
+          <th class="col-md-1"> Saldo / Pagos </th>
+          <th> Estatus </th>
+          <th> Pago </th>
+          <th> Comprobante </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @bills.each do |bill| %>
+          <tr>
+            <td> <%= number_with_delimiter(bill.folio) %> </td>
+            <td> <%= l bill.created_at.to_date, format: :short %> </td>
+            <td> <%= show_non_blank_field(bill.supplier.name) %> </td>
+            <td> <%= number_to_currency(bill.subtotal_with_discount) %> </td>
+            <td> <%= number_to_currency(bill.discount) %> </td>
+            <td> <%= number_to_currency(bill.taxes) %> </td>
+            <td> <%= number_to_currency(bill.total_amount) %> </td>
+            <td id="balance_<%=bill.id%>"> <%= number_to_currency(bill.payments.sum(:total)) %> </td>
+            <% if bill.status == 'activa' %>
+              <td>
+                <span class="label label-success">
+                  activa
+                </span>
+              </td>
+            <% else %>
+              <td>
+                <span class="label label-danger">
+                  cancelada
+                </span>
+              </td>
+            <% end %>
+            <td>
+              <%= payment_on_time(bill) %>
+            </td>
+            <td>
+              <% bill.documents.each do |document| %>
+                <%= link_to get_document_path(document), download: "#{document.document_identifier}" do %>
+                  <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+  <% else %>
+    <p class="individual-font"> No hay facturas pagadas </p>
+  <% end %>
+
+  <br/>
+  <div>
+    <%= link_to bill_receiveds_new_path, class: 'space-between-links' do %>
+      Nueva factura
+      <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+    <% end %>
+
+    <% unless params[:action] == 'history' %>
+      <%= link_to bill_receiveds_history_path, class: 'space-between-links' do  %>
+        Facturas pagadas
+        <i class="fa fa-folder-open" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+
+    <% unless params[:action] == 'index' %>
+      <%= link_to bill_receiveds_index_path, class: 'space-between-links' do  %>
+        Facturas por pagar
+        <i class="fa fa-wpforms" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  </div>
+  <br/>
+
+<%= render 'data_tables_another' %>
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'bills_data_tables' %>
+  <%= javascript_include_tag 'limitQuantity' %>
+<% end %>

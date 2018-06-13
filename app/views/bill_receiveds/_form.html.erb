@@ -1,0 +1,111 @@
+
+<% if params[:action] == 'new' %>
+  <h2> Seleccione los datos de la factura que desea crear </h2><br /><br />
+<% else %>
+  <h2> Seleccione los datos de la factura que desea crear </h2><br /><br />
+<% end %>
+
+<%= form_tag({ controller: 'bill_receiveds', action: params[:action] == 'new' ? 'create' : 'update' }, method: 'post') do %>
+  <div class="form-inside-style">
+    <%= text_field_tag :suppliersAutocomplete, nil, {class: 'select-product form-control', placeholder: 'Por favor seleccione un proveedor'} %><br /><br />
+  </div>
+
+  <div class="form-container">
+
+    <input type="hidden" id="productId" />
+
+    <div class="form-inside-style hidden">
+      <%= label_tag :proveedor, nil, class: 'bigger-label' %>
+      <%= text_field_tag :supplierId, @bill.supplier_id, {class: 'center-text'} %>
+    </div>
+
+    <% if params[:action] == 'edit' %>
+      <div class="form-inside-style toShowOnSelect">
+    <% else %>
+      <div class="form-inside-style hidden toShowOnSelect">
+    <% end %>
+      <%= label_tag :proveedor, nil, class: 'bigger-label' %>
+      <%= text_field_tag :supplierName, @bill&.supplier&.name, {class: 'form-inside center-text', readonly: true} %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= label_tag :folio, nil, class: 'bigger-label' %>
+      <%= text_field_tag :supplier_folio, @bill.folio, {class: 'form-inside center-text'} %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= label_tag :fecha, nil, class: 'bigger-label' %>
+      <%= date_field_tag :supplier_date_of_bill, @bill.date_of_bill, {max: Date.today, class: 'form-inside center-text'} %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= label_tag :total, nil, class: 'bigger-label' %>
+      <%= text_field_tag :supplier_total_amount, @bill.total_amount, {class: 'form-inside center-text'} %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= label_tag :descuento, nil, class: 'bigger-label' %>
+      <%= text_field_tag :supplier_discount, @bill.discount, {class: 'form-inside center-text'} %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= label_tag :subtotal, nil, class: 'bigger-label' %>
+      <%= text_field_tag :supplier_subtotal_with_discount, @bill.subtotal_with_discount, {class: 'form-inside center-text', readonly: true} %>
+    </div>
+
+      <div class="form-inside-style">
+        <%= label_tag 'IVA', nil, class: 'uppercase bigger-label' %>
+        <%= text_field_tag :supplier_taxes_rate, @bill.taxes_rate, {class: 'form-inside center-text'} %>
+
+      <label>
+        <%= check_box_tag :checkPercent, nil, checked: true %>
+        %
+      </label>
+    </div>
+
+    <div class="form-inside-style">
+      <%= label_tag :subtotal_con_descuento, nil, class: 'bigger-label' %>
+      <%= text_field_tag :supplier_subtotal, @bill.subtotal, {class: 'form-inside center-text', readonly: true} %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= label_tag :días_de_crédito, nil, class: 'bigger-label' %>
+      <%= text_field_tag :credit_days, @bill.credit_days, {class: 'form-inside center-text'} %>
+    </div>
+
+    <% if params[:action] == 'edit' %>
+      <div class="form-inside-style">
+    <% else %>
+      <div class="form-inside-style hidden">
+    <% end %>
+      <%= label_tag :estatus, nil, class: 'bigger-label' %>
+      <%= select_tag :status, options_for_select([['activa'], ['cancelada']], selected: @bill.status) %>
+    </div>
+
+    <% if params[:action] == 'edit' %>
+      <p class="hidden"> <%= text_field_tag :id, @bill.id %> </p>
+    <% end %>
+
+    <div class="button-container">
+      <div class="actions"><br /><br />
+        <%= submit_tag :confirmar, class: 'main-button', id: 'addSupplierToForm' %>
+      </div>
+    </div>
+
+  </div>
+<% end %>
+
+<div class="hidden" id="action"><%= params[:action] %></div>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'formValidation.min' %>
+<% end %>
+
+<%= render 'add_masks' %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'jquery.autocomplete.min' %>
+  <%= javascript_include_tag 'jquery.mask.min' %>
+  <%= javascript_include_tag 'jquery.maskMoney.min' %>
+  <%= javascript_include_tag 'ups_and_downs_for_supp' %>
+<% end %>

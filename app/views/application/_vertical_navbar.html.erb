@@ -325,6 +325,15 @@
           <%= link_to 'Costos de producción', warehouse_index_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'bill_receiveds' && params[:action] == 'index') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-file-code-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Facturas por pagar', bill_receiveds_index_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para product-staff o product-admin %>
 

@@ -19,7 +19,7 @@
       <th> Producto </th>
       <th> Movimiento </th>
       <th> Cantidad </th>
-      <% if @movements.where.not(kg: nil).count > 0 %>
+      <% if @movements.where(kg: nil).count > 0 %>
         <th> Peso </th>
       <% end %>
       <th> Usuario </th>
@@ -33,7 +33,7 @@
         <td> <%= movement.product.unique_code %> <%= movement.product.description %> </td>
         <td> <%= movement.movement_type.capitalize %> </td>
         <td> <%= number_with_delimiter(movement.quantity) %> </td>
-        <% if @movements.where.not(kg: nil).count > 0 %>
+        <% if @movements.where(kg: nil).count > 0 %>
           <% if movement.kg != nil %>
             <td> <%= movement.kg %> kg </td>
           <% else %>

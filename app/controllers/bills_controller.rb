@@ -18,6 +18,11 @@ class BillsController < ApplicationController
     end
   end
 
+  def get_document
+    document = Document.find(params[:id])
+    redirect_to document.document_url
+  end
+
   def confirm_payments
     params[:id].each_with_index do |val, i|
       bill = Bill.find(val)
