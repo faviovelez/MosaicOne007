@@ -20,22 +20,24 @@ $(document).ready(function(){
 
   $('[id^="redAddOn_"]').click(function (event) {
     event.preventDefault();
-    var redWrapperId = $(this).attr("id").replace("redWrapper_","");
-    $("#redWrapper_" + redIconId).addClass("hidden");
-    $("#redLink_" + redIconId).removeClass("hidden")
-    $("#greenLink_" + redIconId).removeClass("hidden");
-    $("#for-hide_" + redIconId).removeClass("alter-hidden");
-    $("#for-hide_" + redIconId).addClass("alter-show");
+    debugger
+    var redWrapperId = $(this).attr("id").replace("redAddOn_","");
+    $("#redWrapper_" + redWrapperId).addClass("hidden");
+    $("#redLink_" + redWrapperId).removeClass("hidden")
+    $("#greenLink_" + redWrapperId).removeClass("hidden");
+    $("#for-hide_" + redWrapperId).removeClass("alter-hidden");
+    $("#for-hide_" + redWrapperId).addClass("alter-show");
   });
 
   $('[id^="greenAddOn_"]').click(function (event) {
     event.preventDefault();
-    var greenWrapperId = $(this).attr("id").replace("greenWrapper_","");
-    $("#greenWrapper_" + greenIconId).addClass("hidden");
-    $("#greenLink_" + greenIconId).removeClass("hidden");
-    $("#redLink_" + greenIconId).removeClass("hidden");
-    $("#for-hide_" + greenIconId).removeClass("alter-hidden");
-    $("#for-hide_" + greenIconId).addClass("alter-show");
+    debugger
+    var greenWrapperId = $(this).attr("id").replace("greenAddOn_","");
+    $("#greenWrapper_" + greenWrapperId).addClass("hidden");
+    $("#greenLink_" + greenWrapperId).removeClass("hidden");
+    $("#redLink_" + greenWrapperId).removeClass("hidden");
+    $("#for-hide_" + greenWrapperId).removeClass("alter-hidden");
+    $("#for-hide_" + greenWrapperId).addClass("alter-show");
   });
 
   $('.for-hide-checkbox').bind('change', function() {
