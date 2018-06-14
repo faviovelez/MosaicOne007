@@ -6,12 +6,19 @@
       <th> Estatus </th>
       <th> Cantidad</th>
       <% get_orders %>
-      <% identify_kg_products(@product_requests.first.order) %>
+      <% if @orders.count > 1 %>
+        <% identify_kg_products_multiple(@orders) %>
+      <% else %>
+        <% identify_kg_products(@orders.first) %>
+      <% end %>
       <% if @has_kg_products %>
         <th class="col-md-1"> Peso(s) </th>
       <% end %>
-      <% if (['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) || ['store-admin', 'store'].include?(current_user.role.name)) %>
+      <% if (!['warehouse-admin', 'warehouse-staff', 'store'].include?(current_user.role.name)) %>
+        <th> Descuento </th>
         <th> Total </th>
+      <% else %>
+        <th class="hidden"> Total </th>
       <% end %>
     </tr>
   </thead>
@@ -40,12 +47,15 @@
           <% end %>
         </td>
         <td> <%= number_with_delimiter(pr.quantity) %> </td>
-        <% if @has_kg_products && pr.product.group %>
-          <td> <%= select_tag :kg, options_for_select(@kg_options[pr.product.id]), class: 'form-control' %> </td>
-        <% else %>
-          <td> N/A </td>
+        <% if @has_kg_products %>
+          <% if @has_kg_products && pr.product.group %>
+            <td> <%= select_tag :kg, options_for_select(@kg_options[pr.product.id]), class: 'form-control' %> </td>
+          <% else %>
+            <td> N/A </td>
+          <% end %>
         <% end %>
-        <% if (['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) || ['store-admin', 'store'].include?(current_user.role.name)) %>
+        <% if (!['warehouse-admin', 'warehouse-staff', 'store'].include?(current_user.role.name)) %>
+          <td> <%= number_to_percentage(get_discount(pr), precision: 1) %> </td>
           <td> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
         <% else %>
           <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
@@ -56,14 +66,22 @@
         <td></td>
         <td></td>
         <td> <strong> Total: </strong> </td>
-        <td> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
-        <td></td>
-        <% if (['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) || ['store-admin', 'store'].include?(current_user.role.name)) %>
+        <% if @orders.count > 1 %>
+          <td> <strong> <%= number_with_delimiter(sum_quantity_multiple_orders(@orders)) %> </strong> </td>
+        <% else %>
+          <td> <strong> <%= number_with_delimiter(sum_quantity_order(@orders.first)) %> </strong> </td>
+        <% end %>
+        <% if (!['warehouse-admin', 'warehouse-staff', 'store'].include?(current_user.role.name)) %>
+          <% if @orders.count > 1 %>
+            <td> <strong> <%= number_to_percentage(order_discount_multiple(@orders), precision: 1) %> </strong> </td>
+          <% else %>
+            <td> <strong> <%= number_to_percentage(order_discount(@orders.first), precision: 1) %> </strong> </td>
+          <% end %>
           <td> <strong> <%= number_to_currency(get_total) %> </strong> </td>
         <% else %>
+          <td class="hidden"> <strong> <%= number_to_percentage(order_discount(order), precision: 1) %> </strong> </td>
           <td class="hidden"> <strong> <%= number_to_currency(get_total) %> </strong> </td>
         <% end %>
-        <td></td>
       </tr>
   </tbody>
 </table>

@@ -74,6 +74,16 @@
             <%= link_to orders_show_for_store_path(order), class: 'link-extra-space' do %>
               <i class="fa fa-plus-square link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
             <% end %>
+            <% if current_user.role.name == 'admin-desk' %>
+              <% if (current_user.role.name == 'admin-desk' && (order.bill == nil || order.bill.status == 'cancelada')) %>
+                <%= link_to edit_discount_path(order), class: 'link-extra-space' do %>
+                  <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar descuento"></i>
+                <% end %>
+              <% end %>
+              <%= link_to delete_order_path(order), class: 'link-extra-space', data: { confirm: "Desa cancelar el pedido #{order.id}?. Esta acción no se puede deshacer." } do %>
+                <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Borrar pedido"></i>
+              <% end %>
+            <% end %>
             <% if order.bill != nil %>
               <% unless order.bill.pdf_url == nil %>
                 <%= link_to download_pdf_path(order.bill), download: "Factura.pdf", class: 'link-extra-space' do %>

@@ -21,6 +21,53 @@ module ApplicationHelper
     @due_date = bill.created_at.to_date + bill.supplier.credit_days.to_i.days
   end
 
+  def get_discount(product_request)
+    if product_request.movements == []
+      @discount = (product_request.pending_movement.discount_applied / product_request.pending_movement.initial_price * 100).round(0)
+    else
+      subtotal = 0
+      discount = 0
+      product_request.movements.each do |mov|
+        discount += mov.discount_applied
+        subtotal += mov.subtotal
+      end
+      @discount = (discount / subtotal * 100).round(0)
+    end
+    @discount.round(0)
+  end
+
+  def order_discount(order)
+    subtotal = 0
+    discount = 0
+    order.pending_movements.each do |mov|
+      discount += (mov.discount_applied * mov.quantity)
+      subtotal += (mov.subtotal * mov.quantity)
+    end
+    order.movements.each do |mov|
+      discount += mov.discount_applied
+      subtotal += mov.subtotal
+    end
+    @discount = (discount / subtotal * 100).round(0)
+    @discount.round(0)
+  end
+
+  def order_discount_multiple(orders)
+    subtotal = 0
+    discount = 0
+    orders.each do |order|
+      order.pending_movements.each do |mov|
+        discount += (mov.discount_applied * mov.quantity)
+        subtotal += (mov.subtotal * mov.quantity)
+      end
+      order.movements.each do |mov|
+        discount += mov.discount_applied
+        subtotal += mov.subtotal
+      end
+    end
+    @discount = (discount / subtotal * 100).round(0)
+    @discount.round(0)
+  end
+
   def payment_on_time(bill)
     due_date(bill)
     bill.payment_day <= @due_date ? @pay_status = content_tag(:span, 'a tiempo', class: 'label label-success') : @pay_status = content_tag(:span, 'con atraso', class: 'label label-warning')
@@ -127,6 +174,16 @@ module ApplicationHelper
     @sum = 0
     order.product_requests.where.not(status: 'cancelada').each do |pr|
       @sum += pr.quantity
+    end
+    @sum
+  end
+
+  def sum_quantity_multiple_orders(orders)
+    @sum = 0
+    orders.each do |order|
+      order.product_requests.where.not(status: 'cancelada').each do |pr|
+        @sum += pr.quantity
+      end
     end
     @sum
   end
@@ -477,6 +534,30 @@ def identify_kg_products(order)
     mov.quantity.times do
       @kg_options[mov.product.id] << ["#{mov.product.average} kg (estimado)"]
       @has_kg_products = true
+    end
+  end
+  @kg_options
+end
+
+def identify_kg_products_multiple(orders)
+  @has_kg_products = false
+  @kg_options = {}
+  orders.each do |order|
+    order.movements.joins(:product).where(products: {group: true}).each do |mov|
+      if @kg_options[mov.product.id] == nil
+        @kg_options[mov.product.id] = []
+      end
+      @kg_options[mov.product.id] << ["#{mov.kg} kg"]
+      @has_kg_products = true
+    end
+    order.pending_movements.joins(:product).where(products: {group: true}).each do |mov|
+      if @kg_options[mov.product.id] == nil
+        @kg_options[mov.product.id] = []
+      end
+      mov.quantity.times do
+        @kg_options[mov.product.id] << ["#{mov.product.average} kg (estimado)"]
+        @has_kg_products = true
+      end
     end
   end
   @kg_options

@@ -2,9 +2,9 @@ $(document).ready(function(){
 
   $('[id^="redAddOn_"]').click(function (event) {
     event.preventDefault();
-    wrapperId = $(this).attr("id").replace("myWrapper_","");
-    $("#myWrapper_" + iconId).addClass("hidden");
-    $("#iconLink_" + iconId).removeClass("hidden")
+    wrapperId = $(this).attr("id").replace("redAddOn_","");
+    $("#myWrapper_" + wrapperId).addClass("hidden");
+    $("#iconLink_" + wrapperId).removeClass("hidden")
   });
 
   $('[id^="iconLink_"]').click(function () {
