@@ -30,6 +30,12 @@ table#payment-average {
     margin: 0 auto;
 }
 
+input[id^=discount_new_],
+input[id^=unit_price_new_] {
+  width: 80px;
+  margin: 0 auto;
+}
+
 select#payment_form {
   margin-top: 0;
 }
@@ -570,7 +576,7 @@ p.info > strong {
 }
 
 .center-text {
-  text-align: center;
+  text-align: center !important;
 }
 
 .green {

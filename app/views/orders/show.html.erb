@@ -56,9 +56,9 @@
         <% end %>
         <% if (!['warehouse-admin', 'warehouse-staff', 'store'].include?(current_user.role.name)) %>
           <td> <%= number_to_percentage(get_discount(pr), precision: 1) %> </td>
-          <td> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
+          <td> <%= number_to_currency(get_total_from_pr(pr, 'total')) %> </td>
         <% else %>
-          <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(pr)) %> </td>
+          <td class="hidden"> <%= number_to_currency(get_total_from_pr(pr, 'total')) %> </td>
         <% end %>
       </tr>
       <% end %>
