@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
   $('[id^="redLink_"]').click(function () {
-    redIconId = $(this).attr("id").replace("redLink_","");
+    var redIconId = $(this).attr("id").replace("redLink_","");
     $("#redLink_" + redIconId).addClass("hidden");
     $("#redWrapper_" + redIconId).removeClass("hidden");
     $("#greenLink_" + redIconId).addClass("hidden");
@@ -10,7 +10,7 @@ $(document).ready(function(){
   });
 
   $('[id^="greenLink_"]').click(function () {
-    greenIconId = $(this).attr("id").replace("greenLink_","");
+    var greenIconId = $(this).attr("id").replace("greenLink_","");
     $("#greenLink_" + greenIconId).addClass("hidden");
     $("#greenWrapper_" + greenIconId).removeClass("hidden");
     $("#redLink_" + greenIconId).addClass("hidden");
@@ -20,7 +20,6 @@ $(document).ready(function(){
 
   $('[id^="redAddOn_"]').click(function (event) {
     event.preventDefault();
-    debugger
     var redWrapperId = $(this).attr("id").replace("redAddOn_","");
     $("#redWrapper_" + redWrapperId).addClass("hidden");
     $("#redLink_" + redWrapperId).removeClass("hidden")
@@ -31,7 +30,6 @@ $(document).ready(function(){
 
   $('[id^="greenAddOn_"]').click(function (event) {
     event.preventDefault();
-    debugger
     var greenWrapperId = $(this).attr("id").replace("greenAddOn_","");
     $("#greenWrapper_" + greenWrapperId).addClass("hidden");
     $("#greenLink_" + greenWrapperId).removeClass("hidden");

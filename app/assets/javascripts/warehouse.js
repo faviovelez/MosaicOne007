@@ -295,61 +295,6 @@ $(document).ready(function() {
 
           $('#supplier_total_amount').maskMoney();
 
-//          var calculateSubtotal = function(){
-//            var total = parseFloat($('input#supplier_total_amount').val().replace(/,/,''));
-//            var taxesRate = ((100 +  parseFloat($('input#supplier_taxes_rate').val()) ) / 100);
-//            console.log(taxesRate);
-//            if (!$('#checkPercent').is(':checked')){
-//              taxesRate = parseFloat($('input#supplier_taxes_rate').val());
-//              $('#supplier_subtotal').val((total - taxesRate).toFixed(2));
-//            } else {
-//              $('#supplier_subtotal').val((total / taxesRate).toFixed(2));
-//            }
-//            $('#supplier_subtotal').maskMoney();
-//          };
-//
-//          $('#checkPercent').change(function(){
-//            calculateSubtotal();
-//          });
-//
-//          $('#supplier_taxes_rate').keyup(function(){
-//            calculateSubtotal();
-//          });
-//
-//          initValidation();
-
-//          $('#vinculateSupplier').click(function(){
-//            $('#supplierForm').data('formValidation').validate();
-//            if ( $('#supplierForm').data('formValidation').isValid() ) {
-//              var subtotal = parseFloat($('input#supplier_subtotal').val().replace(/,/,''));
-//              var taxesRate = ((100 +  parseFloat($('input#supplier_taxes_rate').val()) ) / 100);
-//              var total = subtotal * taxesRate;
-//              var id = $('input#supplierId').val();
-//              $('input#supplier_total_amount').val(total);
-//              var info =  $('#suppliersList').val() +              ',' +
-//                $('input#supplier_folio').val() +        ',' +
-//                $('input#supplier_date_of_bill').val() + ',' +
-//                $('input#supplier_subtotal').val() +     ',' +
-//                $('input#supplier_taxes_rate').val() +   ',' +
-//                $('input#supplier_total_amount').val();
-//
-//              $('#supplierInfo' + id).html(info);
-//              var providerName = $('#suppliersList option[value=' +  $('#suppliersList').val() + ']').html();
-//              $('#supplierName' + id).html(providerName);
-//
-//              $('#suppliersList').val('').trigger('change.select2');
-//              $('input#supplier_folio').val('');
-//              $('input#supplier_date_of_bill').val('');
-//              $('input#supplier_subtotal').val('');
-//              $('input#supplier_taxes_rate').val('');
-//              $('input#supplier_total_amount').val('');
-//
-//              $('#supplierModal').modal('hide');
-//            }
-//
-//
-//          });
-
           $('#saveInfoSupplier').click(function(){
             var data = createProductData(true);
             if (checkNotEmpty()){
@@ -365,5 +310,22 @@ $(document).ready(function() {
       }, 200);
 
     }
+
+    $('.form-data-tables').on('submit', function(e){
+      var $form = $(this);
+
+      table.$('input[type="checkbox"]').each(function(){
+        if(!$.contains(document, this)){
+          if(this.checked){
+            $form.append(
+              $('<input>')
+                .attr('type', 'hidden')
+                .attr('name', this.name)
+                .val(this.value)
+              );
+          }
+        }
+      });
+    });
 
 });

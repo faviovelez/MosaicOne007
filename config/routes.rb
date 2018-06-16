@@ -2,6 +2,8 @@ Rails.application.routes.draw do
 
   root 'pages#index'
 
+  get 'pages/utilerias', defaults: { format: 'xml' }
+
   get 'movements/index'
 
   get 'movements/edit'
@@ -226,7 +228,7 @@ Rails.application.routes.draw do
 
   get 'products/show_product_csv'
 
-  get 'orders/edit_discount/:id', to: 'orders#edit_discount/:id', as: 'edit_discount'
+  get 'orders/edit_discount/:id', to: 'orders#edit_discount', as: 'edit_discount'
 
   post 'orders/update_discount'
 

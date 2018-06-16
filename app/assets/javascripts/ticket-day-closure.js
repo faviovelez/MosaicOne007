@@ -15,7 +15,7 @@ $(document).ready(function(){
       "sInfoThousands":  ",",
       "sLoadingRecords": "Cargando...",
       "oPaginate": {
-        "sFirst":    "Primero", 
+        "sFirst":    "Primero",
         "sLast":     "Último",
         "sNext":     "Siguiente",
         "sPrevious": "Anterior"
@@ -37,6 +37,23 @@ $(document).ready(function(){
         title: 'Reporte detallado de ventas:' + $("#date").html() + $("#store").html() + $("#hour").html() + 'hrs'
       },
     ]
+  });
+
+  $('.form-data-tables').on('submit', function(e){
+    var $form = $(this);
+
+    table.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
   });
 
 });

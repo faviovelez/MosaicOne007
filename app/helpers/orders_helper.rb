@@ -52,7 +52,11 @@ module OrdersHelper
       total << pm if (prod_req_result == pm.product_id && (total.include?(pm) == false))
     end
     total.each do |mov|
-      @total += mov.total
+      if mov.class == Movement
+        @total += mov.total
+      else
+        @total += (mov.total * mov.quantity)
+      end
     end
     @total
   end
