@@ -23,6 +23,27 @@ class OrdersController < ApplicationController
   end
 
   def update_discount
+    @orders = []
+    order = ProductRequest.find(params[:id][0]).order
+    @orders << order
+    params[:id].each_with_index do |id, index|
+      pr = ProductRequest.find(id)
+      if pr.movements == []
+        discount = (pr.pending_movement.subtotal * params[:final_discount][index].to_f / 100).round(2)
+        taxes = ((pr.pending_movement.subtotal - discount) * 0.16).round(2)
+        total = (pr.pending_movement.subtotal - discount + taxes).round(2)
+        pr.pending_movement.update(final_price: params[:new_final_price][index].to_f, discount_applied: discount, manual_discount: discount, taxes: taxes, total: total)
+      else
+        pr.movements.each do |mov|
+          discount = (mov.subtotal * params[:final_discount][index].to_f / 100).round(2)
+          taxes = ((mov.subtotal - discount) * 0.16).round(2)
+          total = (mov.subtotal - discount + taxes).round(2)
+          mov.update(final_price: params[:new_final_price][index].to_f, discount_applied: discount, manual_discount: discount, taxes: taxes, total: total)
+        end
+      end
+    end
+    update_order_total
+    redirect_to root_path, notice: "El pedido #{order.id} ha sido modificado."
   end
 
   def new_order_for_prospects(role = current_user.role.name)
@@ -94,6 +115,9 @@ class OrdersController < ApplicationController
   def update_order_total
     if params[:ids].present?
       @orders = Order.find(params[:ids].split('/'))
+    elsif
+      @orders != nil
+      @orders = @orders
     else
       @orders = Order.where(id:params[:id])
     end
@@ -472,18 +496,19 @@ class OrdersController < ApplicationController
     movs = []
     pend_movs = []
     @order = Order.create(
-                            store: current_user.store,
-                            request_user: current_user,
-                            category: 'de línea',
-                            corporate: corporate,
-                            status: 'en espera',
-                            delivery_address: current_user.store.delivery_address,
-                            prospect: @prospect
-                          )
+                  store: current_user.store,
+                  request_user: current_user,
+                  category: 'de línea',
+                  corporate: corporate,
+                  status: 'en espera',
+                  delivery_address: current_user.store.delivery_address,
+                  prospect: @prospect
+                )
     @order.update(deliver_complete: true) if params[:deliver_complete] == "true"
     @order.users << current_user
     @order.save
     create_product_requests
+    @order = Order.last
     @order.product_requests.each do |pr|
       status << [pr.status]
       prod_req << pr
@@ -524,6 +549,8 @@ class OrdersController < ApplicationController
         unassigned_pr.each do |pr|
           ProductRequest.find(pr.id).update(order: @new_order)
         end
+      else
+        @order.update(status: 'en espera')
       end
     else
       if status.first == ['asignado']
@@ -545,18 +572,20 @@ class OrdersController < ApplicationController
     movs = []
     pend_movs = []
     @order = Order.create(
-                            store: current_user.store,
-                            request_user: current_user,
-                            corporate: corporate,
-                            category: 'de línea',
-                            status: 'en espera',
-                            delivery_address: current_user.store.delivery_address,
-                            prospect: @prospect
-                          )
+                  store: current_user.store,
+                  request_user: current_user,
+                  corporate: corporate,
+                  category: 'de línea',
+                  status: 'en espera',
+                  delivery_address: current_user.store.delivery_address,
+                  prospect: @prospect
+                )
+    @order = Order.last
     @order.update(deliver_complete: true) if params[:deliver_complete] == "true"
     @order.users << current_user
     @order.save
     create_product_requests
+    @order = Order.last
     @order.product_requests.each do |pr|
       status << [pr.status]
       prod_req << pr
@@ -597,6 +626,8 @@ class OrdersController < ApplicationController
         unassigned_pr.each do |pr|
           ProductRequest.find(pr.id).update(order: @new_order)
         end
+      else
+        @order.update(status: 'en espera')
       end
     else
       if status.first == ['asignado']

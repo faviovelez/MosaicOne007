@@ -85,14 +85,14 @@
             <% end %>
           <% end %>
           <% if !(['store-admin' 'store', 'admin-desk'].include?(current_user.role.name)) %>
-            <td class="hidden"> <%= number_with_delimiter(product_request.movements.sum(:quantity)) %> </td>
+            <td class="hidden"> <%= number_with_delimiter(get_total_from_pr(product_request, 'quantity')) %> </td>
           <% end %>
           <% if ['store-admin', 'admin-desk'].include?(current_user.role.name) %>
             <td> <%= number_to_percentage(get_discount(product_request), precision: 1) %> </td>
-            <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+            <td> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% else %>
             <td class="hidden"> <%= number_to_percentage(get_discount(product_request), precision: 1) %> </td>
-            <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+            <td class="hidden"> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% end %>
           <td>
             <% if (@order.users.count > 0 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
@@ -173,7 +173,7 @@
             <% end %>
           <% end %>
           <% if !(['store-admin' 'store', 'admin-desk'].include?(current_user.role.name)) %>
-            <td class="hidden"> <%= number_with_delimiter(product_request.movements.sum(:quantity)) %> </td>
+            <td class="hidden"> <%= number_with_delimiter(get_total_from_pr(product_request, 'quantity')) %> </td>
           <% end %>
           <% if !(['store-admin', 'store'].include?(current_user.role.name)) %>
             <td> <%= number_with_delimiter(product_request.quantity / product_request.product.pieces_per_package) %> </td>
@@ -190,10 +190,10 @@
           <% end %>
           <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
             <td> <%= number_to_percentage(get_discount(product_request), precision: 1) %> </td>
-            <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+            <td> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% else %>
             <td class="hidden"> <%= number_to_percentage(get_discount(product_request), precision: 1) %> </td>
-            <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+            <td class="hidden"> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% end %>
           <td>
             <% if (@order.users.count >= 1 && @order.users.include?(current_user) && @order.status == 'en ruta') %>

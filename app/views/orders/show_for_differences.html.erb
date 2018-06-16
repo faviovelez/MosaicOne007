@@ -40,12 +40,12 @@
                 </span>
             <% end %>
           </td>
-          <td> <%= number_with_delimiter(product_request.movements.sum(:quantity)) %> </td>
-          <td> <%= number_with_delimiter(product_request.quantity - product_request.movements.sum(:quantity)) %> </td>
+          <td> <%= number_with_delimiter(get_total_from_pr(product_request, 'quantity')) %> </td>
+          <td> <%= number_with_delimiter(product_request.quantity - get_total_from_pr(product_request, 'quantity')) %> </td>
           <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
-            <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+            <td> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% else %>
-            <td class="hidden"> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+            <td class="hidden"> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% end %>
           <td>
             <% if current_user.role.name == 'admin-desk' %>

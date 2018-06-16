@@ -25,15 +25,93 @@ module ApplicationHelper
     if product_request.movements == []
       @discount = (product_request.pending_movement.discount_applied / product_request.pending_movement.initial_price * 100).round(0)
     else
-      subtotal = 0
-      discount = 0
-      product_request.movements.each do |mov|
-        discount += mov.discount_applied
-        subtotal += mov.subtotal
+      if product_request.movements.count > 1
+        subtotal = 0
+        discount = 0
+        product_request.movements.each do |mov|
+          discount += mov.discount_applied
+          subtotal += mov.subtotal
+        end
+        @discount = (discount / subtotal * 100).round(0)
+      else
+        @discount = (product_request.movements.first.discount_applied / product_request.movements.first.subtotal * 100).round(0)
       end
-      @discount = (discount / subtotal * 100).round(0)
     end
     @discount.round(0)
+  end
+
+  def get_discount_for_calculate(product_request)
+    if product_request.movements == []
+      @discount = ((product_request.pending_movement.initial_price - product_request.pending_movement.final_price) / product_request.pending_movement.initial_price * 100).round(0)
+    else
+      if product_request.movements.count > 1
+        subtotal = 0
+        discount = 0
+        product_request.movements.each do |mov|
+          discount += mov.discount_applied
+          subtotal += mov.subtotal
+        end
+        @discount = (discount / subtotal * 100).round(0)
+      else
+        @discount = ((product_request.movements.first.initial_price - product_request.movements.first.final_price) / product_request.movements.first.initial_price * 100).round(0)
+      end
+    end
+    @discount.round(0)
+  end
+
+  def unit_price(product_request)
+    if product_request.movements == []
+      @unit = product_request.pending_movement.final_price
+    else
+      unit = 0
+      quant = 0
+      if product_request.movements.count > 1
+        product_request.movements.each do |mov|
+          unit += (mov.final_price * mov.quantity)
+          quant += mov.quantity
+        end
+        @unit = (unit / quant).round(2)
+      else
+        @unit = product_request.movements.first.final_price
+      end
+    end
+    @unit
+  end
+
+  def initial_unit_price(product_request)
+    if product_request.movements == []
+      @unit = product_request.pending_movement.initial_price
+    else
+      unit = 0
+      quant = 0
+      if product_request.movements.count > 1
+        product_request.movements.each do |mov|
+          unit += (mov.initial_price * mov.quantity)
+          quant += mov.quantity
+        end
+        @unit = (unit / quant).round(2)
+      else
+        @unit = product_request.movements.first.initial_price
+      end
+    end
+    @unit
+  end
+
+  def get_total_from_pr(pr, type)
+    if type == 'total'
+      if pr.movements == []
+        @mov_total = pr.pending_movement.total * pr.quantity
+      else
+        @mov_total = pr.movements.sum(:total)
+      end
+    else
+      if pr.movements == []
+        @mov_total = pr.pending_movement.quantity
+      else
+        @mov_total = pr.movements.sum(:quantity)
+      end
+    end
+    @mov_total
   end
 
   def order_discount(order)

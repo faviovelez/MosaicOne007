@@ -19,7 +19,7 @@
           <%# end %>
           <td> <%= product_request.product.exterior_color_or_design %> </td>
           <td> <%= number_with_delimiter(product_request.quantity) %> </td>
-          <td> <%= number_to_currency(get_total_from_pr_and_movs(product_request)) %> </td>
+          <td> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <td>
             <% if product_request.status == 'asignado' %>
             <span class="label label-info">

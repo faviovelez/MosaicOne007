@@ -1611,15 +1611,6 @@ class BillsController < ApplicationController
     @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
   end
 
-  #FACTURA GENERAL:
-    # SIEMPRE 'I' (TipoDeComprobante) TypeOfBill.find(1).key
-    # SIEMPRE 'PUE' (MetodoPago) PaymentMethod.find(1).method
-    # SIEMPRE 'P01' (UsoCFDI) CfdiUse.find(23).key
-    # SIEMPRE '01010101' (SatKey) SatKey.find(1).sat_key
-    # SIEMPRE Número de Ticket en lugar de código de producto (NoIdentificacion) row['ticket']
-    # SIEMPRE '1' (Cantidad)
-    # SIEMPRE 'ACT' (ClaveUnidad)
-
   def create_unsigned_xml_file
     s = @store
     b = s.business_unit.billing_address
