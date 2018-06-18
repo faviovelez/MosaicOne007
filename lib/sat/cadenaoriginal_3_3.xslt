@@ -12,6 +12,8 @@
 		la generación de las cadenas originales de los complementos fiscales
 	-->
 
+  <xsl:include href="/home/ubuntu/MosaicOne007/public/Pagos10.xslt"/>
+
   <!-- Aquí iniciamos el procesamiento de la cadena original con su | inicial y el terminador || -->
   <xsl:template match="/">|<xsl:apply-templates select="/cfdi:Comprobante"/>||</xsl:template>
   <!--  Aquí iniciamos el procesamiento de los datos incluidos en el comprobante -->
