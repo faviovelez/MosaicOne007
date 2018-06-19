@@ -26,4 +26,8 @@ class Order < ActiveRecord::Base
     self.movements + self.pending_movements
   end
 
+  def month_year
+    self.created_at.strftime('%m / %Y')
+  end
+
 end

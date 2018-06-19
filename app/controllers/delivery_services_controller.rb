@@ -46,6 +46,9 @@ class DeliveryServicesController < ApplicationController
     end
   end
 
+  def filter_for_viewers
+  end
+
   def select_report
   end
 

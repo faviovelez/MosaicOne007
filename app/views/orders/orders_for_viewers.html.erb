@@ -1,0 +1,79 @@
+<% if @orders.count >= 1 %>
+  <table class="dataTableFour">
+    <thead>
+      <tr class="table-titles">
+        <th class="col-md-1"> Pedido </th>
+        <th class="col-md-1"> Tipo </th>
+        <th class="col-md-3"> Cliente </th>
+        <th class="col-md-1"> Productos </th>
+        <th class="col-md-1"> Piezas </th>
+        <th class="col-md-1"> Estatus </th>
+        <th class="col-md-1"> Descuento </th>
+        <th class="col-md-1"> Total </th>
+        <th class="col-md-1"> Acciones </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+        <tr>
+          <td> <%= order.id %> </td>
+          <td>
+            <% if order.category == 'de línea' %>
+              <span class="label label-success">
+                <%= order.category %>
+              </span>
+            <% elsif order.category == 'especial' %>
+              <span class="label label-primary">
+                <%= order.category %>
+              </span>
+            <% end %>
+          </td>
+          <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin')%>
+            <td> <%= show_non_blank_field(order.prospect&.legal_or_business_name) %> </td>
+          <% end %>
+          <td> <%= order.product_requests.where.not(status: 'cancelada').count %> </td>
+          <td> <%= number_with_delimiter(sum_quantity_order(order)) %> </td>
+          <td>
+            <% if (order.status == 'mercancía asignada' || order.status == 'preparando') %>
+              <span class="label label-info">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'en espera' %>
+              <span class="label label-warning">
+                <%= order.status %>
+              </span>
+            <% elsif (order.status == 'preparado' || order.status == 'en ruta') %>
+              <span class="label label-primary">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'entregado' %>
+              <span class="label label-success">
+                <%= order.status %>
+              </span>
+            <% elsif order.status == 'cancelado' %>
+              <span class="label label-danger">
+                <%= order.status %>
+              </span>
+            <% end %>
+          </td>
+          <td> descuento </td>
+          <td> total </td>
+          <td class="col-md-2">
+            <%= link_to orders_show_for_store_path(order), class: 'link-extra-space' do %>
+              <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<% else %>
+  <p class="individual-font">No tienes pedidos pendientes de entregar.</p>
+<% end %>
+
+<br /><br />
+  <%= render 'links_for_orders' %>
+<br/><br/><br/>
+
+<%= render 'dataTables' %>

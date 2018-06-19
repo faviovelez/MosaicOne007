@@ -105,7 +105,7 @@
           <td class="space-preview"> <%= row["unique_code"] %> </td>
           <td class="space-preview"> <%= number_with_delimiter(row["quantity"]) %> </td>
           <td class="space-preview"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
-          <td class="space-preview"> <%= row["sat_unit_description"] %> </td>
+          <td class="space-preview"> <%= row["sat_unit_description"].capitalize %> </td>
           <td class="space-preview"> <%= row["description"] %> </td>
           <td class="space-preview"> <%= number_to_currency(row["unit_value"]) %> </td>
           <td class="space-preview"> <%= number_to_currency(row["discount"]) %> </td>
@@ -122,7 +122,7 @@
             <td class="space-preview"> <%= row.unique_code %> </td>
             <td class="space-preview"> <%= select_tag "quantities[]", options_for_select(quantity_options(row)), { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
             <td class="space-preview"> <%= row.sat_unit_key %> </strong> </td>
-            <td class="space-preview"> <%= row.sat_unit_description %> </td>
+            <td class="space-preview"> <%= row.sat_unit_description.capitalize %> </td>
             <td class="space-preview"> <%= row.description %> </td>
             <td class="space-preview"> <%= row.unit_value %> </td>
             <td class="space-preview"> <%= number_to_currency(row.discount) %> </td>
@@ -192,6 +192,13 @@
           <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
         <% end %>
       </tr>
+      <% if @bill != nil%>
+        <tr>
+          <td colspan="5"></td>
+          <td colspan="3" class="final-total border-top left">  <strong> Total descontando NC y Dev </strong> </td>
+          <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(real_total(@bill)) %> </strong> </td>
+        </tr>
+      <% end %>
     <% end %>
     <% if @relation_type == '01' %>
       <tr>
@@ -205,6 +212,7 @@
                   <strong>
                     <%= text_field_tag :amount, nil, class: 'form-control', placeholder: 'Monto (con IVA)' %>
                   </strong>
+                  <span class="hidden" id="real_total"><%= real_total(@bill) %></span>
               </div>
             </div>
         </td>
@@ -276,5 +284,11 @@
 <% if @bill == nil%>
   <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
 <% end %>
+
+<%= render 'add_masks' %>
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'only_decimals' %>
+<% end %>
+
 
 <br /><br /><br /><br />
