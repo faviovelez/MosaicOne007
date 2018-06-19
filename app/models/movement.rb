@@ -26,6 +26,10 @@ class Movement < ActiveRecord::Base
   after_create :create_update_summary
   after_create :vinculate_warehouse, :check_for_pendings, if: :is_entry_movement
 
+  def month_year
+    self.created_at.strftime('%m / %Y')
+  end
+
   def create_update_summary
     if (self.movement_type == 'venta' || self.movement_type == 'devolución')
 #      if dont_exist_prospect_sale

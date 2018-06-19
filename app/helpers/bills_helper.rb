@@ -339,9 +339,9 @@ module BillsHelper
   end
 
   def get_payments_on_sales_summary_bill(bill)
+    real_total(bill)
     payments_for_bill_show(bill)
-    (bill.total <= @total_payments_bill || bill.total - @total_payments_bill < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(bill.total - @total_payments_bill)
-    @pending
+    (@real_total <= @total_payments_bill || bill.total - @total_payments_bill < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(bill.total - @total_payments_bill)
   end
 
   def get_payments_from_individual_bill(bill)
@@ -493,7 +493,7 @@ module BillsHelper
 
   def real_total(bill)
     sum_children(bill)
-    bill.total + @sum
+    @real_total = bill.total + @sum
   end
 
   def get_order_payments(order)

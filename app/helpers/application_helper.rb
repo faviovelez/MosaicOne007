@@ -100,9 +100,9 @@ module ApplicationHelper
   def get_total_from_pr(pr, type)
     if type == 'total'
       if pr.movements == []
-        @mov_total = pr.pending_movement.total * pr.quantity
+        @mov_total = (pr.pending_movement.total * pr.quantity).round(2)
       else
-        @mov_total = pr.movements.sum(:total)
+        @mov_total = pr.movements.sum(:total).round(2)
       end
     else
       if pr.movements == []

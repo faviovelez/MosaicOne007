@@ -29,13 +29,17 @@ class BillsController < ApplicationController
       unless params[:payments][i].to_f == 0
         pn = bill.payments.count + 1
         pay = Payment.create(payment_type: 'pago', total: params[:payments][i].to_f, payment_number: pn, payment_form_id: params[:payment_form].to_i, payment_date: Date.parse(params[:date]), date: Date.today, bill: bill)
-        total_pay = bill.payments.where(payment_type: 'pago').sum(:total) - bill.payments.where(payment_type: 'devolución').sum(:total)
-        total_bill = bill.total
-        (total_bill - total_pay < 1) ? bill.update(payed: true) : bill.update(payed: false)
+        validate_payed(bill)
         Document.create(document_type: 'pago', bill: bill, document: params[:image])
       end
     end
     redirect_to bills_pending_path, notice: 'Su pago ha sido registrado'
+  end
+
+  def validate_payed(bill)
+    total_pay = bill.payments.where(payment_type: 'pago').sum(:total) - bill.payments.where(payment_type: 'devolución').sum(:total)
+    total_bill = bill.total - bill.children.where.not(status: 'cancelada').sum(:total)
+    (total_bill - total_pay < 1) ? bill.update(payed: true) : bill.update(payed: false)
   end
 
   def show
@@ -461,7 +465,6 @@ class BillsController < ApplicationController
       else
         @products_prices << [product.price.round(2), product.id]
       end
-
     end
     services.each do |service|
       @products_ids << [service.unique_code]
@@ -2037,6 +2040,7 @@ XML
           end
         end
       end
+      bill.parent == nil ? validate_payed(bill) : validate_payed(bill.parent)
     else
       @error = true
     end
@@ -2277,7 +2281,7 @@ XML
             end
             new_hash["product_id"] = mov.product.id
             new_hash["ticket"] = mov.order.id
-            new_hash["quantity"] = mov.quantity
+            mov.product.group ? new_hash["quantity"] = mov.kg : new_hash["quantity"] = mov.quantity
             new_hash["unit_value"] = mov.initial_price.round(2)
             new_hash["sat_key"] = mov.product.sat_key.sat_key
             new_hash["sat_unit_key"] = mov.product.sat_unit_key.unit
@@ -2308,7 +2312,7 @@ XML
             end
             new_hash["product_id"] = mov.product.id
             new_hash["ticket"] = mov.order.id
-            new_hash["quantity"] = mov.quantity
+            mov.product.group ? new_hash["quantity"] = mov.product.average : new_hash["quantity"] = mov.quantity
             new_hash["unit_value"] = mov.initial_price.round(2)
             new_hash["sat_key"] = mov.product.sat_key.sat_key
             new_hash["sat_unit_key"] = mov.product.sat_unit_key.unit

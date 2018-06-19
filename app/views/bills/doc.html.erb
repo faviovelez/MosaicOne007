@@ -107,7 +107,7 @@
             <td class="grow space"> <%= row["unique_code"] %> </td>
             <td class="grow space"> <%= number_with_delimiter(row["quantity"]) %> </td>
             <td class="grow space"> <%= row["sat_unit_key"] %> </strong> </td>
-            <td class="grow space"> <%= row["sat_unit_description"] %> </td>
+            <td class="grow space"> <%= row["sat_unit_description"].capitalize %> </td>
             <td class="grow space"> <%= row["description"] %> </td>
             <td class="grow space"> <%= number_to_currency(row["unit_value"]) %> </td>
             <td class="grow space"> <%= number_to_currency(row["discount"]) %> </td>
@@ -124,7 +124,7 @@
             <% end %>
             <td class="grow space"> <%= row.quantity %> </td>
             <td class="grow space"> <%= row.sat_unit_key %> </strong> </td>
-            <td class="grow space"> <%= row.sat_unit_description %> </td>
+            <td class="grow space"> <%= row.sat_unit_description.capitalize %> </td>
             <td class="grow space"> <%= row.description %> </td>
             <td class="grow space"> <%= number_to_currency(row.unit_value) %> </td>
             <td class="grow space"> <%= number_to_currency(row.discount) %> </td>
