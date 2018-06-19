@@ -55,12 +55,14 @@
 <div class="hidden" id="action"><%= params[:action] %></div>
 
 <table class="hidden">
-<tbody id="newRowTableBody">
-  <tr class="newRow">
-    <%= render partial: "row_orders" %>
-  </tr>
-</tbody>
+  <tbody id="newRowTableBody">
+    <tr class="newRow">
+      <%= render partial: "row_orders" %>
+    </tr>
+  </tbody>
 </table>
+
+<%= render 'add_masks' %>
 
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'formValidation.min' %>

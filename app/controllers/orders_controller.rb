@@ -18,6 +18,21 @@ class OrdersController < ApplicationController
     end
   end
 
+  def filter_for_viewers
+  end
+
+  def orders_for_viewers
+  end
+
+  def index_for_viewers
+  end
+
+  def history_for_viewers
+  end
+
+  def pr_for_viewers
+  end
+
   def edit_discount
     @order = Order.find(params[:id])
   end
@@ -481,7 +496,7 @@ class OrdersController < ApplicationController
       delete_product_requests(request)
     end
     orders_users = OrdersUser.find_by_order_id(order.id)
-    orders_users.delete
+    orders_users.delete if orders_users != nil
     order.update(status: 'cancelado')
     redirect_to root_path, notice: 'Se canceló por completo el pedido.'
   end

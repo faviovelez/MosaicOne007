@@ -92,6 +92,10 @@ $(document).ready(function() {
               }
               $(field).attr('id', field.replace("#", "") + this_id);
             });
+            if (action == 'new_order_for_prospects') {
+              $("#discount_" + this_id).inputmask("decimal");
+            }
+            $("#packages_" + this_id).inputmask("integer");
             checkSelector = $('#row' + this_id).find('.checkboxes');
             checkSelector.attr('id', 'armed-group_' + this_id);
             checkSelector.attr('class', 'checkboxes hidden armed-group_' + this_id);

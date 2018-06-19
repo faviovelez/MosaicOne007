@@ -32,6 +32,8 @@ Rails.application.routes.draw do
 
   get 'prospects/sales_view/:id', to: 'prospects#sales_view', as: 'prospects_sales_view'
 
+  get 'delivery_services/filter_for_viewers'
+
   get 'delivery_services/select_report'
 
   get 'delivery_services/delivery_services_database'
@@ -235,6 +237,16 @@ Rails.application.routes.draw do
   post 'orders/confirm_received'
 
   get 'orders/cancelled'
+
+  get 'orders/orders_for_viewers'
+
+  get 'orders/index_for_viewers'
+
+  get 'orders/history_for_viewers'
+
+  get 'orders/pr_for_viewers'
+
+  get 'orders/filter_for_viewers'
 
   get 'orders/_product_details/:product', to: 'orders#product_details', as: 'product_details'
 
