@@ -95,6 +95,7 @@ class PosController < ApplicationController
       information.each_with_index do |value, index|
         cad << "#{value} = '#{reg.send(value)}'"
         cad.gsub!("web_id = ''", "") if cad.include?("web_id = ''")
+        cad.gsub!("service_offered_id = ''", "service_offered_id IS null") if cad.include?("service_offered_id = ''")
         cad << " AND " unless index == information.length - 1
       end
       cad.gsub!("AND  AND", "AND")

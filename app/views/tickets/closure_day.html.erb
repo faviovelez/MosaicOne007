@@ -4,16 +4,18 @@
       <th colspan="10" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
     </tr>
     <tr>
-      <th class="no-border"> Ticket </th>
-      <th class="no-border"> Tipo </th>
-      <th class="no-border"> Fecha </th>
-      <th class="no-border"> Subtotal </th>
-      <th class="no-border"> Descuento </th>
-      <th class="no-border"> IVA </th>
-      <th class="no-border"> Total </th>
-      <th class="no-border"> Pagos </th>
-      <th class="no-border"> Factura </th>
-      <th class="no-border"> Estatus Fact. </th>
+      <th class="no-border col-md-1"> Ticket </th>
+      <th class="no-border col-md-1"> Tipo </th>
+      <th class="no-border col-md-1"> Fecha </th>
+      <th class="no-border col-md-1"> Subtotal </th>
+      <th class="no-border col-md-1"> Descuento </th>
+      <th class="no-border col-md-1"> IVA </th>
+      <th class="no-border col-md-1"> Total </th>
+      <th class="no-border col-md-1"> Pagos </th>
+      <th class="no-border col-md-1"> Factura </th>
+      <th class="no-border col-md-1"> Estatus Fact. </th>
+      <th class="no-border hidden"> Comentarios </th>
+      <th class="no-border hidden"> Pago a ticket </th>
     </tr>
   </thead>
   <tbody>
@@ -34,6 +36,8 @@
           <td> <%= ticket.bill.folio %> </td>
           <td> <%= ticket.bill.bill_type.capitalize %> / <%= ticket.bill.status.capitalize %> </td>
         <% end %>
+        <td class="hidden"> <%= ticket.comments %> </td>
+        <td class="hidden"> <%= ticket.parent&.ticket_number %> </td>
       </tr>
     <% end %>
     <tr>
@@ -47,6 +51,101 @@
       <td> <strong> <%= number_to_currency(@day_payments) %> </strong> </td>
       <td> N/A </td>
       <td> N/A </td>
+      <td class="hidden"></td>
+      <td class="hidden"></td>
+    </tr>
+    <tr class="hidden">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="hidden"></td>
+      <td class="hidden"></td>
+    </tr>
+    <tr class="hidden">
+      <td></td>
+      <% @payment_forms.each do |pay_form| %>
+        <td> <%= pay_form[0] %> </td>
+      <% end %>
+      <td> <strong> Total Pagos </strong> </td>
+      <td></td>
+      <td></td>
+      <td class="hidden"></td>
+      <td class="hidden"></td>
+    </tr>
+    <tr class="hidden">
+      <td></td>
+      <% @payment_forms.each do |pay_form| %>
+        <td> <%= number_to_currency(pay_form[1]) %> </td>
+      <% end %>
+      <td> <strong> <%= number_to_currency(@total_payment_forms) %> </strong> </td>
+      <td></td>
+      <td></td>
+      <td class="hidden"></td>
+      <td class="hidden"></td>
+    </tr>
+    <tr class="hidden">
+      <td></td>
+      <% @payment_forms.each do |pay_form| %>
+        <% if pay_form[2] == [] %>
+          <td> - </td>
+        <% else %>
+          <td> <%= pay_form[2] %> </td>
+        <% end %>
+      <% end %>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="hidden"></td>
+      <td class="hidden"></td>
+    </tr>
+    <tr class="hidden">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="hidden"></td>
+      <td class="hidden"></td>
+    </tr>
+    <tr class="hidden">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <th> Ticket promedio (día) </th>
+      <th> Piezas por ticket (día) </th>
+      <th> Ticket promedio (mes) </th>
+      <th> Piezas por ticket (mes) </th>
+      <td class="hidden"></td>
+      <td class="hidden"></td>
+    </tr>
+    <tr class="hidden">
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td> <%= number_to_currency(@average_day_total) %> </td>
+      <td> <%= @average_day_pieces %> </td>
+      <td> <%= number_to_currency(@average_month_total) %> </td>
+      <td> <%= @average_month_pieces %> </td>
+      <td class="hidden"></td>
+      <td class="hidden"></td>
     </tr>
   </tbody>
 </table>
@@ -68,7 +167,7 @@
         <td> <%= pay_form[0] %> </td>
         <td> <%= number_to_currency(pay_form[1]) %> </td>
         <% if pay_form[2] == [] %>
-          -
+          <td> - </td>
         <% else %>
           <td> <%= pay_form[2] %> </td>
         <% end %>
@@ -82,7 +181,7 @@
   </tbody>
 </table>
 
-<table id="payment-average" class="table-display table-display dataTable no-footer">
+<table id="payment-average" class="dataTable no-footer">
   <thead>
     <tr>
       <th colspan="4" class="table-titles"> Promedio de ventas </th>
