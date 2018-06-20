@@ -1,27 +1,55 @@
 <table id="inventory">
   <thead>
-    <tr class="table-titles-inventories">
-      <th> Código </th>
-      <th> Descripción </th>
-      <th> Color </th>
-      <th> Línea </th>
-      <th> Paquetes </th>
-      <th> PxP </th>
-      <th> Inventario </th>
-      <th> Estatus </th>
-    </tr>
+    <% if current_user.store.store_type.store_type == 'corporativo' %>
+      <tr class="table-titles-inventories">
+        <th> Código </th>
+        <th> Descripción </th>
+        <th> Color </th>
+        <th> Línea </th>
+        <th> Paquetes </th>
+        <th> PxP </th>
+        <th> En almacén </th>
+        <th> Apartado </th>
+        <th> Disponible </th>
+        <th> Estatus </th>
+      </tr>
+    <% else %>
+      <tr class="table-titles-inventories">
+        <th> Código </th>
+        <th> Descripción </th>
+        <th> Color </th>
+        <th> Línea </th>
+        <th> Paquetes </th>
+        <th> PxP </th>
+        <th> Inventario </th>
+        <th> Estatus </th>
+      </tr>
+    <% end %>
   </thead>
   <tbody>
     <% @inventories.each do |inventory| %>
       <tr>
-        <td> <%= show_non_blank_field(inventory.product.unique_code) %> </td>
-        <td> <%= show_non_blank_field(inventory.product.description) %> </td>
-        <td> <%= show_non_blank_field(inventory.product.exterior_color_or_design) %> </td>
-        <td> <%= show_non_blank_field(inventory.product.line) %> </td>
-        <td> <%= number_with_delimiter(packages(inventory)) %> </td>
-        <td> <%= inventory.product.pieces_per_package %> </td>
-        <td> <%= number_with_delimiter(inventory.quantity) %> </td>
-        <td> <%= inventory_alert(inventory) %> </td>
+        <% if current_user.store.store_type.store_type == 'corporativo' %>
+          <td> <%= show_non_blank_field(inventory[1]) %> </td>
+          <td> <%= show_non_blank_field(inventory[2]) %> </td>
+          <td> <%= show_non_blank_field(inventory[3]) %> </td>
+          <td> <%= show_non_blank_field(inventory[4]) %> </td>
+          <td> <%= number_with_delimiter(show_non_blank_field(inventory[5])) %> </td>
+          <td> <%= show_non_blank_field(inventory[6]) %> </td>
+          <td> <%= number_with_delimiter(inventory[7] + inventory[10]) %> </td>
+          <td> <%= number_with_delimiter(show_non_blank_field(inventory[10])) %> </td>
+          <td> <%= number_with_delimiter(show_non_blank_field(inventory[7])) %> </td>
+          <td> <%= alternative_inv_alert(inventory) %> </td>
+        <% else %>
+          <td> <%= show_non_blank_field(inventory.product.unique_code) %> </td>
+          <td> <%= show_non_blank_field(inventory.product.description) %> </td>
+          <td> <%= show_non_blank_field(inventory.product.exterior_color_or_design) %> </td>
+          <td> <%= show_non_blank_field(inventory.product.line) %> </td>
+          <td> <%= number_with_delimiter(packages(inventory)) %> </td>
+          <td> <%= inventory.product.pieces_per_package %> </td>
+          <td> <%= number_with_delimiter(inventory.quantity) %> </td>
+          <td> <%= inventory_alert(inventory) %> </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

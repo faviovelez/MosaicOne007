@@ -13,7 +13,7 @@ class InventoriesController < ApplicationController
     @inventories = []
     role = current_user.role.name
     @store = current_user.store
-    if (role == 'store-admin' || role == 'store' || (!(role == 'store-admin' || role == 'store') && current_user.store.store_type.store_type == 'corporativo' && current_user.store.id != 1))
+    if (role == 'store-admin' || role == 'store')
       @dc_products = StoresInventory.includes(:product).where(store: @store, products: {current: true, shared: true})
       @store_products = StoresInventory.includes(:product).where(products: {store_id: @store})
       if @store_products == []
@@ -21,9 +21,10 @@ class InventoriesController < ApplicationController
       else
         @inventories = @store_products + @dc_products
       end
+    elsif (!(role == 'store-admin' || role == 'store') && current_user.store.store_type.store_type == 'corporativo' && current_user.store.id != 1)
+      @inventories = StoresInventory.includes(:product).where(store: @store, products: {current: true, shared: true}).group('products.id, stores_inventories.quantity, stores_inventories.alert, stores_inventories.alert_type').order('products.id').pluck('products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, stores_inventories.quantity / products.pieces_per_package, products.pieces_per_package, stores_inventories.quantity, stores_inventories.alert, stores_inventories.alert_type').map{ |prod| prod << ProductRequest.where(product_id: prod[0], corporate_id: 2, status: 'sin asignar').sum(:quantity) }
     else
-      @dc_products = Inventory.includes(:product).where(products: {current: true, shared: true})
-      @inventories = @dc_products
+      @inventories = Inventory.includes(:product).where(products: {current: true, shared: true}).group('products.id, inventories.quantity, inventories.alert, inventories.alert_type').order('products.id').pluck('products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, inventories.quantity / products.pieces_per_package, products.pieces_per_package, inventories.quantity, inventories.alert, inventories.alert_type').map{ |prod| prod << ProductRequest.where(product_id: prod[0], corporate_id: 1, status: 'sin asignar').sum(:quantity) }
     end
     @inventories
   end

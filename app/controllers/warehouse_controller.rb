@@ -5,6 +5,7 @@ class WarehouseController < ApplicationController
   before_action :set_order, only: [:prepare_order, :waiting_products, :pending_products, :show_prepared_order]
 
   def new_own_entry
+    validate_role
     @movement = Movement.new
   end
 
@@ -250,7 +251,13 @@ class WarehouseController < ApplicationController
   end
 
   def remove_inventory
+    validate_role
     kg_options
+  end
+
+  def validate_role
+    roles = ['warehouse-staff', 'warehouse-admin', 'product-staff', 'product-admin']
+    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless roles.include?(current_user.role.name)
   end
 
   def remove_product
@@ -290,8 +297,7 @@ class WarehouseController < ApplicationController
 
   def new_supplier_entry
     @movement = Movement.new
-    roles = ['warehouse-staff', 'warehouse-admin', 'store', 'store-admin']
-    redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless roles.include?(current_user.role.name)
+    validate_role
   end
 
   def orders_products

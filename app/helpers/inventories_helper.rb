@@ -11,6 +11,17 @@ module InventoriesHelper
     @label
   end
 
+  def alternative_inv_alert(array)
+    if (array[8] == true && array[9] == 'bajo')
+      @label = content_tag(:span, 'bajo', class: 'label label-warning')
+    elsif (array[8] == true && array[9] == 'crítico')
+      @label = content_tag(:span, 'crítico', class: 'label label-danger')
+    else
+      @label = content_tag(:span, 'adecuado', class: 'label label-success')
+    end
+    @label
+  end
+
   def packages(inventory)
     @packages = inventory.quantity / inventory.product.pieces_per_package
     @packages
