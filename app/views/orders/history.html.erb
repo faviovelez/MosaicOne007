@@ -10,6 +10,9 @@
         <th class="col-md-1">Productos</th>
         <th class="col-md-1">Piezas</th>
         <th class="col-md-1">Estatus</th>
+        <% if !(['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name)) %>
+          <th class="col-md-1">Total</th>
+        <% end %>
         <th class="col-md-2">Confirmó</th>
         <th class="col-md-1"> Factura </th>
         <th class="col-md-1">Acciones</th>
@@ -58,6 +61,9 @@
               </span>
             <% end %>
           </td>
+          <% if !(['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name)) %>
+            <td> <%= number_to_currency(order.total) %> </td>
+          <% end %>
           <td class="col-md-2">
             <%= order_confirm_user(order) %>
           </td>
