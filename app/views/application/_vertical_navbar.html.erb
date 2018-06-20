@@ -334,6 +334,42 @@
           <%= link_to 'Facturas por pagar', bill_receiveds_index_path, class: 'text-link' %>
             </li>
 
+          <% if params[:controller] == 'warehouse' && params[:action] == 'new_own_entry'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-industry other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Entrada mercancía producción', warehouse_new_own_entry_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'warehouse' && params[:action] == 'new_supplier_entry'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-truck other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Entrada mercancía terceros', warehouse_new_supplier_entry_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'warehouse' && params[:action] == 'remove_inventory'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-tag other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Salida de mercancía', warehouse_remove_inventory_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'inventories' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para product-staff o product-admin %>
 

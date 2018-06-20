@@ -7,6 +7,9 @@
         <th> Tipo </th>
         <th> Productos </th>
         <th> Piezas </th>
+        <% if !(['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name)) %>
+          <th class="col-md-1">Total</th>
+        <% end %>
         <th> Acciones </th>
       </tr>
     </thead>
@@ -30,6 +33,9 @@
             <% end %>
           <td> <%= order.product_requests.where.not(status: 'cancelada').count %> </td>
           <td> <%= number_with_delimiter(sum_quantity_order(order)) %> </td>
+          <% if !(['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name)) %>
+            <td> <%= number_to_currency(order.total) %> </td>
+          <% end %>
           <td class="col-md-1">
             <%= link_to warehouse_pending_products_path(order), class: 'link-extra-space' do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>

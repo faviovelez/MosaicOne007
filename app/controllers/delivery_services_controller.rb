@@ -14,7 +14,7 @@ class DeliveryServicesController < ApplicationController
     end
     if params[:report_type] == 'Ventas'
       if params[:companies].include?('Todas')
-        @delivery_services = ServiceOffered.includes(:ticket, :service, :delivery_service).where(store_id: current_user.store.id, created_at: initial_date..final_date, tickets: {ticket_type: ['venta', 'devolución']}).where.not(ticket_id: nil, services: {delivery_company: nil}).order(:id)
+        @delivery_services = ServiceOffered.includes(:ticket, :service, :delivery_service).where(store_id: current_user.store.id, created_at: initial_date..final_date, tickets: {ticket_type: ['venta', 'devolución']}).where.not(ticket_id: nil).order(:id)
       else
         companies = params[:companies]
         @delivery_services = ServiceOffered.includes(:ticket, :service, :delivery_service).where(store_id: current_user.store.id, created_at: initial_date..final_date, services: {delivery_company: companies}, tickets: {ticket_type: ['venta', 'devolución']}).where.not(ticket_id: nil).order(:id)
