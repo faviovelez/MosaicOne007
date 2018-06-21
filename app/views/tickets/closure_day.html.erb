@@ -70,43 +70,6 @@
     </tr>
     <tr class="hidden">
       <td></td>
-      <% @payment_forms.each do |pay_form| %>
-        <td> <%= pay_form[0] %> </td>
-      <% end %>
-      <td> <strong> Total Pagos </strong> </td>
-      <td></td>
-      <td></td>
-      <td class="hidden"></td>
-      <td class="hidden"></td>
-    </tr>
-    <tr class="hidden">
-      <td></td>
-      <% @payment_forms.each do |pay_form| %>
-        <td> <%= number_to_currency(pay_form[1]) %> </td>
-      <% end %>
-      <td> <strong> <%= number_to_currency(@total_payment_forms) %> </strong> </td>
-      <td></td>
-      <td></td>
-      <td class="hidden"></td>
-      <td class="hidden"></td>
-    </tr>
-    <tr class="hidden">
-      <td></td>
-      <% @payment_forms.each do |pay_form| %>
-        <% if pay_form[2] == [] %>
-          <td> - </td>
-        <% else %>
-          <td> <%= pay_form[2] %> </td>
-        <% end %>
-      <% end %>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td class="hidden"></td>
-      <td class="hidden"></td>
-    </tr>
-    <tr class="hidden">
-      <td></td>
       <td></td>
       <td></td>
       <td></td>
