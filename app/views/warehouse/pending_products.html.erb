@@ -36,7 +36,7 @@
           <% end %>
         </td>
         <% if (product_request.product.rack.blank? && product_request.product.level.blank?) %>
-          <td class="center-text"> </td>
+          <td class="center-text"> - </td>
         <% else %>
           <td class="center-text"> Estante: <%= product_request.product.rack %> Nivel: <%= product_request.product.level %></td>
         <% end %>
