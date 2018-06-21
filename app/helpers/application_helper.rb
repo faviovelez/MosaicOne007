@@ -127,7 +127,6 @@ module ApplicationHelper
     end
     discount += order.movements.sum(:discount_applied)
     subtotal += order.movements.sum(:subtotal)
-    debugger if subtotal == 0
     @discount = (discount / subtotal * 100).round(0)
     @discount.round(0)
   end
@@ -210,7 +209,7 @@ module ApplicationHelper
   end
 
   def show_non_blank_field(field)
-    field.blank? ? @field_value = '' : @field_value = field
+    field.blank? ? @field_value = '-' : @field_value = field
     @field_value
   end
 
