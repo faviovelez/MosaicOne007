@@ -70,6 +70,7 @@ $(document).ready(function(){
       },
       {
         extend: 'pdf',
+        title: 'Pedido en proceso ' + $("#orderNumber").html() + ' Tienda ' + $("#store").html() + " " + $("#date").html() + $("#hour").html() + 'hrs ',
         exportOptions: {
           columns: [0, 1, 2, 3, 4]
         }
