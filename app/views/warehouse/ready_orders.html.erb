@@ -1,5 +1,5 @@
 <% if @orders.count >= 1 %>
-  <table class="dataTable">
+  <table class="tableSeven">
     <thead>
       <tr class="table-titles">
         <th>Pedido</th>
@@ -54,7 +54,11 @@
             <% end %>
           </td>
           <td> <%= driver_name(order) %> </td>
-          <td> <%= address_for_delivery(order) %> </td>
+          <% if order.delivery_notes.blank? %>
+            <td> <%= address_for_delivery(order) %> </td>
+          <% else %>
+            <td> <%= order.delivery_notes %> </td>
+          <% end %>
           <% if current_user.role.name == 'admin-desk' %>
             <% if (order.bill != nil && order.bill.status != 'cancelada') %>
               <td> <%= order.bill.folio %> </td>
@@ -84,6 +88,10 @@
 <% else %>
   <p class="individual-font">No hay pedidos listos para entregarse.</p>
 <% end %>
+
+<p class="hidden" id="dateToday"><%= l Date.today %></p>
+<p class="hidden" id="storeName"><%= current_user.store.store_name %></p>
+<p class="hidden" id="hour"><%= Time.new.strftime("%H:%M") %></p>
 
 <br /><br />
   <%= render 'links_for_orders' %>
