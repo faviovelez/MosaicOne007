@@ -25,12 +25,12 @@ class OrdersController < ApplicationController
   end
 
   def index_for_viewers
-  end
-
-  def history_for_viewers
+    current_orders
+    render 'orders_for_viewers'
   end
 
   def pr_for_viewers
+    @order = Order.find(params[:id])
   end
 
   def edit_discount
@@ -700,6 +700,8 @@ class OrdersController < ApplicationController
       add_orders(my_status, false)
     elsif (permited_roles_corp.include?(current_user.role.name) && current_user.store.id == 1)
       @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(store: current_user.store, corporate_id: 2).order(:created_at)
+    elsif current_user.role.name == 'viewer'
+      @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).order(:created_at)
     else
       @orders = Order.where.not(status: ['entregado', 'cancelado', 'expirado']).where(corporate: current_user.store).order(:created_at)
     end
@@ -725,6 +727,8 @@ class OrdersController < ApplicationController
       @orders = Order.where(status:'entregado', store: current_user.store).order(:created_at)
       my_status = 'entregado'
       add_orders(my_status, true)
+    elsif current_user.role.name == 'viewer'
+      @orders = Order.where(status:'entregado').order(:created_at)
     else
       @orders = Order.where(status:'entregado', corporate: current_user.store).order(:created_at)
     end

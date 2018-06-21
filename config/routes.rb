@@ -244,7 +244,7 @@ Rails.application.routes.draw do
 
   get 'orders/history_for_viewers'
 
-  get 'orders/pr_for_viewers'
+  get 'orders/pr_for_viewers/:id', to: 'orders#pr_for_viewers', as: 'orders_pr_for_viewers'
 
   get 'orders/filter_for_viewers'
 
