@@ -113,7 +113,7 @@
       <% end %>
     <% end %>
 
-    <% if current_user.role.name == 'store-admin' || current_user.role.name == 'platform-admin' %>
+    <% if ['store-admin', 'platform-admin', 'admin-desk'].include?(current_user.role.name) %>
 
       <% if params[:controller] == 'stores' && params[:action] == 'show_settings' %>
         <%= link_to 'Modificar configuración', edit_store_settings_path(current_user.store) %>
