@@ -5,7 +5,7 @@
 
   <div class="form-inside-style">
     <%= f.label :dirección_de_entrega %>
-    <%= f.select :delivery_address, options_for_select(delivery_options(@order), selected: value), class: 'delivery_order' %>
+    <%= f.select :delivery_address, options_for_select(delivery_options(@order), selected: @order.prospect.delivery_address.id), class: 'delivery_order' %>
   </div>
 
   <% if @order.delivery_address == nil %>
