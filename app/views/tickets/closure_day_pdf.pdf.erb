@@ -74,68 +74,6 @@
     </tr>
     <tr class="hidden">
       <td>
-        <strong>Resumen de pagos</strong>
-      </td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td>
-        <strong>Forma de pago</strong>
-      </td>
-      <td>
-        <strong>Total</strong>
-      </td>
-      <td>
-        <strong>Tickets</strong>
-      </td>
-    </tr>
-    <% @payment_forms.each do |pay_form| %>
-      <tr class="hidden">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td> <%= pay_form[0] %> </td>
-        <td> <%= number_to_currency(pay_form[1]) %> </td>
-        <% if pay_form[2] == [] %>
-          <td> - </td>
-        <% else %>
-          <td> <%= pay_form[2] %> </td>
-        <% end %>
-      </tr>
-      <% end %>
-      <tr class="hidden">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="hidden">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-    <tr class="hidden">
-      <td>
         <strong> Promedio de ventas </strong>
       </td>
       <td></td>

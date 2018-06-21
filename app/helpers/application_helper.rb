@@ -125,10 +125,9 @@ module ApplicationHelper
       discount += (mov.discount_applied * mov.quantity)
       subtotal += (mov.subtotal * mov.quantity)
     end
-    order.movements.each do |mov|
-      discount += mov.discount_applied
-      subtotal += mov.subtotal
-    end
+    discount += order.movements.sum(:discount_applied)
+    subtotal += order.movements.sum(:subtotal)
+    debugger if subtotal == 0
     @discount = (discount / subtotal * 100).round(0)
     @discount.round(0)
   end
