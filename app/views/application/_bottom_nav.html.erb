@@ -127,6 +127,10 @@
         <%= link_to 'Modificar dirección', edit_delivery_address_path(@delivery) %>
       <% elsif params[:controller] == 'billing_addresses' && params[:action] == 'show' %>
         <%= link_to 'Modificar datos de facturación', edit_billing_address_path(@billing) %>
+      <% elsif params[:controller] == 'orders' && params[:action] == 'show_for_store' %>
+        <% if current_user.role.name == 'admin-desk' %>
+          <%= link_to 'Cambiar dirección de entrega', '#myModal', 'data-toggle' => 'modal' %>
+        <% end %>
       <% end %>
     <% end %>
 
