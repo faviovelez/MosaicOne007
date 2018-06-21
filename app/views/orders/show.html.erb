@@ -79,7 +79,11 @@
           <% end %>
           <td> <strong> <%= number_to_currency(get_total) %> </strong> </td>
         <% else %>
-          <td class="hidden"> <strong> <%= number_to_percentage(order_discount(order), precision: 1) %> </strong> </td>
+        <% if @orders.count > 1 %>
+          <td class="hidden"> <strong> <%= number_to_percentage(order_discount_multiple(@orders), precision: 1) %> </strong> </td>
+        <% else %>
+          <td class="hidden"> <strong> <%= number_to_percentage(order_discount(@orders.first), precision: 1) %> </strong> </td>
+        <% end %>
           <td class="hidden"> <strong> <%= number_to_currency(get_total) %> </strong> </td>
         <% end %>
       </tr>
