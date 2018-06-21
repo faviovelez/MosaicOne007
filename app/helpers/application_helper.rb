@@ -210,7 +210,7 @@ module ApplicationHelper
   end
 
   def show_non_blank_field(field)
-    field.blank? ? @field_value = '-' : @field_value = field
+    field.blank? ? @field_value = '' : @field_value = field
     @field_value
   end
 
