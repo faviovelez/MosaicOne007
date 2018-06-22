@@ -1,7 +1,7 @@
 <%= render 'supplier_errors' %>
 <%= form_for(@supplier) do |f| %>
 
-  <h2 class="info-title">Editar de Proveedor  <%= @supplier.legal_or_business_name %></h2>
+  <h2 class="info-title">Editar de Proveedor  <%= @supplier.name %></h2>
 
   <div class="form-container">
 
@@ -12,7 +12,7 @@
 
     <div class="form-inside-style">
       <%= f.label :giro_comercial %>
-      <%= f.text_field :business_type, value: @supplier.business_type), class: 'form-inside' %>
+      <%= f.text_field :business_type, value: @supplier.business_type, class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">
