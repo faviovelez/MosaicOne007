@@ -1,5 +1,5 @@
 <% if @orders.count >= 1 %>
-  <table class="dataTableFour">
+  <table class="dataTableEight">
     <thead>
       <tr class="table-titles">
         <th class="col-md-1">Pedido</th>
@@ -15,6 +15,8 @@
         <% end %>
         <th class="col-md-2">Confirmó</th>
         <th class="col-md-1"> Factura </th>
+        <th class="hidden"> Preparó </th>
+        <th class="hidden"> Entregó </th>
         <th class="col-md-1">Acciones</th>
       </tr>
     </thead>
@@ -76,6 +78,8 @@
               </span>
             <% end %>
           </td>
+          <td class="hidden"> <%= order_warehouse_user(order) %> </td>
+          <td class="hidden"> <%= driver_name(order) %> </td>
           <td class="col-md-2 text-left">
             <%= link_to orders_show_for_store_path(order), class: 'link-extra-space' do %>
               <i class="fa fa-plus-square link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
@@ -113,6 +117,9 @@
                   <% end %>
                 <% end %>
               <% end %>
+              <% if (!['store', 'store-admin'].include?(current_user.role.name)) %>
+                <i class="fa fa-truck link-to-confirm link-extra-space" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Preparó: <%= order_warehouse_user(order) %>, Entregó: <%= driver_name(order) %>"></i>
+              <% end %>
             <% end %>
           </td>
         </tr>
@@ -122,6 +129,10 @@
 <% else %>
   <p class="individual-font">No tienes pedidos entregados todavía.</p>
 <% end %>
+
+<p class="hidden" id="dateToday"><%= l Date.today %></p>
+<p class="hidden" id="storeName"><%= current_user.store.store_name %></p>
+<p class="hidden" id="hour"><%= Time.new.strftime("%H:%M") %></p>
 
 <br /><br />
   <%= render 'links_for_orders' %>
