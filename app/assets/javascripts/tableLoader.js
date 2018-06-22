@@ -261,6 +261,146 @@ $(document).ready(function(){
     ]
   });
 
+  var tableEigth = $('.dataTableEight').DataTable({
+    "order": [[ 1, "asc" ]],
+    "language": {
+      "sProcessing":     "Procesando...",
+      "sLengthMenu":     "Mostrar _MENU_ registros",
+      "sZeroRecords":    "No se encontraron resultados",
+      "sEmptyTable":     "Ningún dato disponible en esta tabla",
+      "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix":    "",
+      "sSearch":         "Buscar:",
+      "sUrl":            "",
+      "sInfoThousands":  ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst":    "Primero",
+        "sLast":     "Último",
+        "sNext":     "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    },
+    pageLength: 8,
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: 'print',
+        orientation: 'landscape',
+        title: "Historial de Pedidos entregados " + $("#dateToday").html() + " " + $("#hour").html() + " Hrs.",
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        }
+      },
+      {
+        extend: 'pdfHtml5',
+        orientation: 'landscape',
+        title: "Historial de Pedidos entregados " + $("#dateToday").html() + " " + $("#hour").html() + " Hrs.",
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        }
+      },
+    ]
+  });
+
+  var tableNine = $('.dataTableNine').DataTable({
+    "order": [[ 1, "asc" ]],
+    "language": {
+      "sProcessing":     "Procesando...",
+      "sLengthMenu":     "Mostrar _MENU_ registros",
+      "sZeroRecords":    "No se encontraron resultados",
+      "sEmptyTable":     "Ningún dato disponible en esta tabla",
+      "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix":    "",
+      "sSearch":         "Buscar:",
+      "sUrl":            "",
+      "sInfoThousands":  ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst":    "Primero",
+        "sLast":     "Último",
+        "sNext":     "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    },
+    pageLength: 8,
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: 'print',
+        title: "Pedidos sin entregar " + $("#dateToday").html() + " " + $("#hour").html() + " Hrs.",
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        }
+      },
+      {
+        extend: 'pdfHtml5',
+        title: "Pedidos sin entregar " + $("#dateToday").html() + " " + $("#hour").html() + " Hrs.",
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        }
+      },
+    ]
+  });
+
+  var tableTen = $('.dataTableTen').DataTable({
+    "order": [[ 1, "asc" ]],
+    "language": {
+      "sProcessing":     "Procesando...",
+      "sLengthMenu":     "Mostrar _MENU_ registros",
+      "sZeroRecords":    "No se encontraron resultados",
+      "sEmptyTable":     "Ningún dato disponible en esta tabla",
+      "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix":    "",
+      "sSearch":         "Buscar:",
+      "sUrl":            "",
+      "sInfoThousands":  ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst":    "Primero",
+        "sLast":     "Último",
+        "sNext":     "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    },
+    pageLength: 8,
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: 'print',
+        title: "Pedidos sin entregar " + $("#dateToday").html() + " " + $("#hour").html() + " Hrs.",
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4, 5, 6, 7]
+        }
+      },
+      {
+        extend: 'pdfHtml5',
+        title: "Pedidos sin entregar " + $("#dateToday").html() + " " + $("#hour").html() + " Hrs.",
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4, 5, 6, 7]
+        }
+      },
+    ]
+  });
+
   $('.form-data-tables').on('submit', function(e){
     var $form = $(this);
 

@@ -12,12 +12,24 @@ class BillingAddress < ActiveRecord::Base
 
   validates :rfc, presence: { message: 'Debe escribir el RFC.'}
 
+  before_save :squish!
+
   after_create :save_web_id_and_set_web_true
 
   after_save :create_update_change_table
 
   def save_web_id_and_set_web_true
     self.update(web_id: self.id, web: true)
+  end
+
+  def squish!
+    self.rfc.gsub!(/\A[[:space:]]+/, '')
+    self.rfc.gsub!(/[[:space:]]+\z/, '')
+    self.rfc.gsub!(/[[:space:]]+/, '')
+    self.rfc.gsub!('-', "")
+    self.rfc.gsub!('.', "")
+    self.rfc.gsub!(',', )
+    self
   end
 
   def create_update_change_table

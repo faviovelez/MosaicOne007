@@ -17,11 +17,11 @@ class Supplier < ActiveRecord::Base
 
   validates :name, presence: { message: 'Debe especificar el nombre del proveedor.'}
 
-  validates :business_type, presence: { message: 'Debe especificar el giro comercial.'}
+#  validates :business_type, presence: { message: 'Debe especificar el giro comercial.'}
 
-  validates :contact_first_name, presence: { message: 'Es necesario especificar por lo menos el primer nombre del contacto del proveedor.'}
+#  validates :contact_first_name, presence: { message: 'Es necesario especificar por lo menos el primer nombre del contacto del proveedor.'}
 
-  validates :contact_last_name, presence: { message: 'Es necesario especificar por lo menos el apellido paterno del contacto del proveedor.'}
+#  validates :contact_last_name, presence: { message: 'Es necesario especificar por lo menos el apellido paterno del contacto del proveedor.'}
 
   validates :direct_phone, numericality: true
 

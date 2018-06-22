@@ -178,6 +178,35 @@ module ApplicationHelper
     @name
   end
 
+
+    def warehouse_name(order)
+      user = order.users.joins(:role).where('roles.name' => ['warehouse-staff', 'warehouse-admin']).first
+      if user == nil
+        name = content_tag(:span, 'sin asignar', class: 'label label-danger')
+      else
+        name = user.first_name.capitalize + " " + user.last_name.capitalize
+      end
+      name
+    end
+
+    def driver_name(order)
+      delivery = order.delivery_attempt
+      if delivery == nil
+        name = content_tag(:span, 'sin asignar', class: 'label label-danger')
+      else
+        name = delivery.driver.first_name.capitalize + " " + delivery.driver.last_name.capitalize
+      end
+      name
+    end
+
+    def driver_names
+      @drivers = []
+      Driver.all.select("CONCAT(first_name, ' ', last_name) AS name, id").each do |driver|
+        @drivers << [driver.name, driver.id]
+      end
+      @drivers
+    end
+
   def order_warehouse_user(order, array = ['warehouse-staff', 'warehouse-admin'])
     user = order.users.where(role: Role.where(name: array)).first
     @name = user.first_name + ' '
