@@ -6,7 +6,7 @@ class SuppliersController < ApplicationController
   # GET /suppliers.json
   def index
     user = current_user.role.name
-    current_user.store.suppliers == [] ? @suppliers = [] : @suppliers = current_user.store.suppliers
+    Supplier.where(store: current_user.store) == [] ? @suppliers = [] : @suppliers = Supplier.where(store: current_user.store)
     Supplier.find([1,2]).each do |supplier|
       @suppliers << supplier unless @suppliers.include?(supplier)
     end

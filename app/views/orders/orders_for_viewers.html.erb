@@ -1,5 +1,5 @@
 <% if @orders.count >= 1 %>
-  <table class="dataTableFour">
+  <table class="dataTableTen">
     <thead>
       <tr class="table-titles">
         <th class="col-md-1"> Pedido </th>
@@ -71,6 +71,10 @@
 <% else %>
   <p class="individual-font">No tienes pedidos pendientes de entregar.</p>
 <% end %>
+
+<p class="hidden" id="dateToday"><%= l Date.today %></p>
+<p class="hidden" id="storeName"><%= current_user.store.store_name %></p>
+<p class="hidden" id="hour"><%= Time.new.strftime("%H:%M") %></p>
 
 <br /><br />
   <%= render 'links_for_orders' %>

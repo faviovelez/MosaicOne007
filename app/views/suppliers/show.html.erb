@@ -78,10 +78,13 @@
         <% end %>
     </p>
 
-  <p>
-    <strong>Tienda: </strong>
-    <%= @supplier.store.store_code %> - <%= @supplier.store.store_name %>
-  </p>
+
+  <% if @supplier.store != nil %>
+    <p>
+      <strong>Tienda: </strong>
+      <%= @supplier.store.store_code %> - <%= @supplier.store.store_name %>
+    </p>
+  <% end %>
 
     <p>
       <% if @supplier.delivery_address.present?%>
