@@ -2,12 +2,15 @@
   <thead>
     <tr>
       <% if current_user.role.name == 'viewer' %>
-        <th colspan="13" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+        <th colspan="14" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
       <% else %>
         <th colspan="12" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
       <% end %>
     </tr>
     <tr>
+      <% if current_user.role.name == 'viewer' %>
+        <th> Tienda </th>
+      <% end %>
       <th> Ticket </th>
       <th> Fecha </th>
       <th> Movimiento </th>
@@ -28,12 +31,15 @@
   <tbody>
     <% @delivery_services.each do |service_offered| %>
       <tr>
+        <% if current_user.role.name == 'viewer' %>
+          <td> <%= service_offered.store.store_name %> </td>
+        <% end %>
         <td> <%= service_offered.ticket.ticket_number %> </td>
         <td> <%= l service_offered.created_at.to_date %> </td>
         <td> <%= service_offered.service_type %> </td>
         <td> <%= service_offered.service.unique_code %> <%= service_offered.service.description %> </td>
         <% if current_user.role.name == 'viewer' %>
-          <td> <%= service_offered.delivery_service.tracking_number %> </td>
+          <td> <%= service_offered.delivery_service&.tracking_number %> </td>
         <% end %>
         <td> <%= number_with_delimiter(service_offered.quantity) %> </td>
         <td> <%= number_to_currency(service_offered.subtotal) %> </td>
@@ -63,6 +69,7 @@
       <td> </td>
       <td> </td>
       <% if current_user.role.name == 'viewer' %>
+        <td> </td>
         <td> </td>
       <% end %>
       <td> <strong> Total </strong> </td>

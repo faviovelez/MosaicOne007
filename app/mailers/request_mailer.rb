@@ -19,10 +19,12 @@ class RequestMailer < ApplicationMailer
   def status_price_assigned(request)
     @request = request
     identify_manager_and_request(request)
+    unless @manager.nil?
       mail(
         to: @manager.email,
         subject: "Precio asignado en pedido especial #{request.id}"
       )
+    end
   end
 
   def status_unassigned(request)
@@ -40,7 +42,7 @@ class RequestMailer < ApplicationMailer
     @request = request
     @mails = []
     identify_manager_and_request(request)
-    @mails << @manager.email
+    @mails << @manager.email unless @manager.nil?
     product_mails = User.joins(:role).where(roles: {name: ['product-admin', 'product-staff']}).pluck(:email)
     product_mails.each do |pm|
       @mails << pm
@@ -54,19 +56,23 @@ class RequestMailer < ApplicationMailer
   def status_cancelled(request)
     @request = request
     identify_manager_and_request(request)
+    unless @manager.nil?
       mail(
         to: @manager.email,
         subject: "El pedido especial #{request.id} ha sido cancelado"
       )
+    end
   end
 
   def request_reactivated(request)
     @request = request
     identify_manager_and_request(request)
+    unless @manager.nil?
       mail(
         to: @manager.email,
         subject: "El pedido especial #{request.id} ha sido reactivado"
       )
+    end
   end
 
   def send_authorisation(request)

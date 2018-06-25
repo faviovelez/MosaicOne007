@@ -2,6 +2,8 @@
 
   <br /><br />
 
+  <% min_date_reports(current_user) %>
+
   <h2 class="blue-title">Por favor seleccione la fecha y el tipo de reporte</h2>
 
   <br /><br />
@@ -21,20 +23,32 @@
     <%= select_tag :companies, options_for_select(company_options, selected: 'Todas'), {include_blank: true, multiple: true} %>
   </div>
 
+  <% if current_user.store.store_type.store_type == 'corporativo' %>
+    <div class="field">
+      <%= label_tag :opciones_de_tiendas %>
+      <%= select_tag :store_options, options_for_select(store_options, selected: 'Todas las tiendas') %>
+    </div>
+
+    <div class="field product-select-2 store-list hidden">
+      <%= label_tag :lista_de_tiendas %>
+      <%= select_tag :store_list, options_for_select(store_list), {include_blank: true, multiple: true} %>
+    </div>
+  <% end %>
+
   <div class="field extra-margin-top">
     <%= label_tag :fecha_de_reporte %>
-    <%= date_field_tag(:date, Date.today, options = {max: Date.today, min: current_user.store.tickets.first.created_at.to_date }) %>
+    <%= date_field_tag(:date, Date.today, options = {max: Date.today, min: @min_date }) %>
   </div>
 
   <div class="group_fields hidden">
     <div class="field">
       <%= label_tag :fecha_inicial %>
-      <%= date_field_tag(:initial_date, Date.today, options = {max: Date.today, min: current_user.store.tickets.first.created_at.to_date }) %>
+      <%= date_field_tag(:initial_date, Date.today, options = {max: Date.today, min: @min_date }) %>
     </div>
 
     <div class="field">
       <%= label_tag :fecha_final %>
-      <%= date_field_tag(:final_date, Date.today, options = {max: Date.today, min: current_user.store.tickets.first.created_at.to_date }) %>
+      <%= date_field_tag(:final_date, Date.today, options = {max: Date.today, min: @min_date }) %>
     </div>
   </div>
 

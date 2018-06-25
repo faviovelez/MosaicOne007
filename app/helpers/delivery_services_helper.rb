@@ -8,5 +8,4 @@ module DeliveryServicesHelper
     @options = options
   end
 
-
 end

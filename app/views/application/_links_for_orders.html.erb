@@ -88,4 +88,13 @@
     <% end %>
   <% end %>
 
+  <% if params[:controller] == 'orders' && params[:action] != 'cancelled' %>
+    <% if ['store', 'store-admin', 'admin-desk', 'viewer'].include?(current_user.role.name) %>
+      <%= link_to orders_cancelled_path, class: 'space-between-links' do %>
+        Pedidos cancelados
+        <i class="fa fa-calendar-times-o" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+
 </div>
