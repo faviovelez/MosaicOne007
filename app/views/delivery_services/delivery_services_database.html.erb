@@ -1,9 +1,16 @@
 <table id="delivery-services" class="table-display">
   <thead>
     <tr>
-      <th colspan="10" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <% if current_user.role.name == 'viewer' %>
+        <th colspan="12" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <% else %>
+        <th colspan="11" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <% end %>
     </tr>
     <tr>
+      <% if current_user.role.name == 'viewer' %>
+        <th> Tienda </th>
+      <% end %>
       <th> Ticket </th>
       <th> Fecha </th>
       <th> Movimiento </th>
@@ -26,6 +33,9 @@
   <tbody>
     <% @delivery_services.each do |delivery_service| %>
       <tr>
+        <% if current_user.role.name == 'viewer' %>
+          <td> <%= delivery_service.store.store_name %> </td>
+        <% end %>
         <td> <%= delivery_service.service_offered.ticket.ticket_number %> </td>
         <td> <%= l delivery_service.created_at.to_date %> </td>
         <td> <%= delivery_service.service_offered.service_type %> </td>

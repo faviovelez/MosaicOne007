@@ -52,6 +52,7 @@
           <% else %>
             <td> - </td>
           <% end %>
+
           <td class="status">
             <% if request.status == 'precio asignado' %>
               <span class="label label-primary">
@@ -73,12 +74,16 @@
               <span class="label label-default">
                 <%= request.status.capitalize %>
               </span>
-              <% elsif (request.status == 'mercancía asignada' || request.status == 'código asignado') %>
-                <span class="label label-info">
-                  <%= request.status.capitalize %>
-                </span>
+            <% elsif (request.status == 'mercancía asignada' || request.status == 'código asignado') %>
+              <span class="label label-primary">
+                <%= request.status.capitalize %>
+              </span>
+            <% elsif request.status == 'cotizando' %>
+              <span class="label label-info">
+                <%= request.status.capitalize %>
+              </span>
             <% end %>
-          </td>
+          </td>          
           <td class="col-md-1">
             <%= link_to manager_requests_path(request) do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>

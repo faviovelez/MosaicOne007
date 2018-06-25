@@ -12,12 +12,25 @@ class DeliveryServicesController < ApplicationController
       initial_date = Date.parse(params[:initial_date]).midnight + 6.hours unless (params[:initial_date] == nil || params[:initial_date] == '')
       final_date = Date.parse(params[:final_date]).end_of_day + 6.hours unless (params[:final_date] == nil || params[:final_date] == '')
     end
+    if params[:store_options] == nil
+      stores = current_user.store.id
+    else
+      if params[:store_options] == 'Todas las tiendas'
+        stores = Store.joins(:store_type).where(store_types: {store_type: 'tienda propia'}).pluck(:id)
+      elsif params[:store_options] == 'Tiendas y franquicias'
+        stores = Store.all.pluck(:id)
+      elsif params[:store_options] == 'Todas las franquicias'
+        stores = Store.joins(:store_type).where(store_types: {store_type: 'franquicia'}).pluck(:id)
+      else
+        stores = params[:store_list]
+      end
+    end
     if params[:report_type] == 'Ventas'
       if params[:companies].include?('Todas')
-        @delivery_services = ServiceOffered.includes(:ticket, :service, :delivery_service).where(store_id: current_user.store.id, created_at: initial_date..final_date, tickets: {ticket_type: ['venta', 'devolución']}).where.not(ticket_id: nil).order(:id)
+        @delivery_services = ServiceOffered.includes(:ticket, :service, :delivery_service, :store).where(store_id: stores, created_at: initial_date..final_date, tickets: {ticket_type: ['venta', 'devolución']}).where.not(ticket_id: nil).order(:id)
       else
         companies = params[:companies]
-        @delivery_services = ServiceOffered.includes(:ticket, :service, :delivery_service).where(store_id: current_user.store.id, created_at: initial_date..final_date, services: {delivery_company: companies}, tickets: {ticket_type: ['venta', 'devolución']}).where.not(ticket_id: nil).order(:id)
+        @delivery_services = ServiceOffered.includes(:ticket, :service, :delivery_service, :store).where(store_id: stores, created_at: initial_date..final_date, services: {delivery_company: companies}, tickets: {ticket_type: ['venta', 'devolución']}).where.not(ticket_id: nil).order(:id)
       end
       if @delivery_services == []
         redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'
@@ -33,10 +46,10 @@ class DeliveryServicesController < ApplicationController
       end
     elsif params[:report_type] == 'Base de datos'
       if params[:companies].include?('Todas')
-        @delivery_services = DeliveryService.includes(service_offered: :ticket).where(store_id: current_user.store.id, created_at: initial_date..final_date, tickets: {ticket_type: ['venta', 'devolución']}).where.not(service_offereds: {ticket_id: nil}).order(:id)
+        @delivery_services = DeliveryService.includes(:store, service_offered: :ticket).where(store_id: stores, created_at: initial_date..final_date, tickets: {ticket_type: ['venta', 'devolución']}).where.not(service_offereds: {ticket_id: nil}).order(:id)
       else
         companies = params[:companies]
-        @delivery_services = DeliveryService.includes(service_offered: [:ticket, :service]).where(store_id: current_user.store.id, created_at: initial_date..final_date, services: {delivery_company: companies}, tickets: {ticket_type: ['venta', 'devolución']}).where.not(service_offereds: {ticket_id: nil}).order(:id)
+        @delivery_services = DeliveryService.includes(:store, service_offered: [:ticket, :service]).where(store_id: stores, created_at: initial_date..final_date, services: {delivery_company: companies}, tickets: {ticket_type: ['venta', 'devolución']}).where.not(service_offereds: {ticket_id: nil}).order(:id)
       end
       if @delivery_services == []
         redirect_to root_path, alert: 'La fecha seleccionada no tiene registros, por favor elija otra'

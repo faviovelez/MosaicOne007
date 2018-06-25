@@ -41,28 +41,34 @@ class FilteredRequestsController < ApplicationController
     filter_confirmed_requests
   end
 
+  def delivered_view
+    filter_delivered_requests
+  end
+
 # Método de tienda: muestra solicitudes activas
   def filter_store_active_requests(store = current_user.store)
     @store_active = store.requests.where.not(:status => ['código asignado','creada','expirada','cancelada']).order(:created_at)
-    @store_active
   end
 
 # Método de tienda: muestra solicitudes expiradas y canceladas
   def filter_store_inactive_requests(store = current_user.store)
-    @store_inactive = store.requests.where(:status => ['expirada','cancelada']).order(:created_at)
+    if store.store_type.store_type == 'corporativo'
+      @store_inactive = Request.where(status: ['expirada','cancelada']).order(:created_at)
+    else
+      @store_inactive = Request.where(store: store, status: ['expirada','cancelada']).order(:created_at)
+    end
     @store_inactive
   end
 
 # Método de tienda: muestra solicitudes guardadas
   def filter_store_saved_requests(store = current_user.store)
     @store_saved = store.requests.where(:status => 'creada').order(:created_at)
-    @store_saved
   end
 
 # Método de managers, director y designers: muestra solicitudes o solicitudes de diseño asignadas al usuario logueado
   def filter_requests_assigned_to_user(user = current_user, role = current_user.role.name)
-    if role == 'manager' || role == 'director'
-      @assigned = user.requests.where.not(:status => ['creada', 'expirada','cancelada', 'mercancía asignada', 'código asignado', 'entregado']).order(:created_at)
+    if (role == 'manager' || role == 'director')
+      @assigned = user.requests.where.not(:status => ['creada', 'expirada','cancelada', 'mercancía asignada', 'código asignado', 'autorizada']).order(:created_at)
     elsif role == 'designer'
       @assigned = user.design_requests.where.not(:status => ['concluida','expirada','cancelada']).order(:created_at)
     end
@@ -71,8 +77,8 @@ class FilteredRequestsController < ApplicationController
 
 # Método para director exclusivo para el Dr. Luis, para ver las solicitudes asignadas a otros gerentes
   def filter_requests_assigned_to_others(user = current_user)
-    @assigned_to_others = Request.where.not(:status => ['creada', 'expirada','cancelada', 'mercancía asignada', 'código asignado', 'entregado']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").where.not('users.id' => (user)).order(:created_at)
-    @assigned_to_others
+    @requests = Request.where.not(:status => ['creada', 'expirada','cancelada', 'mercancía asignada', 'código asignado', 'autorizada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").where.not('users.id' => (user)).order(:created_at)
+    @requests
   end
 
 # Método para managers y designers: muestra las solicitudes o solicitudes de diseño sin asignar
@@ -91,13 +97,17 @@ class FilteredRequestsController < ApplicationController
 
 # Este método sirve para que usuarios con roles distintos a Manager o Designer puedan ver el estatus
   def filter_supporters_view
-    @supporters = Request.where.not(:status => ['creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").order(:created_at)
-    @supporters
+    @requests = Request.where.not(:status => ['creada','expirada','cancelada']).joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director").order(:created_at)
+    @requests
   end
 
 # Este método filtra las solicitudes autorizadas para que las vean los usuarios 'product-admin'
   def filter_confirmed_requests
     @confirmed = Request.where(status: 'autorizada')
+  end
+
+  def filter_delivered_requests
+    @requests = Request.joins(:order).where.not(orders: {id: nil}).where(status: 'autorizada', orders: {status: 'entregado'})
   end
 
 end

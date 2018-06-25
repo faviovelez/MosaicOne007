@@ -1,4 +1,4 @@
-<% if @assigned_to_others.count >= 1 %>
+<% if @requests.count >= 1 %>
     <table class="dataTableFour">
       <thead>
         <tr class="table-titles">
@@ -16,7 +16,7 @@
         </tr>
       </thead>
       <tbody>
-      <% @assigned_to_others.each do |request| %>
+      <% @requests.each do |request| %>
         <tr>
           <td> <%= request.id %> </td>
           <td> <%= request.store.store_name %> </td>
@@ -42,11 +42,7 @@
           <% else %>
           <td> - </td>
           <% end %>
-          <td>
-            <% find_manager(request) %>
-            <%= @follower.first_name %>
-            <%= @follower.last_name %>
-          </td>
+          <td><%= find_manager(request) %></td>
           <td> <%= request.status.capitalize %></td>
           <td class="col-md-1">
             <%= link_to request do %>
