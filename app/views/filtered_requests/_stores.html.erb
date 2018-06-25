@@ -63,33 +63,37 @@
           <% else %>
           <td class="delivery-date"> - </td>
             <% end %>
-          <td class="status">
-            <% if request.status == 'precio asignado' %>
-              <span class="label label-primary">
-                <%= request.status.capitalize %>
-              </span>
-            <% elsif (request.status == 'solicitada' || request.status == 'modificada') %>
-              <span class="label label-danger">
-                <%= request.status.capitalize %>
-              </span>
-            <% elsif request.status == 'costo asignado' %>
-              <span class="label label-warning">
-                <%= request.status.capitalize %>
-              </span>
-            <% elsif request.status == 'autorizada' %>
-              <span class="label label-success">
-                <%= request.status.capitalize %>
-              </span>
-            <% elsif request.status == 'cancelada' %>
-              <span class="label label-default">
-                <%= request.status.capitalize %>
-              </span>
+            <td class="status">
+              <% if request.status == 'precio asignado' %>
+                <span class="label label-primary">
+                  <%= request.status.capitalize %>
+                </span>
+              <% elsif (request.status == 'solicitada' || request.status == 'modificada') %>
+                <span class="label label-danger">
+                  <%= request.status.capitalize %>
+                </span>
+              <% elsif request.status == 'costo asignado' %>
+                <span class="label label-warning">
+                  <%= request.status.capitalize %>
+                </span>
+              <% elsif request.status == 'autorizada' %>
+                <span class="label label-success">
+                  <%= request.status.capitalize %>
+                </span>
+              <% elsif request.status == 'cancelada' %>
+                <span class="label label-default">
+                  <%= request.status.capitalize %>
+                </span>
               <% elsif (request.status == 'mercancía asignada' || request.status == 'código asignado') %>
+                <span class="label label-primary">
+                  <%= request.status.capitalize %>
+                </span>
+              <% elsif request.status == 'cotizando' %>
                 <span class="label label-info">
                   <%= request.status.capitalize %>
                 </span>
-            <% end %>
-          </td>
+              <% end %>
+            </td>
           <td class="text-left">
             <%= link_to request do %>
               <i class="fa fa-plus-square link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver detalles"></i>
@@ -98,22 +102,26 @@
             <%= link_to requests_price_path(request) do %>
               <i class="fa fa-calculator link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Asignar Precio"></i>
             <% end %>
-          <% elsif request.status == 'precio asignado' || request.status == 'confirmada' %>
-              <%= link_to request_estimate_path(format: :pdf, id: request), target: '_blank' do %>
-                <i class="fa fa-file-pdf-o link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver cotización"></i>
-              <% end %>
+          <% elsif request.status == 'precio asignado' || request.status == 'autorizada' %>
+            <%= link_to request_estimate_path(format: :pdf, id: request), target: '_blank' do %>
+              <i class="fa fa-file-pdf-o link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver cotización"></i>
+            <% end %>
+            <% if (request.prospect.email.present? || request.prospect.email_2.present? || request.prospect.email_3.present?) %>
               <%= link_to send_estimate_mail_path(request) do %>
                 <i class="fa fa-send link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Enviar cotización"></i>
               <% end %>
-              <%= link_to request_authorisation_path(format: :pdf, id: request), target: '_blank' do %>
-                <i class="fa fa-file-pdf-o link-to-price extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
-              <% end %>
+            <% end %>
+            <%= link_to request_authorisation_path(format: :pdf, id: request), target: '_blank' do %>
+              <i class="fa fa-file-pdf-o link-to-price extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
+            <% end %>
+            <% if (request.prospect.email.present? || request.prospect.email_2.present? || request.prospect.email_3.present?) %>
               <%= link_to send_authorisation_mail_path(request) do %>
                 <i class="fa fa-send-o link-to-price extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Enviar pedido"></i>
               <% end %>
-              <%= link_to confirm_requests_path(request) do %>
-                <i class="fa fa-check-circle link-to-confirm extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Confirmar pedido"></i>
-               <% end %>
+            <% end %>
+            <%= link_to confirm_requests_path(request) do %>
+              <i class="fa fa-check-circle link-to-confirm extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Confirmar pedido"></i>
+             <% end %>
           <% elsif request.status == 'devuelta'  %>
               <%= link_to edit_request_path(request) do %>
                <i class="fa fa-pencil link-to-confirm extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar cotización"></i>

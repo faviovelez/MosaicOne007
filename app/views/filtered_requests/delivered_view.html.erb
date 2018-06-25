@@ -1,4 +1,4 @@
-<% if @assigned.count >= 1 %>
+<% if @requests.count >= 1 %>
   <table class="dataTableFour">
     <thead>
       <tr class="table-titles">
@@ -10,11 +10,11 @@
         <th class="date col-md-1">Solicitada</th>
         <th class="delivery-date col-md-1">Entregar</th>
         <th class="status col-md-2">Estatus</th>
-        <th class="status col-md-2">Acciones</th>
+        <th class="status col-md-2">Cotiza</th>
       </tr>
     </thead>
     <tbody>
-      <% @assigned.each do |request| %>
+      <% @requests.each do |request| %>
         <tr>
           <td> <%= request.id %> </td>
           <td> <%= request.store.store_name %> </td>
@@ -83,32 +83,13 @@
               </span>
             <% end %>
           </td>
-        <% if request.internal_price.blank? %>
-          <td class="col-md-1">
-            <%= link_to manager_requests_path(request) do %>
-              <i class="fa fa-calculator link-to-price" aria-hidden="true"></i>
-              <span class="link-to-price">Cotizar</span>
-            <% end %>
-        </td>
-          <% elsif request.sensitive_fields_changed %>
-            <td class="col-md-1">
-              <%= link_to manager_view_requests_path(request) do %>
-                <i class="fa fa-pencil-square-o link-to-price" aria-hidden="true"></i>
-                <span class="link-to-price">Recotizar</span>
-              <% end %>
-            </td>
-          <% else %>
-            <td class="col-md-1">
-              <%= link_to request do %>
-                <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-                <span>Ver</span>
-              <% end %>
-            </td>
-          <% end %>
+          <td><%= find_manager(request) %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
 <% else %>
-  <p class="individual-font">No hay solicitudes activas</p>
+  <p class="individual-font">No hay solicitudes entregadas</p>
 <% end %>
+
+<%= render 'dataTables'%>

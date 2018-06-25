@@ -222,6 +222,10 @@ input#boxesQuantity {
   width: 450px !important;
 }
 
+.width-200 {
+  width: 200px !important;
+}
+
 select#report_type,
 select#options,
 select#initial_date,
@@ -229,7 +233,9 @@ select#final_date,
 select#what_final_date,
 select#products,
 select#information,
-select#companies {
+select#companies,
+select#store_options,
+select#stores {
   background-color: #fff !important;
   color: #000 !important;
 }

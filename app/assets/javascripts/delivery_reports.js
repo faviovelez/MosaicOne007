@@ -19,4 +19,19 @@ $(document).ready(function(){
      language: "es"
   });
 
+  $('#store_list').select2({
+     placeholder: 'Tiendas',
+     language: "es"
+  });
+
+  $("#store_options").bind('change', function() {
+    var storeOptions = $(this).val();
+    if (storeOptions == 'Seleccionar tiendas') {
+      $(".select2.select2-container").addClass("width-200");
+      $('.store-list').removeClass('hidden');
+    } else {
+      $('.store-list').addClass('hidden');
+    }
+  });
+
 });

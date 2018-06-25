@@ -54,6 +54,8 @@ Rails.application.routes.draw do
 
   get 'filtered_requests/current_view'
 
+  get 'filtered_requests/delivered_view'
+
   get 'filtered_requests/inactive_view'
 
   get 'filtered_requests/saved_view'

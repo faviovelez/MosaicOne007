@@ -237,19 +237,45 @@ module ApplicationHelper
     @name
   end
 
+  def store_options
+    @store_options = [['Todas las tiendas'], ['Tiendas y franquicias'], ['Todas las franquicias'], 'Seleccionar tiendas']
+  end
+
+  def store_list
+    @stores = []
+    Store.joins(:store_type).where.not(store_types: {store_type: 'corporativo'}).order(:store_name).each do |store|
+      @stores << [store.store_name, store.id]
+    end
+    @stores
+  end
+
   def show_non_blank_field(field)
     field.blank? ? @field_value = '-' : @field_value = field
     @field_value
   end
 
-  def find_manager(request, role = 'manager' || role = 'director')
+  def find_manager(request, roles = ['manager', 'director'])
     user_id = 0
     request.users.each do |user_in_request|
-      if (user_in_request.role.name == role)
+      if (roles.include?(user_in_request.role.name))
         user_id = user_in_request.id
       end
     end
-    @follower = request.users.find(user_id)
+    if user_id == 0
+      @follower = content_tag(:span, 'sin asignar', class: 'label label-danger')
+    else
+      user = request.users.find(user_id)
+      @follower = user.first_name + ' ' + user.last_name
+    end
+  end
+
+  def min_date_reports(user)
+    if user.store.store_type.store_type == 'corporativo'
+      @min_date = Ticket.where(store_id: user.store.business_unit.business_group.stores.pluck(:id)).first.created_at.to_date
+    else
+      @min_date = Ticket.where(store: user.store).first.created_at.to_date
+    end
+    @min_date
   end
 
   def find_designer(request, role = 'designer')

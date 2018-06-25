@@ -660,7 +660,79 @@
 
         <%# Aquí inicia el área que muestra los links para viewer %>
         <% if current_user.role.name == 'viewer' %>
+          <% if params[:controller] == 'filtered_requests' && params[:action] == 'supporters_view' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-server other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Cotizaciones en proceso', filtered_requests_supporters_view_path, class: 'text-link'  %>
+            </li>
 
+          <% if params[:controller] == 'filtered_requests' && params[:action] == 'inactive_view' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-eraser other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Cotizaciones canceladas', filtered_requests_inactive_view_path, class: 'text-link'  %>
+            </li>
+
+          <% if params[:controller] == 'filtered_requests' && params[:action] == 'delivered_view' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-folder-open other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Cotizaciones entregadas', filtered_requests_delivered_view_path, class: 'text-link'  %>
+            </li>
+
+
+          <% if params[:controller] == 'orders' && params[:action] == 'index_for_viewers' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-dropbox other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Pedidos en proceso', orders_index_for_viewers_path, class: 'text-link'  %>
+            </li>
+
+          <% if params[:controller] == 'orders' && params[:action] == 'history' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+              <i class="fa fa-calendar-check-o other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Historial de Pedidos', orders_history_path, class: 'text-link'  %>
+            </li>
+
+          <% if params[:controller] == 'orders' && params[:action] == 'cancelled' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+            <i class="fa fa-calendar-times-o other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Pedidos cancelados', orders_cancelled_path, class: 'text-link'  %>
+          </li>
+
+          <% if params[:controller] == 'delivery_services' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-plane other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Servicios de Mensajería', delivery_services_select_report_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'inventories' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
+            </li>
+            
         <% end %>
         <%-# Aquí termina el área que muestra los links para viewer %>
 
