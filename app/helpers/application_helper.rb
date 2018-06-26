@@ -163,10 +163,10 @@ module ApplicationHelper
   end
 
   def address_for_delivery(order)
-    store = order.store
-    @address = store.delivery_address.street + ' ' + store.delivery_address.exterior_number + ' '
-    @address += 'Int. ' + store.delivery_address.interior_number + ' ' unless store.delivery_address.interior_number.blank?
-    @address += 'Col. ' + store.delivery_address.neighborhood + '.' + ' ' + store.delivery_address.city + ',' + ' ' + store.delivery_address.state
+    prospect = order.prospect
+    @address = prospect.delivery_address.street + ' ' + prospect.delivery_address.exterior_number + ' '
+    @address += 'Int. ' + prospect.delivery_address.interior_number + ' ' unless prospect.delivery_address.interior_number.blank?
+    @address += 'Col. ' + prospect.delivery_address.neighborhood + '.' + ' ' + prospect.delivery_address.city + ',' + ' ' + prospect.delivery_address.state
     @address = @address.split.map(&:capitalize)*' '
     @address
   end
