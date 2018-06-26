@@ -283,7 +283,7 @@
     </tbody>
   </table>
 
-  <% if (@order.users.count > 1 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
+  <% if (@order.users.count > 1 && @order.prospect.id == current_user.store.store_prospect.id && @order.status == 'en ruta') %>
       <div class="actions">
         ¿Pedido completo?
         <%= check_box_tag :order_complete, true, true, { multiple: true, class: 'for-hide-checkbox'} %>
