@@ -255,7 +255,7 @@
             <td colspan="1"> <strong> <%= number_to_percentage(order_discount(@order), precision: 1) %> </strong> </td>
             <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
           <% else %>
-            <td colspan="1" class="hidden"> <strong> <%= number_to_percentage(order_discount(order), precision: 1) %> </strong> </td>
+            <td colspan="1" class="hidden"> <strong> <%= number_to_percentage(order_discount(@order), precision: 1) %> </strong> </td>
             <td colspan="1" class="hidden"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
           <% end %>
           <td colspan="1"></td>
