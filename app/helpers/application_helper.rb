@@ -118,7 +118,8 @@ module ApplicationHelper
     @mov_total
   end
 
-  def order_discount(order)
+  def order_discount(id)
+    order = Order.find(id)
     subtotal = 0
     discount = 0
     order.pending_movements.each do |mov|

@@ -11,6 +11,7 @@
         <th class="delivery-date col-md-1">Entregar</th>
         <th class="status col-md-2">Estatus</th>
         <th class="status col-md-2">Cotiza</th>
+        <th class="status col-md-1">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -84,6 +85,11 @@
             <% end %>
           </td>
           <td><%= find_manager(request) %></td>
+          <td>
+            <%= link_to request do %>
+              <i class="fa fa-plus-square link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver detalles"></i>
+            <% end %>  
+          </td>
         </tr>
       <% end %>
     </tbody>
