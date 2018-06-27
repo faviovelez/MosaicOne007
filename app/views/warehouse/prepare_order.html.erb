@@ -15,6 +15,7 @@
       <th> Almacén </th>
       <th> Ubicación </th>
       <th> Notas </th>
+      <th> Acciones </th>
       <th class="hidden"></th>
     </tr>
   </thead>
@@ -37,6 +38,7 @@
               <%= text_field_tag :boxes, nil, {id: 'boxesQuantity', class: 'form-control'} %>
             </div>
         </td>
+        <td></td>
         <td class="hidden">
           <%= text_field_tag :order, params[:id], {class: 'form-control hidden'} %>
         </td>
@@ -90,6 +92,13 @@
                 </span>
               </div>
             </div>
+          <% end %>
+        </td>
+        <td>
+          <% if current_user.role.name == 'admin-desk' && product_request.status != 'cancelada' %>
+            <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+              <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+            <% end %>
           <% end %>
         </td>
         <td class="hidden">

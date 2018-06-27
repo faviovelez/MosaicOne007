@@ -94,7 +94,7 @@
               <% end %>
             <% end %>
           </td>
-          <td> <%= number_to_percentage(order_discount(order), precision: 1) %> </td>
+          <td> <%= number_to_percentage(order_discount(order.id), precision: 1) %> </td>
           <td> <%= number_to_currency(order.total) %> </td>
         </tr>
       <% end %>

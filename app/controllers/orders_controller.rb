@@ -235,7 +235,8 @@ class OrdersController < ApplicationController
       params[:solved][index] == 'true' ? solved = true : solved = false
       pr.update(solved: solved)
     end
-    redirect_to orders_differences_path, notice: "Se ha actualizado el pedido #{product_requests.first.order.id}"
+    pr = ProductRequest.find(params[:id][0])
+    redirect_to orders_differences_path, notice: "Se ha actualizado el pedido #{pr.order.id}"
   end
 
   def confirm_received
