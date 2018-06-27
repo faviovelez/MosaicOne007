@@ -1,9 +1,10 @@
 <% if @business_groups.count >= 1 %>
-  <table>
+  <table class="dataTableFour">
     <thead>
       <tr class="table-titles">
-        <th class="col-md-3">Nombre</th>
-        <th class="col-md-1">Empresas</th>
+        <th>Nombre</th>
+        <th>Empresas</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -13,14 +14,14 @@
           <td><%=business_group.business_units.count %></td>
           <td class="col-md-1">
             <%= link_to business_group_path(business_group) do %>
-              <i class="fa fa-plus-circle link-to-details" aria-hidden="true"></i>
-              <span class="link-to-details">Ver</span>
+              <i class="fa fa-plus-circle link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver"></i>
             <% end %>
           </td>
       </tr>
-        <% end %>
+      <% end %>
     </tbody>
   </table>
 <% else %>
   <p class="individual-font">Aún no hay grupos de empresas registrados</p>
 <% end %>
+<%= render 'dataTables'%>

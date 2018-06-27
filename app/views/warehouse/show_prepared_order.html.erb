@@ -1,6 +1,6 @@
 <%= form_tag({ controller: 'warehouse', action: 'assign_driver' }, method: 'post', class: 'form-data-tables') do %>
 
-  <table class="table dataTableNoPaginationNoButton">
+  <table class="table dataTableNoPagination">
     <thead>
       <tr class="table-titles">
         <th> Producto </th>
@@ -16,6 +16,7 @@
         <% elsif ((current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') && @order.delivery_attempt != nil) %>
           <th> Chofer </th>
         <% end %>
+        <th> Acciones </th>
       </tr>
     </thead>
     <tbody>
@@ -43,6 +44,13 @@
               <%= text_field_tag :id, params[:id], {class: 'hidden'} %>
             </td>
           <% end %>
+          <td>
+            <% if current_user.role.name == 'admin-desk' && product_request.status != 'cancelada' %>
+              <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+                <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+              <% end %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>

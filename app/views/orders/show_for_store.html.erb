@@ -252,10 +252,10 @@
           <td colspan="1"> <strong> <%= @order.boxes %> cajas </strong> </td>
           <td colspan="1"> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
           <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
-            <td colspan="1"> <strong> <%= number_to_percentage(order_discount(@order), precision: 1) %> </strong> </td>
+            <td colspan="1"> <strong> <%= number_to_percentage(order_discount(@order.id), precision: 1) %> </strong> </td>
             <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
           <% else %>
-            <td colspan="1" class="hidden"> <strong> <%= number_to_percentage(order_discount(@order), precision: 1) %> </strong> </td>
+            <td colspan="1" class="hidden"> <strong> <%= number_to_percentage(order_discount(@order.id), precision: 1) %> </strong> </td>
             <td colspan="1" class="hidden"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
           <% end %>
           <td colspan="1"></td>
@@ -275,7 +275,7 @@
           <td colspan="1"> <strong> Total: </strong>  </td>
           <td colspan="1"> <strong> <%= @order.boxes %> cajas </strong> </td>
           <td colspan="1"> <strong> <%= number_with_delimiter(sum_quantity_order(@order)) %> </strong> </td>
-          <td colspan="1"> <strong> <%= number_to_percentage(order_discount(@order), precision: 1) %> </strong> </td>
+          <td colspan="1"> <strong> <%= number_to_percentage(order_discount(@order.id), precision: 1) %> </strong> </td>
           <td colspan="1"> <strong> <%= number_to_currency(@order.total) %> </strong> </td>
           <td colspan="1"></td>
         </tr>
