@@ -128,7 +128,7 @@ module ApplicationHelper
     end
     discount += order.movements.sum(:discount_applied)
     subtotal += order.movements.sum(:subtotal)
-    @discount = (discount / subtotal * 100).round(0)
+    (discount != 0 && subtotal != 0) ? @discount = (discount / subtotal * 100).round(0) : @discount = 0 
     @discount.round(0)
   end
 

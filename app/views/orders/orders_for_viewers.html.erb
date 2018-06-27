@@ -56,7 +56,7 @@
               </span>
             <% end %>
           </td>
-          <td> <%= number_to_percentage(order_discount(order), precision: 1) %> </td>
+          <td> <%= number_to_percentage(order_discount(order.id), precision: 1) %> </td>
           <td> <%= number_to_currency(order.total) %> </td>
           <td class="col-md-2">
             <%= link_to orders_pr_for_viewers_path(order), class: 'link-extra-space' do %>

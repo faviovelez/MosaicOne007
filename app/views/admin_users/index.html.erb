@@ -13,7 +13,7 @@
       <tr>
         <% @users.each do |user| %>
           <td> <%= user.first_name %> <%= user.middle_name %> <%= user.last_name %> </td>
-          <td> <%= user.store.store_code %> - <%= user.store.store_name %> </td>
+          <td> <%= user.store.store_name %> </td>
           <td> <%= user.role.translation.capitalize %> </td>
           <td>
             <%= link_to user_path(user) do %>
