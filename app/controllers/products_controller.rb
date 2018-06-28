@@ -255,6 +255,7 @@ class ProductsController < ApplicationController
     @order.users << @finded_user
     @order.save
     @product_request = ProductRequest.create(product: @product, quantity: @request.quantity, order: @order, maximum_date: @request.delivery_date, status: 'sin asignar')
+    @pending_movement.update(product_request: @product_request)
     @inventory = Inventory.create(product: @product, unique_code: @product.unique_code)
     store_inventory = StoresInventory.create(product: @product, store: @finded_user.store)
   end
