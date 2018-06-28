@@ -256,7 +256,7 @@ class WarehouseController < ApplicationController
   end
 
   def validate_role
-    roles = ['warehouse-staff', 'warehouse-admin', 'product-staff', 'product-admin']
+    roles = ['warehouse-staff', 'warehouse-admin', 'product-staff', 'product-admin', 'admin-desk']
     redirect_to root_path, alert: 'No cuenta con los permisos necesarios' unless roles.include?(current_user.role.name)
   end
 
