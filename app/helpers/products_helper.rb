@@ -5,7 +5,7 @@ module ProductsHelper
     role = current_user.role.name
     b_u = current_user.store.business_unit
     main_bu = BusinessUnit.where(main: true)
-    if (role == 'product-admin' || role == 'product-staff') || (role == 'store-admin' || role == 'store' && (main_bu.include?(b_u) == true ))
+    if (role == 'product-admin' || role == 'product-staff' || role == 'admin-desk') || (role == 'store-admin' || role == 'store' && (main_bu.include?(b_u) == true ))
       suppliers = Supplier.where(name: [
                             'Diseños de Cartón',
                             'Comercializadora de Cartón y Diseño'

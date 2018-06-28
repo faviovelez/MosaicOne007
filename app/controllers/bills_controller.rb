@@ -1384,6 +1384,7 @@ class BillsController < ApplicationController
             @method_description = @method.description
             @method_key = @method.method
             @payment_form
+            rows(@general_bill, @objects)
           else
             @payment_key = @greatest_payment.payment_key
             @payment_description = @payments.first.first
@@ -1533,6 +1534,8 @@ class BillsController < ApplicationController
             @method_description = @method.description
             @method_key = @method.method
             @payment_form
+            rows(@general_bill, @objects)
+            @rows
           else
             @payment_key = @greatest_payment.payment_key
             @payment_description = @payments.first.first
@@ -1612,6 +1615,7 @@ class BillsController < ApplicationController
     @xml_path = "/public/uploads/bill_files/#{@store.id}/#{@time}-#{@p_rfc}_final"
     @sat_path = Rails.root.join('lib', 'sat')
     @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
+
   end
 
   def create_unsigned_xml_file

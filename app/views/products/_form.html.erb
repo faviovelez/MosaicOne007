@@ -265,7 +265,7 @@
 
       <div class="form-inside-style">
         <%= f.label :almacén %>
-        <% if (current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin') %>
+        <% if (current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin' || current_user.role.name == 'admin-desk' ) %>
           <%= f.select :warehouse_id, options_for_select(Warehouse.where("warehouse_code LIKE ?", "%AG%").collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
         <% else %>
           <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.business_group.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>

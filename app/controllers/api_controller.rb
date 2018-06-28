@@ -107,7 +107,7 @@ class ApiController < ApplicationController
     end
     separated = 0
     pending_orders = 0
-    product_requests = ProductRequest.where(product: p, corporate_id: params[:store_id].to_i).where.not(status: ['entregado', 'cancelada'])
+    product_requests = ProductRequest.joins(:order).where(product: p, corporate_id: params[:store_id].to_i).where.not(status: ['entregado', 'cancelada']).where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] })
     product_requests.each do |request|
       if request.status == "asignado"
         separated += request.quantity.to_i
