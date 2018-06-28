@@ -3,7 +3,8 @@
     <thead>
       <tr class="table-titles">
         <th>Pedido</th>
-        <th class="col-md-3"> Cliente / Tienda </th>
+        <th> Fecha </th>
+        <th class="col-md-2"> Cliente / Tienda </th>
         <th>Tipo</th>
         <th>Cajas</th>
         <th>Estatus</th>
@@ -19,6 +20,7 @@
       <% @orders.each do |order| %>
         <tr>
           <td> <%= order.id %> </td>
+          <td> <%= l order.created_at.to_date, format: :short %> </td>
           <td> <%= show_non_blank_field(order.prospect&.legal_or_business_name) %> </td>
           <% if order.category == 'de línea' %>
               <td>

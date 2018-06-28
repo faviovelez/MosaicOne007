@@ -628,6 +628,42 @@
           <%= link_to 'Mercancía apartada', warehouse_select_product_path, class: 'text-link' %>
             </li>
 
+          <% if params[:controller] == 'warehouse' && params[:action] == 'new_own_entry'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-industry other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Entrada mercancía producción', warehouse_new_own_entry_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'warehouse' && params[:action] == 'new_supplier_entry'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-truck other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Entrada mercancía terceros', warehouse_new_supplier_entry_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'warehouse' && params[:action] == 'remove_inventory'  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-tag other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Salida de mercancía', warehouse_remove_inventory_path, class: 'text-link' %>
+            </li>
+
+          <% if ((params[:controller] == 'filtered_requests' && params[:action] == 'product_view') || params[:request_id].present?)  %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-pencil-square-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Crear producto especial', filtered_requests_product_view_path, class: 'text-link' %>
+            </li>
+
           <% if (params[:controller] == 'warehouse' && (params[:action] == 'sales_for_billing'))  %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
@@ -732,7 +768,7 @@
           <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
             </li>
-            
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para viewer %>
 
