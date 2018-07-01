@@ -11,6 +11,9 @@
       <th> Movimiento </th>
       <th> Cantidad </th>
       <th> Motivo / Folio </th>
+      <% if !(current_user.store.store_type.store_type == 'tienda propia') %>
+        <th> Costo </th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -34,6 +37,9 @@
             <% else %>
               <td> <%= movement.ticket.ticket_number %> </td>
             <% end %>
+          <% end %>
+          <% if !(current_user.store.store_type.store_type == 'tienda propia') %>
+            <td> <%= number_to_currency(movement.total_cost) %> </td>
           <% end %>
         </tr>
     <% end %>
