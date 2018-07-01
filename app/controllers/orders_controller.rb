@@ -520,63 +520,74 @@ class OrdersController < ApplicationController
                   delivery_address: current_user.store.delivery_address,
                   prospect: @prospect
                 )
-    @order.update(deliver_complete: true) if params[:deliver_complete] == "true"
+    @order.update(deliver_complete: true) if params[:deliver_complete] == "true" && @prospect.store.id != 2
     @order.users << current_user
     @order.save
     create_product_requests
-    @order = Order.last
-    @order.product_requests.each do |pr|
-      status << [pr.status]
-      prod_req << pr
-    end
-    if status.uniq.length != 1
-      if !(@order.deliver_complete)
-        @order.movements.each do |mov|
-          movs << mov
-        end
-        @order.pending_movements.each do |mov|
-          pend_movs << mov
-        end
-        @new_order = Order.create(store: current_user.store,
-          request_user: current_user,
-          category: 'de línea',
-          corporate: corporate,
-          delivery_address: current_user.store.delivery_address,
-          status: 'en espera',
-          prospect: @prospect
-        )
-        assigned_mov = []
-        unassigned_pr = []
-        assigned_pr = []
-        pendings = []
-        prod_req.each do |pr|
-          pend_movs.each do |pm|
-            pendings << pm if (pm.product_id == pr.product_id && (pendings.include?(pm) == false))
-            unassigned_pr << pr if (pm.product_id == pr.product_id && (unassigned_pr.include?(pr) == false))
+    if @all_orders == nil
+      @order = Order.last
+      @order.product_requests.each do |pr|
+        status << [pr.status]
+        prod_req << pr
+      end
+      if status.uniq.length != 1
+        if !(@order.deliver_complete)
+          @order.movements.each do |mov|
+            movs << mov
           end
-          movs.each do |mov|
-            assigned_mov << mov if (pr.product_id == mov.product_id && (assigned_mov.include?(mov) == false))
-            assigned_pr << pr if (pr.product_id == mov.product_id && (assigned_pr.include?(pr) == false))
+          @order.pending_movements.each do |mov|
+            pend_movs << mov
           end
-        end
-        pendings.each do |pend|
-          PendingMovement.find(pend.id).update(order: @new_order)
-        end
-        unassigned_pr.each do |pr|
-          ProductRequest.find(pr.id).update(order: @new_order)
+          @new_order = Order.create(store: current_user.store,
+            request_user: current_user,
+            category: 'de línea',
+            corporate: corporate,
+            delivery_address: current_user.store.delivery_address,
+            status: 'en espera',
+            prospect: @prospect
+          )
+          assigned_mov = []
+          unassigned_pr = []
+          assigned_pr = []
+          pendings = []
+          prod_req.each do |pr|
+            pend_movs.each do |pm|
+              pendings << pm if (pm.product_id == pr.product_id && (pendings.include?(pm) == false))
+              unassigned_pr << pr if (pm.product_id == pr.product_id && (unassigned_pr.include?(pr) == false))
+            end
+            movs.each do |mov|
+              assigned_mov << mov if (pr.product_id == mov.product_id && (assigned_mov.include?(mov) == false))
+              assigned_pr << pr if (pr.product_id == mov.product_id && (assigned_pr.include?(pr) == false))
+            end
+          end
+          pendings.each do |pend|
+            PendingMovement.find(pend.id).update(order: @new_order)
+          end
+          unassigned_pr.each do |pr|
+            ProductRequest.find(pr.id).update(order: @new_order)
+          end
+        else
+          @order.update(status: 'en espera')
         end
       else
-        @order.update(status: 'en espera')
+        if status.first == ['asignado']
+          @order.update(status: 'mercancía asignada')
+        end
       end
+      @orders = []
+      @orders << @order.id
+      @orders << @new_order.id unless @new_order == nil
+      redirect_to orders_show_path(@orders), notice: 'Todos los registros almacenados.'
     else
-      if status.first == ['asignado']
-        @order.update(status: 'mercancía asignada')
+      @orders = []
+      @all_orders.each do |order|
+        if order.movements != []
+          order.update(status: 'mercancía asignada')
+        end
+        @orders << order.id
       end
+      redirect_to orders_show_path(@orders), notice: 'Todos los registros almacenados.'
     end
-    @orders = []
-    @orders << @order.id
-    @orders << @new_order.id unless @new_order == nil
-    redirect_to orders_show_path(@orders), notice: 'Todos los registros almacenados.'
   end
 
   def save_products_for_prospects
@@ -758,20 +769,54 @@ class OrdersController < ApplicationController
     if params[:armed][n] == 'true'
       converted_armed = true
     end
-    counter.times do
-      product = Product.find(params[:products][n])
-      product_request = ProductRequest.create(
-        product: product,
-        status: 'asignado',
-        quantity: params[:request][n],
-        corporate: @corporate,
-        armed: converted_armed,
-        order: @order
-      )
-      if product_request.save
-        passing_validation(product_request, n)
+    if @prospect.store.id == 2
+      @all_orders = []
+      counter.times do
+        product = Product.find(params[:products][n])
+        if n == 0
+          product_request = ProductRequest.create(
+            product: product,
+            status: 'asignado',
+            quantity: params[:request][n],
+            corporate: @corporate,
+            armed: converted_armed,
+            order: @order
+          )
+          @all_orders << @order
+        else
+          @order = @order.dup
+          @order.save
+          @all_orders << @order
+          product_request = ProductRequest.create(
+            product: product,
+            status: 'asignado',
+            quantity: params[:request][n],
+            corporate: @corporate,
+            armed: converted_armed,
+            order: @order
+          )
+        end
+        if product_request.save
+          passing_validation(product_request, n)
+        end
+        n += 1
       end
-      n += 1
+    else
+      counter.times do
+        product = Product.find(params[:products][n])
+        product_request = ProductRequest.create(
+          product: product,
+          status: 'asignado',
+          quantity: params[:request][n],
+          corporate: @corporate,
+          armed: converted_armed,
+          order: @order
+        )
+        if product_request.save
+          passing_validation(product_request, n)
+        end
+        n += 1
+      end
     end
   end
 

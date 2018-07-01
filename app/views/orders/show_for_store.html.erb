@@ -31,7 +31,7 @@
           <th class="hidden"> Descuento </th>
           <th class="hidden"> Total </th>
         <% end %>
-        <th> Acciones </th>
+        <th class="col-md-2"> Acciones </th>
       </tr>
     </thead>
     <tbody>
@@ -95,7 +95,7 @@
             <td class="hidden"> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% end %>
           <td>
-            <% if (@order.users.count > 0 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
+            <% if (@order.users.count > 0 && @order.prospect.id == current_user.store.store_prospect.id && @order.status == 'en ruta') %>
               <div class="all-hide hidden">
                 <span class="for-hide" id="for-hide_<%= product_request.id %>">
                   ¿Completo?
@@ -196,7 +196,7 @@
             <td class="hidden"> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% end %>
           <td>
-            <% if (@order.users.count >= 1 && @order.users.include?(current_user) && @order.status == 'en ruta') %>
+            <% if (@order.users.count > 0 && @order.prospect.id == current_user.store.store_prospect.id && @order.status == 'en ruta') %>
               <div class="all-hide hidden">
                 <span class="for-hide" id="for-hide_<%= product_request.id %>">
                   ¿Completo?

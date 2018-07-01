@@ -12,9 +12,11 @@
         <th class="col-md-1"> Piezas </th>
         <th class="col-md-1"> Estatus </th>
         <th class="col-md-2"> Solicitó </th>
-        <th class="col-md-1"> Descuento </th>
-        <th class="col-md-1"> Total </th>
-        <th class="col-md-1"> Acciones </th>
+        <% if !['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) %>
+          <th class="col-md-1"> Descuento </th>
+          <th class="col-md-1"> Total </th>
+        <% end %>
+        <th class="col-md-2"> Acciones </th>
       </tr>
     </thead>
     <tbody>
@@ -64,9 +66,11 @@
           <td class="col-md-1">
             <%= order_request_user(order) %>
           </td>
-          <td> <%= number_to_percentage(order_discount(order.id), precision: 1) %> </td>
-          <td> <%= number_to_currency(order.total) %> </td>
-          <td class="col-md-1">
+          <% if !['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) %>
+            <td> <%= number_to_percentage(order_discount(order.id), precision: 1) %> </td>
+            <td> <%= number_to_currency(order.total) %> </td>
+          <% end %>
+          <td class="col-md-2">
             <%= link_to orders_show_for_store_path(order), class: 'link-extra-space' do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido"></i>
             <% end %>

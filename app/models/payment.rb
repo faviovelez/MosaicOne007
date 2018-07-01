@@ -18,6 +18,8 @@ class Payment < ActiveRecord::Base
 
   after_create :save_web_id_and_set_web_true, :create_update_date_advise, :add_to_bill
 
+  after_create :update_parent_status, if: :has_parent_and_is_not_payed
+
   # Crear o modificar objeto y si pertenece al mismo ticket dejar solo uno y borrar los demás (borrar los viejos)
   # Buscar y modificar los que pertenezcan al mismo ticket y desactivarlas y/o borrarlas (DateAdvise) ON CREATE Y ON UPDATE?
 
@@ -32,6 +34,29 @@ class Payment < ActiveRecord::Base
         !!(DateAdvise.where(ticket: @ticket.parent).first.nil?)
       end
     end
+  end
+
+  def update_parent_status
+    total_pay = 0
+    total = 0
+    parent = self.ticket.parent
+    total += parent.store_movements.sum(:total)
+    total += parent.service_offereds.sum(:total)
+    total_pay += parent.payments.where(payment_type: 'pago').sum(:total)
+    children = parent.children
+    children.each do |child|
+      total += child.store_movements.where(movement_type: 'venta').sum(:total)
+      total -= child.store_movements.where(movement_type: 'devolución').sum(:total)
+      total += child.service_offereds.where(service_type: 'venta').sum(:total)
+      total -= child.service_offereds.where(service_type: 'devolución').sum(:total)
+      total_pay += child.payments.where(payment_type: 'pago').sum(:total)
+      total_pay -= child.payments.where(payment_type: 'devolución').sum(:total)
+    end
+    parent.update(payed: true) if total - total_pay > 1
+  end
+
+  def has_parent_and_is_not_payed
+    self.ticket.parent.present? && !self.ticket.parent.payed
   end
 
   def add_to_bill
