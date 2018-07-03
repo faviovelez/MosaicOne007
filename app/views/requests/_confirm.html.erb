@@ -14,7 +14,6 @@
 
       <% if @request.authorised_without_doc == true  %>
         <p> Si deseas subir el pedido autorizado, desmarca este campo y sube un archivo. </p>
-      <% else %>
       <% end %>
 
       <div class="field authorised_without_doc form-inside-style">
@@ -24,23 +23,40 @@
     </div>
 
     <div class="authorisation">
-    <% unless @request.payment_uploaded %>
-      <div class="field form-inside-style upload_payment">
-        <%= f.label :ficha_de_depósito %>
-        <%= f.file_field :payment %>
+      <% unless @request.payment_uploaded %>
+        <div class="field form-inside-style upload_payment">
+          <%= f.label :ficha_de_depósito %>
+          <%= f.file_field :payment %>
+        </div>
+      <% end %>
+
+      <% if @request.authorised_without_pay == true  %>
+        <p> Si deseas subir la ficha de depósito, desmarca este campo y sube un archivo. </p>
+      <% end %>
+
+      <div class="field authorised_without_pay form-inside-style">
+        <%= f.label :autorizar_sin_ficha_de_depósito, class: 'padding-top' %>
+        <%= f.check_box(:authorised_without_pay, checked_value: '1', unchecked_value: '0') %>
       </div>
-    <% end %>
-
-    <% if @request.authorised_without_pay == true  %>
-      <p> Si deseas subir la ficha de depósito, desmarca este campo y sube un archivo. </p>
-    <% else %>
-    <% end %>
-
-    <div class="field authorised_without_pay form-inside-style">
-      <%= f.label :autorizar_sin_ficha_de_depósito, class: 'padding-top' %>
-      <%= f.check_box(:authorised_without_pay, checked_value: '1', unchecked_value: '0') %>
     </div>
-  </div>
+
+    <div class="printcard">
+      <% unless @request.printcard_uploaded %>
+        <div class="field form-inside-style upload_printcard">
+          <%= f.label :printcard %>
+          <%= f.file_field :printcard %>
+        </div>
+      <% end %>
+
+      <% if @request.authorised_without_printcard == true  %>
+        <p> Si deseas subir el printcard, desmarca este campo y sube un archivo. </p>
+      <% end %>
+
+      <div class="field authorised_without_printcard form-inside-style">
+        <%= f.label :autorizar_sin_printcard, class: 'padding-top' %>
+        <%= f.check_box(:authorised_without_printcard, checked_value: '1', unchecked_value: '0') %>
+      </div>
+    </div>
 
   <div class="button-container">
     <div class="actions">

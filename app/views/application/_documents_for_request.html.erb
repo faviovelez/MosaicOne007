@@ -1,5 +1,5 @@
 
-<% if (@request.authorisation_signed || @request.payment_uploaded || @request.specification_document) %>
+<% if (@request.authorisation_signed || @request.payment_uploaded || @request.specification_document || @request.printcard_uploaded) %>
   <h3>Archivos adjuntos</h3>
 <% end %>
 
@@ -10,7 +10,7 @@
       <%= image_tag '/assets/authorisation.png', alt: 'Ícono documento autorización', class: 'document-icon img-responsive' %>
       <%= link_to 'Ver', @authorisation.first.document_url, target: '_blank' %>
     <% end %>
-    <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin')) %>
+    <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin' || current_user.role.name == 'admin-desk')) %>
       <%= link_to 'Borrar', document_path(@authorisation.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
     <% end %>
   </div>
@@ -26,13 +26,29 @@
       <%= image_tag '/assets/deposit.png', alt: 'Ícono documento pago', class: 'document-icon img-responsive' %>
       <%= link_to 'Ver', @payment.first.document_url, target: '_blank' %>
     <% end %>
-    <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin')) %>
+    <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin' || current_user.role.name == 'admin-desk')) %>
       <%= link_to 'Borrar', document_path(@payment.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
     <% end %>
   </div>
   <% elsif @request.authorised_without_pay %>
     <h4>Ficha de depósito</h4>
     <p class="individual-font">Autorizado sin ficha de depósito</p>
+<% end %>
+
+<% if @request.printcard_uploaded %>
+  <h4> Printcard </h4>
+  <div class="document-link-area">
+    <%= link_to @printcard.first.document_url, target: '_blank' do %>
+      <%= image_tag '/assets/document_red.png', alt: 'Ícono printcard', class: 'document-icon img-responsive' %>
+      <%= link_to 'Ver', @printcard.first.document_url, target: '_blank' %>
+    <% end %>
+    <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin' || current_user.role.name == 'admin-desk')) %>
+      <%= link_to 'Borrar', document_path(@printcard.first), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
+    <% end %>
+  </div>
+  <% elsif @request.authorised_without_printcard %>
+    <h4> Printcard </h4>
+    <p class="individual-font">Autorizado sin printcard</p>
 <% end %>
 
 <% if @request.specification_document %>

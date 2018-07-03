@@ -9,7 +9,7 @@
         <th class="product col-md-1">Material</th>
         <th class="date col-md-1">Solicitada</th>
         <th class="delivery-date col-md-1">Entregar</th>
-        <th class="status col-md-2">Estatus</th>
+        <th class="status col-md-1">Estatus</th>
         <th class="status col-md-2">Acciones</th>
       </tr>
     </thead>
@@ -80,9 +80,30 @@
             <% end %>
           </td>
           <td class="col-md-1">
-            <%= link_to new_request_product_path(request) do %>
-              <i class="fa fa-book link-to-confirm" aria-hidden="true"></i>
-              <span class="link-to-confirm">Nuevo</span>
+            <%= link_to new_request_product_path(request), class: 'link-extra-space' do %>
+              <i class="fa fa-book link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Crear producto"></i>
+            <% end %>
+            <% request.documents.where(document_type: ['pedido', 'printcard', 'pago']).each do |document| %>
+              <% if request.documents != [] %>
+                <% if document.document_type == 'printcard' %>
+                  <%= link_to document.document_url, {class: 'link-extra-space',  target: '_blank'} do %>
+                    <i class="fa fa-archive link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver printcard"></i>
+                  <% end %>
+                <% elsif document.document_type == 'pago' %>
+                  <%= link_to document.document_url, {class: 'link-extra-space', target: '_blank'} do %>
+                    <i class="fa fa-money link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver ficha de depósito"></i>
+                  <% end %>
+                <% else %>
+                  <%= link_to document.document_url, {class: 'link-extra-space', target: '_blank'} do %>
+                    <i class="fa fa-briefcase link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver Pedido"></i>
+                  <% end %>
+                <% end %>
+                <% if request.documents.where(document_type: 'pago') == [] %>
+                  <%= link_to request_authorisation_path(format: :pdf, id: request), {class: 'link-extra-space', target: '_blank'} do %>
+                    <i class="fa fa-file-pdf-o link-to-price extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido en blanco"></i>
+                  <% end %>
+                <% end %>
+              <% end %>
             <% end %>
           </td>
         </tr>

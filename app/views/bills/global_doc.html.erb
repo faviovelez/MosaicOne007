@@ -116,27 +116,48 @@
           </tr>
         <% end %>
         <% if (@bill != nil || @relation_type == '03') %>
-        <% @rows.each do |row|%>
-          <tr>
-            <td class="grow space"> <%= row.sat_key %> </td>
-            <% if @bill == nil || @relation_type == '03'%>
-              <td class="grow space"> <%= row.ticket %> </td>
-            <% end %>
-            <td class="grow space"> <%= row.quantity %> </td>
-            <td class="grow space"> <%= row.sat_unit_key %> </strong> </td>
-            <td class="grow space"> <%= row.description %> </td>
-            <td class="grow space"> <%= number_to_currency(row.unit_value) %> </td>
-            <td class="grow space"> <%= number_to_currency(row.discount) %> </td>
-            <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
-            <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
-          </tr>
-        <% end %>
+          <% @rows.each do |row|%>
+            <tr>
+              <td class="grow space"> <%= row.sat_key %> </td>
+              <% if @bill == nil || @relation_type == '03'%>
+                <td class="grow space"> <%= row.ticket %> </td>
+              <% end %>
+              <td class="grow space"> <%= row.quantity %> </td>
+              <td class="grow space"> <%= row.sat_unit_key %> </strong> </td>
+              <td class="grow space"> <%= row.description %> </td>
+              <td class="grow space"> <%= number_to_currency(row.unit_value) %> </td>
+              <td class="grow space"> <%= number_to_currency(row.discount) %> </td>
+              <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
+              <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
+            </tr>
+          <% end %>
       <% end %>
       <tr>
-        <td>
-          <br />
-        </td>
+        <td> <br/> </td>
+        <td colspan="3 letter" class="grow center"> <br/> </td>
+        <td> <br/> </td>
+        <td colspan="5"> <br/> </td>
       </tr>
+      <% if @notes != nil%>
+        <tr>
+          <td> <br/> </td>
+          <td colspan="3 letter" class="grow center"> <br/> </td>
+          <td> <br/> </td>
+          <td colspan="5"> <br/> </td>
+        </tr>
+        <tr>
+          <td> <br/> </td>
+          <td colspan="3 letter" class="grow center"> <br/> </td>
+          <td> <br/> </td>
+          <td colspan="5" class="text-left grow"> <%= @notes %> </td>
+        </tr>
+        <tr>
+          <td> <br/> </td>
+          <td colspan="3 letter" class="grow center"> <br/> </td>
+          <td> <br/> </td>
+          <td colspan="5"> <br/> </td>
+        </tr>
+      <% end %>
       <tr>
         <td></td>
         <td colspan="3 letter" class="grow center"> </td>
