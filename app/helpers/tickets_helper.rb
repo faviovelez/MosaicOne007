@@ -174,7 +174,7 @@ module TicketsHelper
     rows_for_ticket_show_helper(ticket)
     payments_for_ticket_show(ticket)
     get_returns_or_changes_for_ticket(ticket)
-  ((@total_rows_ticket - @difference) <= @total_payments_ticket || @total_rows_ticket - @total_payments_ticket < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(@total_rows_ticket - @total_payments_ticket)
+  ((@total_rows_ticket - @difference) <= @total_payments_ticket || @total_rows_ticket - @difference - @total_payments_ticket < 1) ? @pending = content_tag(:span, 'pagado', class: 'label label-success') : @pending = number_to_currency(@total_rows_ticket - @difference - @total_payments_ticket)
     @pending
   end
 

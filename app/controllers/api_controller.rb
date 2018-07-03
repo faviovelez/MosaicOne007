@@ -154,11 +154,17 @@ class ApiController < ApplicationController
     render json: { suggestions: suppliers_group }
   end
 
-  def get_prospects_for_store
+  def get_prospects_for_store(role = current_user.role.name)
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       prospects = current_user.store.prospects
     else
-      prospects = Prospect.includes(:billing_address, :business_unit).where(business_units: {name: 'Comercializadora de Cartón y Diseño'})
+      prospects = Prospect.where(store_id: current_user.store.id)
+    end
+    corporate = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).pluck(:id)
+    Store.all.each do |store|
+      unless prospects.include?(store.store_prospect)
+        prospects << store.store_prospect if corporate.include?(current_user.store.id)
+      end
     end
     options = []
     prospects.each do |prospect|
