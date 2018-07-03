@@ -128,7 +128,7 @@ module ApplicationHelper
     end
     discount += order.movements.sum(:discount_applied)
     subtotal += order.movements.sum(:subtotal)
-    (discount != 0 && subtotal != 0) ? @discount = (discount / subtotal * 100).round(0) : @discount = 0 
+    (discount != 0 && subtotal != 0) ? @discount = (discount / subtotal * 100).round(0) : @discount = 0
     @discount.round(0)
   end
 
@@ -604,12 +604,12 @@ module ApplicationHelper
   end
 
   def username(request)
-    roles = ['store', 'store-admin']
+    roles = ['store', 'store-admin', 'admin-desk']
     user = request.users.joins(:role).where('roles.name' => roles).first
     user_name = user.first_name.capitalize
     user_name += ' ' + user.middle_name.capitalize unless user.middle_name.blank?
     user_name += ' ' + user.last_name.capitalize unless user.last_name.capitalize.blank?
-    @user_name =user_name
+    @user_name = user_name
   end
 
   def request_address(request)

@@ -31,7 +31,7 @@
 
     <div class="form-inside-style hidden">
       <%= f.label :tipo_de_tienda %>
-      <%= f.select :store_type_id, options_for_select(StoreType.all.collect{|t| [t.store_type, t.id]}) %>
+      <%= f.select :store_type_id, options_for_select(StoreType.all.collect{|t| [t.store_type, t.id]}, selected: @store.store_type_id) %>
     </div>
 
     <h3>Datos de contacto</h3>

@@ -36,6 +36,12 @@
     </div>
   <% end %>
 
+  <div class="field form-inside-style">
+    <%= label_tag :notas %>
+    <%= text_field_tag :notes, nil, class: 'form-control', placeholder: 'Notas' %>
+  </div>
+
+
   <div class="actions">
     <%= submit_tag 'Vista previa de factura', class: 'main-button' %>
   </div>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180613181650) do
+ActiveRecord::Schema.define(version: 20180702210422) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1305,6 +1305,10 @@ ActiveRecord::Schema.define(version: 20180613181650) do
     t.boolean  "has_window",                    default: false
     t.string   "impression_finishing",          default: [],                 array: true
     t.text     "develop"
+    t.boolean  "printcard_document"
+    t.boolean  "authorised_without_printcard"
+    t.string   "printcard"
+    t.boolean  "printcard_uploaded"
   end
 
   add_index "requests", ["estimate_doc_id"], name: "index_requests_on_estimate_doc_id", using: :btree

@@ -449,8 +449,10 @@ class BillsController < ApplicationController
     if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
       @store_products = Product.where(store: current_user.store)
     end
-    @store_products.each do |product|
-      @products << product
+    if @store_products != nil
+      @store_products.each do |product|
+        @products << product
+      end
     end
     services = Service.where(current: true)
     @products.each do |product|
@@ -552,6 +554,7 @@ class BillsController < ApplicationController
   end
 
   def preview
+    @notes = params[:notes]
     @relation_type = params[:relation_type]
     params[:bill] == nil ? @bill = nil : @bill = Bill.find(params[:bill])
     params[:tickets] == nil ? tickets = nil : tickets = Ticket.find(params[:tickets])
@@ -1205,6 +1208,7 @@ class BillsController < ApplicationController
   end
 
   def cfdi_process
+    @notes = params[:notes]
     if (params['form'].present? || params['global_form'].present?)
       @relation_type = ''
       @store = Store.find(params['store_name']).first
@@ -1218,10 +1222,18 @@ class BillsController < ApplicationController
       @tax_regime_key = s_billing.tax_regime.tax_id
       @tax_regime = s_billing.tax_regime.description
       if params['form'].present?
-        bl = BillingAddress.where(business_name: params['prospect_name'], store: @store, rfc: params['prospect_rfc'])
+        if (current_user.store.id == 1 || current_user.store.id == 2)
+          bl = BillingAddress.where(business_name: params['prospect_name'], rfc: params['prospect_rfc'])
+        else
+          bl = BillingAddress.where(business_name: params['prospect_name'], store: @store, rfc: params['prospect_rfc'])
+        end
         bl.each do |b|
           b.prospects.each do |p|
-            if p.store == @store
+            if !(current_user.store.id == 1 || current_user.store.id == 2)
+              if p.store == @store
+                @prospect = p
+              end
+            else
               @prospect = p
             end
           end
@@ -2192,7 +2204,7 @@ XML
             end
           end
           children.service_offereds.each do |so|
-            serv = so.product.unique_code
+            serv = so.service.unique_code
             ticket = so.ticket.parent.id
             i = ''
             @rows.each_with_index do |key, index |

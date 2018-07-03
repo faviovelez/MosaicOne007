@@ -156,6 +156,26 @@
     <% end %>
 
     <% unless @relation_type == '03' %>
+      <% if @notes != nil%>
+        <tr>
+          <td colspan="3"></td>
+          <td></td>
+          <td></td>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td colspan="3"></td>
+          <td></td>
+          <td></td>
+          <td colspan="5" class="text-left"> <%= @notes %> </td>
+        </tr>
+        <tr>
+          <td colspan="3"></td>
+          <td></td>
+          <td></td>
+          <td colspan="5"></td>
+        </tr>
+      <% end %>
       <tr>
         <td colspan="3 letter" class="center"> __________________________ </td>
         <td></td>
@@ -282,7 +302,7 @@
 <% end %>
 
 <% if @bill == nil%>
-  <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill]}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
+  <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
 <% end %>
 
 <%= render 'add_masks' %>

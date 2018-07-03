@@ -375,8 +375,10 @@ $("#request_impression_no").click(function () {
 /* Este método esconde o muestra el checkbox de autorizaciones manuales */
   var authorisation = $('#request_authorisation');
   var payment = $('#request_payment');
+  var printcard = $('#request_printcard');
   var authorisedWithoutDoc = $('#request_authorised_without_doc');
   var authorisedWithoutPay = $('#request_authorised_without_pay');
+  var authorisedWithoutPrincard = $('#request_authorised_without_printcard');
 
   authorisedWithoutDoc.bind('change', function() {
     if (authorisedWithoutDoc.is(":checked")) {
@@ -395,6 +397,16 @@ $("#request_impression_no").click(function () {
       }
     } else {
       $('.upload_payment').removeClass('hidden');
+    }
+  });
+
+  authorisedWithoutPrincard.bind('change', function() {
+    if (authorisedWithoutPrincard.is(":checked")) {
+      if (printcard != '' ){
+        $('.upload_printcard').addClass('hidden');
+      }
+    } else {
+      $('.upload_printcard').removeClass('hidden');
     }
   });
 

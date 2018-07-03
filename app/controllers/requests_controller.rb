@@ -208,7 +208,7 @@ class RequestsController < ApplicationController
   def update
     # Este método salva el estatus anterior de la solicitud
     save_last_status
-    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin')
+    if (current_user.role.name == 'store' || current_user.role.name == 'store-admin' || current_user.role.name == 'admin-desk')
       # Este método guarda el estatus de si la solicitud tiene solicitud de diseño.
       # request_has_design?
       @request.update(request_params)
@@ -247,7 +247,7 @@ class RequestsController < ApplicationController
       elsif @request.update(request_params) && params[:enviar_dudas]
         redirect_to manager_after_path(@request), notice: "Los comentarios fueron enviados a la tienda."
       elsif @request.update(request_params)
-        @request.update(sales_price: params[:request][:internal_price].to_f, status: 'precio asignado') if (@request.store.store_type.store_type == 'tienda propia' && params[:request][:internal_price].present? && params[:request][:internal_cost].present?)
+        @request.update(sales_price: params[:request][:internal_price].to_f, status: 'precio asignado') if ((@request.store.store_type.store_type == 'tienda propia' || @request.store.store_type.store_type == 'corporativo') && params[:request][:internal_price].present? && params[:request][:internal_cost].present?)
         redirect_to manager_view_requests_path(@request), notice: "Los campos fueron actualizados correctamente."
       else
         respond_to do |format|
@@ -404,6 +404,12 @@ class RequestsController < ApplicationController
         @request.save
       end
     end
+    if params[:request][:printcard].present?
+      printcard = Document.create(document: params[:request][:printcard], document_type: 'printcard', request: @request)
+      @request.documents << printcard
+      @request.update(printcard_uploaded: true)
+      @request.save
+    end
   end
 
   # Valida si se autorizó con un click la Request.
@@ -413,6 +419,9 @@ class RequestsController < ApplicationController
     end
     if params[:request][:authorised_without_doc] == '1'
       @request.authorised_without_doc = true
+    end
+    if params[:request][:authorised_without_printcard] == '1'
+      @request.authorised_without_printcard = true
     end
   end
 
@@ -639,6 +648,10 @@ class RequestsController < ApplicationController
        :authorised,
        :last_status,
        :has_window,
+       :printcard,
+       :printcard_document,
+       :printcard_uploaded,
+       :authorised_without_printcard,
        :develop)
     end
 end
