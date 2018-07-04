@@ -504,7 +504,7 @@ class OrdersController < ApplicationController
 
   def save_products
     @store = Store.find(params[:store_id])
-    @prospect = Prospect.find_by_store_prospect_id(current_user.store)
+    @prospect = Prospect.find_by_store_prospect_id(current_user.store.id)
     corporate = Store.find(params[:corporate_store])
     @corporate = corporate
     status = []
