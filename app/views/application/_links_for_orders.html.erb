@@ -28,17 +28,6 @@
     <% end %>
   <% end %>
 
-  <% unless current_user.role.name == 'viewer' %>
-    <% if !(params[:controller] == 'orders' && params[:action] == 'cancelled') %>
-      <% if (current_user.role.name != 'warehouse-admin' && current_user.role.name != 'warehouse-staff') %>
-        <%= link_to orders_cancelled_path, class: 'space-between-links' do  %>
-          Pedidos cancelados
-          <i class="fa fa-calendar-times-o" aria-hidden="true"></i>
-        <% end %>
-      <% end %>
-    <% end %>
-  <% end %>
-
   <% if !(params[:controller] == 'orders' && params[:action] == 'history') %>
     <% if (current_user.role.name != 'warehouse-admin' && current_user.role.name != 'warehouse-staff') %>
       <%= link_to orders_history_path(current_user.store), class: 'space-between-links' do  %>

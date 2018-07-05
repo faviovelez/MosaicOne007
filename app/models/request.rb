@@ -82,7 +82,7 @@ class Request < ActiveRecord::Base
   # Validación para que se escriba el producto que se quiere cotizar cuando el cliente elija 'otro' en tipo de producto
   def fill_name_type
     if name_type.blank?
-      errors[:base] << "Mencionle el tipo de producto que quiere cotizar." unless product_type != 'otro'
+      errors[:base] << "Mencione el tipo de producto que quiere cotizar." if product_type == 'otro'
     end
   end
 
@@ -163,7 +163,7 @@ class Request < ActiveRecord::Base
 
   # Validación que evalúa si los campos de la descripción del producto que irán dentro están completos para poder elegir las opciones de sugerir medidas.
   def measures_suggestion
-    if what_measures == 'sugerir medidas'
+    if what_measures == "4"
       errors[:base] << "Es necesario llenar todas las medidas o los detalles del producto." unless product_complete
     end
   end
@@ -171,7 +171,7 @@ class Request < ActiveRecord::Base
   # Validación que evalúa campos adicionales (cuántos productos son, si las cajas son para estibar o almacenar) pero sólo si el producto es una caja y se pide sugerir material o resistencia.
   def product_complete
     @product_fields = []
-    if resistance_main_material == 'Sugerir resistencia' || main_material == 'sugerir material'
+    if resistance_main_material == 'Sugerir resistencia' || main_material == 'sugerir material' || what_measures == "4" # sugerir medidas
       if product_type == 'caja'
         @product_fields = [product_what, how_many, product_weight, for_what, boxes_stow]
       else

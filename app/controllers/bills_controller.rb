@@ -2096,7 +2096,7 @@ XML
         end
         @rows << new_hash
       end
-    elsif (general_bill == false && objects.first.is_a?(Ticket))
+      elsif (general_bill == false && objects.first.is_a?(Ticket))
       objects.each do |o|
         o.store_movements.each do |sm|
           new_hash = Hash.new.tap do |hash|
