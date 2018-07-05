@@ -74,8 +74,8 @@
         <% document = @specifications[n] %>
         <% if (@request.status != 'autorizada' && (current_user.role.name == 'store' || current_user.role.name == 'store-admin')) %>
           <%= link_to 'Borrar', document_path(document), from: 'request', method: :delete, data: { confirm: 'Desa borrar este documento?' } %>
-          <% n +=1 %>
         <% end %>
+        <% n +=1 %>
       <% end %>
     <% end %>
     </div>

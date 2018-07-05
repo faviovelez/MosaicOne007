@@ -98,11 +98,11 @@
                     <i class="fa fa-briefcase link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver Pedido"></i>
                   <% end %>
                 <% end %>
-                <% if request.documents.where(document_type: 'pago') == [] %>
-                  <%= link_to request_authorisation_path(format: :pdf, id: request), {class: 'link-extra-space', target: '_blank'} do %>
-                    <i class="fa fa-file-pdf-o link-to-price extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido en blanco"></i>
-                  <% end %>
-                <% end %>
+              <% end %>
+            <% end %>
+            <% if request.documents.where(document_type: 'pago') == [] %>
+              <%= link_to request_authorisation_path(format: :pdf, id: request), {class: 'link-extra-space', target: '_blank'} do %>
+                <i class="fa fa-file-pdf-o link-to-price extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pedido en blanco"></i>
               <% end %>
             <% end %>
           </td>

@@ -286,6 +286,8 @@ class Movement < ActiveRecord::Base
           elsif self.quantity < pending.product_request.quantity
             pending.product_request.update(special_shortage: pending.product_request.quantity - self.quantity, quantity: self.quantity)
           end
+          order = pending.product_request.order
+          update_order_total(order)
         end
         if quantity >= pending.quantity
           generate_objects_instance(pending)
@@ -293,6 +295,83 @@ class Movement < ActiveRecord::Base
         end
       end
     end
+  end
+
+  def update_order_total(order)
+    cost = 0
+    subtotal = 0
+    discount = 0
+    taxes = 0
+    total = 0
+    if order.movements != []
+      order.movements.each do |mov|
+        if mov.quantity == nil
+          mov.delete
+        else
+          if mov.movement_type == 'venta'
+            cost += mov.total_cost.to_f
+            subtotal += mov.subtotal.to_f
+            discount += mov.discount_applied.to_f
+            taxes += mov.taxes.to_f
+            total += mov.total.to_f
+          elsif mov.movement_type == 'devolución'
+            cost -= mov.total_cost.to_f
+            subtotal -= mov.subtotal.to_f
+            discount -= mov.discount_applied.to_f
+            taxes -= mov.taxes.to_f
+            total -= mov.total.to_f
+          end
+        end
+      end
+    end
+    order.pending_movements.each do |mov|
+      if mov.quantity == nil
+        mov.delete
+      else
+        product = mov.product
+        if product.group
+          if mov.movement_type == 'venta'
+            cost += mov.total_cost.to_f * mov.quantity * product.average
+            subtotal += mov.subtotal.to_f * mov.quantity * product.average
+            discount += mov.discount_applied.to_f * mov.quantity * product.average
+            taxes += mov.taxes.to_f * mov.quantity * product.average
+            total += (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
+          elsif mov.movement_type == 'devolución'
+            cost -= mov.total_cost.to_f * mov.quantity * product.average
+            subtotal -= mov.subtotal.to_f * mov.quantity * product.average
+            discount -= mov.discount_applied.to_f * mov.quantity * product.average
+            taxes -= mov.taxes.to_f * mov.quantity * product.average
+            total -= (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
+          end
+        else
+          if mov.movement_type == 'venta'
+            cost += mov.total_cost.to_f * mov.quantity
+            subtotal += mov.subtotal.to_f * mov.quantity
+            discount += mov.discount_applied.to_f * mov.quantity
+            taxes += mov.taxes.to_f * mov.quantity
+            total += (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
+          elsif mov.movement_type == 'devolución'
+            cost -= mov.total_cost.to_f * mov.quantity
+            subtotal -= mov.subtotal.to_f * mov.quantity
+            discount -= mov.discount_applied.to_f * mov.quantity
+            taxes -= mov.taxes.to_f * mov.quantity
+            total -= (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
+          end
+        end
+      end
+    end
+    subtotal = subtotal.round(2)
+    discount = discount.round(2)
+    taxes = taxes.round(2)
+    cost = cost.round(2)
+    total = total.round(2)
+    order.update(
+      subtotal: subtotal,
+      discount_applied: discount,
+      taxes: taxes,
+      total: total,
+      cost: cost
+    )
   end
 
   def check_for_product_requests

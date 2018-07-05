@@ -49,44 +49,50 @@
     <%= @request.boxes_stow.capitalize %>
   </p>
 
-  <p class="bigger-p margin-right-p">
     <% if @request.what_measures == '2' %>
+      <p class="bigger-p margin-right-p">
       <strong> Medidas internas: </strong>
+    <% elsif @request.what_measures == '4' %>
+      <p>
+        <strong>
+          <%= f.label :medidas, class: 'bigger-label' %>
+        </strong>
+        <%= f.select :what_measures, options_for_select([['seleccione', ''], ['externas', '1'], ['internas', '2']], selected: @request.what_measures), {}, class: 'extra-margin-right medidas' %>
     <% else %>
-      <strong> Medidas: </strong>
-    <% end %>
-
-    <% if @request.product_type == 'bolsa' %>
-        <%= @request.bag_length %> cm
-        x
-        <%= @request.bag_width %> cm
-        x
-        <%= @request.bag_height %> cm
-    <% elsif @request.product_type == 'exhibidor' %>
-      Altura:
-      <%= @request.exhibitor_height %> cm
-      Ancho (bandeja):
-      <%= @request.tray_width %> cm
-      Largo (bandeja):
-      <%= @request.tray_length %> cm
-      Número de bandejas:
-      <%= @request.tray_quantity %>
-    <% elsif @request.product_type == 'caja' || @request.product_type == 'otro' %>
-      <% if @request.what_measures == '1' %>
-        <%= @request.outer_length %> cm
-        x
-        <%= @request.outer_width %> cm
-        x
-        <%= @request.outer_height %> cm
-      <% elsif @request.what_measures == '2' %>
-        <%= @request.inner_length %> cm
-        x
-        <%= @request.inner_width %> cm
-        x
-        <%= @request.inner_height %> cm
-      <% end %>
+      <p class="bigger-p margin-right-p">
+        <strong> Medidas: </strong>
+      <% if @request.product_type == 'bolsa' %>
+          <%= @request.bag_length %> cm
+          x
+          <%= @request.bag_width %> cm
+          x
+          <%= @request.bag_height %> cm
+      <% elsif @request.product_type == 'exhibidor' %>
+        Altura:
+        <%= @request.exhibitor_height %> cm
+        Ancho (bandeja):
+        <%= @request.tray_width %> cm
+        Largo (bandeja):
+        <%= @request.tray_length %> cm
+        Número de bandejas:
+        <%= @request.tray_quantity %>
+      <% elsif @request.product_type == 'caja' || @request.product_type == 'otro' %>
+        <% if @request.what_measures == '1' %>
+          <%= @request.outer_length %> cm
+          x
+          <%= @request.outer_width %> cm
+          x
+          <%= @request.outer_height %> cm
+        <% elsif @request.what_measures == '2' %>
+          <%= @request.inner_length %> cm
+          x
+          <%= @request.inner_width %> cm
+          x
+          <%= @request.inner_height %> cm
+        <% end %>
     <% end %>
   </p>
+  <% end %>
 
   <% if @request.main_material == 'sugerir material' && params[:action] == 'manager_view' %>
     <div class="field form-inside-style">
@@ -246,17 +252,55 @@
     </p>
   <% end %>
 
-  <% if params[:action] == 'manager_view' %>
+  <% if params[:action] == 'manager_view' && @request.develop != nil %>
     <p class="bigger-p margin-right-p"><strong>Desarrollo: </strong>
       <%= @request.develop %>
     </p>
   <% end %>
-
 </div>
 
+<div id="outer" class="outer hidden">
+  <h4>Medidas externas</h4>
+
+  <div class="field form-inside-style">
+    <%= f.text_field :outer_length, placeholder: 'largo', class: 'form-inside' %>
+    cm
+  </div>
+
+  <div class="field form-inside-style">
+    <%= f.text_field :outer_width, placeholder: 'ancho', class: 'form-inside' %>
+    cm
+  </div>
+
+  <div class="field form-inside-style">
+    <%= f.text_field :outer_height, placeholder: 'alto', class: 'form-inside' %>
+    cm
+  </div>
+</div>
+
+<% if @request.what_measures == '4' %>
+  <div id="inner" class="inner hidden">
+    <h4>Medidas internas</h4>
+    <div class="field form-inside-style">
+      <%= f.text_field :inner_length, placeholder: 'largo', class: 'form-inside' %>
+      cm
+    </div>
+
+    <div class="field form-inside-style">
+      <%= f.text_field :inner_width, placeholder: 'ancho', class: 'form-inside' %>
+      cm
+    </div>
+
+    <div class="field form-inside-style">
+      <%= f.text_field :inner_height, placeholder: 'alto', class: 'form-inside' %>
+      cm
+    </div>
+  </div>
+<% end %>
+
 <% if params[:action] == 'manager_view' && field %>
-  <div class="actions">
-    <%= f.submit :guardar_cambios, name: 'actualizar', class: 'main-button capitalize' %>
+  <div class="actions"><br /><br />
+    <%= f.submit :guardar_cambios, name: 'actualizar', class: 'main-button capitalize' %><br /><br />
   </div>
 <% end %>
 
@@ -274,5 +318,8 @@
     <% end %>
   <% end %>
 
-
 </div>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'alter_request' %>
+<% end %>

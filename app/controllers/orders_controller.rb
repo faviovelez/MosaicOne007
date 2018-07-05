@@ -299,6 +299,8 @@ class OrdersController < ApplicationController
         end
         # Posiblemente un mailer que avise de los faltantes
         request.update(status: 'entregado', quantity: request.quantity.to_i + params[:excess][index].to_i - params[:surplus][index].to_i, alert: alert, excess: params[:excess][index].to_i, surplus: params[:surplus][index].to_i)
+        counter = request.movements.count
+        n = 0
         request.movements.each do |mov|
           new_mov = mov.as_json
           new_mov.delete("id")
@@ -309,7 +311,13 @@ class OrdersController < ApplicationController
           new_mov["reason"] = "Pedido #{order.id}"
           new_mov["movement_type"] = 'alta automática'
           new_mov["store_id"] = current_user.store.id
-          new_mov["quantity"] = new_mov["quantity"].to_i + params[:excess][index].to_i - params[:surplus][index].to_i
+          if counter == 1
+            new_mov["quantity"] = new_mov["quantity"].to_i + params[:excess][index].to_i - params[:surplus][index].to_i
+          elsif counter != 1 && n == counter
+            new_mov["quantity"] = new_mov["quantity"].to_i + params[:excess][index].to_i - params[:surplus][index].to_i
+          else
+            new_mov["quantity"] = new_mov["quantity"].to_i
+          end
           if (current_user.store.id == 1 || current_user.store.id == 2)
             new_mov.delete("product_request_id")
             Movement.create(new_mov)
@@ -338,6 +346,7 @@ class OrdersController < ApplicationController
             new_mov["total_cost"] = new_mov["cost"] * new_mov["quantity"].to_i
             StoreMovement.create(new_mov)
           end
+          n += 1
         end
       end
       order.update(status: 'entregado', deliver_complete: complete, confirm_user: current_user)
@@ -769,7 +778,7 @@ class OrdersController < ApplicationController
     if params[:armed][n] == 'true'
       converted_armed = true
     end
-    if @prospect.store.id == 2
+    if @prospect.store_prospect.id == 2
       @all_orders = []
       counter.times do
         product = Product.find(params[:products][n])
