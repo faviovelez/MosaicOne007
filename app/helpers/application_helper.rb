@@ -550,7 +550,7 @@ module ApplicationHelper
       @measures =  ' medidas internas:' + ' ' + request.inner_length.to_s + ' ' + 'x' + ' ' + request.inner_width.to_s + ' ' + 'x' + ' ' + request.inner_height.to_s + ' ' + 'cm' + ','
     elsif request.bag_length.present?
       @measures =  ' medidas:' + ' ' + request.bag_length.to_s + ' ' + 'x' + ' ' + request.bag_width.to_s + ' ' + 'x' + ' ' + request.bag_height.to_s + ' ' + 'cm' + ','
-    elsif exhibitor_height.present?
+    elsif request.exhibitor_height.present?
       @measures =  ' medidas:' + ' ' + request.exhibitor_height.to_s + ' ' + 'x' + ' ' + request.tray_quantity.to_s + ' ' + 'x' + ' ' + request.tray_length.to_s + ' ' + 'x' + ' ' + request.tray_width.to_s + 'x' + request.tray_divisions.to_s + ' ' + 'cm' + ','
     end
     @measures
@@ -600,7 +600,7 @@ module ApplicationHelper
     measures_info(request)
     material_info(request)
     impression_info(request)
-    @description = @product + ' ' + @measures + ' ' + @material + ' ' + @impression
+    @description = @product.to_s + ' ' + @measures.to_s + ' ' + @material.to_s + ' ' + @impression.to_s
   end
 
   def username(request)

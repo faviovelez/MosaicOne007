@@ -1,16 +1,16 @@
 <%= form_for(@request) do |f| %>
 
-<div class="form-container">
+  <div class="form-container">
 
-  <div class="field form-inside-style hidden">
-    <%= f.text_field :product_what, class: 'form-inside' %>
-  </div>
+    <div class="field form-inside-style hidden">
+      <%= f.text_field :product_what, class: 'form-inside' %>
+    </div>
 
-  <div class="button-container">
+    <div class="button-container">
 
-    <div class="actions">
-      <%= f.submit :asignar, name: 'asignar', class: 'main-button capitalize', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
+      <div class="actions">
+        <%= f.submit :asignar, name: 'asignar', class: 'main-button capitalize', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
+      </div>
     </div>
   </div>
-</div>
 <% end %>
