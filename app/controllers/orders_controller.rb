@@ -408,7 +408,7 @@ class OrdersController < ApplicationController
     discount_applied = order.discount_applied
     order.movements.each do |mov|
       if mov.product == product
-        number = WarehouseEntry.where(product: product, store: order.store).order(:id).last.entry_number.to_i
+        number = WarehouseEntry.where(product: product, store: order.corporate).order(:id).last.entry_number.to_i
         entry_mov = mov.entry_movement
         if order.status != 'entregado'
           entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: order.store, movement: entry_mov, entry_number: number.next)
@@ -445,7 +445,7 @@ class OrdersController < ApplicationController
     order.update(status: 'mercancía asignada') if (status.uniq.length == 1 && status.first == 'asignado' && order.status == 'en espera')
     if order.product_requests.where.not(status: 'cancelada').count < 1
       order.update(status: 'cancelado')
-      redirect_to root_path, notice: 'Se canceló por completo el pedido.'
+      redirect_to root_path, notice: "Se canceló por completo el pedido #{order.id}."
     else
       order.update(total: total, subtotal: subtotal, taxes: taxes, discount_applied: discount_applied)
       redirect_to orders_show_for_store_path(order), notice: 'Se canceló este producto de su pedido.'
@@ -463,7 +463,7 @@ class OrdersController < ApplicationController
     order.movements.each do |mov|
       # Falta el proceso que los quita de los reportes
       if mov.product == product
-        number = WarehouseEntry.where(product: product, store: order.store).order(:id).last.entry_number.to_i
+        number = WarehouseEntry.where(product: product, store: order.corporate).order(:id).last.entry_number.to_i
         entry_mov = mov.entry_movement
         if order.status != 'entregado'
           entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: order.store, movement: entry_mov, entry_number: number.next)
@@ -508,7 +508,7 @@ class OrdersController < ApplicationController
     orders_users = OrdersUser.find_by_order_id(order.id)
     orders_users.delete if orders_users != nil
     order.update(status: 'cancelado')
-    redirect_to root_path, notice: 'Se canceló por completo el pedido.'
+    redirect_to root_path, notice: "Se canceló por completo el pedido #{order.id}."
   end
 
   def save_products
@@ -778,7 +778,7 @@ class OrdersController < ApplicationController
     if params[:armed][n] == 'true'
       converted_armed = true
     end
-    if @prospect.store_prospect.id == 2
+    if @prospect.store_prospect != nil && @prospect.store_prospect.id == 2
       @all_orders = []
       counter.times do
         product = Product.find(params[:products][n])

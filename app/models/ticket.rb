@@ -18,8 +18,16 @@ class Ticket < ActiveRecord::Base
 
   after_create :save_web_id_and_set_web_true
 
+  after_create :update_ticket_type_if_parent_cancelled
+
   def save_web_id_and_set_web_true
     self.update(web_id: self.id, web: true)
+  end
+
+  def update_ticket_type_if_parent_cancelled
+    if self.parent != nil
+      self.update(ticket_type: 'cancelado') if self.parent.ticket_type == 'cancelado'
+    end
   end
 
   def sum_payments

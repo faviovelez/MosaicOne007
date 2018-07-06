@@ -227,6 +227,11 @@
                   </div>
                 </div>
               </div>
+              <% if current_user.role.name == 'admin-desk' && (product_request.status != 'cancelada' && product_request.order.status != 'en ruta') %>
+                <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+                  <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+                <% end %>
+              <% end %>
             <% else %>
               <% if current_user.role.name == 'admin-desk' && product_request.status != 'cancelada' %>
                 <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>

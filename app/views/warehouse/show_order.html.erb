@@ -11,6 +11,7 @@
           <th> Notas </th>
           <th> Chofer </th>
         <% end %>
+        <th> Acciones </th>
       </tr>
     </thead>
     <tbody>
@@ -53,6 +54,13 @@
           <% elsif (current_user.role.name == 'admin-desk' && @order.delivery_attempt != nil) %>
             <td> <%= @order.delivery_attempt.driver&.first_name %> <%= @order.delivery_attempt.driver&.last_name %> </td>
           <% end %>
+          <td>
+            <% if current_user.role.name == 'admin-desk' && product_request.status != 'cancelada' %>
+              <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+                <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+              <% end %>
+            <% end %>
+          </td>
         </tr>
         <% end %>
       <% else %>
@@ -96,6 +104,13 @@
             <% elsif (current_user.role.name == 'admin-desk' && @order.delivery_attempt != nil) %>
               <td> <%= @order.delivery_attempt.driver&.first_name %> <%= @order.delivery_attempt.driver&.last_name %> </td>
             <% end %>
+            <td>
+              <% if current_user.role.name == 'admin-desk' && product_request.status != 'cancelada' %>
+                <%= link_to delete_product_from_order_path(product_request), class: 'deleteProduct', data: { confirm: "Desa borrar el producto #{product_request.product.unique_code}, #{product_request.product.description} del pedido?. Esta acción no se puede deshacer." } do %>
+                  <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Cancelar"></i>
+                <% end %>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       <% end %>
