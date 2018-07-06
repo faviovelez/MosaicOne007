@@ -99,7 +99,7 @@ class PosController < ApplicationController
         cad << " AND " unless index == information.length - 1
       end
       cad.gsub!("AND  AND", "AND")
-      object = reg.class.where(cad).first
+      object = reg.class.where(cad).first unless reg.class == TicketsChild
       return reg if object.nil?
       updated_reg_for(object, reg)
       return object

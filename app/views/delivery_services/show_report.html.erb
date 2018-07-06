@@ -34,10 +34,12 @@
         <% end %>
         <td> <%= number_to_currency(@service_offered.total - @service_offered.total_cost) %> </td>
         <td>
-          <%= link_to delivery_services_show_database_path(@service_offered.delivery_service) do %>
-            <i class="fa fa-cube link-to-show" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Datos de envío"></i>
+          <% if @service_offered.delivery_service != nil %>
+            <%= link_to delivery_services_show_database_path(@service_offered.delivery_service) do %>
+              <i class="fa fa-cube link-to-show" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Datos de envío"></i>
+            <% end %>
           <% end %>
-       </td>
+        </td>
       </tr>
     </tbody>
   </table>
