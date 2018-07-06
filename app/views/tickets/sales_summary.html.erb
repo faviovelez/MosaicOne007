@@ -32,13 +32,13 @@
           <td>
             <% if tickets_exists(summary.month, summary.year) %>
               <%= link_to sales_path(year: summary.year, month: summary.month, store: current_user.store) do %>
-                <%= image_tag '/assets/ticket_main.png', alt: 'Ticket icon', class: 'sales-summary-icon' %>
+                <%= image_tag '/assets/ticket_main.png', alt: 'Ticket icon', class: 'sales-summary-icon', title: "Tickets" %>
               <% end %>
             <% end %>
 
             <% if bills_exists(summary.month, summary.year) %>
               <%= link_to bills_issued_path(year: summary.year, month: summary.month, store: current_user.store) do %>
-                <%= image_tag '/assets/pdf_alter.png', alt: 'Alternative icon PDF', class: 'sales-summary-icon' %>
+                <%= image_tag '/assets/pdf_alter.png', alt: 'Alternative icon PDF', class: 'sales-summary-icon', title: "Facturas" %>
               <% end %>
             <% end %>
           </td>
