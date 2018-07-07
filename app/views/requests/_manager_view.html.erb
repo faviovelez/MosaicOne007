@@ -2,6 +2,7 @@
 
   <%= form_for(@request) do |f| %>
 
+  <% unless @request.what_measures == '4' %>
     <div class="form-container flex-start">
 
       <div class="field form-inside-style">
@@ -27,6 +28,7 @@
         </div>
       </div>
     </div>
+    <% end %>
   <% end %>
 
   <% if @request.status == 'solicitada' || @request.status == 'modificada' || @request.status == 'devuelta' || @request.status == 'cotizando' %>
