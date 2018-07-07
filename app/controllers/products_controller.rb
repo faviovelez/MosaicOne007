@@ -241,7 +241,7 @@ class ProductsController < ApplicationController
     discount = @request.sales_price - @request.internal_price
     quantity = @request.quantity
     store_id = BusinessUnit.find(@product.business_unit_id).stores.joins(:store_type).where(store_types: {store_type: 'corporativo'}).first.id
-    @order = Order.new(status: 'en espera', category: 'especial', request_user: @request.users.first,  request: @request, store: @request.store, delivery_address: current_user.store.delivery_address, cost: (cost * quantity).round(2), subtotal: (real_price * quantity).round(2), discount_applied: (discount * quantity).round(2), taxes: (price * quantity * 0.16).round(2), total: (price * quantity * 1.16).round(2))
+    @order = Order.new(status: 'en espera', category: 'especial', request_user: @request.users.where(role_id: [4,5,10]).first, request: @request, store: @request.store, delivery_address: current_user.store.delivery_address, cost: (cost * quantity).round(2), subtotal: (real_price * quantity).round(2), discount_applied: (discount * quantity).round(2), taxes: (price * quantity * 0.16).round(2), total: (price * quantity * 1.16).round(2))
     @pending_movement = PendingMovement.new(product: @product, quantity: @request.quantity, movement_type: 'venta', order: @order, unique_code: @product.unique_code, product_request: @product_request, buyer_user: @finded_user, store_id: store_id, initial_price: real_price, final_price: price, cost: 0, total_cost: nil, subtotal: real_price, discount_applied: discount, automatic_discount: discount, taxes: price * 0.16, total: price* 1.16)
     if corporate_stores.include?(@request.store.id)
       @order.update(prospect: @request.prospect)
@@ -263,7 +263,7 @@ class ProductsController < ApplicationController
   def find_user
     @finded_user = nil
     users = @request.users
-    store_users = User.joins(:role).where("roles.name = ? OR roles.name = ?", "store", "store-admin")
+    store_users = User.joins(:role).where("roles.name = ? OR roles.name = ? OR roles.name = ?", "store", "store-admin", "admin-desk")
     users.each do |user|
       store_users.each do |store_user|
         if user == store_user
