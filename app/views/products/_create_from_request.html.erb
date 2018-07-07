@@ -285,7 +285,7 @@
         <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
           <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.warehouses.collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
         <% else %>
-          <%= f.select :warehouse_id, options_for_select(current_user.store.business_unit.warehouses.where.not('name LIKE ?', '%Almacén%').collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
+          <%= f.select :warehouse_id, options_for_select(Store.find(1).business_unit.warehouses.where.not('name LIKE ?', '%Almacén%').collect{|w| [w.name, w.id]}, selected: @product.warehouse_id) %>
         <% end %>
       </div>
 
