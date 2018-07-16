@@ -95,7 +95,7 @@
             <td class="hidden"> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% end %>
           <td>
-            <% if (@order.users.count > 0 && @order.prospect.id == current_user.store.store_prospect.id && @order.status == 'en ruta') %>
+            <% if (@order.users.count > 0 && (@order.prospect.id == current_user.store.store_prospect.id || @order.users.include?(current_user)) && @order.status == 'en ruta') %>
               <div class="all-hide hidden">
                 <span class="for-hide" id="for-hide_<%= product_request.id %>">
                   ¿Completo?
