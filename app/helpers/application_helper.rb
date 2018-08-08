@@ -221,7 +221,7 @@ module ApplicationHelper
   end
 
   def movement_username(movement)
-    @user = movement.user.first_name + ' ' + movement.user.last_name
+    movement.user == nil ? @user = "Sin información" : @user = movement.user.first_name + ' ' + movement.user.last_name
   end
 
   def order_driver(order)
