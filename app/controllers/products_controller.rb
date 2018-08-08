@@ -12,12 +12,60 @@ class ProductsController < ApplicationController
   end
 
   def show_product_csv
+    headers = %w{cod desc cant}
     attributes = %w{unique_code description quantity}
 
     file = CSV.generate(headers: true) do |csv|
-      csv << attributes
+      csv << headers
 
-      Product.where(current: true, shared: true).each do |product|
+      Product.where(current: true, shared: true).order(:unique_code).each do |product|
+        csv << attributes.map{ |attr| attr == 'quantity' ? 0 : product.send(attr) }
+      end
+    end
+    new_file = CSV.parse(file, headers: true, encoding: 'ISO-8859-1')
+    File.open(Rails.root.join("public", "uploads", "product_files", "all_stores", "productos.csv"), "w") do |file|
+      file.write(new_file)
+    end
+
+    @products_file = File.read(Rails.root.join("public", "uploads", "product_files", "all_stores", "productos.csv"))
+
+    respond_to do |format|
+      format.csv { send_data @products_file, filename: "productos-activos-en-blanco#{Date.today}.csv" }
+    end
+  end
+
+  def show_product_cost_for_stores
+    headers = %w{cod desc cost}
+    attributes = %w{unique_code description price_with_discount_stores}
+
+    file = CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      Product.where(current: true, shared: true).order(:unique_code).each do |product|
+        csv << attributes.map{ |attr| product.send(attr) }
+      end
+    end
+
+    new_file = CSV.parse(file, headers: true, encoding: 'ISO-8859-1')
+    File.open(Rails.root.join("public", "uploads", "product_files", "all_stores", "productos.csv"), "w") do |file|
+      file.write(new_file)
+    end
+
+    @products_file = File.read(Rails.root.join("public", "uploads", "product_files", "all_stores", "productos.csv"))
+
+    respond_to do |format|
+      format.csv { send_data @products_file, filename: "productos-activos-costo-tiendas-propias-#{Date.today}.csv" }
+    end
+  end
+
+  def show_product_cost_for_franchises
+    headers = %w{cod desc cost}
+    attributes = %w{unique_code description price_with_discount_franchises}
+
+    file = CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      Product.where(current: true, shared: true).order(:unique_code).each do |product|
         csv << attributes.map{ |attr| product.send(attr) }
       end
     end
@@ -29,8 +77,30 @@ class ProductsController < ApplicationController
     @products_file = File.read(Rails.root.join("public", "uploads", "product_files", "all_stores", "productos.csv"))
 
     respond_to do |format|
-      format.html
-      format.csv { send_data @products_file, filename: "productos-#{Date.today}.csv" }
+      format.csv { send_data @products_file, filename: "productos-activos-costo-franquicias-#{Date.today}.csv" }
+    end
+  end
+
+  def show_product_cost_for_corporate
+    headers = %w{cod desc cost}
+    attributes = %w{unique_code description cost}
+
+    file = CSV.generate(headers: true) do |csv|
+      csv << headers
+
+      Product.where(current: true, shared: true).order(:unique_code).each do |product|
+        csv << attributes.map{ |attr| attr == 'cost' ? product.send(attr).to_f : product.send(attr) }
+      end
+    end
+    new_file = CSV.parse(file, headers: true, encoding: 'ISO-8859-1')
+    File.open(Rails.root.join("public", "uploads", "product_files", "all_stores", "productos.csv"), "w") do |file|
+      file.write(new_file)
+    end
+
+    @products_file = File.read(Rails.root.join("public", "uploads", "product_files", "all_stores", "productos.csv"))
+
+    respond_to do |format|
+      format.csv { send_data @products_file, filename: "productos-activos-costo-corporativo-#{Date.today}.csv" }
     end
   end
 

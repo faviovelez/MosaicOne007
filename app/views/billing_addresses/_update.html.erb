@@ -16,10 +16,10 @@
 
   <div class="form-container">
 
-    <% if params[:id] == current_user.store.business_unit.billing_address %>
+    <% if params[:id].to_i == current_user.store.business_unit.billing_address.id %>
       <div class="form-inside-style tax-regime">
           <%= f.label :régimen_fiscal %>
-          <%= f.select :tax_regime_id, options_for_select(tax_regime_options, value: @billing.tax_regime_id) %>
+          <%= f.select :tax_regime_id, options_for_select(tax_regime_options, selected: @billing.tax_regime_id) %>
       </div>
     <% end %>
 

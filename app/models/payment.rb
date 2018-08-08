@@ -56,7 +56,7 @@ class Payment < ActiveRecord::Base
   end
 
   def has_parent_and_is_not_payed
-    self.ticket.parent.present? && !self.ticket.parent.payed
+    self.ticket.present? && self.ticket.parent.present? && !self.ticket.parent.payed 
   end
 
   def add_to_bill

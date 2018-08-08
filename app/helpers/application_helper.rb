@@ -164,10 +164,14 @@ module ApplicationHelper
 
   def address_for_delivery(order)
     prospect = order.prospect
-    @address = prospect.delivery_address.street + ' ' + prospect.delivery_address.exterior_number + ' '
-    @address += 'Int. ' + prospect.delivery_address.interior_number + ' ' unless prospect.delivery_address.interior_number.blank?
-    @address += 'Col. ' + prospect.delivery_address.neighborhood + '.' + ' ' + prospect.delivery_address.city + ',' + ' ' + prospect.delivery_address.state
-    @address = @address.split.map(&:capitalize)*' '
+    if prospect.delivery_address != nil
+      @address = prospect.delivery_address.street + ' ' + prospect.delivery_address.exterior_number + ' '
+      @address += 'Int. ' + prospect.delivery_address.interior_number + ' ' unless prospect.delivery_address.interior_number.blank?
+      @address += 'Col. ' + prospect.delivery_address.neighborhood + '.' + ' ' + prospect.delivery_address.city + ',' + ' ' + prospect.delivery_address.state
+      @address = @address.split.map(&:capitalize)*' '
+    else
+      @address = 'No especificada'
+    end
     @address
   end
 
@@ -216,6 +220,10 @@ module ApplicationHelper
     @name
   end
 
+  def movement_username(movement)
+    @user = movement.user.first_name + ' ' + movement.user.last_name
+  end
+
   def order_driver(order)
     user = order.delivery_attempt.driver
     @name = user.first_name + ' ' + user.last_name
@@ -239,12 +247,40 @@ module ApplicationHelper
   end
 
   def store_options
-    @store_options = [['Todas las tiendas'], ['Tiendas y franquicias'], ['Todas las franquicias'], 'Seleccionar tiendas']
+    @store_options = [['Todas las tiendas'], ['Tiendas y franquicias'], ['Todas las franquicias'], ['Seleccionar tiendas']]
+  end
+
+  def corporate_store_options
+    @store_options = [['Todas las tiendas'], ['Seleccionar tiendas']]
+  end
+
+  def month_list
+    date2 = Date.today
+    if current_user.store.store_type.store_type == 'corporativo'
+      date1 = Ticket.where(store_id: current_user.store.business_unit.business_group.stores.pluck(:id)).first.created_at.to_date
+    else
+      date1 = Ticket.where(store: current_user.store).first.created_at.to_date
+    end
+    months = (date2.year * 12 + date2.month) - (date1.year * 12 + date1.month)
+    @month_list = [date1.strftime('%m/%Y')]
+    months.times do
+      @month_list << (date1 += 1.month).strftime('%m/%Y')
+    end
+    @last = @month_list.last
+    @month_list
   end
 
   def store_list
     @stores = []
     Store.joins(:store_type).where.not(store_types: {store_type: 'corporativo'}).order(:store_name).each do |store|
+      @stores << [store.store_name, store.id]
+    end
+    @stores
+  end
+
+  def corporate_store_list
+    @stores = []
+    Store.joins(:store_type).where(store_types: {store_type: 'tienda propia'}).order(:store_name).each do |store|
       @stores << [store.store_name, store.id]
     end
     @stores
@@ -568,10 +604,10 @@ module ApplicationHelper
   def impression_info(request)
     @impression = ''
     if request.impression == 'si'
-      if request.impression_finishing == ['Sin acabados']
+      if (request.impression_finishing == ['Sin acabados'] || request.impression_finishing == [])
         @impression = " con impresión a #{request.inks} tintas en #{request.impression_where}."
       else
-        if request.impression_finishing != ['Sin acabados']
+        if !(request.impression_finishing == ['Sin acabados'] || request.impression_finishing == [])
           @impression = " con impresión a #{request.inks} tintas en #{request.impression_where}"
           if request.impression_finishing.length > 1
             @impression += ' con '

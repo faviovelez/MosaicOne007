@@ -85,6 +85,16 @@
                 <i class="fa fa-eye other-nav-icons" aria-hidden="true"></i>
                 <%= link_to 'Cotizaciones asignadas a otros', filtered_requests_other_users_view_path, class: 'text-link'  %>
               </li>
+
+              <% if (params[:controller] == 'tikets' && (params[:action] == 'corporate_store_sales' || params[:action] == 'select_month_and_store')) %>
+                <li class="vertical-link actual-vertical-link">
+              <% else %>
+                <li class="vertical-link">
+              <% end %>
+              <i class="fa fa-table other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Reporte de ventas mensuales', tickets_select_month_and_store_path, class: 'text-link' %>
+                </li>
+
           <% end %>
             <%-# Aquí termina el área que muestra los links solo para director %>
 
@@ -548,6 +558,25 @@
             <%= link_to 'Grupos de negocio', business_groups_path, class: 'text-link'  %>
           </li>
 
+          <li class="vertical-link">
+            <i class="fa fa-file-code-o other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Descargar inventario en blanco', products_show_product_csv_path(format: :csv), class: 'text-link' %>
+          </li>
+
+          <li class="vertical-link">
+            <i class="fa fa-file-excel-o other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Descargar costos para tiendas', products_show_product_cost_for_stores_path(format: :csv), class: 'text-link' %>
+          </li>
+
+          <li class="vertical-link">
+            <i class="fa fa-file-powerpoint-o other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Descargar costos para franquicias', products_show_product_cost_for_franchises_path(format: :csv), class: 'text-link' %>
+          </li>
+
+          <li class="vertical-link">
+            <i class="fa fa-file-word-o other-nav-icons" aria-hidden="true"></i>
+            <%= link_to 'Descargar costos para corporativo', products_show_product_cost_for_corporate_path(format: :csv), class: 'text-link' %>
+          </li>
         <% end %>
         <%# Aquí termina el área que muestra los links para platform-admin %>
 
@@ -699,6 +728,15 @@
           <% end %>
           <i class="fa fa-file-code-o other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Facturas pendientes de pago', bills_pending_path, class: 'text-link' %>
+            </li>
+
+          <% if (params[:controller] == 'tikets' && (params[:action] == 'corporate_store_sales' || params[:action] == 'select_month_and_store')) %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-table other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Reporte de ventas mensuales', tickets_select_month_and_store_path, class: 'text-link' %>
             </li>
 
         <% end %>

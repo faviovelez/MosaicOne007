@@ -78,7 +78,7 @@ class DeliveryServicesController < ApplicationController
     total_cost = params[:total_cost]
     service_offered = ServiceOffered.find(params[:id])
     service_offered.update(total_cost: total_cost.to_f, cost: service_offered.total_cost.to_f / service_offered.quantity)
-    redirect_to delivery_services_show_report_path(service_offered.id), notice: 'Se ha guardado el costo con éxito'
+    redirect_to :back, notice: 'Se ha guardado el costo con éxito'
   end
 
   def show_database
