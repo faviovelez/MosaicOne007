@@ -11,6 +11,7 @@
         <th> En almacén </th>
         <th> Apartado </th>
         <th> Disponible </th>
+        <th> Solicitado </th>
         <th> Estatus </th>
       </tr>
     <% else %>
@@ -39,6 +40,7 @@
           <td> <%= number_with_delimiter(inventory[7] + inventory[10]) %> </td>
           <td> <%= number_with_delimiter(show_non_blank_field(inventory[10])) %> </td>
           <td> <%= number_with_delimiter(show_non_blank_field(inventory[7])) %> </td>
+          <td> <%= number_with_delimiter(show_non_blank_field(inventory[11])) %> </td>
           <td> <%= alternative_inv_alert(inventory) %> </td>
         <% else %>
           <td> <%= show_non_blank_field(inventory.product.unique_code) %> </td>

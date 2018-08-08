@@ -16,7 +16,7 @@
 
   <div class="form-container">
 
-    <% if @owner.class == 'BusinessUnit' %>
+    <% if @owner.class == 'BusinessUnit' || params[:business_unit_id] != nil %>
       <div class="form-inside-style tax-regime">
         <%= f.label :régimen_fiscal %>
         <%= f.select :tax_regime_id, options_for_select(tax_regime_options, value: @billing.tax_regime_id), {include_blank: true}, multiple: true, class: 'select2-field' %>

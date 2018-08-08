@@ -59,6 +59,14 @@ class Product < ActiveRecord::Base
     @price
   end
 
+  def price_with_discount_stores
+    @price = (self.price * self.discount_for_stores.to_f / 100).round(2)
+  end
+
+  def price_with_discount_franchises
+    @price = (self.price * self.discount_for_franchises.to_f / 100).round(2)
+  end
+
   def create_update_change_table
     if change_table_dont_exists
       create_change_to_table

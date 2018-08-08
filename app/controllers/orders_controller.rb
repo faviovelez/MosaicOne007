@@ -252,7 +252,6 @@ class OrdersController < ApplicationController
           new_mov.delete("created_at")
           new_mov.delete("updated_at")
           new_mov["cost"] = new_mov["cost"].to_f
-          new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
           new_mov["reason"] = "Pedido #{order.id}"
           new_mov["movement_type"] = 'alta automática'
           new_mov["store_id"] = current_user.store.id
@@ -276,12 +275,16 @@ class OrdersController < ApplicationController
             new_mov.delete("discount_rule_id")
             new_mov.delete("confirm")
             new_mov.delete("maximum_date")
-            new_mov.delete("kg")
             new_mov.delete("return_billed")
             new_mov["web"] = true
             new_mov["pos"] = false
             new_mov["cost"] = new_mov["final_price"]
-            new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
+            if new_mov["kg"] != nil
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i * new_mov["kg"]
+            else
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
+            end
+            new_mov.delete("kg")
             StoreMovement.create(new_mov)
           end
         end
@@ -338,12 +341,17 @@ class OrdersController < ApplicationController
             new_mov.delete("discount_rule_id")
             new_mov.delete("confirm")
             new_mov.delete("maximum_date")
-            new_mov.delete("kg")
             new_mov.delete("return_billed")
             new_mov["web"] = true
             new_mov["pos"] = false
             new_mov["cost"] = new_mov["final_price"]
             new_mov["total_cost"] = new_mov["cost"] * new_mov["quantity"].to_i
+            if new_mov["kg"] != nil
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i * new_mov["kg"]
+            else
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
+            end
+            new_mov.delete("kg")
             StoreMovement.create(new_mov)
           end
           n += 1

@@ -6,6 +6,7 @@
         <th class="table-titles"> Fecha </th>
         <th class="table-titles"> Movimiento </th>
         <th class="table-titles"> Tipo de guía </th>
+        <th class="table-titles"> No de guía </th>
         <th class="table-titles quantity-width"> Cantidad </th>
         <th class="table-titles"> Subtotal </th>
         <th class="table-titles"> Descuento </th>
@@ -22,15 +23,16 @@
         <td> <%= l @service_offered.created_at.to_date %> </td>
         <td> <%= @service_offered.service_type %> </td>
         <td> <%= @service_offered.service.unique_code %> <%= @service_offered.service.description %> </td>
+        <td> <%= @service_offered.delivery_service&.tracking_number %> </td>
         <td> <%= number_with_delimiter(@service_offered.quantity) %> </td>
         <td> <%= number_to_currency(@service_offered.subtotal) %> </td>
         <td> <%= number_to_currency(@service_offered.discount_applied) %> </td>
         <td> <%= number_to_currency(@service_offered.taxes) %> </td>
         <td> <%= number_to_currency(@service_offered.total) %> </td>
         <% if @service_offered.total_cost.to_f == 0 %>
-          <td> <%= text_field_tag :total_cost, @service_offered.total_cost.to_f, class: 'form-control center-text' %> </td>
+          <td> <%= text_field_tag :total_cost, nil, class: 'form-control center-text', placeholder: 'Sin IVA' %> </td>
         <% else %>
-          <td> <%= number_to_currency(@service_offered.total_cost.to_f) %> </td>
+          <td> <%= text_field_tag :total_cost, @service_offered.total_cost.to_f, class: 'form-control center-text', placeholder: 'Sin IVA' %> </td>
         <% end %>
         <td> <%= number_to_currency(@service_offered.total - @service_offered.total_cost) %> </td>
         <td>
@@ -48,12 +50,10 @@
     <%= text_field_tag :id, @service_offered.id, class: 'hidden' %>
   </div>
 
-<% if @service_offered.total_cost.to_f == 0 %>
   <div class="actions">
     <%= submit_tag 'Guardar', class: 'main-button' %>
   </div>
   <br /><br />
-<% end %>
 
 <% end %>
 

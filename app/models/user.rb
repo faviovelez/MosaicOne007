@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
   has_many :user_sales
   has_many :production_orders
   has_many :movements
+  has_many :store_movements
   has_many :pending_movements
   has_many :tickets
   has_many :estimate_docs
