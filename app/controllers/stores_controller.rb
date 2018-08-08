@@ -55,7 +55,6 @@ class StoresController < ApplicationController
 #    zip_code_is_in_sat_list
 ############################################################
     assign_cost_type
-    get_last_series
     respond_to do |format|
       if @store.save
         assign_series
@@ -112,7 +111,7 @@ class StoresController < ApplicationController
   end
 
   def assign_series
-    @store.update(series: @last_series)
+    @store.update(series: @last_series.next)
   end
 
   def save_csv_files
@@ -155,7 +154,7 @@ class StoresController < ApplicationController
       csv.each do |row|
         store = @store
         product = Product.find_by_unique_code(row['cod'])
-        if product.nil?
+        if product.nil? || (product.classification != 'de línea' && product.store_id != current_user.store.id)
           unfinded << row['cod']
         else
           inventory = store.stores_inventories.where(product: product).first
@@ -208,7 +207,7 @@ class StoresController < ApplicationController
       csv.each do |row|
         store = @store
         product = Product.find_by_unique_code(row['cod'])
-        if product.nil?
+        if product.nil? || (product.classification != 'de línea' && product.store_id != current_user.store.id)
           unfinded << row['cod']
         else
           inventory = store.stores_inventories.where(product: product).first

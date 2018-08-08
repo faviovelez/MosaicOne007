@@ -2,7 +2,7 @@
 
 <%= render 'documents_for_design_request' %>
 
-<% if @design_request.status == 'solicitada' && current_user.role.name == 'designer' %>
+<% if @design_request.status == 'solicitada' && (current_user.role.name == 'designer' || current_user.role.name == 'designer-admin') %>
   <%= render 'form_to_assign' %>
 <% end %>
 

@@ -46,6 +46,7 @@ $(document).ready(function() {
               "#reason_",
               "#kg_",
               "#kg_field_",
+              "#requestedInventory_"
             ]
             fields.forEach(function(field) {
               if ($(field).attr('id') == 'description_') {
@@ -60,6 +61,8 @@ $(document).ready(function() {
                 $(field).html(response.response[0][8]["total_inventory"]);
               } else if ($(field).attr('id') == 'quantity_') {
                 $(field).inputmask("integer");
+              } else if ($(field).attr('id') == 'requestedInventory_') {
+                $(field).html(response.response[0][11]["pending"]);
               } else if ($(field).attr('id') == 'kg_field_') {
                 if (isKgProduct) {
                   $(field).removeClass("hidden");

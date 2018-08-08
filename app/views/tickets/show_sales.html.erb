@@ -1,0 +1,29 @@
+<table class="dataTableFourNoOrder">
+  <thead>
+    <tr class="table-titles">
+      <th> Día </th>
+      <% @store_names.each do |store_name| %>
+        <th> <%= store_name %> </th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <% @stores.each do |day| %>
+        <td> <%= day[0] %> </td>
+        <% @store_names.each do |store_name| %>
+          <td> <%= number_to_currency(day[1][store_name]) %> </td>
+        <% end %>
+    </tr>
+      <% end %>
+      <tr>
+        <td> <strong>Total</strong>  </td>
+        <% @store_totals.each do |total| %>
+          <td> <strong><%= number_to_currency(total[1]) %></strong> </td>
+        <% end %>
+      </tr>
+  </tbody>
+</table>
+
+<p id="date_month" class="hidden"><%= @date %></p>
+<%= render 'dataTables' %>

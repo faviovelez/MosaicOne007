@@ -15,6 +15,7 @@ class Movement < ActiveRecord::Base
   belongs_to :seller_user, class_name: 'User', foreign_key: 'seller_user_id'
   belongs_to :buyer_user, class_name: 'User', foreign_key: 'buyer_user_id'
   belongs_to :entry_movement, class_name: 'Movement', foreign_key: 'entry_movement_id'
+  belongs_to :user
   has_one :warehouse_entry
   has_many :delivery_attempts
   has_many :stores, through: :stores_warehouse_entries

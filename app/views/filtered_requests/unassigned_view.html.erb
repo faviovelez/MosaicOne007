@@ -1,7 +1,7 @@
 
 <% if current_user.role.name == 'manager' || current_user.role.name == 'director' %>
   <%= render 'manager_unassigned' %>
-<% elsif current_user.role.name == 'designer' %>
+<% elsif current_user.role.name == 'designer' || current_user.role.name == 'designer-admin'  %>
   <%= render 'designer_unassigned' %>
 <% end %>
 <%= render 'dataTables' %>

@@ -1,0 +1,46 @@
+<%= form_tag({ controller: 'tickets', action: 'corporate_store_sales' }, method: 'get', class: 'form-data-tables') do %>
+
+  <br /><br />
+
+  <% min_date_reports(current_user) %>
+
+  <h2 class="blue-title">Por favor seleccione la fecha de reporte y la lista de tiendas</h2>
+
+  <br /><br />
+  <% if current_user.store.store_type.store_type == 'corporativo' %>
+
+    <div class="field product-select-2 month-list">
+      <%= label_tag :mes_y_año %>
+      <%= select_tag :month_and_year, options_for_select(month_list, selected: @last), {include_blank: true, multiple: true} %>
+    </div>
+
+    <div class="field">
+      <%= label_tag :opciones_de_tiendas %>
+      <%= select_tag :store_options, options_for_select(corporate_store_options, selected: 'Todas las tiendas') %>
+    </div>
+
+    <div class="field product-select-2 store-list hidden">
+      <%= label_tag :lista_de_tiendas %>
+      <%= select_tag :store_list, options_for_select(corporate_store_list), {include_blank: true, multiple: true} %>
+    </div>
+  <% end %>
+
+  <br /><br />
+
+  <div class="actions">
+    <%= submit_tag 'Ver reporte', class: 'main-button' %>
+  </div>
+
+  <br /><br />
+
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'corporate_reports' %>
+<% end %>

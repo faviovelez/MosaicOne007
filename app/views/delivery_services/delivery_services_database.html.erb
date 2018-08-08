@@ -1,10 +1,14 @@
-<table id="delivery-services" class="table-display">
+<% if current_user.role.name == 'viewer' %>
+  <table id="delivery-services" class="display-database-viewer">
+<% else %>
+  <table id="delivery-services" class="display-database-store">
+<% end %>
   <thead>
     <tr>
       <% if current_user.role.name == 'viewer' %>
-        <th colspan="12" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
-      <% else %>
         <th colspan="11" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+      <% else %>
+        <th colspan="10" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
       <% end %>
     </tr>
     <tr>
@@ -40,7 +44,7 @@
         <td> <%= l delivery_service.created_at.to_date %> </td>
         <td> <%= delivery_service.service_offered.service_type %> </td>
         <td> <%= delivery_service.service_offered.service.unique_code %> <%= delivery_service.service_offered.service.description %> </td>
-        <td> <%= delivery_service.tracking_number %> </td>
+        <td> <%= delivery_service&.tracking_number %> </td>
         <td> <%= delivery_service.sender_zipcode %> </td>
         <td> <%= delivery_service.receivers_zipcode %> </td>
         <% if delivery_service.weight.blank? %>

@@ -1,4 +1,8 @@
-<table id="delivery-services" class="table-display-details">
+<% if current_user.role.name == 'viewer' %>
+  <table id="delivery-services" class="table-display-viewer-details">
+<% else %>
+  <table id="delivery-services" class="table-display-store-details">
+<% end %>
   <thead>
     <tr>
       <% if current_user.role.name == 'viewer' %>
@@ -11,7 +15,7 @@
       <% if current_user.role.name == 'viewer' %>
         <th> Tienda </th>
       <% end %>
-      <th> Ticket </th>
+      <th class="hidden"> Ticket </th>
       <th> Fecha </th>
       <th> Movimiento </th>
       <th> Tipo de guía </th>
@@ -23,8 +27,8 @@
       <th> Descuento </th>
       <th> IVA </th>
       <th> Total </th>
-      <th class="col-md-1"> Costo de venta </th>
-      <th class="col-md-1"> Margen $</th>
+      <th> Costo de venta </th>
+      <th> Margen $</th>
       <th> Acciones</th>
     </tr>
   </thead>
@@ -34,10 +38,10 @@
         <% if current_user.role.name == 'viewer' %>
           <td> <%= service_offered.store.store_name %> </td>
         <% end %>
-        <td> <%= service_offered.ticket.ticket_number %> </td>
+        <td class="hidden"> <%= service_offered.ticket.ticket_number %> </td>
         <td> <%= l service_offered.created_at.to_date %> </td>
         <td> <%= service_offered.service_type %> </td>
-        <td> <%= service_offered.service.unique_code %> <%= service_offered.service.description %> </td>
+        <td> <%= service_offered.service.unique_code %> <span class="hidden"><%= service_offered.service.description %></span>  </td>
         <% if current_user.role.name == 'viewer' %>
           <td> <%= service_offered.delivery_service&.tracking_number %> </td>
         <% end %>
@@ -65,11 +69,13 @@
       </tr>
     <% end %>
     <tr>
+      <% if current_user.role.name == 'viewer' %>
+        <td> </td>
+      <% end %>
       <td> </td>
       <td> </td>
       <td> </td>
       <% if current_user.role.name == 'viewer' %>
-        <td> </td>
         <td> </td>
       <% end %>
       <td> <strong> Total </strong> </td>

@@ -30,6 +30,10 @@ class BillsController < ApplicationController
         pn = bill.payments.count + 1
         pay = Payment.create(payment_type: 'pago', total: params[:payments][i].to_f, payment_number: pn, payment_form_id: params[:payment_form].to_i, payment_date: Date.parse(params[:date]), date: Date.today, bill: bill)
         validate_payed(bill)
+        orders = bill.orders
+        orders.each do |order|
+          order.payments << pay
+        end
         Document.create(document_type: 'pago', bill: bill, document: params[:image])
       end
     end

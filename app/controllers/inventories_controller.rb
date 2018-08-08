@@ -22,9 +22,17 @@ class InventoriesController < ApplicationController
         @inventories = @store_products + @dc_products
       end
     elsif (!(role == 'store-admin' || role == 'store') && current_user.store.store_type.store_type == 'corporativo' && current_user.store.id != 1)
-      @inventories = StoresInventory.includes(:product).where(store: @store, products: {current: true, shared: true}).group('products.id, stores_inventories.quantity, stores_inventories.alert, stores_inventories.alert_type').order('products.id').pluck('products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, stores_inventories.quantity / products.pieces_per_package, products.pieces_per_package, stores_inventories.quantity, stores_inventories.alert, stores_inventories.alert_type').map{ |prod| prod << ProductRequest.joins(:order).where(product_id: prod[0], corporate_id: 2, status: 'asignado').where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] }).sum(:quantity) }
+      @inventories = StoresInventory.includes(:product).where(store: @store, products: {current: true, shared: true}).group('products.id, stores_inventories.quantity, stores_inventories.alert, stores_inventories.alert_type').order('products.id').pluck('products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, stores_inventories.quantity / products.pieces_per_package, products.pieces_per_package, stores_inventories.quantity, stores_inventories.alert, stores_inventories.alert_type')
+      .map do |prod|
+        prod << ProductRequest.joins(:order).where(product_id: prod[0], corporate_id: 2, status:   'asignado').where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] }).sum(:quantity)
+        prod << ProductRequest.joins(:order).where(product_id: prod[0], corporate_id: 2, status: 'sin asignar').where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] }).sum(:quantity)
+      end
     else
-      @inventories = Inventory.includes(:product).where(products: {current: true, shared: true}).group('products.id, inventories.quantity, inventories.alert, inventories.alert_type').order('products.id').pluck('products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, inventories.quantity / products.pieces_per_package, products.pieces_per_package, inventories.quantity, inventories.alert, inventories.alert_type').map{ |prod| prod << ProductRequest.joins(:order).where(product_id: prod[0], corporate_id: 1, status: 'asignado').where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] }).sum(:quantity) }
+      @inventories = Inventory.includes(:product).where(products: {current: true, shared: true}).group('products.id, inventories.quantity, inventories.alert, inventories.alert_type').order('products.id').pluck('products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, inventories.quantity / products.pieces_per_package, products.pieces_per_package, inventories.quantity, inventories.alert, inventories.alert_type')
+      .map do |prod|
+        prod << ProductRequest.joins(:order).where(product_id: prod[0], corporate_id: 1, status: 'asignado').where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] }).sum(:quantity)
+        prod << ProductRequest.joins(:order).where(product_id: prod[0], corporate_id: 1, status: 'sin asignar').where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] }).sum(:quantity)
+      end
     end
     @inventories
   end
@@ -55,15 +63,15 @@ class InventoriesController < ApplicationController
       if params[:information] == 'Movimientos de inventario'
         if params[:products] == 'Elegir producto'
           if current_user.store.store_type.store_type == 'corporativo'
-            movements = Movement.includes(:product).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja'], product: params[:product_list]).where.not(quantity: 0)
+            movements = Movement.includes(:product).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja', 'alta automática', 'baja automática'], product: params[:product_list]).where.not(quantity: 0)
           else
-            movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja'], product: params[:product_list]).where.not(quantity: 0)
+            movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja', 'alta automática', 'baja automática'], product: params[:product_list]).where.not(quantity: 0)
           end
         else
           if current_user.store.store_type.store_type == 'corporativo'
-            movements = Movement.includes(:product).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja']).where.not(quantity: 0)
+            movements = Movement.includes(:product).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja', 'alta automática', 'baja automática']).where.not(quantity: 0)
           else
-            movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja']).where.not(quantity: 0)
+            movements = StoreMovement.includes(:product, :ticket).where(store: current_user.store, created_at: initial_date..final_date, movement_type: ['alta', 'baja', 'alta automática', 'baja automática']).where.not(quantity: 0)
           end
         end
       else

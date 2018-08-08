@@ -102,6 +102,12 @@ Rails.application.routes.draw do
 
   get 'tickets/product_sales'
 
+  get 'tickets/corporate_store_sales'
+
+  get 'tickets/select_month_and_store'
+
+  get 'tickets/show_sales'
+
   get 'bills/pending'
 
   get 'bills/get_document/:id', to: 'bills#get_document', as: 'get_document_bill'
@@ -231,6 +237,12 @@ Rails.application.routes.draw do
   get 'tikets/process_incomming_data'
 
   get 'products/show_product_csv'
+
+  get 'products/show_product_cost_for_stores'
+
+  get 'products/show_product_cost_for_franchises'
+
+  get 'products/show_product_cost_for_corporate'
 
   get 'orders/edit_discount/:id', to: 'orders#edit_discount', as: 'edit_discount'
 

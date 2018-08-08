@@ -1,7 +1,7 @@
 <table id="store_movements" class="table-display">
   <thead>
     <tr>
-      <th colspan="8" class="table-titles"> Resumen de movimientos <%= params[:date] %> </th>
+      <th colspan="9" class="table-titles"> Resumen de movimientos <%= params[:date] %> </th>
     </tr>
     <tr>
       <th> Código </th>
@@ -14,6 +14,7 @@
       <% if !(current_user.store.store_type.store_type == 'tienda propia') %>
         <th> Costo </th>
       <% end %>
+      <th> Usuario </th>
     </tr>
   </thead>
   <tbody>
@@ -41,6 +42,7 @@
           <% if !(current_user.store.store_type.store_type == 'tienda propia') %>
             <td> <%= number_to_currency(movement.total_cost) %> </td>
           <% end %>
+          <td> <%= movement_username(movement) %> </td>
         </tr>
     <% end %>
   </tbody>

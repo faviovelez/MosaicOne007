@@ -69,7 +69,7 @@ class FilteredRequestsController < ApplicationController
   def filter_requests_assigned_to_user(user = current_user, role = current_user.role.name)
     if (role == 'manager' || role == 'director')
       @assigned = user.requests.where.not(:status => ['creada', 'expirada','cancelada', 'mercancía asignada', 'código asignado', 'autorizada']).order(:created_at)
-    elsif role == 'designer'
+    elsif role == 'designer' || role == 'designer-admin'
       @assigned = user.design_requests.where.not(:status => ['concluida','expirada','cancelada']).order(:created_at)
     end
       @assigned
@@ -86,7 +86,7 @@ class FilteredRequestsController < ApplicationController
     if role == 'manager' || role == 'director'
       requests = Request.where.not(:status => ['creada','expirada','cancelada'])
       assigned = requests.joins(users: :role).where("roles.name = ? OR roles.name = ?", "manager", "director")
-    elsif role == 'designer'
+    elsif role == 'designer' || role == 'designer-admin'
       requests = DesignRequest.where.not(:status => ['concluida','expirada','cancelada'])
       assigned = DesignRequest.where.not(:status => ['concluida','expirada','cancelada']).joins(users: :role).where('roles.name' => 'designer')
     end
