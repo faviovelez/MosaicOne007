@@ -235,6 +235,8 @@ select#products,
 select#information,
 select#companies,
 select#store_options,
+select#group_options,
+select#client_list,
 select#stores {
   background-color: #fff !important;
   color: #000 !important;

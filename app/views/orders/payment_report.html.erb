@@ -1,0 +1,42 @@
+<table class="dataTablestandard">
+  <thead>
+    <tr class="table-titles">
+      <th> Factura </th>
+      <th> Cliente </th>
+      <th> Empresa </th>
+      <th> Total factura </th>
+      <th> Cantidad pagada </th>
+      <th> Fecha de pago </th>
+      <th> Fecha de registro </th>
+      <th> Forma de pago </th>
+      <th> No. de pedido </th>
+      <th> Comprobante </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @payments.each do |pay| %>
+      <tr>
+        <td> <%= pay.bill.sequence %> <%= pay.bill.folio %> </td>
+        <td> <%= pay.bill.prospect.legal_or_business_name %> </td>
+        <td> <%= pay.bill.issuing_company.business_name %> </td>
+        <td> <%= number_to_currency(pay.bill.total) %> </td>
+        <td> <%= number_to_currency(pay.total) %> </td>
+        <td> <%= l pay.payment_date %> </td>
+        <td> <%= l pay.date %> </td>
+        <td> <%= pay.payment_form.description %> </td>
+        <td> <%= number_with_delimiter(pay.order_id) %> </td>
+        <td>
+          <% if pay.bill.documents != [] %>
+            <% pay.bill.documents.each do |document| %>
+              <%= link_to get_document_path(document), download: "#{document.document_identifier}", class: 'link-extra-space' do %>
+                <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+              <% end %>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render 'dataTables' %>

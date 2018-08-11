@@ -74,5 +74,15 @@ $(document).ready(function(){
      language: "es"
   });
 
+  $('#companies').select2({
+     placeholder: 'Seleccione una empresa',
+     language: "es",
+     maximumSelectionLength: 1
+  });
+
+  $('#client_list').select2({
+     placeholder: 'Buscar clientes',
+     language: "es",
+  });
 
 });

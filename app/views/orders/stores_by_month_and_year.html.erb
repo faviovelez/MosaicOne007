@@ -1,0 +1,40 @@
+<table class="dataTableFourNoOrder">
+  <thead>
+    <tr class="table-titles">
+      <th> Cliente </th>
+      <th> Año </th>
+      <% @month_names.each do |month| %>
+        <th> <%= month.capitalize %> </th>
+      <% end %>
+      <th> Acumulado </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @month_sales.each do |store, year| %>
+      <tr>
+        <td> <%= store %> </td>
+        <td> <%= @first_year %> </td>
+        <% year[@first_year].each do |month| %>
+          <td> <%= number_to_currency(month) %> </td>
+        <% end %>
+        <td> <%= number_to_currency(year[@first_year].inject(&:+)) %> </td>
+      </tr>
+      <% @fy = @first_year %>
+      <% @years.times do %>
+        <% if year[@fy += 1] == nil %>
+          <% year[@fy += 1] = [0,0,0,0,0,0,0,0,0,0,0,0] %>
+        <% end %>
+        <tr>
+          <% year[@fy += 1].each do |month| %>
+            <td> <%= @fy += 1 %> </td>
+            <td> <%= number_to_currency(month) %> </td>
+          <% end %>
+          <td> <%= number_to_currency(year[@fy += 1].inject(&:+)) %> </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
+
+<p id="date_month" class="hidden"><%= @date %></p>
+<%= render 'dataTables' %>

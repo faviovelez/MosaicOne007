@@ -86,14 +86,15 @@
                 <%= link_to 'Cotizaciones asignadas a otros', filtered_requests_other_users_view_path, class: 'text-link'  %>
               </li>
 
-              <% if (params[:controller] == 'tikets' && (params[:action] == 'corporate_store_sales' || params[:action] == 'select_month_and_store')) %>
+              <% if (params[:controller] == 'orders' && (params[:action] == 'select_report' || params[:action] == 'payment_report' || params[:action] == 'billing_report' || params[:action] == 'collection_report' || params[:action] == 'stores_by_month_and_year' || params[:action] == 'show_sales' || params[:action] == 'process_report')) %>
                 <li class="vertical-link actual-vertical-link">
               <% else %>
                 <li class="vertical-link">
               <% end %>
-              <i class="fa fa-table other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Reporte de ventas mensuales', tickets_select_month_and_store_path, class: 'text-link' %>
+              <i class="fa fa-th-large other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Reportes corporativo', orders_select_report_path, class: 'text-link' %>
                 </li>
+
 
           <% end %>
             <%-# Aquí termina el área que muestra los links solo para director %>
@@ -730,13 +731,13 @@
           <%= link_to 'Facturas pendientes de pago', bills_pending_path, class: 'text-link' %>
             </li>
 
-          <% if (params[:controller] == 'tikets' && (params[:action] == 'corporate_store_sales' || params[:action] == 'select_month_and_store')) %>
+          <% if (params[:controller] == 'orders' && (params[:action] == 'select_report' || params[:action] == 'payment_report' || params[:action] == 'billing_report' || params[:action] == 'collection_report' || params[:action] == 'stores_by_month_and_year' || params[:action] == 'show_sales' || params[:action] == 'process_report')) %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
           <% end %>
-          <i class="fa fa-table other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Reporte de ventas mensuales', tickets_select_month_and_store_path, class: 'text-link' %>
+          <i class="fa fa-th-large other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Reportes corporativo', orders_select_report_path, class: 'text-link' %>
             </li>
 
         <% end %>
