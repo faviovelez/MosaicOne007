@@ -28,7 +28,7 @@ class BillsController < ApplicationController
       bill = Bill.find(val)
       unless params[:payments][i].to_f == 0
         pn = bill.payments.count + 1
-        pay = Payment.create(payment_type: 'pago', total: params[:payments][i].to_f, payment_number: pn, payment_form_id: params[:payment_form].to_i, payment_date: Date.parse(params[:date]), date: Date.today, bill: bill)
+        pay = Payment.create(payment_type: 'pago', total: params[:payments][i].to_f, payment_number: pn, payment_form_id: params[:payment_form].to_i, payment_date: Date.parse(params[:date]), date: Date.today, bill: bill, user: current_user)
         validate_payed(bill)
         orders = bill.orders
         orders.each do |order|
@@ -140,7 +140,7 @@ class BillsController < ApplicationController
     store = Store.find(params[:store]) || current_user.store
     month = params[:month]
     year = params[:year]
-    @bills = store.bills.where('extract(month from created_at) = ? and extract(year from created_at) = ?', month, year).where(relation_type: nil).where.not(pdf: nil, xml: nil)
+    @bills = store.bills.where('extract(month from created_at) = ? and extract(year from created_at) = ?', month, year).where(relation_type: nil).where.not(pdf: nil, xml: nil, status: 'cancelada')
   end
 
   def select_bills

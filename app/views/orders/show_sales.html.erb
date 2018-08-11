@@ -1,6 +1,7 @@
 <table class="dataTableFourNoOrder">
   <thead>
     <tr class="table-titles">
+
       <th> Día </th>
       <% @store_names.each do |store_name| %>
         <th> <%= store_name %> </th>
@@ -17,11 +18,29 @@
     </tr>
       <% end %>
       <tr>
-        <td> <strong>Total</strong>  </td>
+        <td> <strong>Total</strong> </td>
         <% @store_totals.each do |total| %>
           <td> <strong><%= number_to_currency(total[1]) %></strong> </td>
         <% end %>
       </tr>
+      <tr>
+        <% @big_totals.each do |k, v| %>
+          <td> </td>
+          <td> <strong><%= k %></strong> </td>
+          <td> <strong><%= number_to_currency(v) %></strong> </td>
+          <% (@store_names.length - @big_totals.length + 1).times do %>
+            <td></td>
+          <% end %>
+        </tr>
+        <% end %>
+        <tr>
+          <td> </td>
+          <td> <strong>Total General </strong> </td>
+          <td> <strong><%= number_to_currency(@big_total) %></strong> </td>
+          <% (@store_names.length - @big_totals.length + 1).times do %>
+            <td></td>
+          <% end %>
+        </tr>
   </tbody>
 </table>
 

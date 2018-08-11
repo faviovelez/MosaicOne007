@@ -1,0 +1,37 @@
+<table class="dataTablestandard">
+  <thead>
+    <tr class="table-titles">
+      <th> Empresa </th>
+      <th> Cliente </th>
+      <th> Facturas </th>
+      <th> Subtotal </th>
+      <th> Descuento </th>
+      <th> IVA </th>
+      <th> Total </th>
+      <th> Pagos </th>
+      <th> Saldo </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bills.each do |bill| %>
+      <tr>
+        <td> <%= bill[0] %> </td>
+        <td> <%= bill[1] %> </td>
+        <td> <%= number_with_delimiter(bill[2].to_i) %> </td>
+        <td> <%= number_to_currency(bill[3].to_f) %> </td>
+        <td> <%= number_to_currency(bill[4].to_f) %> </td>
+        <td> <%= number_to_currency(bill[5].to_f) %> </td>
+        <td>
+          <%= link_to orders_process_report_path(prospect_id: bill[7], extended_collection: true, initial_date: @initial_date, final_date: @final_date, store_id: @store_id, report_type: 'Saldo por clientes') do %>
+            <%= number_to_currency(bill[6].to_f) %>
+          <% end %>
+        </td>
+        <td> <%= number_to_currency(bill[7]) %> </td>
+        <td> <%= number_to_currency(bill[6].to_f - bill[7].to_f) %> </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table><br /><br />
+
+<%= link_to 'Reporte detallado', orders_process_report_path(extended_collection: true, initial_date: @initial_date, final_date: @final_date, store_id: @store_id, report_type: 'Saldo por clientes') %>
+<%= render 'dataTables' %>

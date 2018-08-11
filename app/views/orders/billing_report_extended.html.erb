@@ -1,0 +1,33 @@
+<table class="dataTablestandard">
+  <thead>
+    <tr class="table-titles">
+      <th> Pedido </th>
+      <th> Factura </th>
+      <th> Empresa </th>
+      <th> Cliente </th>
+      <th> Fecha </th>
+      <th> Subtotal </th>
+      <th> Descuento </th>
+      <th> IVA </th>
+      <th> Total </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bills.each do |bill| %>
+      <tr>
+        <td> <%= number_with_delimiter(bill[10].to_i) %> </td>
+        <td> <%= bill[8] %> </td>
+        <td> <%= bill[0] %> </td>
+        <td> <%= bill[1] %> </td>
+        <td> <%= l bill[9].to_date %> </td>
+        <td> <%= number_to_currency(bill[3]) %> </td>
+        <td> <%= number_to_currency(bill[4]) %> </td>
+        <td> <%= number_to_currency(bill[5]) %> </td>
+        <td> <%= number_to_currency(bill[6]) %> </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Reporte resumido', orders_process_report_path(initial_date: @initial_date, final_date: @final_date, store_id: @store_id, report_type: 'Facturación por empresa') %>
+<%= render 'dataTables' %>

@@ -21,6 +21,10 @@ module ApplicationHelper
     @due_date = bill.created_at.to_date + bill.supplier.credit_days.to_i.days
   end
 
+  def current_bill(date)
+    Date.today < date ? @bill_status = content_tag(:span, 'al corriente', class: 'label label-success') : @bill_status = content_tag(:span, 'vencida', class: 'label label-warning')
+  end
+
   def get_discount(product_request)
     if product_request.movements == []
       @discount = (product_request.pending_movement.discount_applied / product_request.pending_movement.initial_price * 100).round(0)
@@ -270,6 +274,10 @@ module ApplicationHelper
     @month_list
   end
 
+  def companies_select
+    @companies = BusinessGroup.find(1).business_units.pluck(:name, :id)
+  end
+
   def store_list
     @stores = []
     Store.joins(:store_type).where.not(store_types: {store_type: 'corporativo'}).order(:store_name).each do |store|
@@ -306,11 +314,11 @@ module ApplicationHelper
     end
   end
 
-  def min_date_reports(user)
+  def min_date_reports(user = current_user)
     if user.store.store_type.store_type == 'corporativo'
       @min_date = Ticket.where(store_id: user.store.business_unit.business_group.stores.pluck(:id)).first.created_at.to_date
     else
-      @min_date = Ticket.where(store: user.store).first.created_at.to_date
+      current_user.store.tickets == [] ? @min_date = Date.today : @min_date = current_user.store.tickets.order(:created_at).limit(1).pluck(:created_at).first.to_date
     end
     @min_date
   end
