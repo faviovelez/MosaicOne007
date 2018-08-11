@@ -102,12 +102,6 @@ Rails.application.routes.draw do
 
   get 'tickets/product_sales'
 
-  get 'tickets/corporate_store_sales'
-
-  get 'tickets/select_month_and_store'
-
-  get 'tickets/show_sales'
-
   get 'bills/pending'
 
   get 'bills/get_document/:id', to: 'bills#get_document', as: 'get_document_bill'
@@ -297,6 +291,20 @@ Rails.application.routes.draw do
   post 'orders/solve_differences'
 
   get 'orders/new_corporate/:store_id', to: 'orders#new_corporate', as: 'orders_new_corporate'
+
+  get 'orders/payment_report'
+
+  get 'orders/process_report'
+
+  get 'orders/select_report'
+
+  get 'orders/show_sales'
+
+  get 'orders/billing_report'
+
+  get 'orders/collection_report'
+
+  get 'orders/stores_by_month_and_year'
 
   get 'requests/authorisation_doc/:id', to: 'requests#authorisation_doc', as: 'request_authorisation'
 

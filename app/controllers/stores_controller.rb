@@ -172,18 +172,21 @@ class StoresController < ApplicationController
             entry.delete
           end
           movement = StoreMovement.new(
-            movement_type: 'alta',
             store: store,
             product: product,
-            quantity: quantity,
+            quantity: quantity.abs,
             web: true,
             pos: false,
             cost: cost,
             total_cost: (cost * quantity).round(2),
             supplier: product.supplier,
             discount_applied: discount.round(2),
-            automatic_discount: discount.round(2)
+            automatic_discount: discount.round(2),
+            user: current_user
           )
+
+          quantity >= 0 ? movement.movement_type = 'alta' : movement.movement_type = 'baja'
+
           if movement.save
             @product_counter += 1
           end
@@ -193,7 +196,7 @@ class StoresController < ApplicationController
             quantity: quantity,
             store_movement: movement
           )
-          inventory.update(quantity: quantity, rack: row['estante'], level: row['nivel'])
+          inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
         end
       end
       unfinded.join(", ")
@@ -225,18 +228,21 @@ class StoresController < ApplicationController
             entry.delete
           end
           movement = StoreMovement.new(
-            movement_type: 'alta',
             store: store,
             product: product,
-            quantity: quantity,
+            quantity: quantity.abs,
             web: true,
             pos: false,
             cost: cost,
             total_cost: (cost * quantity).round(2),
             supplier: product.supplier,
             discount_applied: discount.round(2),
-            automatic_discount: discount.round(2)
+            automatic_discount: discount.round(2),
+            user: current_user
           )
+
+          quantity >= 0 ? movement.movement_type = 'alta' : movement.movement_type = 'baja'
+
           if movement.save
             @product_counter += 1
           end
@@ -246,7 +252,7 @@ class StoresController < ApplicationController
             quantity: quantity,
             store_movement: movement
           )
-          inventory.update(quantity: quantity, rack: row['estante'], level: row['nivel'])
+          inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
           end
       end
       unfinded.join(", ")

@@ -1,0 +1,49 @@
+<table class="dataTablestandard">
+  <thead>
+    <tr class="table-titles">
+      <th> Pedido </th>
+      <th> Factura </th>
+      <th> Fecha </th>
+      <th> Empresa </th>
+      <th> Cliente </th>
+      <th> Subtotal </th>
+      <th> Descuento </th>
+      <th> IVA </th>
+      <th> Total </th>
+      <th> Pagos </th>
+      <th> Saldo </th>
+      <th> Estatus </th>
+      <th> Comprobantes </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bills.each do |bill| %>
+      <tr>
+        <td> <%= number_with_delimiter(bill[13].to_i) %> </td>
+        <td> <%= bill[8] %> </td>
+        <td> <%= l bill[9].to_date %> </td>
+        <td> <%= bill[0] %> </td>
+        <td> <%= bill[1] %> </td>
+        <td> <%= number_to_currency(bill[3].to_f) %> </td>
+        <td> <%= number_to_currency(bill[4].to_f) %> </td>
+        <td> <%= number_to_currency(bill[5].to_f) %> </td>
+        <td> <%= number_to_currency(bill[6].to_f) %> </td>
+        <td> <%= number_to_currency(bill[7].to_f) %> </td>
+        <td> <%= number_to_currency(bill[6].to_f - bill[7].to_f) %> </td>
+        <td> <%= current_bill(bill[10].to_date) %> </td>
+        <td>
+          <% if Bill.find(bill[11]).documents != [] %>
+            <% Bill.find(bill[11]).documents.each do |document| %>
+              <%= link_to get_document_path(document), download: "#{document.document_identifier}", class: 'link-extra-space' do %>
+                <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+              <% end %>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table><br /><br />
+
+<%= link_to 'Reporte resumido', orders_process_report_path(initial_date: @initial_date, final_date: @final_date, store_id: @store_id, report_type: 'Saldo por clientes') %>
+<%= render 'dataTables' %>

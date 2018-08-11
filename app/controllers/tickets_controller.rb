@@ -66,7 +66,6 @@ class TicketsController < ApplicationController
 
   def corporate_reports(stores, initial, final)
     @query_corporate_prospects_string = "SELECT united_prospect_sales.id, united_prospect_sales.name, COALESCE(SUM(united_prospect_sales.quantity), 0) AS quantity, COALESCE(SUM(united_prospect_sales.subtotal), 0) AS subtotal, COALESCE(SUM(united_prospect_sales.taxes), 0) AS taxes, COALESCE(SUM(united_prospect_sales.discount), 0) AS discount, COALESCE(SUM(united_prospect_sales.total), 0) AS total, COALESCE(SUM(united_prospect_sales.cost), 0) AS cost, COALESCE((SUM(united_prospect_sales.total) - (SUM(united_prospect_sales.cost) * 1.16)), 0) AS margin FROM (SELECT id, CASE WHEN filtered_store_movements.legal_or_business_name = '' THEN 'Sin Nombre' WHEN filtered_store_movements.legal_or_business_name IS null THEN 'Público en General' ELSE filtered_store_movements.legal_or_business_name END AS name, COALESCE(filtered_store_movements.quantity, 0) AS quantity, COALESCE(filtered_store_movements.subtotal, 0) AS subtotal, COALESCE(filtered_store_movements.taxes, 0) AS taxes, COALESCE(filtered_store_movements.discount, 0) AS discount, COALESCE(filtered_store_movements.total, 0) AS total, COALESCE(filtered_store_movements.cost, 0) AS cost, COALESCE((filtered_store_movements.total - (filtered_store_movements.cost * 1.16)), 0) AS margin FROM (SELECT COALESCE(SUM (CASE WHEN movement_type = 'venta' THEN store_movements.quantity WHEN movement_type = 'devolución' THEN -store_movements.quantity ELSE 0 END ), 0) AS quantity, COALESCE(SUM (CASE WHEN movement_type = 'venta' THEN store_movements.subtotal WHEN movement_type = 'devolución' THEN -store_movements.subtotal ELSE 0 END ), 0) AS subtotal, COALESCE(SUM (CASE WHEN movement_type = 'venta' THEN store_movements.discount_applied WHEN movement_type = 'devolución' THEN -store_movements.discount_applied ELSE 0 END ), 0) AS discount, COALESCE(SUM (CASE WHEN movement_type = 'venta' THEN store_movements.taxes WHEN movement_type = 'devolución' THEN -store_movements.taxes ELSE 0 END ), 0) AS taxes, COALESCE(SUM (CASE WHEN movement_type = 'venta' THEN store_movements.total WHEN movement_type = 'devolución' THEN -store_movements.total ELSE 0 END ), 0) AS total, COALESCE(SUM (CASE WHEN movement_type = 'venta' THEN store_movements.total_cost WHEN movement_type = 'devolución' THEN -store_movements.total_cost ELSE 0 END ), 0) AS cost, prospects.legal_or_business_name, prospects.id FROM store_movements LEFT JOIN prospects ON store_movements.prospect_id = prospects.id WHERE store_movements.created_at > '#{initial_date}' AND store_movements.created_at < '#{final_date}' AND store_movements.store_id = #{store_id} GROUP BY prospects.legal_or_business_name, prospects.id ORDER BY prospects.legal_or_business_name) AS filtered_store_movements UNION ALL SELECT id, CASE WHEN filtered_service_offereds.legal_or_business_name = '' THEN 'Sin Nombre' WHEN filtered_service_offereds.legal_or_business_name IS null THEN 'Público en General' ELSE filtered_service_offereds.legal_or_business_name END AS name, COALESCE(filtered_service_offereds.quantity, 0) AS quantity, COALESCE(filtered_service_offereds.subtotal, 0) AS subtotal, COALESCE(filtered_service_offereds.taxes, 0) AS taxes, COALESCE(filtered_service_offereds.discount, 0) AS discount, COALESCE(filtered_service_offereds.total, 0) AS total, COALESCE(filtered_service_offereds.cost, 0) AS cost, COALESCE((filtered_service_offereds.total - (filtered_service_offereds.cost * 1.16)), 0) AS margin FROM (SELECT COALESCE(SUM (CASE WHEN service_type = 'venta' THEN service_offereds.quantity WHEN service_type = 'devolución' THEN -service_offereds.quantity ELSE 0 END ), 0) AS quantity, COALESCE(SUM (CASE WHEN service_type = 'venta' THEN service_offereds.subtotal WHEN service_type = 'devolución' THEN -service_offereds.subtotal ELSE 0 END ), 0) AS subtotal, COALESCE(SUM (CASE WHEN service_type = 'venta' THEN service_offereds.discount_applied WHEN service_type = 'devolución' THEN -service_offereds.discount_applied ELSE 0 END ), 0) AS discount, COALESCE(SUM (CASE WHEN service_type = 'venta' THEN service_offereds.taxes WHEN service_type = 'devolución' THEN -service_offereds.taxes ELSE 0 END ), 0) AS taxes, COALESCE(SUM (CASE WHEN service_type = 'venta' THEN service_offereds.total WHEN service_type = 'devolución' THEN -service_offereds.total ELSE 0 END ), 0) AS total, COALESCE(SUM (CASE WHEN service_type = 'venta' THEN service_offereds.total_cost WHEN service_type = 'devolución' THEN -service_offereds.total_cost ELSE 0 END ), 0) AS cost, prospects.legal_or_business_name, prospects.id FROM service_offereds LEFT JOIN prospects ON service_offereds.prospect_id = prospects.id WHERE service_offereds.created_at > '#{initial_date}' AND service_offereds.created_at < '#{final_date}' AND service_offereds.store_id = #{store_id} GROUP BY prospects.legal_or_business_name, prospects.id ORDER BY prospects.legal_or_business_name) AS filtered_service_offereds) AS united_prospect_sales GROUP BY united_prospect_sales.name, united_prospect_sales.id"
-
   end
 
 ## Es necesario mantener la query (fechas, tienda) para el reporte de clientes CREAR QUERY PARA EL SALDO, VENTAS Y PAGOS Y USAR UNA QUERY RAILS WAY PARA OBTENER LOS TICKETS, DEVOLUCIONES PAGOS DE ESE CLIENTE
@@ -150,54 +149,6 @@ class TicketsController < ApplicationController
         end
       end
     end
-  end
-
-  def corporate_store_sales
-    if params[:store_options] == 'Todas las tiendas'
-      stores_id = Store.joins(:store_type).where(store_types: {store_type: 'tienda propia'}).pluck(:id)
-    else
-      stores_id = params[:store_list]
-    end
-
-    stores_id_string = stores_id.join(',')
-    initial_date = Date.parse(params["month_and_year"].join(',')).beginning_of_month.strftime('%F %H:%M:%S')
-    final_date = Date.parse(params["month_and_year"].join(',')).end_of_month.strftime('%F 23:59:59')
-
-    month = initial_date.to_date.month
-    year = initial_date.to_date.year
-    @days = *(1..Time.days_in_month(month, year))
-    @date = initial_date.to_date.strftime('%m/%Y')
-
-    stores_query = "SELECT SUM(total) AS total, store_name, EXTRACT(day FROM day) AS day FROM (SELECT COALESCE(SUM (CASE WHEN movement_type = 'venta' THEN store_movements.total WHEN movement_type = 'devolución' THEN -store_movements.total ELSE 0 END ), 0) AS total, store_name, DATE_TRUNC('day', store_movements.created_at) AS day FROM store_movements LEFT JOIN stores ON store_movements.store_id = stores.id WHERE store_movements.created_at > '#{initial_date}' AND store_movements.created_at < '#{final_date}' AND store_movements.store_id IN (#{stores_id_string}) AND store_movements.ticket_id IS NOT null GROUP BY store_name, day UNION ALL SELECT COALESCE(SUM (CASE WHEN service_type = 'venta' THEN service_offereds.total WHEN service_type = 'devolución' THEN -service_offereds.total ELSE 0 END ), 0) AS total, store_name, DATE_TRUNC('day', service_offereds.created_at) AS day FROM service_offereds LEFT JOIN stores ON service_offereds.store_id = stores.id WHERE service_offereds.created_at > '#{initial_date}' AND service_offereds.created_at < '#{final_date}' AND service_offereds.store_id IN (#{stores_id_string}) AND service_offereds.ticket_id IS NOT null GROUP BY store_name, day ORDER BY day) join_fields GROUP BY store_name, day ORDER BY store_name, day"
-
-    @store_names = Store.where(id: stores_id).pluck(:store_name).sort
-    @stores = {}
-
-    results = StoreMovement.connection.select_all(stores_query).rows
-
-    results.each do |array|
-      @days.each do |day|
-        if @stores[day] == nil
-          @stores[day] = {}
-        else
-          @store_names.each do |name|
-            finded = results.select{ |arr| arr[2] == day.to_s && arr[1] == name }.flatten
-            finded == [] ? @stores[day][name] = 0 : @stores[day][name] = finded[0].to_f
-          end
-        end
-      end
-    end
-    @store_totals = results.group_by(&:second).map{ |k,v| [k, v.inject(0){ |sum, i| (sum + i.first.to_f).round(2) }] }
-    @store_names.each_with_index do |name, index|
-      @store_totals.insert(index, [name, 0]) unless @store_totals.select{ |arr| arr[0] == name } != []
-    end
-    render 'show_sales'
-  end
-
-  def select_month_and_store
-  end
-
-  def show_sales
   end
 
   def get_payments_from_ticket_day
