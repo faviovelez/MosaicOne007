@@ -36,6 +36,13 @@ $(document).ready(function(){
       $(".single-date").addClass('hidden');
       $(".group_fields").addClass("hidden");
     } else {
+      if (reportType == 'Comparativo compras por mes') {
+        $(".group_options").removeClass('hidden');
+        $(".store-options").addClass('hidden');
+      } else {
+        $(".group_options").addClass('hidden');
+        $(".store-options").removeClass('hidden');
+      }
       $(".select2.select2-container").addClass("width-200");
       $(".companies-list").addClass('hidden');
       $(".month-list").removeClass('hidden');

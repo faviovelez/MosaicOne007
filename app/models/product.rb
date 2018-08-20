@@ -23,6 +23,7 @@ class Product < ActiveRecord::Base
   has_many :products_bills_receiveds
   has_many :bill_receiveds, through: :products_bills_receiveds
   has_many :movements, through: :stores_warehouse_entries
+  has_many :store_movements
   has_many :stores_warehouse_entries
   has_many :store_use_inventories
   has_many :exhibition_inventories

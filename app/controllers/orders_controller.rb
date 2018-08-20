@@ -139,6 +139,8 @@ class OrdersController < ApplicationController
       report_of_sales
     elsif params[:report_type] == 'Compras por tienda por mes'
       stores_buying_report
+    elsif params[:report_type] == 'Comparativo compras por mes'
+      monthly_report_stores
     end
   end
 
@@ -166,10 +168,10 @@ class OrdersController < ApplicationController
     @billing_consolidated_query = "SELECT store_name, legal_or_business_name, COUNT(DISTINCT bills.id) AS count, SUM(DISTINCT CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -subtotal WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN subtotal ELSE 0 END) AS subtotal, SUM(DISTINCT CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -discount_applied WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN discount_applied ELSE 0 END) AS discount, SUM(DISTINCT CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -taxes WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN taxes ELSE 0 END) AS taxes, SUM(DISTINCT CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -bills.total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN bills.total ELSE 0 END) AS total, prospects.id FROM bills INNER JOIN stores ON bills.store_id = stores.id INNER JOIN prospects ON bills.prospect_id = prospects.id WHERE bills.store_id = #{@store_id} AND bills.status = 'creada' AND bills.created_at > '#{@initial_date}' AND bills.created_at < '#{@final_date}' GROUP BY legal_or_business_name, store_name, prospects.id"
 
     if params[:extended_billing].present?
-      @bills = Bill.joins(:prospect, :store, :orders).where(store_id: @store_id, status: 'creada', created_at: @initial_date..@final_date).pluck("stores.store_name,  prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), prospects.id, orders.id")
+      @bills = Bill.joins(:prospect, :store, :orders).where(store_id: @store_id, status: 'creada', created_at: @initial_date..@final_date).group("stores.store_name,  prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), prospects.id").order('bills.id').pluck("stores.store_name,  prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), array_agg(orders.id), prospects.id")
       render 'billing_report_extended'
     elsif params[:extended_prospect_billing].present?
-      @bills = Bill.joins(:prospect, :store, :orders).where(store_id: @store_id, status: 'creada', created_at: @initial_date..@final_date, prospect_id: params[:prospect_id]).pluck("stores.store_name,  prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), orders.id")
+      @bills = Bill.joins(:prospect, :store, :orders).where(store_id: @store_id, status: 'creada', created_at: @initial_date..@final_date, prospect_id: params[:prospect_id]).group("stores.store_name,  prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), prospects.id").order('bills.id').pluck("stores.store_name,  prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), array_agg(orders.id)")
       render 'billing_report_extended'
     else
       @bills = Bill.connection.select_all(@billing_consolidated_query).rows
@@ -181,10 +183,10 @@ class OrdersController < ApplicationController
     @collection_consolidated_query = "SELECT store_name, legal_or_business_name, COUNT(DISTINCT bills.id) AS count, SUM(DISTINCT CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -subtotal WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN subtotal ELSE 0 END) AS subtotal, SUM(DISTINCT CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -discount_applied WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN discount_applied ELSE 0 END) AS discount, SUM(DISTINCT CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -taxes WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN taxes ELSE 0 END) AS taxes, SUM(DISTINCT CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -bills.total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN bills.total ELSE 0 END) AS total, SUM(CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END) AS payments, prospects.id FROM bills INNER JOIN stores ON bills.store_id = stores.id INNER JOIN prospects ON bills.prospect_id = prospects.id LEFT JOIN payments ON payments.bill_id = bills.id WHERE bills.store_id = #{@store_id} AND bills.status = 'creada' AND bills.created_at > '#{@initial_date}' AND bills.created_at < '#{@final_date}' GROUP BY legal_or_business_name, store_name, prospects.id"
 
     if params[:extended_collection].present?
-      @bills = Bill.uniq.joins(:store, :prospect, :orders).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where('bills.store_id = ?', @store_id).where(created_at: @initial_date..@final_date).order(:id).group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days, orders.id').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(prospects.credit_days|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), orders.id")
+      @bills = Bill.uniq.joins(:store, :prospect, :orders).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where('bills.store_id = ?', @store_id).where(created_at: @initial_date..@final_date).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id)")
       render 'collection_report_extended'
     elsif params[:extended_collection_billing].present?
-      @bills = Bill.uniq.joins(:store, :prospect, :orders).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where('bills.store_id = ?', @store_id).where(created_at: @initial_date..@final_date, prospect_id: @prospect_id).order(:id).group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days, orders.id').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(prospects.credit_days|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), orders.id")
+      @bills = Bill.uniq.joins(:store, :prospect, :orders).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where('bills.store_id = ?', @store_id).where(created_at: @initial_date..@final_date, prospect_id: @prospect_id).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id)")
       render 'collection_report_extended'
     else
       @bills = Bill.connection.select_all(@collection_consolidated_query).rows
@@ -199,9 +201,33 @@ class OrdersController < ApplicationController
       @prospect_ids = Store.joins(:store_type, :store_prospect).where(store_types: {store_type: 'franquicia'}).pluck('prospects.id')
     elsif params[:group_options] == 'Solo distribuidores'
       @prospect_ids = Prospect.joins(:store_type).where(store_types: {store_type: 'distribuidor'}).pluck(:id)
+    elsif params[:group_options] == 'Franquicias y distribuidores'
+      @prospect_ids = Prospect.joins(:store_type).where(store_types: {store_type: ['franquicia','distribuidor']}).pluck(:id)
     else
       @prospect_ids = params[:client_list]
     end
+  end
+
+  def monthly_report_stores
+    prospect_types
+    @first_year = Movement.where(movement_type: 'venta').first.created_at.year
+    @fy = @first_year
+    @current_year = Date.today.year
+    @years = @current_year - @first_year
+    initial_date = Date.parse(params["month_and_year"].join(',')).beginning_of_month.strftime('%F %H:%M:%S')
+    final_date = Date.parse(params["month_and_year"].join(',')).end_of_month.strftime('%F 23:59:59')
+
+    month_before_initial = (initial_date.to_date - 1.month).strftime('%F %H:%M:%S')
+    month_before_final = (final_date.to_date - 1.month).strftime('%F 23:59:59')
+    year_before_initial = (initial_date.to_date - 1.year).strftime('%F %H:%M:%S')
+    year_before_final = (final_date.to_date - 1.year).strftime('%F 23:59:59')
+
+    @month_sales = Movement.joins(:prospect).where(prospect_id: @prospect_ids).where("(movements.created_at > ? AND movements.created_at < ?) OR (movements.created_at > ? AND movements.created_at < ?) OR (movements.created_at > ? AND movements.created_at < ?)", "#{initial_date}, #{final_date}, #{month_before_initial}, #{month_before_final}, #{year_before_initial}, #{year_before_final} ").group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END) as total, DATE_TRUNC('month', movements.created_at) AS month")
+
+    debugger
+
+#    @month_sales = Bill.joins(:prospect).where(prospect_id: @prospect_ids).where("(bills.created_at > ? AND bills.created_at < ?) OR (bills.created_at > ? AND bills.created_at < ?) OR (bills.created_at > ? AND bills.created_at < ?)", "#{initial_date}, #{final_date}, #{month_before_initial}, #{month_before_final}, #{year_before_initial}, #{year_before_final} ").group("prospects.legal_or_business_name, DATE_TRUNC('month', bills.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN total ELSE 0 END) as total, DATE_TRUNC('month', bills.created_at) AS month")
+
   end
 
   def stores_buying_report
@@ -210,7 +236,9 @@ class OrdersController < ApplicationController
     @fy = @first_year
     @current_year = Date.today.year
     @years = @current_year - @first_year
-    @month_sales = Movement.joins(:prospect).where(prospect_id: @prospect_ids).group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").pluck("prospects.legal_or_business_name, SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END) as total, DATE_TRUNC('month', movements.created_at) AS month")
+    @month_sales = Movement.joins(:prospect).where(prospect_id: @prospect_ids).group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END) as total, DATE_TRUNC('month', movements.created_at) AS month")
+
+#    @month_sales = Bill.joins(:prospect).where(prospect_id: @prospect_ids).group("prospects.legal_or_business_name, DATE_TRUNC('month', bills.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN total ELSE 0 END) as total, DATE_TRUNC('month', bills.created_at) AS month")
 
     if @month_sales != []
       grouped_values = {}

@@ -29,7 +29,12 @@ $(document).ready(function(){
     pageLength: 8,
     dom: 'Bfrtip',
     buttons: [
-      'excel', 'pdf'
+      {
+        extend: 'excel',
+      },
+      {
+        extend: 'pdfHtml5',
+      },
     ]
   });
 
