@@ -139,7 +139,12 @@ $(document).ready(function(){
     pageLength: 8,
     dom: 'Bfrtip',
     buttons: [
-      'pdfHtml5'
+      {
+        extend: 'excel',
+      },
+      {
+        extend: 'pdfHtml5',
+      },
     ]
   });
 
