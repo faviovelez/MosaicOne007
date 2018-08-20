@@ -1,7 +1,6 @@
 <table class="dataTablestandard">
   <thead>
     <tr class="table-titles">
-      <th> Pedido </th>
       <th> Factura </th>
       <th> Fecha </th>
       <th> Empresa </th>
@@ -13,13 +12,13 @@
       <th> Pagos </th>
       <th> Saldo </th>
       <th> Estatus </th>
+      <th> Pedidos </th>
       <th> Comprobantes </th>
     </tr>
   </thead>
   <tbody>
     <% @bills.each do |bill| %>
       <tr>
-        <td> <%= number_with_delimiter(bill[13].to_i) %> </td>
         <td> <%= bill[8] %> </td>
         <td> <%= l bill[9].to_date %> </td>
         <td> <%= bill[0] %> </td>
@@ -31,6 +30,7 @@
         <td> <%= number_to_currency(bill[7].to_f) %> </td>
         <td> <%= number_to_currency(bill[6].to_f - bill[7].to_f) %> </td>
         <td> <%= current_bill(bill[10].to_date) %> </td>
+        <td> <%= number_with_delimiter(bill[13].join(', ')) %> </td>
         <td>
           <% if Bill.find(bill[11]).documents != [] %>
             <% Bill.find(bill[11]).documents.each do |document| %>

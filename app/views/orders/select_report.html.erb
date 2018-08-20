@@ -10,12 +10,12 @@
 
   <div class="field">
     <%= label_tag :tipo_de_reporte %>
-    <%= select_tag :report_type, options_for_select([['Facturación por empresa'], ['Pagos por empresa'], ['Saldo por clientes'], ['Ventas por tienda'], ['Compras por tienda por mes']]) %>
+    <%= select_tag :report_type, options_for_select([['Facturación por empresa'], ['Pagos por empresa'], ['Saldo por clientes'], ['Ventas por tienda'], ['Compras por tienda por mes'], ['Comparativo compras por mes']]) %>
   </div>
 
   <div class="field group-options hidden">
     <%= label_tag :opciones_de_reporte %>
-    <%= select_tag :group_options, options_for_select([['Solo tiendas'], ['Solo franquicias'], ['Solo distribuidores'], ['Seleccionar clientes']]) %>
+    <%= select_tag :group_options, options_for_select([['Franquicias y distribuidores'], ['Solo tiendas'], ['Solo franquicias'], ['Solo distribuidores'], ['Seleccionar clientes']]) %>
   </div>
 
   <br /><div class="field client-list hidden">
