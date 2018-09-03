@@ -258,6 +258,87 @@ module ApplicationHelper
     @store_options = [['Todas las tiendas'], ['Seleccionar tiendas']]
   end
 
+  def total_with_nc_and_devs(bill, total)
+    bill = Bill.find(bill)
+    difference = bill.children.sum(:total)
+    @total = total - difference
+  end
+
+  def pay_form_translator(form)
+    pay_forms = {
+      "Efectivo" => 'Efectivo',
+      "Cheque nominativo" => 'Cheque',
+      "Transferencia electrónica de fondos" => 'Transferencia',
+      "Tarjeta de crédito" => 'Tarjeta de crédito',
+      "Tarjeta de débito" => 'Tarjeta de débito',
+      "Por definir" => 'Venta a crédito'
+    }
+    @pay_form = pay_forms[form]
+  end
+
+  def pay_bill_status(id)
+    (id == nil || (id != nil && Bill.find(id).status == 'cancelada')) ? @stat = true : @stat = false
+  end
+
+  def pay_bill_span(id)
+    if id == nil
+      @span = content_tag(:span, 'sin REP', class: 'label label-warning')
+    elsif id != nil && Bill.find(id).status == 'cancelada'
+      @span = content_tag(:span, 'REP cancelado', class: 'label label-danger')
+    else
+      @span = content_tag(:span, 'con REP', class: 'label label-success')
+    end
+    @span
+  end
+
+  def select_correct_date_data(arr, date)
+    correct_array = arr.select{ |arr| arr[2] == date}
+    correct_array == [] ? @sale = 0 : @sale = correct_array[0][1]
+  end
+
+  def compare_vs_ly(arr, actual_date, ly_date)
+    actual_array = arr.select{ |arr| arr[2] == actual_date}
+    actual_array == [] ? actual_sale = 0 : actual_sale = actual_array[0][1]
+    ly_array = arr.select{ |arr| arr[2] == ly_date}
+    ly_array == [] ? ly_sale = 0 : ly_sale = ly_array[0][1]
+    if ly_sale == 0 && actual_date == 0
+      @ly_comparision = 'ND'
+    elsif ly_sale == 0 && actual_date != 0
+      @ly_comparision = 100
+    elsif actual_date == 0
+      @ly_comparision = 'Sin ventas actuales'
+    else
+      @ly_comparision = (((actual_sale / ly_sale) - 1) * 100).round(1)
+    end
+  end
+
+  def compare_vs_lm(arr, actual_date, lm_date)
+    actual_array = arr.select{ |arr| arr[2] == actual_date}
+    actual_array == [] ? actual_sale = 0 : actual_sale = actual_array[0][1]
+    lm_array = arr.select{ |arr| arr[2] == lm_date}
+    lm_array == [] ? lm_sale = 0 : lm_sale = lm_array[0][1]
+    if lm_sale == 0 && actual_date == 0
+      @ly_comparision = 'ND'
+    elsif lm_sale == 0 && actual_date != 0
+      @ly_comparision = 100
+    elsif actual_date == 0
+      @lm_comparision = 'Sin ventas actuales'
+    else
+      @lm_comparision = (((actual_sale / lm_sale) - 1) * 100).round(1)
+    end
+  end
+
+  def pay_bills(id)
+    bill_ids = Bill.where(pay_bill_id: id).pluck(:sequence, :folio) unless id == nil
+    @bill_ids = bill_ids.map{ |arr| arr[0] + ' ' + arr[1]}.join(", ")
+  end
+
+  def pay_bill_tickets(id)
+    ticket_numbers = []
+    ticket_numbers = Payment.joins(:ticket).where(payment_bill_id: id).pluck('tickets.ticket_number')
+    @ticket_numbers = ticket_numbers.join(", ")
+  end
+
   def month_list
     date2 = Date.today
     if current_user.store.store_type.store_type == 'corporativo'

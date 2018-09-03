@@ -9,6 +9,60 @@ class InventoriesController < ApplicationController
     filter_products
   end
 
+  def index_with_data
+    store_id = current_user.store.id
+    store_id = 16
+    final_date = (Date.today - 1.month).end_of_month
+    months = Store.find(store_id).months_in_inventory
+    initial_date = final_date - months.month + 1.day
+    initial_date_for_query = initial_date.strftime('%F %H:%M:%S')
+    final_date_for_query = final_date.strftime('%F 23:59:59')
+
+    ly_after_initial_date = (Date.today - 1.year + 1.month).beginning_of_month
+    ly_after_final_date = ly_after_initial_date + months.months - 1.day
+    ly_after_initial_date_for_query = ly_after_initial_date.strftime('%F %H:%M:%S')
+    ly_after_final_date_for_query = ly_after_final_date.strftime('%F 23:59:59')
+
+
+    month_sales = StoreMovement.joins('RIGHT JOIN products ON products.id = store_movements.product_id RIGHT JOIN stores_inventories ON products.id = stores_inventories.product_id').where(stores_inventories: {store_id: store_id}).where.not(movement_type: ['alta', 'baja', 'alta automática', 'baja automática']).where(store_id: store_id).where("(store_movements.created_at > '#{initial_date_for_query}' AND store_movements.created_at < '#{final_date_for_query}') OR (store_movements.created_at > '#{ly_after_initial_date_for_query}' AND store_movements.created_at < '#{ly_after_final_date_for_query}')").order("products.id, DATE_TRUNC('month', store_movements.created_at)").group("products.id, products.unique_code, products.description, DATE_TRUNC('month', store_movements.created_at), stores_inventories.quantity").pluck("products.id, products.unique_code, products.description, COALESCE(SUM(CASE WHEN store_movements.movement_type = 'devolución' THEN -store_movements.quantity WHEN store_movements.movement_type = 'venta' THEN store_movements.quantity ELSE 0 END), 0) as total, COUNT(DISTINCT DATE_TRUNC('month', store_movements.created_at)) AS months, DATE_TRUNC('month', store_movements.created_at) AS month, stores_inventories.quantity")
+
+    @grouped_stores_inventories = StoresInventory.joins(:product).where(store_id: store_id).order(:product_id).pluck(:product_id, :unique_code, :description, :quantity, :exterior_material_color, :line).group_by{ |arr| arr[0]}
+    @grouped_month_sales = month_sales.group_by{ |arr| arr[0]}
+
+    @average_sales_arr = []
+    times = (Store.find(store_id).days_inventory_desired / 30.0)
+    @grouped_month_sales.keys.each do |prod_id|
+      q_cy = nil
+      q_ly = nil
+      avg_cy = 0
+      avg_ly = 0
+      id = @grouped_month_sales[prod_id][0][0]
+      code = @grouped_month_sales[prod_id][0][1]
+      desc = @grouped_month_sales[prod_id][0][2]
+      quant = @grouped_month_sales[prod_id][0][6]
+      sales_arr_cy = []
+      sales_arr_ly = []
+      @grouped_month_sales[prod_id].each do |arr|
+        if arr[5].to_date >= initial_date && arr[5].to_date <= final_date
+          sales_arr_cy << [arr[5].to_date.strftime('%m/%Y'), arr[3].to_i]
+          q_cy = q_cy.to_i + arr[3]
+        else
+          sales_arr_ly << [arr[5].to_date.strftime('%m/%Y'), arr[3].to_i]
+          q_ly = q_ly.to_i + arr[3]
+        end
+        q_cy == nil ? avg_cy = nil : avg_cy = (q_cy / months).round(0).to_i
+        q_ly == nil ? avg_ly = nil : avg_ly = (q_ly / months).round(0).to_i
+      end
+      desired_cy = (times * avg_cy.to_i).round(0).to_i
+      desired_ly = (times * avg_ly.to_i).round(0).to_i
+      avg_cy.to_i == 0 ? mos = 999999999.999 : mos = (quant / avg_cy).to_f
+      order_cy = desired_cy - quant
+      order_ly = desired_ly - quant
+      @average_sales_arr << [id, code, desc, avg_cy, sales_arr_cy, avg_ly, sales_arr_ly, quant, desired_cy, desired_ly, order_cy, order_ly, mos]
+    end
+    @average_sales_arr = @average_sales_arr.group_by{ |arr| arr[0]}
+  end
+
   def filter_products
     @inventories = []
     role = current_user.role.name

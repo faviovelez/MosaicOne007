@@ -1,0 +1,220 @@
+<div id=bill>
+
+  <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'img-bill' %>
+
+  <div class="top-right">
+    <h3 id="top-title"> RECIBO ELECTRÓNICO DE PAGO </h3>
+
+    <p> <strong> Serie: </strong> <span> <%= @series %> </span> </p>
+    <p> <strong> Folio: </strong> <span> <%= @folio %> </span> </p>
+    <p class="no-break"> <strong> Fecha y hora de timbrado: </strong> <%= @time.slice(0..18) %> </p>
+    <p> <strong> Lugar de expedición: </strong> <span> <%= @zipcode %> </span> </p>
+    <p> <strong> Tipo de comprobante: </strong> <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill_description %> </span> </p>
+  </div>
+
+  <div class="center bottom">
+    <% if @store.store_type.store_type == 'tienda propia' %>
+      <p> Sucursal <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+    <% elsif @store.store_type.store_type == 'franquicia' %>
+      <p> Tienda <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+    <% elsif @store.store_type.store_type == 'corporativo' %>
+      <p> <%= @store.store_name.split.map(&:capitalize)*' ' %> </p>
+    <% end %>
+    <p> <%= address %> </p>
+    <p> Tel. <%= number_to_phone(@store.direct_phone, area_code: true) %> </p>
+    <p> <%= @store.email %> </p>
+    <p> www.disenosdecarton.com.mx </p>
+  </div>
+
+  <table id="issuing-receiving-table">
+    <thead>
+      <tr class="ligth-bg">
+        <th class="title-cfdi half header"> EMISOR</th>
+        <th class="title-cfdi half header"> RECEPTOR </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="grow half first center"> RFC: <span> <%= @store_rfc %> </span> </td>
+        <td class="grow half center"> RFC: <span> <%= @prospect_rfc %> </span> </td>
+      </tr>
+      <tr>
+        <td class="grow half first center"> Nombre: <span> <%= @store_name %> </span> </td>
+        <td class="grow half center"> Nombre: <span> <%= @prospect_name %> </span> </td>
+      </tr>
+      <tr>
+        <td class="grow half first center"> Régimen Fiscal: <span> <strong> <%= @tax_regime_key %> </strong> - <%= @tax_regime %> </td>
+        <td class="grow half center"> Uso CFDI: <span> <strong> <%= @cfdi_use_key %> </strong> - <%= @cfdi_use %> </span> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="margin-top-bill">
+    <thead>
+      <tr class="header-main">
+        <th class="grow space"> Factura </th>
+        <th class="grow space"> Id Documento </th>
+        <th class="grow space"> Parcialidad </th>
+        <th class="grow space"> Saldo anterior </th>
+        <th class="grow space"> Importe pagado </th>
+        <th class="grow space"> Saldo insoluto </th>
+        <th class="grow space"> Moneda </th>
+        <th class="grow space"> Método pago </th>
+        <th class="grow space"> Forma pago </th>
+        <th class="grow space"> Monto </th>
+        <th class="grow space"> Fecha pago </th>
+        <th class="grow space"> No. operación </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @rows.each do |row|%>
+        <tr>
+          <td class="grow space"> <%= row[0] %> </td>
+          <td class="grow space"> <%= row[1] %> </td>
+          <td class="grow space"> <%= row[2] %> </td>
+          <td class="grow space"> <%= number_to_currency(row[3]) %> </strong> </td>
+          <td class="grow space"> <%= number_to_currency(row[4]) %> </td>
+          <td class="grow space"> <%= number_to_currency(row[5]) %> </td>
+          <td class="grow space"> MXN </td>
+          <td class="grow space"> PPD </td>
+          <td class="grow space"> <%= row[6] %> </td>
+          <td class="grow space"> <%= number_to_currency(row[7]) %> </td>
+          <td class="grow space"> <%= l row[8] %> </td>
+          <td class="grow space"> <%= row[9] %> </td>
+        </tr>
+        <% if row[6] == "Cheque nominativo" || row[6] == "Transferencia electrónica de fondos" || row[6] == "Tarjeta de crédito" || row[6] == "Tarjeta de débito" %>
+          <% params_index = @payments_ids.find_index{|arr| arr == row[10].to_s} %>
+          <% if params_index.present? %>
+            <tr>
+              <td class="grow space"></td>
+              <td class="grow space"></td>
+              <td class="grow space" colspan="4">
+                <strong>Nombre emisor cuenta ordenante:</strong>
+                <br/ > <%= @emisor_name[params_index] %>
+              </td>
+              <td class="grow space" colspan="3">
+                <strong>RFC emisor cuenta ordenante:</strong>
+                <br/ > <%= @emisor_rfc[params_index] %>
+              </td>
+              <td class="grow space" colspan="3">
+                <strong>No. de cuenta ordenante:</strong>
+                <br/ > <%= @emisor_account[params_index] %>
+              </td>
+            </tr>
+            <tr>
+              <td class="grow space"></td>
+              <td class="grow space"></td>
+              <td class="grow space" colspan="4"> </td>
+              <td class="grow space" colspan="3">
+                <strong>RFC emisor cuenta beneficiario:</strong>
+                <br/ > <%= @beneficiario_account[params_index] %>
+              </td>
+              <td class="grow space" colspan="3">
+                <strong>No. de cuenta beneficiario</strong>
+                <br/ > <%= @beneficiario_rfc[params_index] %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      <% end %>
+      <tr>
+        <td>
+          <br />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="6" class="grow letter"> <strong> Importe con letra </strong> </td>
+        <td colspan="2" class="final-total grow"> </td>
+        <td colspan="4" class="final-total grow right"> </td>
+      </tr>
+      <tr>
+        <td colspan="6" class="grow letter"> <%= number_to_letters(@total) %> <%= decimals(@total) %> </td>
+        <td colspan="2" class="final-total grow border-top"> <strong> Total </strong> </td>
+        <td colspan="4" class="final-total grow border-top right"> <strong> <%= number_to_currency(@total) %> </strong> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br /><br />
+
+  <% if @relation_type == 4 %>
+    <table class="two-columns-one-header">
+      <thead>
+      </thead>
+      <tbody>
+        <% @cancelled_bills.each do |bill| %>
+          <tr class="all">
+            <td class="title-cfdi all header" colspan="2"> CFDI RELACIONADO </td>
+          </tr>
+          <tr>
+            <td class="grow half first smaller left"> <strong> Tipo de Relación: </strong> <span> <strong> 04 </strong> - Sustitución de los CFDI previos </span> </td>
+            <td class="grow half smaller left"> <strong> CFDI Relacionado: </strong> <span> <%= bill[1] %> </span> </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <table class="bill-first-footer">
+    <tbody>
+      <tr>
+        <td>
+          <table id="qr-table">
+            <% @qr_print.modules.each_index do |x| -%>
+              <tr>
+                <% @qr_print.modules.each_index do |y| -%>
+                <% if @qr_print.dark?(x,y) -%>
+                  <td class="black"/>
+                <% else -%>
+                  <td class="white"/>
+                <% end -%>
+              <% end -%>
+              </tr>
+            <% end -%>
+          </table>
+        </td>
+        <td>
+          <div class="certificate">
+            <p class="title-cfdi"> Folio Fiscal - UUID: </p>
+            <p class="grow"> <%= @uuid %> </p>
+            <p class="title-cfdi"> Número de Serie del Certificado </p>
+            <p class="grow"> <%= @store.certificate_number %> </p>
+            <p class="title-cfdi"> Número de Serie del Certificado SAT </p>
+            <p class="grow"> <%= @sat_certificate %> </p>
+            <p class="title-cfdi"> Fecha y hora de Certificación </p>
+            <p class="grow"> <%= @date.strftime('%FT%T') %> </p>
+          </div>
+        </td>
+        <td>
+          <div class="fiscal-folio">
+            <p class="title-cfdi with-bg"> Sello Digital:</p>
+            <p class="grow break">
+              <%= @cfd_stamp %>
+            </p>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="digital-stamp first-stamp">
+    <p class="title-cfdi with-bg"> Sello del SAT: </p>
+    <p class="grow break">
+      <%= @sat_seal %>
+    </p>
+  </div>
+
+  <div class="digital-stamp">
+    <p class="title-cfdi with-bg"> Cadena Original: </p>
+    <p class="grow" id="first">
+      <%= @stamp_original_chain.slice(0..105) %>
+    </p>
+    <p id="second">
+      <%= @stamp_original_chain.slice(106..211) %>
+    </p>
+    <p id="third">
+      <%= @stamp_original_chain.slice(212..@stamp_original_chain.length) %>
+    </p>
+  </div>
+
+  <p class="grow footer"> Este documento es una representación impresa de un CFDI </p>

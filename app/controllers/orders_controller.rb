@@ -95,7 +95,7 @@ class OrdersController < ApplicationController
       prosp = Store.find(2).store_prospect
     end
     credit = prosp.credit_days.to_i
-    bills = Bill.where(payed: false, prospect: prosp).pluck(:created_at, :total, :folio, :id)
+    bills = Bill.where(payed: false, prospect: prosp, status: 'creada').pluck(:created_at, :total, :folio, :id)
     bills.each_with_index do |val, index|
       bill = Bill.find(val[3])
       bills[index] << bill.payments.sum(:total)
@@ -141,7 +141,32 @@ class OrdersController < ApplicationController
       stores_buying_report
     elsif params[:report_type] == 'Comparativo compras por mes'
       monthly_report_stores
+    elsif params[:report_type] == 'Facturas recibidas'
+      bill_received_summary
     end
+  end
+
+  def bill_received_summary
+    select_dates
+    bills = BillReceived.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(store_id: current_user.store_id).where(created_at: @initial_date..@final_date).group("suppliers.name").pluck("suppliers.name, COUNT(DISTINCT bill_receiveds.id), SUM(bill_receiveds.total_amount), SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), array_agg(bill_receiveds.id), 'BillReceived'")
+
+    store_prospect = current_user.store.store_prospect.id
+    complement = Bill.joins(:prospect).joins('LEFT JOIN payments ON bills.id = payments.bill_id').where(receiving_company: store_prospect, status: 'creada', created_at: @initial_date..@final_date).group("prospects.legal_or_business_name").pluck("prospects.legal_or_business_name, COUNT(DISTINCT bills.id), SUM(bills.total), SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), array_agg(bills.id), 'Bill'")
+    @bills = bills + complement
+
+    render 'bill_received_summary'
+  end
+
+  def bill_received_extended
+    @initial_date = Time.parse(params[:initial_date])
+    @final_date = Time.parse(params[:final_date])
+    @ids = params[:ids].split('/')
+    if params[:type] == 'BillReceived'
+      @bills = params[:type].constantize.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(id: @ids).group("bill_receiveds.id, suppliers.name").pluck("bill_receiveds.id, bill_receiveds.folio, bill_receiveds.created_at, suppliers.name, bill_receiveds.total_amount, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
+    else
+      @bills = params[:type].constantize.joins(:prospect).joins('LEFT JOIN payments ON bills.id = payments.bill_id, prospects.legal_or_business_name').where(id: @ids).group("bills.id").pluck("bills.id CONCAT(bills.sequence, ' ', bills.folio), bills.created_at, prospects.legal_or_business_name, bills.total, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
+    end
+    debugger
   end
 
   def report_parameters
@@ -197,14 +222,19 @@ class OrdersController < ApplicationController
   def prospect_types
     if params[:group_options] == 'Solo tiendas'
       @prospect_ids = Store.joins(:store_type, :store_prospect).where(store_types: {store_type: 'tienda propia'}).pluck('prospects.id')
+      @prospect_names = Store.joins(:store_type, :store_prospect).where(store_types: {store_type: 'tienda propia'}).pluck('legal_or_business_name, store_types.store_type')
     elsif params[:group_options] == 'Solo franquicias'
       @prospect_ids = Store.joins(:store_type, :store_prospect).where(store_types: {store_type: 'franquicia'}).pluck('prospects.id')
+      @prospect_names = Store.joins(:store_type, :store_prospect).where(store_types: {store_type: 'franquicia'}).pluck('legal_or_business_name, store_types.store_type')
     elsif params[:group_options] == 'Solo distribuidores'
       @prospect_ids = Prospect.joins(:store_type).where(store_types: {store_type: 'distribuidor'}).pluck(:id)
+      @prospect_names = Prospect.joins(:store_type).where(store_types: {store_type: 'distribuidor'}).pluck('legal_or_business_name, store_types.store_type')
     elsif params[:group_options] == 'Franquicias y distribuidores'
       @prospect_ids = Prospect.joins(:store_type).where(store_types: {store_type: ['franquicia','distribuidor']}).pluck(:id)
+      @prospect_names = Prospect.joins(:store_type).where(store_types: {store_type: ['franquicia','distribuidor']}).pluck('legal_or_business_name, store_types.store_type')
     else
       @prospect_ids = params[:client_list]
+      @prospect_names = Prospect.joins(:store_type).where(id: params[:client_list]).pluck('legal_or_business_name, store_types.store_type')
     end
   end
 
@@ -214,20 +244,153 @@ class OrdersController < ApplicationController
     @fy = @first_year
     @current_year = Date.today.year
     @years = @current_year - @first_year
-    initial_date = Date.parse(params["month_and_year"].join(',')).beginning_of_month.strftime('%F %H:%M:%S')
-    final_date = Date.parse(params["month_and_year"].join(',')).end_of_month.strftime('%F 23:59:59')
-
+    initial_date = Date.parse(params[:month_and_year].join(',')).beginning_of_month.strftime('%F %H:%M:%S')
+    final_date = Date.parse(params[:month_and_year].join(',')).end_of_month.strftime('%F 23:59:59')
+    @date_selected = params[:month_and_year].join(',')
+    @last_month_selected = (Date.parse(initial_date) - 1.month).strftime('%m/%Y')
+    @last_year_selected = (Date.parse(initial_date) - 1.year).strftime('%m/%Y')
     month_before_initial = (initial_date.to_date - 1.month).strftime('%F %H:%M:%S')
     month_before_final = (final_date.to_date - 1.month).strftime('%F 23:59:59')
     year_before_initial = (initial_date.to_date - 1.year).strftime('%F %H:%M:%S')
     year_before_final = (final_date.to_date - 1.year).strftime('%F 23:59:59')
 
-    @month_sales = Movement.joins(:prospect).where(prospect_id: @prospect_ids).where("(movements.created_at > ? AND movements.created_at < ?) OR (movements.created_at > ? AND movements.created_at < ?) OR (movements.created_at > ? AND movements.created_at < ?)", "#{initial_date}, #{final_date}, #{month_before_initial}, #{month_before_final}, #{year_before_initial}, #{year_before_final} ").group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END) as total, DATE_TRUNC('month', movements.created_at) AS month")
+    month_sales = Movement.joins(:prospect).where(prospect_id: @prospect_ids).where("(movements.created_at > '#{initial_date}' AND movements.created_at < '#{final_date}') OR (movements.created_at > '#{month_before_initial}' AND movements.created_at < '#{month_before_final}') OR (movements.created_at > '#{year_before_initial}' AND movements.created_at < '#{year_before_final}')").group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END) as total, DATE_TRUNC('month', movements.created_at) AS month")
 
-    debugger
+    #    @month_sales = Bill.joins(:prospect).where(prospect_id: @prospect_ids).where("(bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}') OR (bills.created_at > '#{month_before_initial}' AND bills.created_at < '#{month_before_final}') OR (bills.created_at > '#{year_before_initial}' AND bills.created_at < '#{year_before_final}')").group("prospects.legal_or_business_name, DATE_TRUNC('month', bills.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN total ELSE 0 END) as total, DATE_TRUNC('month', bills.created_at) AS month")
+    @month_sales = month_sales.each{ |arr| arr[2] = arr[2].strftime('%m/%Y')}.group_by{ |arr| arr[0]}
 
-#    @month_sales = Bill.joins(:prospect).where(prospect_id: @prospect_ids).where("(bills.created_at > ? AND bills.created_at < ?) OR (bills.created_at > ? AND bills.created_at < ?) OR (bills.created_at > ? AND bills.created_at < ?)", "#{initial_date}, #{final_date}, #{month_before_initial}, #{month_before_final}, #{year_before_initial}, #{year_before_final} ").group("prospects.legal_or_business_name, DATE_TRUNC('month', bills.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN total ELSE 0 END) as total, DATE_TRUNC('month', bills.created_at) AS month")
+    this_month_sales = Prospect.joins('LEFT JOIN movements ON movements.prospect_id = prospects.id').where(id: @prospect_ids).where("movements.created_at > '#{initial_date}' AND movements.created_at < '#{final_date}'").group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, COALESCE(SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END), 0) as total, DATE_TRUNC('month', movements.created_at) AS month")
+    this_month_sales = this_month_sales.group_by{ |arr| arr[0]} if this_month_sales != []
 
+    ly_month_sales = Prospect.joins('LEFT JOIN movements ON movements.prospect_id = prospects.id').where(id: @prospect_ids).where("movements.created_at > '#{year_before_initial}' AND movements.created_at < '#{year_before_final}'").group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, COALESCE(SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END), 0) as total, DATE_TRUNC('month', movements.created_at) AS month")
+    ly_month_sales = ly_month_sales.group_by{ |arr| arr[0]} if ly_month_sales != []
+
+    comparision = {}
+    @prospect_names.each do |name|
+      comparision[name[0]] = []
+      if this_month_sales == [] || this_month_sales[name[0]] == [] || this_month_sales[name[0]] == nil
+        comparision[name[0]] << 0
+      else
+        comparision[name[0]] << this_month_sales[name[0]][0][1].to_f
+      end
+      if ly_month_sales == [] || ly_month_sales[name[0]] == [] || ly_month_sales[name[0]] == nil
+        comparision[name[0]] << 0
+      else
+        comparision[name[0]] << ly_month_sales[name[0]][0][1].to_f
+      end
+      comparision[name[0]] << name[1]
+      if comparision[name[0]][0] > comparision[name[0]][1]
+        status = 'sube'
+        comparision[name[0]][1] == 0 ? percentage = 100 : percentage = ((comparision[name[0]][0] / comparision[name[0]][1]) - 1).round(1)
+      elsif comparision[name[0]][0] < comparision[name[0]][1]
+        status = 'baja'
+        percentage = ((comparision[name[0]][0] / comparision[name[0]][1]) - 1).round(1)
+      else
+        status = 'sin info'
+        percentage = 0
+      end
+      comparision[name[0]] << status
+      comparision[name[0]] << percentage
+      comparision[name[0]] << name[0]
+    end
+    @count_franchises = @prospect_names.select{ |arr| arr[1] == 'franquicia' }.length
+    @count_distribuitors = @prospect_names.select{ |arr| arr[1] == 'distribuidor' }.length
+
+    @up_franchise = comparision.values.select{ |arr| arr[3] == "sube" && arr[2] == 'franquicia'}.length
+    @down_franchise = comparision.values.select{ |arr| arr[3] == "baja" && arr[2] == 'franquicia'}.length
+    @no_info_franchise = comparision.values.select{ |arr| arr[3] == "sin info" && arr[2] == 'franquicia'}.length
+
+    @up_distribuitor = comparision.values.select{ |arr| arr[3] == "sube" && arr[2] == 'distribuidor'}.length
+    @down_distribuitor = comparision.values.select{ |arr| arr[3] == "baja" && arr[2] == 'distribuidor'}.length
+    @no_info_distribuitor = comparision.values.select{ |arr| arr[3] == "sin info" && arr[2] == 'distribuidor'}.length
+
+    @top_three_franchises = comparision.values.select{ |arr| arr[2] == 'franquicia'}.sort.reverse{ |arr| arr[0]}[0..2]
+
+    @bottom_three_franchises = comparision.values.select{ |arr| arr[2] == 'franquicia'}.sort{ |arr| arr[0]}[0..2]
+
+    @top_three_percentage_franchises = comparision.values.select{ |arr| arr[2] == 'franquicia'}.sort.reverse{ |arr| arr[4]}[0..2]
+
+    @bottom_three_percentage_franchises = comparision.values.select{ |arr| arr[2] == 'franquicia'}.sort{ |arr| arr[4]}[0..2]
+
+    render 'store_sales_comparision'
+  end
+
+  def sales_by_stores_summary
+    params[:client_list] = params[:client_list].split('/')
+    @prospect_ids = params[:client_list]
+    @prospect_names = Prospect.joins(:store_type).where(id: @prospect_ids).pluck('legal_or_business_name, store_types.store_type')
+
+    @first_year = Movement.where(movement_type: 'venta').first.created_at.year
+    @fy = @first_year
+    @current_year = Date.today.year
+    @years = @current_year - @first_year
+    initial_date = Date.parse(params[:date_selected]).beginning_of_month.strftime('%F %H:%M:%S')
+    final_date = Date.parse(params[:date_selected]).end_of_month.strftime('%F 23:59:59')
+    @date_selected = params[:date_selected]
+    @last_month_selected = (Date.parse(initial_date) - 1.month).strftime('%m/%Y')
+    @last_year_selected = (Date.parse(initial_date) - 1.year).strftime('%m/%Y')
+    month_before_initial = (initial_date.to_date - 1.month).strftime('%F %H:%M:%S')
+    month_before_final = (final_date.to_date - 1.month).strftime('%F 23:59:59')
+    year_before_initial = (initial_date.to_date - 1.year).strftime('%F %H:%M:%S')
+    year_before_final = (final_date.to_date - 1.year).strftime('%F 23:59:59')
+
+    month_sales = Movement.joins(:prospect).where(prospect_id: @prospect_ids).where("(movements.created_at > '#{initial_date}' AND movements.created_at < '#{final_date}') OR (movements.created_at > '#{month_before_initial}' AND movements.created_at < '#{month_before_final}') OR (movements.created_at > '#{year_before_initial}' AND movements.created_at < '#{year_before_final}')").group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END) as total, DATE_TRUNC('month', movements.created_at) AS month")
+
+    #    @month_sales = Bill.joins(:prospect).where(prospect_id: @prospect_ids).where("(bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}') OR (bills.created_at > '#{month_before_initial}' AND bills.created_at < '#{month_before_final}') OR (bills.created_at > '#{year_before_initial}' AND bills.created_at < '#{year_before_final}')").group("prospects.legal_or_business_name, DATE_TRUNC('month', bills.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Nota de Débito' THEN total ELSE 0 END) as total, DATE_TRUNC('month', bills.created_at) AS month")
+    @month_sales = month_sales.each{ |arr| arr[2] = arr[2].strftime('%m/%Y')}.group_by{ |arr| arr[0]}
+
+    this_month_sales = Prospect.joins('LEFT JOIN movements ON movements.prospect_id = prospects.id').where(id: @prospect_ids).where("movements.created_at > '#{initial_date}' AND movements.created_at < '#{final_date}'").group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, COALESCE(SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END), 0) as total, DATE_TRUNC('month', movements.created_at) AS month")
+    this_month_sales = this_month_sales.group_by{ |arr| arr[0]} if this_month_sales != []
+
+    ly_month_sales = Prospect.joins('LEFT JOIN movements ON movements.prospect_id = prospects.id').where(id: @prospect_ids).where("movements.created_at > '#{year_before_initial}' AND movements.created_at < '#{year_before_final}'").group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, COALESCE(SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END), 0) as total, DATE_TRUNC('month', movements.created_at) AS month")
+    ly_month_sales = ly_month_sales.group_by{ |arr| arr[0]} if ly_month_sales != []
+
+    comparision = {}
+    @prospect_names.each do |name|
+      comparision[name[0]] = []
+      if this_month_sales == [] || this_month_sales[name[0]] == [] || this_month_sales[name[0]] == nil
+        comparision[name[0]] << 0
+      else
+        comparision[name[0]] << this_month_sales[name[0]][0][1].to_f
+      end
+      if ly_month_sales == [] || ly_month_sales[name[0]] == [] || ly_month_sales[name[0]] == nil
+        comparision[name[0]] << 0
+      else
+        comparision[name[0]] << ly_month_sales[name[0]][0][1].to_f
+      end
+      comparision[name[0]] << name[1]
+      if comparision[name[0]][0] > comparision[name[0]][1]
+        status = 'sube'
+        comparision[name[0]][1] == 0 ? percentage = 100 : percentage = ((comparision[name[0]][0] / comparision[name[0]][1]) - 1).round(1)
+      elsif comparision[name[0]][0] < comparision[name[0]][1]
+        status = 'baja'
+        percentage = ((comparision[name[0]][0] / comparision[name[0]][1]) - 1).round(1)
+      else
+        status = 'sin info'
+        percentage = 0
+      end
+      comparision[name[0]] << status
+      comparision[name[0]] << percentage
+      comparision[name[0]] << name[0]
+    end
+    @count_franchises = @prospect_names.select{ |arr| arr[1] == 'franquicia' }.length
+    @count_distribuitors = @prospect_names.select{ |arr| arr[1] == 'distribuidor' }.length
+
+    @up_franchise = comparision.values.select{ |arr| arr[3] == "sube" && arr[2] == 'franquicia'}.length
+    @down_franchise = comparision.values.select{ |arr| arr[3] == "baja" && arr[2] == 'franquicia'}.length
+    @no_info_franchise = comparision.values.select{ |arr| arr[3] == "sin info" && arr[2] == 'franquicia'}.length
+
+    @up_distribuitor = comparision.values.select{ |arr| arr[3] == "sube" && arr[2] == 'distribuidor'}.length
+    @down_distribuitor = comparision.values.select{ |arr| arr[3] == "baja" && arr[2] == 'distribuidor'}.length
+    @no_info_distribuitor = comparision.values.select{ |arr| arr[3] == "sin info" && arr[2] == 'distribuidor'}.length
+
+    @top_three_franchises = comparision.values.select{ |arr| arr[2] == 'franquicia'}.sort.reverse{ |arr| arr[0]}[0..2]
+
+    @bottom_three_franchises = comparision.values.select{ |arr| arr[2] == 'franquicia'}.sort{ |arr| arr[0]}[0..2]
+
+    @top_three_percentage_franchises = comparision.values.select{ |arr| arr[2] == 'franquicia'}.sort.reverse{ |arr| arr[4]}[0..2]
+
+    @bottom_three_percentage_franchises = comparision.values.select{ |arr| arr[2] == 'franquicia'}.sort{ |arr| arr[4]}[0..2]
   end
 
   def stores_buying_report

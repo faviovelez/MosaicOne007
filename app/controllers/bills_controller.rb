@@ -423,7 +423,7 @@ class BillsController < ApplicationController
   end
 
   def get_time
-    @time = Time.now.strftime('%FT%T')
+      @time = Time.now.strftime('%FT%T')
   end
 
   def get_info_for_form
@@ -837,7 +837,7 @@ class BillsController < ApplicationController
         end
         object.children.each do |children|
           children.payments.each do |pay|
-            payments << [pay.payment_form.description, pay.total] if pay.payment_type == 'pago '
+            payments << [pay.payment_form.description, pay.total] if pay.payment_type == 'pago'
             payments << [pay.payment_form.description, -pay.total] if pay.payment_type == 'devolución'
             real_payments << pay if (pay.payment_type == 'pago' || pay.payment_type == 'devolución')
           end
@@ -1132,14 +1132,13 @@ class BillsController < ApplicationController
       elsif @relation&.id == 4
         bill.bill_folio_type = "Sustitución"
       elsif @relation&.id == 7
-        bill.bill_folio_type = "Aplicaición de Anticipo"
+        bill.bill_folio_type = "Aplicación de Anticipo"
       elsif @series.include?("FA")
         bill.bill_folio_type = "Anticipo"
       else
         bill.bill_folio_type = "Factura"
       end
     end
-
   end
 
   def rows_for_form
@@ -1633,6 +1632,298 @@ class BillsController < ApplicationController
     @store_path = Rails.root.join('public', 'uploads', 'store', "#{@store.id}")
   end
 
+  def select_pay_bills
+    prospect_count = Payment.where(id: params[:payments]).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("prospects.id").uniq.length
+    if prospect_count > 1
+      redirect_to bills_partially_payed_bills_path, alert: 'Ha seleccionado pagos de distintos clientes, por favor modifique la selección.'
+    else
+      @payments = Payment.find(params[:payments])
+      get_store_and_zipcode
+      get_type_of_bill_pay
+      get_billing_address_info
+      get_payments_array
+      get_prospect_info
+      get_cfdi_use_pay_bill
+      pay_bill_series_and_folio
+      get_time
+      generate_bill_pay_rows
+      render 'payment_bill_preview'
+    end
+  end
+
+  def pay_cfdi_process
+    @payments = Payment.find(params[:payments].split(" "))
+    get_store_and_zipcode
+    get_type_of_bill_pay
+    get_billing_address_info
+    get_payments_array_secondary
+    get_prospect_info
+    get_cfdi_use_pay_bill
+    pay_bill_series_and_folio
+    generate_bill_pay_rows
+    total_for_pay_bill
+    generate_aditional_info_for_rows
+    @time = params[:time]
+    create_directories
+    @pay_bill = true
+    create_additional_variables
+    created_payment_cfdi
+    generate_digital_stamp
+    get_stamp_from_pac
+    qrcode_print
+    generate_pdf
+    save_to_db
+    if @error
+      redirect_to root_path, alert: 'Hubo un error al generar el REP, por favor intente de nuevo.'
+    else
+      redirect_to bills_partially_payed_bills_with_pay_bill_path, notice: 'Su REP ha sido generado con éxito.'
+    end
+  end
+
+  def cancel_pay_bill
+    @time = Time.now.strftime('%FT%T')
+    @bill = Bill.find(params[:payment])
+    @store = @bill.store
+    create_directories
+    cancel_uuid
+  end
+
+  def partially_payed_bills_with_pay_bill
+    filter_pay_bills
+  end
+
+  def get_store_and_zipcode
+    @store = current_user.store
+    @zipcode = @store.zip_code
+  end
+
+  def get_type_of_bill_pay
+    type_of_bill = TypeOfBill.find_by_key('P')
+    @type_of_bill_key = type_of_bill.key
+    @type_of_bill_description = type_of_bill.description
+  end
+
+  def get_billing_address_info
+    @store_rfc = @store.business_unit.billing_address.rfc.upcase
+    @store_name = @store.business_unit.billing_address.business_name
+    @tax_regime = @store.business_unit.billing_address.tax_regime.description
+    @tax_regime_key = @store.business_unit.billing_address.tax_regime.tax_id
+  end
+
+  def get_payments_array
+    filter_corporate_stores
+    if @corporate_stores.include?(current_user.store.id)
+      @payments_array = Payment.where(id: params[:payments]).joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id, bills.sequence, bills.folio, bills.uuid, payments.operation_number")
+    else
+      @payments_array = Payment.where(id: params[:payments]).joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("tickets.ticket_number, payments.payment_date, tickets.ticket_type, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id, bills.sequence, bills.folio, bills.uuid, payments.operation_number")
+    end
+    @pay_bills = @payments_array.map{ |arr| arr[9]}
+  end
+
+  def get_payments_array_secondary
+    filter_corporate_stores
+    if @corporate_stores.include?(current_user.store.id)
+      @cancelled_bills = Bill.where(id: Payment.where(id: params[:payments].split(" ")).joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck(:payment_bill_id)).pluck(:id, :uuid, :status)
+      @relation_type = 4 unless @cancelled_bills == []
+
+      @payments_array = Payment.where(id: params[:payments].split(" ")).joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id, bills.sequence, bills.folio, bills.uuid, payments.operation_number, payments.id, payment_forms.payment_key")
+    else
+      @cancelled_bills = Bill.where(id: Payment.where(id: params[:payments].split(" ")).joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck(:payment_bill_id)).pluck(:id, :uuid, :status)
+      @relation_type = 4 unless @cancelled_bills == []
+
+      @payments_array = Payment.where(id: params[:payments].split(" ")).joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("tickets.ticket_number, payments.payment_date, tickets.ticket_type, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id, bills.sequence, bills.folio, bills.uuid, payments.operation_number, payments.id, payment_forms.payment_key")
+    end
+    @pay_bills = @payments_array.map{ |arr| arr[9]}
+  end
+
+
+  def get_prospect_info
+    @prospect = @payments_array.map{ |arr| arr[10]}.uniq.first
+    billing_address = Prospect.find(@prospect).billing_address
+    @prospect_rfc = billing_address.rfc.upcase
+    @prospect_name = billing_address.business_name
+  end
+
+  def get_cfdi_use_pay_bill
+    cfdi_use = CfdiUse.find_by_description("Por definir")
+    @cfdi_use_key = cfdi_use.key
+    @cfdi_use = cfdi_use.description
+  end
+
+  def pay_bill_series_and_folio
+    @series = 'REP'+ @store.store_code
+    @folio = @store.pay_bill_last_folio.to_i.next
+  end
+
+  def generate_bill_pay_rows
+    @rows = []
+    by_bill = @payments_array.group_by{ |arr| arr[11]}
+    by_bill.keys.each do |folio|
+      count = 1
+      bill = Bill.find(by_bill[folio][0][11])
+      difference = bill.children.sum(:total)
+      total = by_bill[folio][0][6] - difference
+      payed = by_bill[folio][0][3]
+      due = total - payed
+      by_bill[folio].each_with_index do |array, index|
+        payed += array[3] unless index == 0
+        total = due unless index == 0
+        due -= array[3] unless index == 0
+        @rows << [array[12] + ' ' + array[13], array[14], count, total, array[3], due, array[4], array[3], array[1], array[15].to_s, array[8], array[17], array[11]]
+        count += 1
+      end
+    end
+  end
+
+  def total_for_pay_bill
+    @total = @rows.sum{|arr| arr[4]}
+  end
+
+  def generate_aditional_info_for_rows
+    if params[:payment_ids].present?
+      @payments_ids = params[:payment_ids]
+      @emisor_rfc = params[:emisor_rfc]
+      @emisor_name = params[:emisor_name]
+      @emisor_account = params[:emisor_account]
+      @beneficiario_rfc = params[:beneficiario_rfc]
+      @beneficiario_account = params[:beneficiario_account]
+      params_index = @payments_ids.find_index{|arr| arr == arr[10].to_s}
+    end
+  end
+
+  def partially_payed_bills
+    filter_partially_payed
+  end
+
+  def filter_corporate_stores
+    @corporate_stores = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).pluck(:id)
+  end
+
+  def filter_pay_bills
+    @bills = Bill.joins(:prospect).where(store_id: current_user.store.id, bill_folio_type: 'Pago', status: 'creada')
+  end
+
+  def filter_partially_payed
+    initial_date = (Date.parse('2018-09-01') - 3.month).strftime('%F %H:%M:%S')
+#    initial_date = Date.parse('2018-09-01').strftime('%F %H:%M:%S')
+    final_date = Date.today.strftime('%F 23:59:59')
+
+    filter_corporate_stores
+    if @corporate_stores.include?(current_user.store.id)
+      @payments = Payment.joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status != 'creada'").where(store_id: nil, bills: {store_id: current_user.store.id}).where.not(payment_type: 'crédito').order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
+    else
+      @payments = Payment.joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status != 'creada'").where(store_id: current_user.store.id).where.not(payment_type: 'crédito').order(:id).pluck("tickets.ticket_number, payments.payment_date, tickets.ticket_type, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
+    end
+  end
+
+  def payment_bill_preview
+  end
+
+  def create_additional_variables
+    Prospect.find(@prospect).legal_or_business_name == 'Público en General' ? @general_bill = true : @general_bill = false
+    @use = CfdiUse.find_by_key('P01')
+    @bill_type = TypeOfBill.find_by_key('P')
+  end
+
+  def created_payment_cfdi
+    document = Hash.new.tap do |hash|
+      hash["xmlns:cfdi"] = 'http://www.sat.gob.mx/cfd/3'
+      hash["xmlns:xsi"] = 'http://www.w3.org/2001/XMLSchema-instance'
+      hash["xsi:schemaLocation"] = 'http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd'
+      hash["xmlns:pago10"] = 'http://www.sat.gob.mx/Pagos'
+      hash["Version"] = '3.3'
+      hash["Serie"] = @series
+      hash["Folio"] = @folio
+      hash["Fecha"] = @time
+      hash["Sello"] = ''
+      hash["NoCertificado"] = @store.certificate_number
+      hash["Certificado"] = ''
+      hash["SubTotal"] = 0
+      hash["Moneda"] = 'XXX'
+      hash["Total"] = 0
+      hash["TipoDeComprobante"] = 'P'
+      hash["LugarExpedicion"] = @zipcode
+    end
+
+    issuer = Hash.new.tap do |hash|
+      hash["Rfc"] = @store_rfc
+      hash["Nombre"] = @store_name
+      hash["RegimenFiscal"] = @tax_regime_key
+    end
+
+    receiver = Hash.new.tap do |hash|
+      hash["Rfc"] = @prospect_rfc
+      hash["Nombre"] = @prospect_name
+      hash["UsoCFDI"] = 'P01'
+    end
+
+    builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
+      xml['cfdi'].Comprobante(document) do
+        if @relation_type == 4
+          xml['cfdi'].CfdiRelacionados('TipoRelacion' => '04' ) do
+            @cancelled_bills.each do |bill|
+              xml['cfdi'].CfdiRelacionado('UUID' => bill[1])
+            end
+          end
+        end
+        xml['cfdi'].Emisor(issuer)
+        xml['cfdi'].Receptor(receiver)
+        concept = Hash.new.tap do |hash|
+          hash["ClaveProdServ"] = '84111506'
+          hash["Cantidad"] = '1'
+          hash["ClaveUnidad"] = 'ACT'
+          hash["Descripcion"] = 'Pago'
+          hash["ValorUnitario"] = '0'
+          hash["Importe"] = '0'
+        end
+        xml['cfdi'].Conceptos do
+          xml['cfdi'].Concepto(concept) do
+          end
+        end
+        xml['cfdi'].Complemento do
+          xml['pago10'].Pagos('Version' => '1.0') do
+            @rows.each_with_index do |row, index|
+              payment = Hash.new.tap do |hash|
+                if params[:payment_ids].present?
+                  params_index = params[:payment_ids].find_index{|arr| arr == row[10].to_s}
+                end
+                hash["FechaPago"] = row[8].strftime('%FT12:00:00')
+                hash["FormaDePagoP"] = row[11]
+                hash["MonedaP"] = 'MXN'
+                hash["Monto"] = '%.2f' % row[7]
+                hash["NumOperacion"] = row[9] unless row[9] == ""
+                if params_index != nil
+                  hash["RfcEmisorCtaOrd"] = params[:emisor_rfc][params_index] unless params[:emisor_rfc][params_index] == ""
+                  hash["NomBancoOrdExt"] = params[:emisor_name][params_index] unless params[:emisor_name][params_index] == ""
+                  hash["CtaOrdenante"] = params[:emisor_account][params_index] unless params[:emisor_account][params_index] == ""
+                  hash["RfcEmisorCtaBen"] = params[:beneficiario_rfc][params_index] unless params[:beneficiario_rfc][params_index] == ""
+                  hash["CtaBeneficiario"] = params[:beneficiario_account][params_index] unless params[:beneficiario_account][params_index] == ""
+                end
+              end
+              xml['pago10'].Pago(payment) do
+                related_doc = Hash.new.tap do |hash|
+                  hash["IdDocumento"] = row[1]
+                  hash["Serie"] = row[0].split(" ").first
+                  hash["Folio"] = row[0].split(" ").second
+                  hash["MonedaDR"] = 'MXN'
+                  hash["MetodoDePagoDR"] = 'PPD'
+                  hash["NumParcialidad"] = row[2]
+                  hash["ImpSaldoAnt"] = '%.2f' % row[3]
+                  hash["ImpPagado"] = '%.2f' % row[4]
+                  hash["ImpSaldoInsoluto"] = '%.2f' % row[5]
+                end
+                xml['pago10'].DoctoRelacionado(related_doc) do
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+    builder.to_xml.encoding
+    unsigned = File.open(File.join(@working_dir, 'unsigned.xml'), 'w'){ |file| file.write(builder.to_xml) }
+  end
+
   def create_unsigned_xml_file
     s = @store
     b = s.business_unit.billing_address
@@ -1661,7 +1952,7 @@ class BillsController < ApplicationController
       hash["Descuento"] = '%.2f' % @total_discount if @discount_any
       hash["Moneda"] = 'MXN'
       hash["TipoCambio"] = '1'
-        hash["Total"] = '%.2f' % @total
+      hash["Total"] = '%.2f' % @total
       hash["TipoDeComprobante"] = @type_of_bill_key
       hash["MetodoPago"] = @method_key
       hash["LugarExpedicion"] = b.zipcode
@@ -1823,7 +2114,7 @@ XML
 
     receipt_file = File.open(File.join(@final_dir, 'acuse.xml'), 'w'){ |file| file.write(xml_receipt) }
 
-    soap_response = File.open(File.join(@working_dir, 'response.xml'), 'w'){ |file| file.write(response) }
+#    soap_response = File.open(File.join(@working_dir, 'response.xml'), 'w'){ |file| file.write(response) }
 
     soap_request = File.open(File.join(@working_dir, 'request.xml'), 'w'){ |file| file.write(request) }
 
@@ -1866,6 +2157,7 @@ XML
 
     #Separa los métodos según las partes que se necesitan
     xml_response = hash[:xml]
+
     @uuid = hash[:uuid]
     @date = hash[:fecha]
     @cod_status = hash[:cod_estatus]
@@ -1879,10 +2171,18 @@ XML
       #Separa la parte del timbre fiscal digital para generar cadena original (y quita la parte que genera error)
       doc = Nokogiri::XML(xml_response)
 
-      extract = doc.xpath('//cfdi:Complemento').children.to_xml.gsub('xsi:', '')
+      if @pay_bill
+        extract = doc.xpath('//cfdi:Complemento').children[1]
+      else
+        extract = doc.xpath('//cfdi:Complemento').children.to_xml.gsub('xsi:', '')
+      end
 
       #Obtiene el atributo SelloCFD
-      @cfd_stamp = doc.xpath('//cfdi:Complemento').children.attr('SelloCFD').value
+      if @pay_bill
+        @cfd_stamp = doc.xpath('//cfdi:Complemento').children[1].attr('SelloCFD')
+      else
+        @cfd_stamp = doc.xpath('//cfdi:Complemento').children.attr('SelloCFD').value
+      end
 
       #Obtiene los últimos 8 dígitos del atributo SelloCFD (para QR)
       @cfd_last_8 = @cfd_stamp.slice((@cfd_stamp.length - 8)..@cfd_stamp.length)
@@ -1903,7 +2203,6 @@ XML
       stamp_xslt = Nokogiri::XSLT(File.read(@sat_path.join('cadenaoriginal_TFD_1_1.xslt')))
       @stamp_original_chain = stamp_xslt.apply_to(stamp_xml)
     end
-
   end
 
   def save_to_db
@@ -1911,24 +2210,29 @@ XML
     @pdf_file = File.open(File.join(@final_dir, 'factura.pdf'), 'r')
     bill = Bill.new.tap do |bill|
       bill.status = 'creada'
-      bill.issuing_company = @s_billing
-      bill.receiving_company = @p_billing
-      bill.prospect = @prospect
+      if @pay_bill
+        bill.issuing_company = @store.business_unit.billing_address
+        bill.receiving_company = Prospect.find(@prospect).billing_address
+      else
+        bill.issuing_company = @s_billing
+        bill.receiving_company = @p_billing
+      end
+      @prospect.class == Fixnum ? bill.prospect_id = @prospect : bill.prospect = @prospect
       bill.store = @store
       bill.sequence = @series
       bill.folio = @folio
       bill.payment_conditions = @payment_form
       bill.payment_method = @method
       bill.payment_form = @greatest_payment
-      bill.subtotal = @subtotal
-      bill.taxes = @total_taxes
-      bill.total = @total
-      bill.discount_applied = @total_discount
+      bill.subtotal = @subtotal.to_f
+      bill.taxes = @total_taxes.to_f
+      bill.total = @total.to_f
+      bill.discount_applied = @total_discount.to_f
       # bill.automatic_discount_applied = @total_discount
       # bill.manual_discount_applied = @total_discount
       bill.tax = Tax.find(2)
       bill.tax_regime = @regime
-      bill.taxes_transferred = @total_taxes
+      bill.taxes_transferred = @total_taxes.to_f
       # bill.taxes_witheld =
       bill.cfdi_use = @use
       # bill.pac =
@@ -1954,28 +2258,36 @@ XML
       if @objects != nil
         @objects.class == Bill ? bill.from = @bill.class.to_s : bill.from = @objects.first.class.to_s
       else
-        bill.from = 'Form'
+        @pay_bill ? bill.from = 'Payments' : bill.from = 'Form'
       end
         @general_bill == true ? bill.bill_type = 'global' : bill.bill_type = 'cliente'
       bill.parent = @bill
-      if @relation&.id == 1
-        bill.bill_folio_type = "Nota de Crédito"
-      elsif @relation&.id == 2
-        bill.bill_folio_type = "Nota de Débito"
-      elsif @relation&.id == 3
-        bill.bill_folio_type = "Devolución"
-      elsif @relation&.id == 4
-        bill.bill_folio_type = "Sustitución"
-      elsif @relation&.id == 7
-        bill.bill_folio_type = "Aplicaición de Anticipo"
-      elsif @series.include?("FA")
-        bill.bill_folio_type = "Anticipo"
+      if @pay_bill
+        bill.bill_folio_type = "Pago"
       else
-        bill.bill_folio_type = "Factura"
+        if @relation&.id == 1
+          bill.bill_folio_type = "Nota de Crédito"
+        elsif @relation&.id == 2
+          bill.bill_folio_type = "Nota de Débito"
+        elsif @relation&.id == 3
+          bill.bill_folio_type = "Devolución"
+        elsif @relation&.id == 4
+          bill.bill_folio_type = "Sustitución"
+        elsif @relation&.id == 7
+          bill.bill_folio_type = "Aplicación de Anticipo"
+        elsif @series.include?("FA")
+          bill.bill_folio_type = "Anticipo"
+        else
+          bill.bill_folio_type = "Factura"
+        end
       end
     end
     if @bill == nil
-      @store.update(bill_last_folio: @folio)
+      if @pay_bill
+        @store.update(pay_bill_last_folio: @folio)
+      else
+        @store.update(bill_last_folio: @folio)
+      end
     else
       if @relation_type == '01'
         @store.update(credit_note_last_folio: @folio)
@@ -1985,13 +2297,15 @@ XML
         @store.update(return_last_folio: @folio)
       elsif @relation_type == '07'
         @store.update(advance_e_last_folio: @folio)
+      else
+        @store.update(bill_last_folio: @folio)
       end
     end
     if bill.save
       if @bill != nil
         @bill.children << bill
       end
-      if @bill == nil
+      if @bill == nil && !@pay_bill
         @rows.each do |row|
           row_for_bill = Row.new.tap do |r|
             r.bill = bill
@@ -2013,8 +2327,10 @@ XML
           row_for_bill.save
         end
       else
-        @rows.each do |row|
-          row.update(bill: bill)
+        if !@pay_bill
+          @rows.each do |row|
+            row.update(bill: bill)
+          end
         end
       end
       # El update de folio solo sirve para las facturas normales por el momento
@@ -2059,7 +2375,14 @@ XML
           end
         end
       end
-      bill.parent == nil ? validate_payed(bill) : validate_payed(bill.parent)
+      if @pay_bill
+        @rows.each do |row|
+          Bill.find(row[12]).update(pay_bill: bill)
+          Payment.find(row[10]).update(payment_bill: bill)
+        end
+      else
+        bill.parent == nil ? validate_payed(bill) : validate_payed(bill.parent)
+      end
     else
       @error = true
     end
@@ -2410,10 +2733,14 @@ XML
 # Ó también generarla a través de xslt, ejemplo:  ||1.1|ad662d33-6934-459c-a128-bdf0393e0f44|2001-12-17T09:30:47|AAA010802QT9|ValorDelAtributoLeyenda|iYyIk1MtEPzTxY3h57kYJnEXNae9lvLMgAq3jGMePsDtEOF6XLWbrV2GL/2TX00vP2+YsPN+5UmyRdzMLZGEfESiNQF9fotNbtA487dWnCf5pUu0ikVpgHvpY7YoA4Lb1D/JWc+zntkgW+Ig49WnlKyXi0LOlBOVuxckDb7Eax4=|12345678901234567890||
 
   def generate_pdf
-    if @general_bill
-      pdf = render_to_string pdf: "factura", template: 'bills/global_doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
+    if @pay_bill
+      pdf = render_to_string pdf: "REP", template: 'bills/payment_doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
     else
-      pdf = render_to_string pdf: "factura", template: 'bills/doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
+      if @general_bill
+        pdf = render_to_string pdf: "factura", template: 'bills/global_doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
+      else
+        pdf = render_to_string pdf: "factura", template: 'bills/doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
+      end
     end
     save_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}_final", 'factura.pdf')
     pdf_bill = File.open(save_path, 'wb'){ |file| file << pdf }
@@ -2433,6 +2760,21 @@ XML
       format.html
       format.pdf {
         render template: 'bills/doc',
+        pdf: filename,
+        page_size: 'Letter',
+        layout: 'bill.html',
+        show_as_html: params[:debug].present?
+      }
+    end
+  end
+
+  def payment_doc
+    qrcode
+    filename = "REP_#{current_user.store.series}_#{current_user.store.last_bill.next}_#{Prospect.find(@prospect).billing_address.rfc}"
+    respond_to do |format|
+      format.html
+      format.pdf {
+        render template: 'bills/payment_doc',
         pdf: filename,
         page_size: 'Letter',
         layout: 'bill.html',

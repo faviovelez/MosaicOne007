@@ -13,6 +13,8 @@ class Payment < ActiveRecord::Base
   belongs_to :bank
   belongs_to :order
   has_one :date_advise
+  belongs_to :payment_bill, class_name: 'Bill', foreign_key: 'payment_bill_id'
+
 
   before_update :create_update_summary
 
@@ -40,8 +42,10 @@ class Payment < ActiveRecord::Base
     total_pay = 0
     total = 0
     parent = self.ticket.parent
-    total += parent.store_movements.sum(:total)
-    total += parent.service_offereds.sum(:total)
+    total += parent.store_movements.where(movement_type: 'venta').sum(:total)
+    total -= parent.store_movements.where(movement_type: 'devolución').sum(:total)
+    total += parent.service_offereds.where(service_type: 'venta').sum(:total)
+    total -= parent.service_offereds.where(service_type: 'devolución').sum(:total)
     total_pay += parent.payments.where(payment_type: 'pago').sum(:total)
     children = parent.children
     children.each do |child|
@@ -52,11 +56,16 @@ class Payment < ActiveRecord::Base
       total_pay += child.payments.where(payment_type: 'pago').sum(:total)
       total_pay -= child.payments.where(payment_type: 'devolución').sum(:total)
     end
-    parent.update(payed: true) if total - total_pay > 1
+    parent.update(payed: true) if total - total_pay < 1
+    if parent.bill != nil
+      self.ticket.payments.each do |pay|
+        parent.bill.payments << pay
+      end
+    end
   end
 
   def has_parent_and_is_not_payed
-    self.ticket.present? && self.ticket.parent.present? && !self.ticket.parent.payed 
+    self.ticket.present? && self.ticket.parent.present? && !self.ticket.parent.payed
   end
 
   def add_to_bill

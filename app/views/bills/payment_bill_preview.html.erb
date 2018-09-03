@@ -1,0 +1,138 @@
+<table id="issuing-receiving-table-preview">
+  <thead>
+    <tr>
+      <td>
+        <%= image_tag 'logo-disenos-decarton.png', class: 'img-bill-preview' %>
+      </td>
+      <td>
+        <div class="top-right-preview">
+          <h3 id="top-title"> RECIBO ELECTRÓNICO DE PAGO </h3>
+
+          <% if @pay_bills.uniq == [nil] %>
+            <% @relation_type = 04 %>
+          <% end %>
+          <p> Serie: <span> <strong> <%= @series %> </strong>  </span> </p>
+          <p> Folio: <span> <strong> <%= @folio %> </strong>  </span> </p>
+          <p> Fecha y hora de timbrado: <span> <%= @time %> </span> </p>
+          <p> Lugar de expedición: <span> <%= @zipcode %> </span> </p>
+          <p> Tipo de comprobante: <span> <strong> <%= @type_of_bill_key %> </strong> - <%= @type_of_bill_description %> </span> </p>
+        </div>
+      </td>
+    </tr>
+    <tr class="ligth-bg-preview">
+      <th class="half header"> EMISOR</th>
+      <th class="half header"> RECEPTOR </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="half first"> RFC: <span> <%= @store_rfc %> </span> </td>
+      <td class="half "> RFC: <span> <%= @prospect_rfc %> </span> </td>
+    </tr>
+    <tr>
+      <td class="half first"> Nombre: <span> <%= @store_name %> </span> </td>
+      <td class="half"> Nombre: <span> <%= @prospect_name %> </span> </td>
+    </tr>
+    <tr>
+      <td class="half first"> Régimen Fiscal: <span> <strong> <%= @tax_regime_key %> </strong> - <%= @tax_regime %> </td>
+      <td class="half"> Uso CFDI: <span> <strong> <%= @cfdi_use_key %> </strong> - <%= @cfdi_use %> </span> </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="quantities-table full-width">
+  <thead>
+    <tr class="header-main-preview">
+      <th class="space-preview"> Factura </th>
+      <th class="space-preview"> Id Documento </th>
+      <th class="space-preview"> Parcialidad </th>
+      <th class="space-preview"> Saldo anterior </th>
+      <th class="space-preview"> Importe pagado </th>
+      <th class="space-preview"> Saldo insoluto </th>
+      <th class="space-preview"> Moneda </th>
+      <th class="space-preview"> Método pago </th>
+      <th class="space-preview"> Forma pago </th>
+      <th class="space-preview"> Monto </th>
+      <th class="space-preview"> Fecha pago </th>
+      <th class="space-preview"> No. operación </th>
+    </tr>
+  </thead>
+  <%= form_tag({ controller: 'bills', action: 'pay_cfdi_process' }, method: 'post') do %>
+  <tbody>
+    <% @rows.each do |row| %>
+      <tr>
+        <td class="space-preview"> <%= row[0] %> </td>
+        <td class="space-preview"> <%= row[1] %> </td>
+        <td class="space-preview"> <%= row[2] %> </td>
+        <td class="space-preview"> <%= number_to_currency(row[3]) %> </td>
+        <td class="space-preview"> <%= number_to_currency(row[4]) %> </td>
+        <td class="space-preview"> <%= number_to_currency(row[5]) %> </td>
+        <td class="space-preview"> MXN </td>
+        <td class="space-preview"> PPD </td>
+        <td class="space-preview"> <%= row[6] %> </td>
+        <td class="space-preview"> <%= number_to_currency(row[7]) %> </td>
+        <td class="space-preview"> <%= l row[8] %> </td>
+        <td class="space-preview"> <%= row[9] %> </td>
+      </tr>
+      <% if row[6] == "Cheque nominativo" || row[6] == "Transferencia electrónica de fondos" || row[6] == "Tarjeta de crédito" || row[6] == "Tarjeta de débito" %>
+        <tr>
+          <td></td>
+          <td></td>
+          <td colspan="4">
+            <strong>Nombre emisor cuenta ordenante:</strong>
+            <br/ > <%= text_field_tag "emisor_name[]", nil, class: 'form-control center-text' %>
+          </td>
+          <td colspan="3">
+            <strong>RFC emisor cuenta ordenante:</strong>
+            <br/ > <%= text_field_tag "emisor_rfc[]", nil, class: 'form-control center-text' %>
+
+          </td>
+          <td colspan="3">
+            <strong>No. de cuenta ordenante:</strong>
+            <br/ > <%= text_field_tag "emisor_account[]", nil, class: 'form-control center-text' %>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td colspan="4"> </td>
+          <td colspan="3">
+            <strong>RFC emisor cuenta beneficiario:</strong>
+            <br/ > <%= text_field_tag "beneficiario_rfc[]", nil, class: 'form-control center-text' %>
+          </td>
+          <td colspan="3">
+            <strong>No. de cuenta beneficiario</strong>
+            <br/ > <%= text_field_tag "beneficiario_account[]", nil, class: 'form-control center-text' %>
+            <%= text_field_tag "payment_ids[]", row[10].to_s, class: 'hidden' %>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+    <tr>
+      <td>
+        <br /><br />
+      </td>
+    </tr>
+    <tr>
+      <td><br /></td>
+      <td class="hidden">
+          <%= text_field_tag :payments, params[:payments] %>
+          <%= text_field_tag :time, @time %>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="12">
+        <%= submit_tag 'Generar REP', {data: {disable_with: "Por favor espere mientras se procesa su solicitud..."}, class: 'main-button' } %>
+      </td>
+    <% end %>
+    </tr>
+  </tbody>
+</table>
+
+<%= render 'add_masks' %>
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'only_decimals' %>
+<% end %>
+
+
+<br /><br /><br /><br />
