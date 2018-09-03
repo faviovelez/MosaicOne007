@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180702210422) do
+ActiveRecord::Schema.define(version: 20180830184352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -156,6 +156,7 @@ ActiveRecord::Schema.define(version: 20180702210422) do
     t.string   "cancel_receipt"
     t.string   "bill_type"
     t.string   "bill_folio_type"
+    t.integer  "pay_bill_id"
   end
 
   add_index "bills", ["cfdi_use_id"], name: "index_bills_on_cfdi_use_id", using: :btree
@@ -164,6 +165,7 @@ ActiveRecord::Schema.define(version: 20180702210422) do
   add_index "bills", ["issuing_company_id"], name: "index_bills_on_issuing_company_id", using: :btree
   add_index "bills", ["pac_id"], name: "index_bills_on_pac_id", using: :btree
   add_index "bills", ["parent_id"], name: "index_bills_on_parent_id", using: :btree
+  add_index "bills", ["pay_bill_id"], name: "index_bills_on_pay_bill_id", using: :btree
   add_index "bills", ["payment_form_id"], name: "index_bills_on_payment_form_id", using: :btree
   add_index "bills", ["payment_method_id"], name: "index_bills_on_payment_method_id", using: :btree
   add_index "bills", ["prospect_id"], name: "index_bills_on_prospect_id", using: :btree
@@ -914,6 +916,7 @@ ActiveRecord::Schema.define(version: 20180702210422) do
     t.date     "date"
     t.integer  "pos_id"
     t.integer  "web_id"
+    t.integer  "payment_bill_id"
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
@@ -921,6 +924,7 @@ ActiveRecord::Schema.define(version: 20180702210422) do
   add_index "payments", ["bill_received_id"], name: "index_payments_on_bill_received_id", using: :btree
   add_index "payments", ["business_unit_id"], name: "index_payments_on_business_unit_id", using: :btree
   add_index "payments", ["order_id"], name: "index_payments_on_order_id", using: :btree
+  add_index "payments", ["payment_bill_id"], name: "index_payments_on_payment_bill_id", using: :btree
   add_index "payments", ["payment_form_id"], name: "index_payments_on_payment_form_id", using: :btree
   add_index "payments", ["store_id"], name: "index_payments_on_store_id", using: :btree
   add_index "payments", ["supplier_id"], name: "index_payments_on_supplier_id", using: :btree
@@ -1630,6 +1634,7 @@ ActiveRecord::Schema.define(version: 20180702210422) do
     t.integer  "days_before",              default: 3
     t.integer  "days_after",               default: 5
     t.boolean  "collection_active",        default: true
+    t.integer  "days_inventory_desired",   default: 30
   end
 
   add_index "stores", ["business_group_id"], name: "index_stores_on_business_group_id", using: :btree

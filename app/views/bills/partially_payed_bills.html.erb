@@ -1,0 +1,57 @@
+<%= form_tag({ controller: 'bills', action: 'select_pay_bills' }, method: 'post', class: 'form-data-tables') do %>
+  <table class="dataTableFour">
+    <thead>
+      <tr class="table-titles">
+        <th> </th>
+        <th class="col-md-1">Ticket</th>
+        <th> Fecha </th>
+        <th> Monto </th>
+        <th> Forma pago </th>
+        <th> Cliente </th>
+        <th> Total Factura </th>
+        <th> Factura venta </th>
+        <th> Estatus </th>
+      </tr>
+    </thead>
+    <tbody>
+        <% @payments.each do |pay| %>
+          <tr>
+            <% if pay_bill_status(pay[9]) %>
+              <td>
+                <%= check_box_tag "payments[]", "#{pay[8]}", false, { multiple: true, id: "payments_#{pay[8]}" }%>
+              </td>
+            <% else %>
+              <td> </td>
+            <% end %>
+            <td> <%= number_with_delimiter(pay[0]) %> </td>
+            <td> <%= l pay[1] %> </td>
+            <td>
+              <%= number_to_currency(pay[3]) %>
+            </td>
+            <td> <%= pay_form_translator(pay[4]) %> </td>
+            <td>
+              <%= pay[5] %>
+            </td>
+            <td> <%= number_to_currency(total_with_nc_and_devs(pay[11], pay[6])) %> </td>
+            <td>
+              <%= number_with_delimiter(pay[7].to_i) %>
+            </td>
+            <td> <%= pay_bill_span(pay[9]) %> </td>
+          </tr>
+        <% end %>
+    </tbody>
+  </table>
+
+  <%= link_to bills_partially_payed_bills_with_pay_bill_path do %>
+    <i class="fa fa-file-archive-o" aria-hidden="true"></i>
+    Ver histórico de REP
+  <% end %>
+
+  <div class="actions">
+    <%= submit_tag 'Seleccionar pagos', {data: {disable_with: "Por favor espere mientras se procesa su solicitud..."}, class: 'main-button'} %>
+  </div>
+  <br /><br />
+
+<% end %>
+
+<%= render 'dataTables' %>
