@@ -226,6 +226,10 @@ input#boxesQuantity {
   width: 200px !important;
 }
 
+.full-width {
+  width: 95%;
+}
+
 select#report_type,
 select#options,
 select#initial_date,

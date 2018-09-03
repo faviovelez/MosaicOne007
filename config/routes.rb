@@ -102,7 +102,19 @@ Rails.application.routes.draw do
 
   get 'tickets/product_sales'
 
+  post 'bills/cancel_pay_bill'
+
   get 'bills/pending'
+
+  post 'bills/select_pay_bills'
+
+  post 'bills/pay_cfdi_process'
+
+  get 'bills/partially_payed_bills'
+
+  get 'bills/partially_payed_bills_with_pay_bill'
+
+  get 'bills/payment_bill_preview'
 
   get 'bills/get_document/:id', to: 'bills#get_document', as: 'get_document_bill'
 
@@ -194,6 +206,8 @@ Rails.application.routes.draw do
 
   get 'bills/global_form'
 
+  get 'inventories/index_with_data'
+
   get 'inventories/index'
 
   get 'inventories/order_suggestions'
@@ -237,6 +251,14 @@ Rails.application.routes.draw do
   get 'products/show_product_cost_for_franchises'
 
   get 'products/show_product_cost_for_corporate'
+
+  get 'orders/bill_received_extended/:ids/:type/:initial_date/:final_date', to: 'orders#bill_received_extended', as: 'orders_bill_received_extended'
+
+  get 'orders/bill_received_summary'
+
+  get 'orders/store_sales_comparision'
+
+  get 'orders/sales_by_stores_summary/:date_selected/:client_list', to: 'orders#sales_by_stores_summary', as: 'orders_sales_by_stores_summary'
 
   get 'orders/edit_discount/:id', to: 'orders#edit_discount', as: 'edit_discount'
 

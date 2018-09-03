@@ -13,7 +13,7 @@ $(document).ready(function(){
 
   $("#report_type").bind('change', function() {
     var reportType = $(this).val();
-    if (reportType == 'Facturación por empresa' || reportType == 'Pagos por empresa' || reportType == 'Saldo por clientes') {
+    if (reportType == 'Facturación por empresa' || reportType == 'Pagos por empresa' || reportType == 'Saldo por clientes' || reportType == 'Facturas recibidas') {
       $(".month-list").addClass('hidden');
       $(".store-options").addClass('hidden');
       $(".date-options").removeClass('hidden');

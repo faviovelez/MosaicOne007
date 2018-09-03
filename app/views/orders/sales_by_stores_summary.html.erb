@@ -1,0 +1,85 @@
+<table class="dataTableFourNoOrderPortrait">
+  <thead>
+    <tr class="table-titles">
+      <th> Análisis de compras mensuales de franquicias y distribuidores </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> <strong> De <%= @count_franchises %> franquicias </strong> </td>
+      <td> <strong> De <%= @count_distribuitors %> distribuidores </strong> </td>
+    </tr>
+    <tr>
+      <td> <%= @up_franchise %> suben sus compras </td>
+      <td> <%= @up_distribuitor %> suben sus compras </td>
+    </tr>
+    <tr>
+      <td> <%= @down_franchise %> bajan sus compras </td>
+      <td> <%= @down_distribuitor %> bajan sus compras </td>
+    </tr>
+    <tr>
+      <td> <%= @no_info_franchise %> no se tiene información </td>
+      <td> <%= @no_info_distribuitor %> no se tiene información </td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> <strong> Las tres franquicias que más compraron </strong> </td>
+      <td> </td>
+    </tr>
+    <% @top_three_franchises.each do |franchise| %>
+      <tr>
+        <td> <%= franchise[5] %> </td>
+        <td> <%= number_to_currency(franchise[0]) %> </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> <strong> Las tres franquicias que menos compraron </strong> </td>
+      <td> </td>
+    </tr>
+    <% @bottom_three_franchises.each do |franchise| %>
+      <tr>
+        <td> <%= franchise[5] %> </td>
+        <td> <%= number_to_currency(franchise[0]) %> </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> <strong> Las tres franquicias con mayor porcentaje de crecimiento </strong> </td>
+      <td> </td>
+    </tr>
+    <% @top_three_percentage_franchises.each do |franchise| %>
+      <tr>
+        <td> <%= franchise[5] %> </td>
+        <td> <%= number_to_percentage(franchise[4], precision: 1) %> </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> <strong> Las tres franquicias con menor porcentaje de crecimiento </strong> </td>
+      <td>  </td>
+    </tr>
+    <% @bottom_three_percentage_franchises.each do |franchise| %>
+      <tr>
+        <td> <%= franchise[5] %> </td>
+        <td> <%= number_to_percentage(franchise[4], precision: 1) %> </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<p id="date_month" class="hidden"><%= @date %></p>
+<%= render 'dataTables' %>

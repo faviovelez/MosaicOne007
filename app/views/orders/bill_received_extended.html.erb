@@ -1,0 +1,28 @@
+<table class="dataTableFourNoOrderPortraitBillsReceived">
+  <thead>
+    <tr class="table-titles">
+      <th> Folio </th>
+      <th> Fecha </th>
+      <th> Proveedor </th>
+      <th> Total </th>
+      <th> Pagos </th>
+      <th> Saldos </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bills.each do |bill| %>
+      <tr>
+        <td> <%= bill[1] %> </td>
+        <td> <%= l bill[2].to_date %> </td>
+        <td> <%= bill[3] %> </td>
+        <td> <%= number_to_currency(bill[4]) %> </td>
+        <td> <%= number_to_currency(bill[5]) %> </td>
+        <td> <%= number_to_currency(bill[4] - bill[5]) %> </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<p id="initial_date" class="hidden"><%= l @initial_date.to_date %></p>
+<p id="final_date" class="hidden"><%= l @final_date.to_date %></p>
+<%= render 'dataTables' %>

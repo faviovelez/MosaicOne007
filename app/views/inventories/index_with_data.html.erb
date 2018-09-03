@@ -1,0 +1,58 @@
+<table id="inventory">
+  <thead>
+    <tr class="table-titles-inventories">
+      <th> Código </th>
+      <th> Descripción </th>
+      <th> Color </th>
+      <th> Línea </th>
+      <th> Inventario </th>
+      <th> Vtas. x mes (<%= current_user.store.months_in_inventory %> meses) </th>
+      <th class="hidden"> Vtas. x mes (<%= current_user.store.months_in_inventory %> meses <%= (Date.today - 1.year).year %>) </th>
+      <th> Inv. óptimo (ventas <%= current_user.store.months_in_inventory %> meses atrás) </th>
+      <th class="hidden"> Inv. óptimo (<%= current_user.store.months_in_inventory %> meses sig. <%= (Date.today - 1.year).year %>) </th>
+      <th> Pedido sugerido ventas <%= current_user.store.months_in_inventory %> meses atrás </th>
+      <th class="hidden"> Pedido sugerido ventas <%= current_user.store.months_in_inventory %> meses sig. <%= (Date.today - 1.year).year %> </th>
+      <th> Meses de Inv. </th>
+      <th> Estatus </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @grouped_stores_inventories.each do |key, value| %>
+      <tr>
+        <td> <%= value[0][1] %> </td>
+        <td> <%= value[0][2] %> </td>
+        <td> <%= value[0][4] %> </td>
+        <td> <%= value[0][5] %> </td>
+        <td> <%= value[0][3] %> </td>
+        <% if @average_sales_arr[key].nil? %>
+          <td>
+            0
+          </td>
+          <td>
+            0
+          </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> Adecuado </td>
+        <% else %>
+          <td> <%= @average_sales_arr[key][0][3] %> </td>
+          <td class="hidden"> <%= @average_sales_arr[key][0][5].to_i %> </td>
+          <td> <%= @average_sales_arr[key][0][8] %> </td>
+          <td class="hidden"> <%= @average_sales_arr[key][0][9] %> </td>
+          <td> <%= @average_sales_arr[key][0][10] > 0 ? @average_sales_arr[key][0][10] : 0 %> </td>
+          <td class="hidden"> <%= @average_sales_arr[key][0][11] > 0 ? @average_sales_arr[key][0][11] : 0 %> </td>
+          <td> <%= @average_sales_arr[key][0][12].round(2) %> </td>
+          <td> Adecuado</td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render 'data_tables_another' %>
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'inventory' %>
+<% end %>

@@ -1,0 +1,64 @@
+<%= form_tag({ controller: 'bills', action: 'cancel_pay_bill' }, method: 'post', class: 'form-data-tables') do %>
+  <table class="dataTableFour">
+    <thead>
+      <tr class="table-titles">
+        <th> </th>
+        <th class="col-md-1">Serie y Folio REP</th>
+        <th> Cliente </th>
+        <th> Fecha </th>
+        <th> Total REP </th>
+        <th> Facturas venta </th>
+        <th> Tickets de pago </th>
+        <th> Status </th>
+        <th> Detalles </th>
+      </tr>
+    </thead>
+    <tbody>
+        <% @bills.each do |bill| %>
+          <tr>
+            <% if !pay_bill_status(bill.id) %>
+              <td>
+                <%= radio_button_tag :payment, "#{bill.id}", false, { id: "bill[#{bill.id}]" }%>
+              </td>
+            <% else %>
+              <td> </td>
+            <% end %>
+            <td> <%= bill.sequence %> <%= bill.folio %> </td>
+            <td> <%= bill.prospect.legal_or_business_name %> </td>
+            <td> <%= l bill.created_at.to_date %> </td>
+            <td> <%= number_to_currency(bill.total) %> </td>
+            <td> <%= pay_bills(bill.id) %> </td>
+            <td> <%= pay_bill_tickets(bill.id) %> </td>
+            <td> <%= pay_bill_span(bill.id) %> </td>
+            <td style="width: 100px">
+              <% unless bill.pdf_url == nil %>
+                <%= link_to download_pdf_path(bill.id), download: "Factura.pdf" do %>
+                  <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+
+              <% unless bill.xml_url == nil %>
+                <%= link_to download_xml_path(bill.id), download: "Factura.xml" do %>
+                  <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+
+              <% unless bill.cancel_receipt_url == nil %>
+                <%= link_to download_xml_receipt_path(bill.id), download: "Acuse.xml" do %>
+                  <%= image_tag '/assets/xml_cancel.png', alt: 'Icon XML', class: 'download-icon-table' %>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+    </tbody>
+  </table>
+
+  <div class="actions">
+    <%= submit_tag 'Cancelar factura de pagos', {data: {confirm:'¿Está seguro que desea cancelar este Recibo Electrónico de Pagos?', disable_with: "Por favor espere mientras se procesa su solicitud..."}, class: 'main-button'} %>
+  </div>
+  <br /><br />
+
+<% end %>
+
+<%= render 'dataTables' %>

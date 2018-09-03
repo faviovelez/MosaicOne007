@@ -216,6 +216,15 @@
           <%= link_to 'Facturas por pagar', bills_pending_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'bills' && (params[:action] == 'partially_payed_bills' || params[:action] == 'partially_payed_bills_with_pay_bill' || params[:action] == 'select_pay_bills' || params[:action] == 'pay_cfdi_process' || params[:action] == 'pay_cfdi_process' || params[:action] == 'cancel_pay_bill')) %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-file-powerpoint-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Recibo electrónico de pago', bills_partially_payed_bills_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para store o store-admin %>
 
@@ -738,6 +747,15 @@
           <% end %>
           <i class="fa fa-th-large other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Reportes corporativo', orders_select_report_path, class: 'text-link' %>
+            </li>
+
+          <% if (params[:controller] == 'bills' && (params[:action] == 'partially_payed_bills' || params[:action] == 'partially_payed_bills_with_pay_bill' || params[:action] == 'select_pay_bills' || params[:action] == 'pay_cfdi_process' || params[:action] == 'pay_cfdi_process' || params[:action] == 'cancel_pay_bill')) %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-file-powerpoint-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Recibo electrónico de pago', bills_partially_payed_bills_path, class: 'text-link' %>
             </li>
 
         <% end %>

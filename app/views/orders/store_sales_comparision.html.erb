@@ -1,0 +1,47 @@
+<table class="dataTableFourNoOrder">
+  <thead>
+    <tr class="table-titles">
+      <th> Cliente </th>
+      <th> <%= @date_selected %> </th>
+      <th> <%= @last_month_selected %> </th>
+      <th> <%= @last_year_selected %> </th>
+      <th> % VS mes pasado </th>
+      <th> % VS año pasado </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @prospect_names.each do |name| %>
+      <tr>
+        <% if @month_sales[name[0]] == nil %>
+          <td> <%= name[0] %> </td>
+          <td> <%= number_to_currency(0) %> </td>
+          <td> <%= number_to_currency(0) %> </td>
+          <td> <%= number_to_currency(0) %> </td>
+          <td> ND </td>
+          <td> ND </td>
+        <% else %>
+          <td> <%= name[0] %> </td>
+          <td> <%= number_to_currency(select_correct_date_data(@month_sales[name[0]], @date_selected)) %> </td>
+          <td> <%= number_to_currency(select_correct_date_data(@month_sales[name[0]], @last_month_selected)) %> </td>
+          <td> <%= number_to_currency(select_correct_date_data(@month_sales[name[0]], @last_year_selected)) %> </td>
+          <td>
+            <% compare_vs_lm(@month_sales[name[0]], @date_selected, @last_month_selected) %>
+            <%= @lm_comparision.class == String ? @lm_comparision : number_to_percentage(@lm_comparision, precision: 1) %>
+          </td>
+          <td>
+            <% compare_vs_ly(@month_sales[name[0]], @date_selected, @last_year_selected) %>
+            <%= @ly_comparision.class == String ? @ly_comparision : number_to_percentage(@ly_comparision, precision: 1) %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to orders_sales_by_stores_summary_path(date_selected: @date_selected, client_list: @prospect_ids) do %>
+  <i class="fa fa-list" aria-hidden="true"></i>
+  Resumen de ventas por tienda
+<% end %>
+
+<p id="date_month" class="hidden"><%= @date %></p>
+<%= render 'dataTables' %>

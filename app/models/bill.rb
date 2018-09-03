@@ -11,11 +11,13 @@ class Bill < ActiveRecord::Base
   has_many :tickets
   has_many :payments
   has_many :children, through: :bills_child, foreign_key: 'children_id'
+  has_many :payment_bills, through: :payment_bills, foreign_key: 'payment_bill_id'
   has_many :bills_child
   has_many :rows
   belongs_to :store
   belongs_to :prospect
   belongs_to :parent, class_name: 'Bill', foreign_key: 'parent_id'
+  belongs_to :pay_bill, class_name: 'Bill', foreign_key: 'pay_bill_id'
   belongs_to :issuing_company, class_name: 'BillingAddress'
   belongs_to :receiving_company, class_name: 'BillingAddress'
   belongs_to :expedition_zip
