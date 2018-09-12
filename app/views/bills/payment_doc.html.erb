@@ -52,67 +52,75 @@
   <table class="margin-top-bill">
     <thead>
       <tr class="header-main">
-        <th class="grow space"> Factura </th>
-        <th class="grow space"> Id Documento </th>
-        <th class="grow space"> Parcialidad </th>
-        <th class="grow space"> Saldo anterior </th>
-        <th class="grow space"> Importe pagado </th>
-        <th class="grow space"> Saldo insoluto </th>
-        <th class="grow space"> Moneda </th>
-        <th class="grow space"> Método pago </th>
-        <th class="grow space"> Forma pago </th>
-        <th class="grow space"> Monto </th>
-        <th class="grow space"> Fecha pago </th>
-        <th class="grow space"> No. operación </th>
+        <th class="grow-pay space"> Factura </th>
+        <th class="grow-pay space"> Id Documento </th>
+        <th class="grow-pay space"> Parcialidad </th>
+        <th class="grow-pay space"> Saldo anterior </th>
+        <th class="grow-pay space"> Importe pagado </th>
+        <th class="grow-pay space"> Saldo insoluto </th>
+        <th class="grow-pay space"> Moneda </th>
+        <th class="grow-pay space"> Método pago </th>
+        <th class="grow-pay space"> Forma pago </th>
+        <th class="grow-pay space"> Monto </th>
+        <th class="grow-pay space"> Fecha pago </th>
+        <th class="grow-pay space"> No. operación </th>
       </tr>
     </thead>
     <tbody>
       <% @rows.each do |row|%>
         <tr>
-          <td class="grow space"> <%= row[0] %> </td>
-          <td class="grow space"> <%= row[1] %> </td>
-          <td class="grow space"> <%= row[2] %> </td>
-          <td class="grow space"> <%= number_to_currency(row[3]) %> </strong> </td>
-          <td class="grow space"> <%= number_to_currency(row[4]) %> </td>
-          <td class="grow space"> <%= number_to_currency(row[5]) %> </td>
-          <td class="grow space"> MXN </td>
-          <td class="grow space"> PPD </td>
-          <td class="grow space"> <%= row[6] %> </td>
-          <td class="grow space"> <%= number_to_currency(row[7]) %> </td>
-          <td class="grow space"> <%= l row[8] %> </td>
-          <td class="grow space"> <%= row[9] %> </td>
+          <td class="grow-pay space"> <%= row[0] %> </td>
+          <td class="grow-pay space"> <%= row[1] %> </td>
+          <td class="grow-pay space"> <%= row[2] %> </td>
+          <td class="grow-pay space"> <%= number_to_currency(row[3]) %> </strong> </td>
+          <td class="grow-pay space"> <%= number_to_currency(row[4]) %> </td>
+          <td class="grow-pay space"> <%= number_to_currency(row[5]) %> </td>
+          <td class="grow-pay space"> MXN </td>
+          <td class="grow-pay space"> PPD </td>
+          <td class="grow-pay space"> <%= row[6] %> </td>
+          <td class="grow-pay space"> <%= number_to_currency(row[7]) %> </td>
+          <td class="grow-pay space"> <%= l row[8] %> </td>
+          <td class="grow-pay space"> <%= row[9] %> </td>
         </tr>
         <% if row[6] == "Cheque nominativo" || row[6] == "Transferencia electrónica de fondos" || row[6] == "Tarjeta de crédito" || row[6] == "Tarjeta de débito" %>
           <% params_index = @payments_ids.find_index{|arr| arr == row[10].to_s} %>
           <% if params_index.present? %>
             <tr>
-              <td class="grow space"></td>
-              <td class="grow space"></td>
-              <td class="grow space" colspan="4">
-                <strong>Nombre emisor cuenta ordenante:</strong>
-                <br/ > <%= @emisor_name[params_index] %>
+              <td class="grow-pay" colspan="3">
+                <% unless (@emisor_name[params_index] == '' || @emisor_name[params_index] == ['']) %>
+                  <strong>Nombre emisor cuenta ordenante:</strong>
+                  <br/ > <%= @emisor_name[params_index] %>
+                <% end %>
               </td>
-              <td class="grow space" colspan="3">
-                <strong>RFC emisor cuenta ordenante:</strong>
-                <br/ > <%= @emisor_rfc[params_index] %>
+              <td class="grow-pay" colspan="4">
+                <% unless (@emisor_rfc[params_index] == '' || @emisor_rfc[params_index] == ['']) %>
+                  <strong>RFC emisor cuenta ordenante:</strong>
+                  <br/ > <%= @emisor_rfc[params_index] %>
+                <% end %>
               </td>
-              <td class="grow space" colspan="3">
-                <strong>No. de cuenta ordenante:</strong>
-                <br/ > <%= @emisor_account[params_index] %>
+              <td class="grow-pay" colspan="4">
+                <% unless (@emisor_account[params_index] == '' || @emisor_account[params_index] == ['']) %>
+                  <strong>No. de cuenta ordenante:</strong>
+                  <br/ > <%= @emisor_account[params_index] %>
+                <% end %>
               </td>
+              <td class="grow-pay"></td>
             </tr>
             <tr>
-              <td class="grow space"></td>
-              <td class="grow space"></td>
-              <td class="grow space" colspan="4"> </td>
-              <td class="grow space" colspan="3">
-                <strong>RFC emisor cuenta beneficiario:</strong>
-                <br/ > <%= @beneficiario_account[params_index] %>
+              <td class="grow-pay" colspan="3"> </td>
+              <td class="grow-pay" colspan="4">
+                <% unless (@beneficiario_rfc[params_index] == '' || @beneficiario_rfc[params_index] == ['']) %>
+                  <strong>RFC emisor cuenta beneficiario:</strong>
+                  <br/ > <%= @beneficiario_rfc[params_index] %>
+                <% end %>
               </td>
-              <td class="grow space" colspan="3">
-                <strong>No. de cuenta beneficiario</strong>
-                <br/ > <%= @beneficiario_rfc[params_index] %>
+              <td class="grow-pay" colspan="4">
+                <% unless (@beneficiario_account[params_index] == '' || @beneficiario_account[params_index] == ['']) %>
+                  <strong>No. de cuenta beneficiario</strong>
+                  <br/ > <%= @beneficiario_account[params_index] %>
+                <% end %>
               </td>
+              <td class="grow-pay"></td>
             </tr>
           <% end %>
         <% end %>
@@ -123,14 +131,14 @@
         </td>
       </tr>
       <tr>
-        <td colspan="6" class="grow letter"> <strong> Importe con letra </strong> </td>
-        <td colspan="2" class="final-total grow"> </td>
-        <td colspan="4" class="final-total grow right"> </td>
+        <td colspan="6" class="grow-pay letter"> <strong> Importe con letra </strong> </td>
+        <td colspan="2" class="final-total grow-pay"> </td>
+        <td colspan="4" class="final-total grow-pay right"> </td>
       </tr>
       <tr>
-        <td colspan="6" class="grow letter"> <%= number_to_letters(@total) %> <%= decimals(@total) %> </td>
-        <td colspan="2" class="final-total grow border-top"> <strong> Total </strong> </td>
-        <td colspan="4" class="final-total grow border-top right"> <strong> <%= number_to_currency(@total) %> </strong> </td>
+        <td colspan="6" class="grow-pay letter"> <%= number_to_letters(@total) %> <%= decimals(@total) %> </td>
+        <td colspan="2" class="final-total grow-pay border-top"> <strong> Total </strong> </td>
+        <td colspan="4" class="final-total grow-pay border-top right"> <strong> <%= number_to_currency(@total) %> </strong> </td>
       </tr>
     </tbody>
   </table>

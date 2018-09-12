@@ -1670,13 +1670,17 @@ class BillsController < ApplicationController
     created_payment_cfdi
     generate_digital_stamp
     get_stamp_from_pac
-    qrcode_print
-    generate_pdf
-    save_to_db
-    if @error
-      redirect_to root_path, alert: 'Hubo un error al generar el REP, por favor intente de nuevo.'
+    if @cod_status == 'Comprobante timbrado satisfactoriamente'
+      qrcode_print
+      generate_pdf
+      save_to_db
+      if @error
+        redirect_to root_path, alert: 'Hubo un error al generar el REP, por favor intente de nuevo.'
+      else
+        redirect_to bills_partially_payed_bills_with_pay_bill_path, notice: 'Su REP ha sido generado con éxito.'
+      end
     else
-      redirect_to bills_partially_payed_bills_with_pay_bill_path, notice: 'Su REP ha sido generado con éxito.'
+      redirect_to root_path, alert: @incidents_hash[:incidencia][:mensaje_incidencia]
     end
   end
 
@@ -1810,9 +1814,9 @@ class BillsController < ApplicationController
 
     filter_corporate_stores
     if @corporate_stores.include?(current_user.store.id)
-      @payments = Payment.joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status != 'creada'").where(store_id: nil, bills: {store_id: current_user.store.id}).where.not(payment_type: 'crédito').order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
+      @payments = Payment.joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("(payments.payment_bill_id IS NOT null AND bills.status != 'creada') OR (bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status = 'creada' AND payments.payment_bill_id IS null)").where(store_id: nil, bills: {store_id: current_user.store.id}).where.not(payment_type: 'crédito').order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
     else
-      @payments = Payment.joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status != 'creada'").where(store_id: current_user.store.id).where.not(payment_type: 'crédito').order(:id).pluck("tickets.ticket_number, payments.payment_date, tickets.ticket_type, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
+      @payments = pp Payment.joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("(payments.payment_bill_id IS NOT null AND bills.status != 'creada') OR (bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status = 'creada' AND payments.payment_bill_id IS null)").where(store_id: current_user.store.id).where.not(payment_type: 'crédito').order(:id).pluck("tickets.ticket_number, payments.payment_date, tickets.ticket_type, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
     end
   end
 
@@ -2157,7 +2161,6 @@ XML
 
     #Separa los métodos según las partes que se necesitan
     xml_response = hash[:xml]
-
     @uuid = hash[:uuid]
     @date = hash[:fecha]
     @cod_status = hash[:cod_estatus]

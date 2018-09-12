@@ -1,0 +1,19 @@
+<%= form_tag({ controller: 'products', action: 'change_price_process' }, method: 'post', class: 'form-data-tables', multipart: true) do %>
+
+<div class="form-container">
+
+  <h2> Elija un archivo de lista de precios en formato csv </h2>
+
+  <div class="form-inside-style">
+    <%= label_tag :lista_de_productos %>
+    <%= file_field_tag :product_list, accept: '.csv' %>
+  </div>
+
+</div>
+
+  <div class="actions">
+    <%= submit_tag 'Cambiar precios', {data: {confirm:'¿Está seguro que desea subir el cambio de precios?', disable_with: "Por favor espere mientras se procesa su solicitud..."}, class: 'main-button'} %>
+  </div>
+  <br /><br />
+
+<% end %>

@@ -86,6 +86,10 @@ Rails.application.routes.draw do
 
   get 'stores/settings/:id', to: 'stores#settings', as: 'edit_store_settings'
 
+  get 'products/massive_price_change'
+
+  post 'products/change_price_process'
+
   get 'products/catalogue'
 
   get 'products/special'

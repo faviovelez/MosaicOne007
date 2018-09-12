@@ -27,6 +27,7 @@ class User < ActiveRecord::Base
   has_many :payments
   has_many :orders, foreign_key: 'request_user_id'
   has_many :orders, foreign_key: 'confirm_user_id'
+  has_many :list_price_changes
 
   after_create :save_web_id_and_set_web_true
 
