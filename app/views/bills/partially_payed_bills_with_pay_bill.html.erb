@@ -32,19 +32,19 @@
             <td> <%= pay_bill_span(bill.id) %> </td>
             <td style="width: 100px">
               <% unless bill.pdf_url == nil %>
-                <%= link_to download_pdf_path(bill.id), download: "Factura.pdf" do %>
+                <%= link_to download_pdf_path(bill.id), download: "RET_#{bill.folio}.pdf" do %>
                   <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon-table' %>
                 <% end %>
               <% end %>
 
               <% unless bill.xml_url == nil %>
-                <%= link_to download_xml_path(bill.id), download: "Factura.xml" do %>
+                <%= link_to download_xml_path(bill.id), download: "RET_#{bill.folio}.xml" do %>
                   <%= image_tag '/assets/xml_icon.png', alt: 'Icon XML', class: 'download-icon-table' %>
                 <% end %>
               <% end %>
 
               <% unless bill.cancel_receipt_url == nil %>
-                <%= link_to download_xml_receipt_path(bill.id), download: "Acuse.xml" do %>
+                <%= link_to download_xml_receipt_path(bill.id), download: "Acuse_RET#{bill.folio}.xml" do %>
                   <%= image_tag '/assets/xml_cancel.png', alt: 'Icon XML', class: 'download-icon-table' %>
                 <% end %>
               <% end %>

@@ -11,6 +11,34 @@ class ProductsController < ApplicationController
     filter_products
   end
 
+  def massive_price_change
+  end
+
+  def change_price_process
+    unless params[:product_list] == nil
+      ListPriceChange.create(user: current_user, document_list: params[:product_list])
+      price_list = ListPriceChange.last
+      url = price_list.document_list_url
+      csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+      unfinded = []
+      csv.each do |row|
+        product = Product.find_by_unique_code(row['cod'])
+        if product.nil? || (product.classification != 'de línea' && product.store_id != current_user.store.id)
+          unfinded << row['cod']
+        else
+          product.update(price: row['precio'].to_f.round(2))
+        end
+      end
+      unfinded.join(", ")
+      @product_undefined = unfinded
+    end
+    if (@product_undefined == nil || @product_undefined == '' || @product_undefined == [] || @product_undefined == [''])
+      redirect_to root_path, notice: 'Se ha cargado la lista de precios exitosamente.'
+    else
+      redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
+    end
+  end
+
   def show_product_csv
     headers = %w{cod desc cant}
     attributes = %w{unique_code description quantity}
