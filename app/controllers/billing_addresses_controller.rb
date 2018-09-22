@@ -39,6 +39,7 @@ class BillingAddressesController < ApplicationController
   end
 
   def update
+    add_store_to_finkok if @billing.prospects.first.store_prospect_id != nil
     respond_to do |format|
       if @billing.update(billing_params)
         format.html { redirect_to @billing, notice: 'Los datos de facturación fueron modificados exitosamente.' }
@@ -83,7 +84,6 @@ class BillingAddressesController < ApplicationController
 private
 
   def add_store_to_finkok
-
     client = Savon.client(wsdl: ENV['add_dir']) do
       convert_request_keys_to :none
     end
