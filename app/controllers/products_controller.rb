@@ -15,28 +15,204 @@ class ProductsController < ApplicationController
   end
 
   def change_price_process
-    unless params[:product_list] == nil
-      ListPriceChange.create(user: current_user, document_list: params[:product_list])
+    if params[:product_pieces] != nil
+      change_product_pieces
+      if (@product_undefined == nil || @product_undefined == '' || @product_undefined == [] || @product_undefined == [''])
+        redirect_to root_path, notice: 'Se ha cargado la lista de piezas por paquete exitosamente.'
+      else
+        redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
+      end
+    elsif params[:supplier_list] != nil
+      add_suppliers
+      redirect_to root_path, notice: 'Se ha cargado la lista de proveedores exitosamente.'
+    elsif params["clientes_tienda1"] != nil || params["clientes_tienda2"] != nil
+      add_store_customers
+      redirect_to root_path, notice: 'Se ha cargado la lista de clientes exitosamente.'
+    elsif params[:patria_products]
+      change_to_patria_products
+      if (@product_undefined == nil || @product_undefined == '' || @product_undefined == [] || @product_undefined == [''])
+        redirect_to root_path, notice: 'Se ha cargado la lista de productos de Patria exitosamente.'
+      else
+        redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
+      end
+    else
+      unless params[:product_list] == nil
+        ListPriceChange.create(user: current_user, document_list: params[:product_list], list_type: 'price_list')
+        price_list = ListPriceChange.last
+        url = price_list.document_list_url
+        csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+        unfinded = []
+        csv.each do |row|
+          product = Product.find_by_unique_code(row['cod'])
+          if product.nil? || (product.classification != 'de línea' && product.store_id != current_user.store.id)
+            unfinded << row['cod']
+          else
+            product.update(price: row['precio'].to_f.round(2))
+          end
+        end
+        unfinded.join(", ")
+        @product_undefined = unfinded
+      end
+      if (@product_undefined == nil || @product_undefined == '' || @product_undefined == [] || @product_undefined == [''])
+        redirect_to root_path, notice: 'Se ha cargado la lista de precios exitosamente.'
+      else
+        redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
+      end
+    end
+  end
+
+  def change_to_patria_products
+    if params[:patria_products] != nil
+      ListPriceChange.create(user: current_user, document_list: params[:patria_products], list_type: 'patria_list')
       price_list = ListPriceChange.last
       url = price_list.document_list_url
       csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
       unfinded = []
       csv.each do |row|
         product = Product.find_by_unique_code(row['cod'])
-        if product.nil? || (product.classification != 'de línea' && product.store_id != current_user.store.id)
-          unfinded << row['cod']
-        else
-          product.update(price: row['precio'].to_f.round(2))
-        end
+        product != nil ? product.update(business_unit_id: 1, supplier_id: 1) : unfinded << row['cod']
       end
       unfinded.join(", ")
       @product_undefined = unfinded
     end
-    if (@product_undefined == nil || @product_undefined == '' || @product_undefined == [] || @product_undefined == [''])
-      redirect_to root_path, notice: 'Se ha cargado la lista de precios exitosamente.'
-    else
-      redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
+  end
+
+  def add_store_customers
+    if params["clientes_tienda1"] != nil
+      ListPriceChange.create(user: current_user, document_list: params["clientes_tienda1"], list_type: 'prospect_list')
+      price_list = ListPriceChange.last
+      url = price_list.document_list_url
+      csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+      csv.each do |row|
+        billing = BillingAddress.create(
+                                          {
+                                            business_name: row['nombre_de_empresa_o_cliente'],
+                                            rfc: row['rfc'],
+                                            street: row['calle'],
+                                            exterior_number: row['num_ext'],
+                                            interior_number: row['num_int'],
+                                            zipcode: row['cod_postal'],
+                                            neighborhood: row['colonia'],
+                                            city: row['ciudad'],
+                                            state: row['estado'],
+                                            store_id: 1
+                                          }
+                                        )
+
+        delivery = DeliveryAddress.create(
+                                            {
+                                              street: row['calle'],
+                                              exterior_number: row['num_ext'],
+                                              interior_number: row['num_int'],
+                                              zipcode: row['cod_postal'],
+                                              neighborhood: row['colonia'],
+                                              city: row['ciudad'],
+                                              state: row['estado']
+                                            }
+                                          )
+
+        prospect = Prospect.create(
+                                    {
+                                      legal_or_business_name: row['nombre_de_empresa_o_cliente'],
+                                      prospect_type: row['giro'],
+                                      contact_first_name: row['contacto_primer_nombre'],
+                                      contact_middle_name: row['contacto_segundo_nombre'],
+                                      contact_last_name: row['contacto_apellido_paterno'],
+                                      second_last_name: row['contacto_apellido_materno'],
+                                      contact_position: row['puesto_del_contacto'],
+                                      direct_phone: row['tel_fijo'],
+                                      extension: row['ext'],
+                                      cell_phone: row['cel'],
+                                      email: row['mail'],
+                                      store_id: 1,
+                                      billing_address: billing,
+                                      delivery_address: delivery
+                                    }
+                                  )
+      end
+    elsif params["clientes_tienda2"] != nil
+      ListPriceChange.create(user: current_user, document_list: params["clientes_tienda2"], list_type: 'prospect_list')
+      price_list = ListPriceChange.last
+      url = price_list.document_list_url
+      csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+      csv.each do |row|
+        billing = BillingAddress.create(
+                                          {
+                                            business_name: row['nombre_de_empresa_o_cliente'],
+                                            rfc: row['rfc'],
+                                            street: row['calle'],
+                                            exterior_number: row['num_ext'],
+                                            interior_number: row['num_num'],
+                                            zipcode: row['cod_postal'],
+                                            neighborhood: row['colonia'],
+                                            city: row['ciudad'],
+                                            state: row['estado'],
+                                            store_id: 2
+                                          }
+        )
+        prospect = Prospect.create(
+                                    {
+                                      legal_or_business_name: row['nombre_de_empresa_o_cliente'],
+                                      prospect_type: row['giro'],
+                                      contact_first_name: row['contacto_primer_nombre'],
+                                      contact_middle_name: row['contacto_segundo_nombre'],
+                                      contact_last_name: row['contacto_apellido_paterno'],
+                                      second_last_name: row['contacto_apellido_materno'],
+                                      contact_position: row['puesto_del_contacto'],
+                                      direct_phone: row['tel_fijo'],
+                                      extension: row['ext'],
+                                      cell_phone: row['cel'],
+                                      email: row['mail'],
+                                      store_id: 2,
+                                      billing_address: billing
+                                    }
+        )
+
+        delivery = DeliveryAddress.create(
+                                          {
+                                            street: row['calle'],
+                                            exterior_number: row['num_ext'],
+                                            interior_number: row['num_num'],
+                                            zipcode: row['cod_postal'],
+                                            neighborhood: row['colonia'],
+                                            city: row['ciudad'],
+                                            state: row['estado'],
+                                            store_id: 2
+                                          }
+        )
+      end
     end
+  end
+
+  def add_suppliers
+    ListPriceChange.create(user: current_user, document_list: params[:supplier_list], list_type: 'supplier_list')
+    price_list = ListPriceChange.last
+    url = price_list.document_list_url
+    csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+    csv.each do |row|
+      corporate_stores = Store.where(store_type: StoreType.find_by_store_type('corporativo')).pluck(:id)
+      corporate_stores.each do |store_id|
+        supplier = Supplier.find_or_create_by(name: row['nombre_proveedor'], direct_phone: row['tel_fijo'], store_id: store_id)
+      end
+    end
+  end
+
+  def change_product_pieces
+    ListPriceChange.create(user: current_user, document_list: params[:product_pieces], list_type: 'pieces_list')
+    price_list = ListPriceChange.last
+    url = price_list.document_list_url
+    csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+    unfinded = []
+    csv.each do |row|
+      product = Product.find_by_unique_code(row['cod'])
+      if product.nil? || (product.classification != 'de línea' && product.store_id != current_user.store.id)
+        unfinded << row['cod']
+      else
+        product.update(pieces_per_package: row['pza'].to_i) unless row['pza'].to_i == 0
+      end
+    end
+    unfinded.join(", ")
+    @product_undefined = unfinded
   end
 
   def show_product_csv
