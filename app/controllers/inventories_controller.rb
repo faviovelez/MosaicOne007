@@ -69,7 +69,7 @@ class InventoriesController < ApplicationController
     @store = current_user.store
     if (role == 'store-admin' || role == 'store')
       @dc_products = StoresInventory.includes(:product).where(store: @store, products: {current: true, shared: true})
-      @store_products = StoresInventory.includes(:product).where(products: {store_id: @store})
+      @store_products = StoresInventory.includes(:product).where(products: {store_id: @store}, store_id: @store.id)
       if @store_products == []
         @inventories = @dc_products
       else
