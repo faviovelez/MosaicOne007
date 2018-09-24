@@ -72,6 +72,7 @@
       <% if current_user.role.name == 'viewer' %>
         <td> </td>
       <% end %>
+      <td class="hidden"> </td>
       <td> </td>
       <td> </td>
       <% if current_user.role.name == 'viewer' %>
@@ -85,7 +86,6 @@
       <td> <strong> <%= number_to_currency(@day_total) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_total_cost) %> </strong> </td>
       <td> <strong> <%= number_to_currency(@day_total_margin) %> </strong> </td>
-      <td> </td>
       <td> </td>
     </tr>
   </tbody>

@@ -9,6 +9,28 @@
     <%= file_field_tag :product_list, accept: '.csv' %>
   </div>
 
+  <div class="form-inside-style">
+    <%= label_tag :lista_de_piezas_por_paquete %>
+    <%= file_field_tag :product_pieces, accept: '.csv' %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= label_tag :lista_de_proveedores %>
+    <%= file_field_tag :supplier_list, accept: '.csv' %>
+  </div>
+
+  <div class="form-inside-style">
+    <%= label_tag :productos_que_fabrica_patria %>
+    <%= file_field_tag :patria_products, accept: '.csv' %>
+  </div>
+
+  <% Store.where(store_type: StoreType.find_by_store_type('corporativo')).each do |store| %>
+    <div class="form-inside-style">
+      <%= label_tag "clientes tienda #{store.store_name}" %>
+      <%= file_field_tag "clientes_tienda#{store.id}", accept: '.csv' %>
+    </div>
+  <% end %>
+
 </div>
 
   <div class="actions">

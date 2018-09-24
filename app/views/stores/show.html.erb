@@ -48,7 +48,7 @@
 
   <p>
     <strong>Extensión: </strong>
-    <%=@store.direct_phone %>
+    <%=@store.extension %>
   </p>
 
   <% if @store.cell_phone.present?%>
@@ -79,7 +79,7 @@
   </p>
 
   <p>
-    <% if current_user.role.name == 'store-admin' %>
+    <% if (current_user.role.name == 'store-admin' || current_user.role.name == 'admin-desk') %>
       <%= link_to 'Editar datos', edit_store_path(@store), class: 'space-between-links' %>
     <% end %>
     <% if @store.business_unit.billing_address.present? %>
