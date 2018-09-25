@@ -172,6 +172,13 @@ class StoresController < ApplicationController
             entry.delete
           end
           if store.id == 1
+            WarehouseEntry.create(
+              product: product,
+              store: store,
+              quantity: quantity,
+            )
+            we = WarehouseEntry.last
+            inventory.update(quantity: inventory.quantity.to_i + quantity)
             movement = Movement.new(
               store: store,
               product: product,
@@ -184,6 +191,13 @@ class StoresController < ApplicationController
               user: current_user
             )
           else
+            StoresWarehouseEntry.create(
+              product: product,
+              store: store,
+              quantity: quantity,
+            )
+            we = StoresWarehouseEntry.last
+            inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
             movement = StoreMovement.new(
               store: store,
               product: product,
@@ -203,23 +217,7 @@ class StoresController < ApplicationController
 
           if movement.save
             @product_counter += 1
-          end
-          if store.id == 1
-            WarehouseEntry.create(
-              product: product,
-              store: store,
-              quantity: quantity,
-              movement: movement
-            )
-            inventory.update(quantity: inventory.quantity.to_i + quantity)
-          else
-            StoresWarehouseEntry.create(
-              product: product,
-              store: store,
-              quantity: quantity,
-              store_movement: movement
-            )
-            inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
+            we.class == WarehouseEntry ? we.update(movement: movement) : we.update(store_movement: movement)
           end
         end
       end
@@ -252,6 +250,13 @@ class StoresController < ApplicationController
             entry.delete
           end
           if store.id == 1
+            WarehouseEntry.create(
+              product: product,
+              store: store,
+              quantity: quantity,
+            )
+            we = WarehouseEntry.last
+            inventory.update(quantity: inventory.quantity.to_i + quantity)
             movement = Movement.new(
               store: store,
               product: product,
@@ -264,6 +269,13 @@ class StoresController < ApplicationController
               user: current_user
             )
           else
+            StoresWarehouseEntry.create(
+              product: product,
+              store: store,
+              quantity: quantity,
+            )
+            we = StoresWarehouseEntry.last
+            inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
             movement = StoreMovement.new(
               store: store,
               product: product,
@@ -278,28 +290,10 @@ class StoresController < ApplicationController
               user: current_user
             )
           end
-
           quantity >= 0 ? movement.movement_type = 'alta' : movement.movement_type = 'baja'
-
           if movement.save
             @product_counter += 1
-          end
-          if store.id == 1
-            WarehouseEntry.create(
-              product: product,
-              store: store,
-              quantity: quantity,
-              movement: movement
-            )
-            inventory.update(quantity: inventory.quantity.to_i + quantity)
-          else
-            StoresWarehouseEntry.create(
-              product: product,
-              store: store,
-              quantity: quantity,
-              store_movement: movement
-            )
-            inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
+            we.class == WarehouseEntry ? we.update(movement: movement) : we.update(store_movement: movement)
           end
         end
       end
