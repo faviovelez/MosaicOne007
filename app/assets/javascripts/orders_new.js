@@ -14,10 +14,16 @@ $(document).ready(function() {
     $('.select-product').autocomplete({
       lookup: response.suggestions,
       onSelect: function (suggestion) {
+        if ($('#ProspectId').html() == undefined) {
+          var url = '/api/get_info_from_product/' + suggestion.data + '/' + $('#corporate_store').val();
+        } else {
+          var url = '/api/get_info_from_product_with_prospect/' + suggestion.data + '/' + $('#corporate_store').val() + '/' + $('#ProspectId').html().replace(/ /g,"");
+        }
         $.ajax({
-          url: '/api/get_info_from_product/' + suggestion.data + '/' + $('#corporate_store').val(),
+          url: url,
           method: 'get'
-        }).done(function(response) {
+        })
+        .done(function(response) {
           $("#unique_code_").val('');
           $("#totalRow").removeClass("hidden");
           isKgProduct = response.response[0][9]["kg"];
@@ -234,8 +240,8 @@ $(document).ready(function() {
         discount = 0;
       }
       if (idRow in kgProducts) {
+        unit_p = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2);
         if (total_quantity != 0) {
-          unit_p = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2);
           if (total_quantity <= (kgProducts[idRow].length - 1)) {
             for(var index = 0; index < total_quantity; index++) {
               sum += parseFloat(Object.values(kgProducts[idRow][index]));
@@ -251,7 +257,7 @@ $(document).ready(function() {
       } else {
         price = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2);
       }
-      $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+      $("#unit_price_" + idRow).html("$ " + unit_p.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
 
     } else {
       if (idRow in kgProducts) {
