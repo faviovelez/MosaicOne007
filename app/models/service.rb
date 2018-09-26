@@ -16,7 +16,7 @@ class Service < ActiveRecord::Base
 
   after_create :save_web_id
 
-  after_save :create_update_change_table
+#  after_save :create_update_change_table
 
   def create_update_change_table
     if change_table_dont_exists

@@ -47,7 +47,7 @@ class Product < ActiveRecord::Base
 
   after_create :save_web_id
 
-  after_save :create_update_change_table
+#  after_save :create_update_change_table
 
   def store_price(store)
     overprice = (self.price * (1 + (store.overprice / 100) ) * 1.16).round(2)
@@ -106,9 +106,9 @@ class Product < ActiveRecord::Base
   end
 
   def create_store_inventories
-    if self.classification == 'de línea'
+    if self.classification == 'de línea' || self.classification == 'especial'
       corporate = StoreType.find_by_store_type('corporativo')
-      stores = Store.where.not(store_type: corporate)
+      stores = Store.where.not(id: 1)
       stores.each do |store|
         StoresInventory.create(product: self, store: store) unless store.stores_inventories.where(product: self).count > 0
       end

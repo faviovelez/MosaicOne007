@@ -28,13 +28,16 @@ class ProductsController < ApplicationController
     elsif params["clientes_tienda1"] != nil || params["clientes_tienda2"] != nil
       add_store_customers
       redirect_to root_path, notice: 'Se ha cargado la lista de clientes exitosamente.'
-    elsif params[:patria_products]
+    elsif params[:patria_products] != nil
       change_to_patria_products
       if (@product_undefined == nil || @product_undefined == '' || @product_undefined == [] || @product_undefined == [''])
         redirect_to root_path, notice: 'Se ha cargado la lista de productos de Patria exitosamente.'
       else
         redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
       end
+    elsif params[:special_products] != nil
+      upload_special_products
+      redirect_to root_path, notice: 'Se ha cargado la lista de productos especiales exitosamente.'
     else
       unless params[:product_list] == nil
         ListPriceChange.create(user: current_user, document_list: params[:product_list], list_type: 'price_list')
@@ -57,6 +60,33 @@ class ProductsController < ApplicationController
         redirect_to root_path, notice: 'Se ha cargado la lista de precios exitosamente.'
       else
         redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
+      end
+    end
+  end
+
+  def upload_special_products
+    ListPriceChange.create(user: current_user, document_list: params[:special_products], list_type: 'productos_especiales')
+    price_list = ListPriceChange.last
+    url = price_list.document_list_url
+    csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+    csv.each do |row|
+      product = Product.find_or_create_by(
+        unique_code: row['cod'],
+        price: row['precio'],
+        sat_key: SatKey.where(sat_key: row['cod_sat']).first,
+        sat_unit_key: SatUnitKey.where(description: row['unit_sat']).first
+      )
+      unless product == nil
+        product.update(
+          description: row['desc'],
+          current: true,
+          shared: true,
+          classification: "especial",
+          line: "diseños especiales",
+          pieces_per_package: row['pza_pp'],
+          supplier: Supplier.where(name: row['proveedor']).first,
+          business_unit: BusinessUnit.where(name: row['unidad_negocio']).first
+        )
       end
     end
   end
