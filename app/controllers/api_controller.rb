@@ -37,7 +37,11 @@ class ApiController < ApplicationController
   end
 
   def get_just_products
-    products =  Product.where(classification: 'de línea').where(current: true, shared: true)
+    if current_user.role.name == 'warehouse-staff' || current_user.role.name == 'warehouse-admin'
+      products =  Product.where(classification: 'de línea').where(current: true, shared: true, business_unit_id: Store.find(2).business_unit.id)
+    else
+      products =  Product.where(classification: 'de línea').where(current: true, shared: true)
+    end
     if current_user.role.name == 'admin-desk'
       special_products = Product.where(classification: 'especial').where(business_unit_id: current_user.store.business_unit.id)
       products = products + special_products
@@ -174,7 +178,9 @@ class ApiController < ApplicationController
         armed_discount = discount
       end
     elsif current_user.store.store_type.store_type == 'corporativo'
-      prospect = Prospect.find(params[:prospect_id])
+      if params[:prospect_id] == nil
+        prospect = Prospect.find(Store.find(1).store_prospect)
+      end
       discount = prospect.discount.to_f
       price_with_discount = (p.price * (1 - (discount / 100))).round(2)
       if p.armed
