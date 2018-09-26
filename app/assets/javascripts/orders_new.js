@@ -254,10 +254,11 @@ $(document).ready(function() {
         } else {
           price = "0.00";
         }
+        $("#unit_price_" + idRow).html("$ " + unit_p.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
       } else {
         price = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2);
+        $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
       }
-      $("#unit_price_" + idRow).html("$ " + unit_p.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
 
     } else {
       if (idRow in kgProducts) {
