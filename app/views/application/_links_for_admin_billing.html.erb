@@ -1,0 +1,13 @@
+<% if (params[:controller] == 'warehouse' && (params[:action] == 'sales_for_billing' ) && current_user.role.name == 'admin-desk') %>
+  <%= link_to bills_form_path, class: 'space-between-links' do %>
+    Formulario Fact Cliente
+    <i class="fa fa-wpforms other-nav-icons" aria-hidden="true"></i>
+  <% end %>
+<% end %>
+
+<% if (params[:controller] == 'warehouse' && (params[:action] == 'sales_for_billing' ) && current_user.role.name == 'admin-desk') %>
+  <%= link_to bills_global_form_path, class: 'space-between-links' do %>
+    Formulario Fact Global
+    <i class="fa fa-list-alt other-nav-icons" aria-hidden="true"></i>
+  <% end %>
+<% end %>

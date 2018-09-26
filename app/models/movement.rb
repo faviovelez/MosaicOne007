@@ -280,12 +280,12 @@ class Movement < ActiveRecord::Base
     pendings.each do |pending|
       unless pending.quantity <= 0
         if self.product.classification == 'especial'
-          pending.update(quantity: self.quantity)
-          pending.product_request.order.request.update(status: 'mercancía asignada')
+          pending.update(quantity: self.quantity) unless pending.order.request == nil
+          pending.product_request.order.request.update(status: 'mercancía asignada') unless (pending.product_request == nil || pending.product_request.order == nil || pending.product_request.order.request == nil)
           if self.quantity > pending.product_request.quantity
-            pending.product_request.update(special_excess: self.quantity - pending.product_request.quantity, quantity: self.quantity)
+            pending.product_request.update(special_excess: self.quantity - pending.product_request.quantity, quantity: self.quantity) unless pending.order.request == nil
           elsif self.quantity < pending.product_request.quantity
-            pending.product_request.update(special_shortage: pending.product_request.quantity - self.quantity, quantity: self.quantity)
+            pending.product_request.update(special_shortage: pending.product_request.quantity - self.quantity, quantity: self.quantity) unless pending.order.request == nil
           end
           order = pending.product_request.order
           update_order_total(order)
