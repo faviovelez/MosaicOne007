@@ -84,7 +84,7 @@ class ApiController < ApplicationController
       end
     elsif current_user.store.store_type.store_type == 'corporativo'
       prospect = Prospect.find(params[:prospect_id])
-      discount = prospect.discount.to_f
+      discount = 0
       price_with_discount = (p.price * (1 - (discount / 100))).round(2)
       if p.armed
         armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
