@@ -169,9 +169,9 @@ module ApplicationHelper
   def address_for_delivery(order)
     prospect = order.prospect
     if prospect.delivery_address != nil
-      @address = prospect.delivery_address.street + ' ' + prospect.delivery_address.exterior_number + ' '
-      @address += 'Int. ' + prospect.delivery_address.interior_number + ' ' unless prospect.delivery_address.interior_number.blank?
-      @address += 'Col. ' + prospect.delivery_address.neighborhood + '.' + ' ' + prospect.delivery_address.city + ',' + ' ' + prospect.delivery_address.state
+      @address = prospect.delivery_address.street.to_s + ' ' + prospect.delivery_address.exterior_number.to_s + ' '
+      @address += 'Int. ' + prospect.delivery_address.interior_number.to_s + ' ' unless prospect.delivery_address.interior_number.blank?
+      @address += 'Col. ' + prospect.delivery_address.neighborhood.to_s + '.' + ' ' + prospect.delivery_address.city.to_s + ',' + ' ' + prospect.delivery_address.state.to_s
       @address = @address.split.map(&:capitalize)*' '
     else
       @address = 'No especificada'
