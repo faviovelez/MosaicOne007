@@ -1341,7 +1341,7 @@ class OrdersController < ApplicationController
     if params[:armed][n] == 'true'
       converted_armed = true
     end
-    if @prospect.store_prospect != nil && @prospect.store_prospect.id == 2
+    if @prospect.store_prospect != nil && @prospect.store_prospect.id == 1
       @all_orders = []
       counter.times do
         product = Product.find(params[:products][n])
