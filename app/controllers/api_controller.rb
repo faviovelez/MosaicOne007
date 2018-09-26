@@ -129,7 +129,6 @@ class ApiController < ApplicationController
       kg_available << {we.movement.identifier => we.movement.kg}
     end
     kg_available << {"avg" => (p.average || 100)}
-    debugger
     if params[:store_id].to_i == 1
       quantity = Inventory.where(product: p).first.quantity.to_i
     else
