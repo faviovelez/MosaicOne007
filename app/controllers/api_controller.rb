@@ -11,22 +11,22 @@ class ApiController < ApplicationController
   end
 
   def get_all_products_for_bill
-    products =  Product.where(classification: 'de línea').where(current: true, shared: true, child: nil)
-    store_products = Product.where(store: current_user.store)
+#    products =  Product.where(classification: 'de línea').where(current: true, shared: true, child: nil)
+#    store_products = Product.where(store: current_user.store)
     services = Service.where(current: true)
     options = []
-    products.each do |product|
-      words = product.description.split(' ') [0..5]
-      words_clean = words.join(' ')
-      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s + ' ' + product.only_measure.to_s
-      options << { "value" => string, "data" => product.id }
-    end
-    store_products.each do |product|
-      words = product.description.split(' ') [0..5]
-      words_clean = words.join(' ')
-      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s + ' ' + product.only_measure.to_s
-      options << { "value" => string, "data" => product.id }
-    end
+#    products.each do |product|
+#      words = product.description.split(' ') [0..5]
+#      words_clean = words.join(' ')
+#      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s + ' ' + product.only_measure.to_s
+#      options << { "value" => string, "data" => product.id }
+#    end
+#    store_products.each do |product|
+#      words = product.description.split(' ') [0..5]
+#      words_clean = words.join(' ')
+#      string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s + ' ' + product.only_measure.to_s
+#      options << { "value" => string, "data" => product.id }
+#    end
     services.each do |service|
       words = service.description.split(' ') [0..5]
       words_clean = words.join(' ')
@@ -37,7 +37,11 @@ class ApiController < ApplicationController
   end
 
   def get_just_products
-    products =  Product.where(classification: ['de línea', 'especial']).where(current: true, shared: true)
+    products =  Product.where(classification: 'de línea').where(current: true, shared: true)
+    if current_user.role.name == 'admin-desk'
+      special_products = Product.where(classification: 'especial').where(business_unit_id: current_user.store.business_unit.id)
+      products = products + special_products
+    end
     store_products = Product.where(store: current_user.store)
     options = []
     products.each do |product|
@@ -147,7 +151,7 @@ class ApiController < ApplicationController
 
   def get_all_suppliers_for_corporate(bu = current_user.store.business_unit.business_group)
     suppliers_group = []
-    suppliers = Supplier.where(business_group: bu)
+    suppliers = Supplier.where(business_group: bu, store_id: current_user.store.id)
     suppliers.each do |sup|
       suppliers_group << {"value" => sup.name, "data" => sup.id }
     end

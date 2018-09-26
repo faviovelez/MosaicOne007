@@ -1075,11 +1075,13 @@ class OrdersController < ApplicationController
     stores = []
     movs = []
     pend_movs = []
+    prod_arr = Product.where(id: params[:products]).pluck(:classification)
+    (prod_arr.first == 'especial' && prod_arr.uniq.length == 1) ? @category = 'especial' : @category = 'de línea'
     @order = Order.create(
                   store: current_user.store,
                   request_user: current_user,
                   corporate: corporate,
-                  category: 'de línea',
+                  category: @category,
                   status: 'en espera',
                   delivery_address: current_user.store.delivery_address,
                   prospect: @prospect
@@ -1108,7 +1110,7 @@ class OrdersController < ApplicationController
             @new_order = Order.create(
               store: current_user.store,
               request_user: current_user,
-              category: 'de línea',
+              category: @category,
               corporate: corporate,
               delivery_address: current_user.store.delivery_address,
               status: 'en espera',
@@ -1142,7 +1144,7 @@ class OrdersController < ApplicationController
             @new_order_patria = Order.create(
               store: current_user.store,
               request_user: current_user,
-              category: 'de línea',
+              category: @category,
               corporate_id: 2,
               delivery_address: current_user.store.delivery_address,
               status: status,
@@ -1165,7 +1167,7 @@ class OrdersController < ApplicationController
               @new_order_unassigned_patria = Order.create(
                 store: current_user.store,
                 request_user: current_user,
-                category: 'de línea',
+                category: @category,
                 corporate_id: 2,
                 delivery_address: current_user.store.delivery_address,
                 status: 'sin asignar',
@@ -1176,7 +1178,7 @@ class OrdersController < ApplicationController
               @new_order_assigned_patria = Order.create(
                 store: current_user.store,
                 request_user: current_user,
-                category: 'de línea',
+                category: @category,
                 corporate_id: 2,
                 delivery_address: current_user.store.delivery_address,
                 status: 'mercancía asignada',
@@ -1392,6 +1394,7 @@ class OrdersController < ApplicationController
 
   def passing_validation(product_request, n)
     order_quantity = product_request.quantity
+    @corporate = product_request.product.business_unit.stores.where(store_type_id: 2).first if @category == 'especial'
     corporate = @corporate
     if @corporate.id == 1
       inventory = product_request.product.inventory

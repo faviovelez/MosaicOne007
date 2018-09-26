@@ -56,7 +56,7 @@
       <div class="form-inside-style">
         <%= f.label :clasificación %>
         <% if current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin' %>
-          <%= f.select :classification, options_for_select(['de línea'], selected: (@product.classification || 'de línea')) %>
+          <%= f.select :classification, options_for_select([['de línea'], ['especial']], selected: (@product.classification || 'de línea')) %>
         <% else %>
           <%= f.select :classification, options_for_select(['de tienda'], selected: (@product.classification || 'de tienda')) %>
         <% end %>
