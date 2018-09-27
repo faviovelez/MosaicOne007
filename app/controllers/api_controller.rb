@@ -126,7 +126,7 @@ class ApiController < ApplicationController
     end
     kg_available = []
     WarehouseEntry.where(product: p, store_id: params[:store_id].to_i).order(:id).each do |we|
-      kg_available << {we.movement.identifier => we.movement.kg}
+      kg_available << {we.movement.identifier => we.movement.kg} if p.group
     end
     kg_available << {"avg" => (p.average || 100)}
     if params[:store_id].to_i == 1
@@ -154,12 +154,12 @@ class ApiController < ApplicationController
     render json: {response: product_info}
   end
 
-  def get_info_from_product
+  def get_info_from_product_store
     product_info = []
     p = Product.find(params[:id])
     if current_user.store.store_type.store_type == 'franquicia'
-      price_with_discount = (p.price * (1 - (p.discount_for_franchises / 100))).round(2)
-      discount = p.discount_for_franchises
+      discount = Store.find(params[:this_store]).store_prospect.discount
+      price_with_discount = (p.price * (1 - (discount / 100))).round(2)
       if p.armed
         armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
         armed_discount = p.armed_discount
@@ -168,8 +168,8 @@ class ApiController < ApplicationController
         armed_discount = discount
       end
     elsif current_user.store.store_type.store_type == 'tienda propia'
-      price_with_discount = (p.price * (1 - (p.discount_for_stores / 100))).round(2)
-      discount = p.discount_for_stores
+      discount = Store.find(params[:this_store]).store_prospect.discount
+      price_with_discount = (p.price * (1 - (discount / 100))).round(2)
       if p.armed
         armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
         armed_discount = p.armed_discount
@@ -219,7 +219,100 @@ class ApiController < ApplicationController
     end
     kg_available = []
     WarehouseEntry.where(product: p, store_id: params[:store_id].to_i).order(:id).each do |we|
-      kg_available << {we.movement.identifier => we.movement.kg}
+      kg_available << {we.movement.identifier => we.movement.kg} if p.group
+    end
+    kg_available << {"avg" => (p.average || 100)}
+    if params[:store_id].to_i == 1
+      quantity = Inventory.where(product: p).first.quantity.to_i
+    else
+      quantity = StoresInventory.where(product: p, store_id: params[:store_id].to_i).first.quantity.to_i
+    end
+    product_info << [
+      { description: "#{p.unique_code} #{p.description}" },
+      { price: price_with_discount },
+      { color: p.exterior_color_or_design },
+      { inventory: quantity },
+      { packages: p.pieces_per_package },
+      { images: images },
+      { discount: discount },
+      { separated: separated},
+      { total_inventory: separated + quantity},
+      { kg: p.group },
+      { availability: kg_available },
+      { pending: pending_orders},
+      { armed: p.armed},
+      { armed_price: armed_price},
+      { armed_discount: armed_discount}
+  ]
+  render json: {response: product_info}
+  end
+
+  def get_info_from_product
+    product_info = []
+    p = Product.find(params[:id])
+    if current_user.store.store_type.store_type == 'franquicia'
+      discount = Store.find(params[:this_store]).store_prospect.discount
+      price_with_discount = (p.price * (1 - (discount / 100))).round(2)
+      if p.armed
+        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_discount = p.armed_discount
+      else
+        armed_price = price_with_discount
+        armed_discount = discount
+      end
+    elsif current_user.store.store_type.store_type == 'tienda propia'
+      discount = Store.find(params[:this_store]).store_prospect.discount
+      price_with_discount = (p.price * (1 - (discount / 100))).round(2)
+      if p.armed
+        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_discount = p.armed_discount
+      else
+        armed_price = price_with_discount
+        armed_discount = discount
+      end
+    elsif current_user.store.store_type.store_type == 'corporativo'
+      if params[:prospect_id] == nil
+        prospect = Prospect.find(Store.find(1).store_prospect)
+      end
+      discount = prospect.discount.to_f
+      price_with_discount = (p.price * (1 - (discount / 100))).round(2)
+      if p.armed
+        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_discount = p.armed_discount
+      else
+        armed_price = price_with_discount
+        armed_discount = discount
+      end
+    else
+      discount = 0
+      price_with_discount = p.price.round(2)
+      if p.armed
+        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_discount = p.armed_discount
+      else
+        armed_price = price_with_discount
+        armed_discount = discount
+      end
+    end
+    images = []
+    unless p.images == []
+      p.images.each do |img|
+        images << img.image_url
+      end
+    end
+    separated = 0
+    pending_orders = 0
+    product_requests = ProductRequest.joins(:order).where(product: p, corporate_id: params[:store_id].to_i).where.not(status: ['entregado', 'cancelada']).where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] })
+    product_requests.each do |request|
+      if request.status == "asignado"
+        separated += request.quantity.to_i
+      elsif request.status == "sin asignar"
+        pending_orders += request.quantity.to_i
+      end
+    end
+    kg_available = []
+    WarehouseEntry.where(product: p, store_id: params[:store_id].to_i).order(:id).each do |we|
+      kg_available << {we.movement.identifier => we.movement.kg} if p.group
     end
     kg_available << {"avg" => (p.average || 100)}
     if params[:store_id].to_i == 1

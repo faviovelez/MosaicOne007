@@ -15,7 +15,7 @@ $(document).ready(function() {
       lookup: response.suggestions,
       onSelect: function (suggestion) {
         if ($('#ProspectId').html() == undefined) {
-          var url = '/api/get_info_from_product/' + suggestion.data + '/' + $('#corporate_store').val();
+          var url = '/api/get_info_from_product/' + suggestion.data + '/' + $('#corporate_store').val() + '/' + $('#storeId').html().replace(/ /g,"");
         } else {
           var url = '/api/get_info_from_product_with_prospect/' + suggestion.data + '/' + $('#corporate_store').val() + '/' + $('#ProspectId').html().replace(/ /g,"");
         }

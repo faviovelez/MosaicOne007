@@ -1077,6 +1077,7 @@ class OrdersController < ApplicationController
     pend_movs = []
     prod_arr = Product.where(id: params[:products]).pluck(:classification)
     (prod_arr.first == 'especial' && prod_arr.uniq.length == 1) ? @category = 'especial' : @category = 'de línea'
+    @corporate = Store.find(current_user.store.id); corporate = @corporate if @category == 'especial' && current_user.store.id == 2
     @order = Order.create(
                   store: current_user.store,
                   request_user: current_user,
@@ -1408,25 +1409,30 @@ class OrdersController < ApplicationController
       inventory = StoresInventory.where(product: product_request.product, store_id: corporate.id).first
     end
     product = product_request.product
-    if @prospect.store_prospect != nil && @prospect.store_prospect.id != 1
-      if (product.armed && params[:armed][n] == 'true')
-        discount = product.armed_discount / 100
-      else
-        if (@prospect.store_prospect.store_type.store_type == 'tienda propia')
-          discount = product.discount_for_stores / 100
-        elsif @prospect.store_prospect.store_type.store_type == 'franquicia'
-          discount = product.discount_for_franchises / 100
-        end
-      end
+    if params[:discount] != nil
+      discount = params[:discount][n].to_f / 100
     else
-      if params[:discount] != nil
-        discount = params[:discount][n].to_f / 100
+      if @prospect.store_prospect != nil && @prospect.store_prospect.id != 1
+        if (product.armed && params[:armed][n] == 'true')
+          discount = product.armed_discount / 100
+        else
+          if (@prospect.store_prospect.store_type.store_type == 'tienda propia')
+            discount = @prospect.discount / 100
+          elsif @prospect.store_prospect.store_type.store_type == 'franquicia'
+            discount = @prospect.discount / 100
+          end
+        end
       else
-        if @prospect.store_prospect.store_type.store_type == 'corporativo'
-          discount = @prospect.discount.to_f / 100
+        if params[:discount] != nil
+          discount = params[:discount][n].to_f / 100
+        else
+          if @prospect.store_prospect.store_type.store_type == 'corporativo'
+            discount = @prospect.discount.to_f / 100
+          end
         end
       end
     end
+
     if order_quantity > inventory.quantity
       product_request.update(status: 'sin asignar')
       q = product_request.quantity
