@@ -164,49 +164,51 @@ class TicketsController < ApplicationController
     @total_payment_forms = 0
     @payment_forms = []
     @tickets.each do |ticket|
-      ticket.payments.each do |payment|
-        if payment.payment_form.description == 'Efectivo'
-          if payment.payment_type == 'pago'
-            @cash[1] += payment.total
-          elsif payment.payment_type == 'devolución'
-            @cash[1] -= payment.total
+      if (ticket.parent == nil || ticket.parent != nil && ticket.parent.ticket_type != 'cancelado')
+        ticket.payments.each do |payment|
+          if payment.payment_form.description == 'Efectivo'
+            if payment.payment_type == 'pago'
+              @cash[1] += payment.total
+            elsif payment.payment_type == 'devolución'
+              @cash[1] -= payment.total
+            end
+            @cash[2] << payment.ticket.ticket_number unless @cash[2].include?(payment.ticket.ticket_number)
+          elsif payment.payment_form.description == 'Cheque nominativo'
+            if payment.payment_type == 'pago'
+              @check[1] += payment.total
+            elsif payment.payment_type == 'devolución'
+              @check[1] -= payment.total
+            end
+            @check[2] << payment.ticket.ticket_number unless @check[2].include?(payment.ticket.ticket_number)
+          elsif payment.payment_form.description == 'Transferencia electrónica de fondos'
+            if payment.payment_type == 'pago'
+              @transfer[1] += payment.total
+            elsif payment.payment_type == 'devolución'
+              @transfer[1] -= payment.total
+            end
+            @transfer[2] << payment.ticket.ticket_number unless @transfer[2].include?(payment.ticket.ticket_number)
+          elsif payment.payment_form.description == 'Tarjeta de crédito'
+            if payment.payment_type == 'pago'
+              @credit_card[1] += payment.total
+            elsif payment.payment_type == 'devolución'
+              @credit_card[1] -= payment.total
+            end
+            @credit_card[2] << payment.ticket.ticket_number unless @credit_card[2].include?(payment.ticket.ticket_number)
+          elsif payment.payment_form.description == 'Tarjeta de débito'
+            if payment.payment_type == 'pago'
+              @debit_card[1] += payment.total
+            elsif payment.payment_type == 'devolución'
+              @debit_card[1] -= payment.total
+            end
+            @debit_card[2] << payment.ticket.ticket_number unless @debit_card[2].include?(payment.ticket.ticket_number)
+          elsif payment.payment_form.description == 'Por definir'
+            if payment.payment_type == 'pago'
+              @credit_sales[1] += payment.total
+            elsif payment.payment_type == 'devolución'
+              @credit_sales[1] -= payment.total
+            end
+            @credit_sales[2] << payment.ticket.ticket_number unless @credit_sales[2].include?(payment.ticket.ticket_number)
           end
-          @cash[2] << payment.ticket.ticket_number unless @cash[2].include?(payment.ticket.ticket_number)
-        elsif payment.payment_form.description == 'Cheque nominativo'
-          if payment.payment_type == 'pago'
-            @check[1] += payment.total
-          elsif payment.payment_type == 'devolución'
-            @check[1] -= payment.total
-          end
-          @check[2] << payment.ticket.ticket_number unless @check[2].include?(payment.ticket.ticket_number)
-        elsif payment.payment_form.description == 'Transferencia electrónica de fondos'
-          if payment.payment_type == 'pago'
-            @transfer[1] += payment.total
-          elsif payment.payment_type == 'devolución'
-            @transfer[1] -= payment.total
-          end
-          @transfer[2] << payment.ticket.ticket_number unless @transfer[2].include?(payment.ticket.ticket_number)
-        elsif payment.payment_form.description == 'Tarjeta de crédito'
-          if payment.payment_type == 'pago'
-            @credit_card[1] += payment.total
-          elsif payment.payment_type == 'devolución'
-            @credit_card[1] -= payment.total
-          end
-          @credit_card[2] << payment.ticket.ticket_number unless @credit_card[2].include?(payment.ticket.ticket_number)
-        elsif payment.payment_form.description == 'Tarjeta de débito'
-          if payment.payment_type == 'pago'
-            @debit_card[1] += payment.total
-          elsif payment.payment_type == 'devolución'
-            @debit_card[1] -= payment.total
-          end
-          @debit_card[2] << payment.ticket.ticket_number unless @debit_card[2].include?(payment.ticket.ticket_number)
-        elsif payment.payment_form.description == 'Por definir'
-          if payment.payment_type == 'pago'
-            @credit_sales[1] += payment.total
-          elsif payment.payment_type == 'devolución'
-            @credit_sales[1] -= payment.total
-          end
-          @credit_sales[2] << payment.ticket.ticket_number unless @credit_sales[2].include?(payment.ticket.ticket_number)
         end
       end
     end
