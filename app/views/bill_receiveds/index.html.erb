@@ -20,16 +20,16 @@
       <tbody>
         <% @bills.each do |bill| %>
           <tr>
-            <td> <%= number_with_delimiter(bill.folio) %> </td>
-            <td> <%= l bill.created_at.to_date, format: :short %> </td>
-            <td> <%= show_non_blank_field(bill.supplier.name) %> </td>
-            <td> <%= number_to_currency(bill.subtotal_with_discount) %> </td>
-            <td> <%= number_to_currency(bill.discount) %> </td>
-            <td> <%= number_to_currency(bill.taxes) %> </td>
-            <td id="balance_<%=bill.id%>"> <%= number_to_currency(bill.total_amount) %> </td>
-            <td> <%= l due_date(bill), format: :short %> </td>
-            <td> <%= number_to_currency(bill.payments.sum(:total)) %> </td>
-            <% if Date.today > due_date(bill) %>
+            <td> <%= number_with_delimiter(bill[0]) %> </td>
+            <td> <%= l bill[1].to_date, format: :short %> </td>
+            <td> <%= bill[2].to_s %> </td>
+            <td> <%= number_to_currency(bill[3]) %> </td>
+            <td> <%= number_to_currency(bill[4]) %> </td>
+            <td> <%= number_to_currency(bill[5]) %> </td>
+            <td id="balance_<%= bill[10] %>"> <%= number_to_currency(bill[6]) %> </td>
+            <td> <%= l bill[1].to_date, format: :short %> </td>
+            <td> <%= number_to_currency(bill[7]) %> </td>
+            <% if Date.today > bill[1].to_date %>
               <td>
                 <span class="label label-warning">
                   Vencida
@@ -43,13 +43,16 @@
               </td>
             <% end %>
             <td>
-              <%= link_to bill_receiveds_edit_path(bill) do %>
-                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar factura"></i>
+              <% if bill[9] == 'BillReceived' %>
+                <%= link_to bill_receiveds_edit_path(Bill.find(bill[10])) do %>
+                  <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar factura"></i>
+                <% end %>
               <% end %>
             </td>
             <td class="col-md-1">
-              <%= text_field_tag 'payments[]', nil, {id: "payments_#{bill.id}", class: 'form-control center-text'} %>
-              <%= text_field_tag 'id[]', bill.id, {class: 'form-control center-text hidden'} %>
+              <%= text_field_tag 'payments[]', nil, {id: "payments_#{bill[10]}", class: 'form-control center-text'} %>
+              <%= text_field_tag 'id[]', bill[10], {class: 'form-control center-text hidden'} %>
+              <%= text_field_tag 'type[]', bill[9], {class: 'form-control center-text hidden'} %>
             </td>
           </tr>
         <% end %>
