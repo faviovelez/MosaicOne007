@@ -18,7 +18,7 @@ module ApplicationHelper
   end
 
   def due_date(bill)
-    @due_date = bill.created_at.to_date + bill.supplier.credit_days.to_i.days
+    @due_date = bill[1].to_date + bill[8].to_i.days
   end
 
   def current_bill(date)
@@ -155,7 +155,11 @@ module ApplicationHelper
 
   def payment_on_time(bill)
     due_date(bill)
-    bill.payment_day <= @due_date ? @pay_status = content_tag(:span, 'a tiempo', class: 'label label-success') : @pay_status = content_tag(:span, 'con atraso', class: 'label label-warning')
+    if bill[9] == 'BillReceived'
+      bill[12] <= @due_date ? @pay_status = content_tag(:span, 'a tiempo', class: 'label label-success') : @pay_status = content_tag(:span, 'con atraso', class: 'label label-warning')
+    else
+      Bill.find(bill[10]).payments.last.created_at.to_date <= @due_date ? @pay_status = content_tag(:span, 'a tiempo', class: 'label label-success') : @pay_status = content_tag(:span, 'con atraso', class: 'label label-warning')
+    end
   end
 
   def minimum_date

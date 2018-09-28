@@ -342,7 +342,7 @@ class ApiController < ApplicationController
 
   def get_all_suppliers_for_corporate(bu = current_user.store.business_unit.business_group)
     suppliers_group = []
-    suppliers = Supplier.where(business_group: bu, store_id: current_user.store.id)
+    suppliers = Supplier.where(store_id: current_user.store.id)
     suppliers.each do |sup|
       suppliers_group << {"value" => sup.name, "data" => sup.id }
     end
