@@ -18,15 +18,16 @@
       <tbody>
         <% @bills.each do |bill| %>
           <tr>
-            <td> <%= number_with_delimiter(bill.folio) %> </td>
-            <td> <%= l bill.created_at.to_date, format: :short %> </td>
-            <td> <%= show_non_blank_field(bill.supplier.name) %> </td>
-            <td> <%= number_to_currency(bill.subtotal_with_discount) %> </td>
-            <td> <%= number_to_currency(bill.discount) %> </td>
-            <td> <%= number_to_currency(bill.taxes) %> </td>
-            <td> <%= number_to_currency(bill.total_amount) %> </td>
-            <td id="balance_<%=bill.id%>"> <%= number_to_currency(bill.payments.sum(:total)) %> </td>
-            <% if bill.status == 'activa' %>
+            <td> <%= number_with_delimiter(bill[0]) %> </td>
+            <td> <%= l bill[1].to_date, format: :short %> </td>
+            <td> <%= bill[2].to_s %> </td>
+            <td> <%= number_to_currency(bill[3]) %> </td>
+            <td> <%= number_to_currency(bill[4]) %> </td>
+            <td> <%= number_to_currency(bill[5]) %> </td>
+            <td id="balance_<%= bill[10] %>"> <%= number_to_currency(bill[6]) %> </td>
+
+            <td id="balance_<%= bill[10] %>"> <%= number_to_currency(bill[7]) %> </td>
+            <% if bill[11] == 'activa' || bill[11] == 'creada' %>
               <td>
                 <span class="label label-success">
                   activa
@@ -43,9 +44,17 @@
               <%= payment_on_time(bill) %>
             </td>
             <td>
-              <% bill.documents.each do |document| %>
-                <%= link_to get_document_path(document), download: "#{document.document_identifier}" do %>
-                  <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+              <% if bill[9] == 'BillReceived' %>
+                <% BillReceived.find(bill[10]).documents.each do |document| %>
+                  <%= link_to get_document_path(document), download: "#{document.document_identifier}" do %>
+                    <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <% Bill.find(bill[10]).documents.each do |document| %>
+                  <%= link_to get_document_path(document), download: "#{document.document_identifier}" do %>
+                    <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                  <% end %>
                 <% end %>
               <% end %>
             </td>

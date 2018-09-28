@@ -64,6 +64,8 @@
 
 <%= render 'add_masks' %>
 
+<p class="hidden" id="storeId"><%= params[:store_id] %></p>
+
 <%= content_for :stylesheet do %>
   <%= stylesheet_link_tag 'formValidation.min' %>
 <% end %>
