@@ -22,7 +22,7 @@
         <td> <%= number_to_currency(bill[4].to_f) %> </td>
         <td> <%= number_to_currency(bill[5].to_f) %> </td>
         <td>
-          <%= link_to orders_process_report_path(prospect_id: bill[7], extended_collection: true, initial_date: @initial_date, final_date: @final_date, store_id: @store_id, report_type: 'Saldo por clientes') do %>
+          <%= link_to orders_process_report_path(prospect_id: bill[8], extended_collection_billing: true, initial_date: @initial_date, final_date: @final_date, store_id: @store_id, report_type: 'Saldo por clientes') do %>
             <%= number_to_currency(bill[6].to_f) %>
           <% end %>
         </td>
