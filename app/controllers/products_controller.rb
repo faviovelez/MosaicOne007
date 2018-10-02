@@ -28,6 +28,9 @@ class ProductsController < ApplicationController
     elsif params["clientes_tienda1"] != nil || params["clientes_tienda2"] != nil
       add_store_customers
       redirect_to root_path, notice: 'Se ha cargado la lista de clientes exitosamente.'
+    elsif params["cambios_tienda1"] != nil || params["cambios_tienda2"] != nil
+      change_billing_address
+      redirect_to root_path, notice: 'Se ha modificado exitosamente la lista de clientes.'
     elsif params[:patria_products] != nil
       change_to_patria_products
       if (@product_undefined == nil || @product_undefined == '' || @product_undefined == [] || @product_undefined == [''])
@@ -104,6 +107,139 @@ class ProductsController < ApplicationController
       end
       unfinded.join(", ")
       @product_undefined = unfinded
+    end
+  end
+
+  def change_billing_address
+    if params["cambios_tienda1"] != nil
+      ListPriceChange.create(user: current_user, document_list: params["cambios_tienda1"], list_type: 'prospect_list')
+      price_list = ListPriceChange.last
+      url = price_list.document_list_url
+      csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+      csv.each do |row|
+        billing = BillingAddress.where(business_name: row['nombre_de_empresa_o_cliente']).first
+        if billing != nil
+          billing.update(
+                                            {
+                                              business_name: row['nombre_de_empresa_o_cliente'],
+                                              rfc: row['rfc'],
+                                              street: row['calle'],
+                                              exterior_number: row['num_ext'],
+                                              interior_number: row['num_int'],
+                                              zipcode: row['cod_postal'],
+                                              neighborhood: row['colonia'],
+                                              city: row['ciudad'],
+                                              state: row['estado'],
+                                              store_id: 1
+                                            }
+                                          )
+        end
+
+        delivery = DeliveryAddress.where(street: row['calle'], exterior_number: row['num_ext'], interior_number: row['num_int'])
+        if delivery == nil
+          delivery = DeliveryAddress.create(
+            {
+              street: row['calle'],
+              exterior_number: row['num_ext'],
+              interior_number: row['num_int'],
+              zipcode: row['cod_postal'],
+              neighborhood: row['colonia'],
+              city: row['ciudad'],
+              state: row['estado']
+            }
+          )
+        else
+          delivery = DeliveryAddress.update(
+            {
+              street: row['calle'],
+              exterior_number: row['num_ext'],
+              interior_number: row['num_int'],
+              zipcode: row['cod_postal'],
+              neighborhood: row['colonia'],
+              city: row['ciudad'],
+              state: row['estado']
+            }
+          )
+        end
+
+        prospect = Prospect.where(legal_or_business_name: row['nombre_de_empresa_o_cliente']).first
+        prospect.update(
+                                    {
+                                      legal_or_business_name: row['nombre_de_empresa_o_cliente'],
+                                      prospect_type: row['giro'],
+                                      contact_first_name: row['contacto_primer_nombre'],
+                                      contact_middle_name: row['contacto_segundo_nombre'],
+                                      contact_last_name: row['contacto_apellido_paterno'],
+                                      second_last_name: row['contacto_apellido_materno'],
+                                      contact_position: row['puesto_del_contacto'],
+                                      direct_phone: row['tel_fijo'],
+                                      extension: row['ext'],
+                                      cell_phone: row['cel'],
+                                      email: row['mail'],
+                                      store_id: 1,
+                                      billing_address: billing,
+                                      delivery_address: delivery
+                                    }
+                                  )
+      end
+    elsif params["cambios_tienda2"] != nil
+      ListPriceChange.create(user: current_user, document_list: params["cambios_tienda2"], list_type: 'prospect_list')
+      price_list = ListPriceChange.last
+      url = price_list.document_list_url
+      csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+      csv.each do |row|
+        billing = BillingAddress.where(business_name: row['nombre_de_empresa_o_cliente']).first
+        if billing != nil
+          billing.update(
+                                            {
+                                              business_name: row['nombre_de_empresa_o_cliente'],
+                                              rfc: row['rfc'],
+                                              street: row['calle'],
+                                              exterior_number: row['num_ext'],
+                                              interior_number: row['num_num'],
+                                              zipcode: row['cod_postal'],
+                                              neighborhood: row['colonia'],
+                                              city: row['ciudad'],
+                                              state: row['estado'],
+                                              store_id: 2
+                                            }
+          )
+        end
+        prospect = Prospect.where(legal_or_business_name: row['nombre_de_empresa_o_cliente']).first
+        prospect.update(
+                                    {
+                                      legal_or_business_name: row['nombre_de_empresa_o_cliente'],
+                                      prospect_type: row['giro'],
+                                      contact_first_name: row['contacto_primer_nombre'],
+                                      contact_middle_name: row['contacto_segundo_nombre'],
+                                      contact_last_name: row['contacto_apellido_paterno'],
+                                      second_last_name: row['contacto_apellido_materno'],
+                                      contact_position: row['puesto_del_contacto'],
+                                      direct_phone: row['tel_fijo'],
+                                      extension: row['ext'],
+                                      cell_phone: row['cel'],
+                                      email: row['mail'],
+                                      store_id: 2,
+                                      billing_address: billing
+                                    }
+        )
+
+        delivery = prospect.delivery_address
+        if delivery != nil
+          delivery.update(
+                                            {
+                                              street: row['calle'],
+                                              exterior_number: row['num_ext'],
+                                              interior_number: row['num_num'],
+                                              zipcode: row['cod_postal'],
+                                              neighborhood: row['colonia'],
+                                              city: row['ciudad'],
+                                              state: row['estado'],
+                                              store_id: 2
+                                            }
+          )
+        end
+      end
     end
   end
 

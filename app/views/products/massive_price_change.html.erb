@@ -31,6 +31,13 @@
     </div>
   <% end %>
 
+  <% Store.where(store_type: StoreType.find_by_store_type('corporativo')).each do |store| %>
+    <div class="form-inside-style">
+      <%= label_tag "cambios tienda #{store.store_name}" %>
+      <%= file_field_tag "cambios_tienda#{store.id}", accept: '.csv' %>
+    </div>
+  <% end %>
+
   <div class="form-inside-style">
     <%= label_tag :productos_especiales %>
     <%= file_field_tag :special_products, accept: '.csv' %>
