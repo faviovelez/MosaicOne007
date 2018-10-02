@@ -71,8 +71,13 @@ class ProspectsController < ApplicationController
   end
 
   def prospects
-    @prospects = prospects = Prospect.select('prospects.id, prospects.legal_or_business_name, prospects.prospect_type, prospects.business_type, COUNT(requests.id) as request_count, COUNT(tickets.id) as ticket_count').joins('LEFT JOIN requests ON requests.prospect_id = prospects.id LEFT JOIN tickets ON tickets.prospect_id = prospects.id').where(store_id: @store_ids).group('prospects.id').order(:id)
-    @prospects
+    @prospects = Prospect.select('prospects.id, prospects.legal_or_business_name, prospects.prospect_type, prospects.business_type, COUNT(requests.id) as request_count, COUNT(tickets.id) as ticket_count').joins('LEFT JOIN requests ON requests.prospect_id = prospects.id LEFT JOIN tickets ON tickets.prospect_id = prospects.id').where(store_id: @store_ids).group('prospects.id').order(:id)
+    if current_user.role.name == 'admin-desk'
+      store_prospects = Prospect.select('prospects.id, prospects.legal_or_business_name, prospects.prospect_type, prospects.business_type, COUNT(requests.id) as request_count, COUNT(tickets.id) as ticket_count').joins('LEFT JOIN requests ON requests.prospect_id = prospects.id LEFT JOIN tickets ON tickets.prospect_id = prospects.id').where.not(store_prospect_id: nil).group('prospects.id').order(:id)
+      store_prospects.each do |prospect|
+        @prospects << prospect unless @prospects.include?(prospect)
+      end
+    end
   end
 
   def save_store_prospect(user = current_user)

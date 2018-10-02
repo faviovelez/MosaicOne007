@@ -170,6 +170,22 @@ module ApplicationHelper
     end
   end
 
+  def inventory_status(number, sales)
+    if number <= @critic && number > 0
+      @inv_status = content_tag(:span, 'crítico', class: 'label label-danger')
+    elsif number < 1 && number > @low
+      @inv_status = content_tag(:span, 'adecuado', class: 'label label-primary')
+    elsif number <= @low && number > @critic
+      @inv_status = content_tag(:span, 'bajo', class: 'label label-warning')
+    elsif number == 1
+      @inv_status = content_tag(:span, 'óptimo', class: 'label label-success')
+    elsif number > 1 && number.round(0) < 1000000000
+      @inv_status = content_tag(:span, 'en exceso', class: 'label label-default black-default')
+    elsif number.round(0) == 1000000000 || number == 0
+      sales == 0 ? @inv_status = content_tag(:span, 'sin información', class: 'label label-default') : @inv_status = content_tag(:span, 'crítico', class: 'label label-danger')
+    end
+  end
+
   def address_for_delivery(order)
     prospect = order.prospect
     if prospect.delivery_address != nil
