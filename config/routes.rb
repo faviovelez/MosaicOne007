@@ -88,6 +88,8 @@ Rails.application.routes.draw do
 
   get 'products/massive_price_change'
 
+  post 'products/change_billing_address'
+
   post 'products/change_price_process'
 
   get 'products/catalogue'
