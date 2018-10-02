@@ -1077,7 +1077,10 @@ class OrdersController < ApplicationController
     pend_movs = []
     prod_arr = Product.where(id: params[:products]).pluck(:classification)
     (prod_arr.first == 'especial' && prod_arr.uniq.length == 1) ? @category = 'especial' : @category = 'de línea'
-    @corporate = Store.find(current_user.store.id); corporate = @corporate if @category == 'especial' && current_user.store.id == 2
+    if @category == 'especial' && current_user.store.id == 2
+      @corporate = Store.find(current_user.store.id)
+      corporate = @corporate
+    end
     @order = Order.create(
                   store: current_user.store,
                   request_user: current_user,

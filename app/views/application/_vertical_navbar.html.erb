@@ -213,9 +213,8 @@
             <li class="vertical-link">
           <% end %>
           <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Control de Inventario', inventories_select_report_path, class: 'text-link' %>
+          <%= link_to 'Control de Inventario', inventories_index_with_data_path, class: 'text-link' %>
             </li>
-
 
           <% if (params[:controller] == 'bills' && params[:action] == 'pending') %>
             <li class="vertical-link actual-vertical-link">
