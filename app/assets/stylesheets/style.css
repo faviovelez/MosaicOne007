@@ -1353,6 +1353,10 @@ h2.reg-title {
   height: 4rem;
 }
 
+.black-default {
+  background-color: #000 !important;
+}
+
 th.table-titles-inventories {
   text-align: center;
   vertical-align: middle;
