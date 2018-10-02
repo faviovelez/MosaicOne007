@@ -781,49 +781,51 @@ class OrdersController < ApplicationController
   def delete_product_from_order
     # Este método funciona independientemente de si ya se facturó
     status = []
-    request = ProductRequest.find(params[:id])
-    product = request.product
-    order = request.order
-    @id = order.id
-    total = order.total
-    subtotal = order.subtotal
-    taxes = order.taxes
-    discount_applied = order.discount_applied
-    order.movements.each do |mov|
-      if mov.product == product
-        number = WarehouseEntry.where(product: product, store: order.corporate).order(:id).last.entry_number.to_i
-        entry_mov = mov.entry_movement
-        if order.status != 'entregado'
-          entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: order.store, movement: entry_mov, entry_number: number.next)
-          if order.corporate_id == 1
-            inventory = Inventory.find_by_product_id(product.id)
-          else
-            inventory = StoresInventory.where(product: product, store: order.store).first
+    if request.status != 'cancelada'
+      request = ProductRequest.find(params[:id])
+      product = request.product
+      order = request.order
+      @id = order.id
+      total = order.total
+      subtotal = order.subtotal
+      taxes = order.taxes
+      discount_applied = order.discount_applied
+      order.movements.each do |mov|
+        if mov.product == product
+          number = WarehouseEntry.where(product: product, store: order.corporate).order(:id).last.entry_number.to_i
+          entry_mov = mov.entry_movement
+          if order.status != 'entregado'
+            entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: order.store, movement: entry_mov, entry_number: number.next)
+            if order.corporate_id == 1
+              inventory = Inventory.find_by_product_id(product.id)
+            else
+              inventory = StoresInventory.where(product: product, store: order.store).first
+            end
+            inventory.update(quantity: inventory.quantity + mov.quantity)
           end
-          inventory.update(quantity: inventory.quantity + mov.quantity)
+          total -= mov.total
+          subtotal -= mov.subtotal
+          taxes -= mov.taxes
+          discount_applied -= mov.discount_applied
+          down_mov = mov.dup
+          down_mov.update_attributes(
+            movement_type: 'devolución'
+          )
         end
-        total -= mov.total
-        subtotal -= mov.subtotal
-        taxes -= mov.taxes
-        discount_applied -= mov.discount_applied
-        down_mov = mov.dup
-        down_mov.update_attributes(
-          movement_type: 'devolución'
-        )
       end
-    end
-    order.pending_movements.each do |mov|
-      if mov.product == product
-        total -= mov.total
-        subtotal -= mov.subtotal
-        taxes -= mov.taxes
-        discount_applied -= mov.discount_applied
-        mov.delete
+      order.pending_movements.each do |mov|
+        if mov.product == product
+          total -= mov.total
+          subtotal -= mov.subtotal
+          taxes -= mov.taxes
+          discount_applied -= mov.discount_applied
+          mov.delete
+        end
       end
-    end
-    request.update(status: 'cancelada')
-    order.product_requests.each do |pr|
-      status << pr.status
+      request.update(status: 'cancelada')
+      order.product_requests.each do |pr|
+        status << pr.status
+      end
     end
     order.update(status: 'mercancía asignada') if (status.uniq.length == 1 && status.first == 'asignado' && order.status == 'en espera')
     if order.product_requests.where.not(status: 'cancelada').count < 1
@@ -846,9 +848,12 @@ class OrdersController < ApplicationController
     order.movements.each do |mov|
       # Falta el proceso que los quita de los reportes
       if mov.product == product
-        number = WarehouseEntry.where(product: product, store: order.corporate).order(:id).last.entry_number.to_i
+        if WarehouseEntry.where(product: product, store: order.corporate) != []
+          number = WarehouseEntry.where(product: product, store: order.corporate).order(:id).last.entry_number.to_i
+        end
         entry_mov = mov.entry_movement
         if order.status != 'entregado'
+          number = 0 if number == nil
           entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: order.store, movement: entry_mov, entry_number: number.next)
           if order.corporate_id == 1
             inventory = Inventory.find_by_product_id(product.id)

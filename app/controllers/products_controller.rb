@@ -135,7 +135,7 @@ class ProductsController < ApplicationController
                                           )
         end
 
-        delivery = DeliveryAddress.where(street: row['calle'], exterior_number: row['num_ext'], interior_number: row['num_int'])
+        delivery = DeliveryAddress.where(street: row['calle'], exterior_number: row['num_ext'], interior_number: row['num_int']).first
         if delivery == nil
           delivery = DeliveryAddress.create(
             {
@@ -149,7 +149,7 @@ class ProductsController < ApplicationController
             }
           )
         else
-          delivery = DeliveryAddress.update(
+          delivery.update(
             {
               street: row['calle'],
               exterior_number: row['num_ext'],
@@ -225,18 +225,31 @@ class ProductsController < ApplicationController
         )
 
         delivery = prospect.delivery_address
-        if delivery != nil
+        if delivery == nil
+          DeliveryAddress.create(
+                                  {
+                                    street: row['calle'],
+                                    exterior_number: row['num_ext'],
+                                    interior_number: row['num_num'],
+                                    zipcode: row['cod_postal'],
+                                    neighborhood: row['colonia'],
+                                    city: row['ciudad'],
+                                    state: row['estado'],
+                                    store_id: 2
+                                  }
+          )
+        else
           delivery.update(
-                                            {
-                                              street: row['calle'],
-                                              exterior_number: row['num_ext'],
-                                              interior_number: row['num_num'],
-                                              zipcode: row['cod_postal'],
-                                              neighborhood: row['colonia'],
-                                              city: row['ciudad'],
-                                              state: row['estado'],
-                                              store_id: 2
-                                            }
+            {
+              street: row['calle'],
+              exterior_number: row['num_ext'],
+              interior_number: row['num_num'],
+              zipcode: row['cod_postal'],
+              neighborhood: row['colonia'],
+              city: row['ciudad'],
+              state: row['estado'],
+              store_id: 2
+            }
           )
         end
       end
