@@ -198,14 +198,24 @@
           <%= link_to 'Servicios de Mensajería', delivery_services_select_report_path, class: 'text-link' %>
             </li>
 
-          <% if params[:controller] == 'inventories' %>
+          <% if params[:controller] == 'inventories' && params[:action] != 'index_with_data' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-bar-chart other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'inventories' && params[:action] == 'index_with_data' %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
           <% end %>
           <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
+          <%= link_to 'Control de Inventario', inventories_select_report_path, class: 'text-link' %>
             </li>
+
 
           <% if (params[:controller] == 'bills' && params[:action] == 'pending') %>
             <li class="vertical-link actual-vertical-link">
@@ -783,6 +793,16 @@
           <i class="fa fa-cubes other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Todos los productos', products_path, class: 'text-link' %>
             </li>
+
+          <% if params[:controller] == 'inventories' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para admin-desk %>
 
