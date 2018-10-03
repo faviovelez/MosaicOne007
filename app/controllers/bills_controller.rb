@@ -1302,18 +1302,6 @@ class BillsController < ApplicationController
         rows_for_global_form
         @general_bill = true
       end
-      if @bill == nil
-        if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
-          pay_form = PaymentForm.where(payment_key: params[:payment_key]).first
-          @greatest_payment = pay_form
-          @payment_key = pay_form.payment_key
-          @payment_description = pay_form.description
-          @method = PaymentMethod.where(method: params[:method_key]).first
-          @method_key = @method.method
-          @method_description = @method.description
-          @payment_form = params[:payment_form]
-        end
-      end
       create_directories
       create_unsigned_xml_file
       generate_digital_stamp

@@ -880,6 +880,25 @@
           <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
             </li>
 
+          <% if params[:controller] == 'bills' && params[:action] == 'form' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-wpforms other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Formulario de factura cliente', bills_form_path, class: 'text-link'%>
+            </li>
+
+
+          <% if params[:controller] == 'bills' && params[:action] == 'global_form' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-folder-open other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Formulario Fact Global', bills_global_form_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para viewer %>
 

@@ -780,9 +780,9 @@ class OrdersController < ApplicationController
 
   def delete_product_from_order
     # Este método funciona independientemente de si ya se facturó
+    request = ProductRequest.find(params[:id])
     status = []
     if request.status != 'cancelada'
-      request = ProductRequest.find(params[:id])
       product = request.product
       order = request.order
       @id = order.id
