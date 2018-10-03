@@ -128,7 +128,12 @@
             <td class="space-preview"> <%= number_to_currency(row.discount) %> </td>
             <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
             <td class="space-preview"> <%= number_to_currency(row.subtotal) %> </td>
-            <td class="hidden"> <%= text_field_tag "products[]", Product.find_by_unique_code(row.unique_code).id, { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
+            <% if Product.find_by_unique_code(row.unique_code) == nil %>
+              <td class="hidden"> <%= text_field_tag "products[]", Service.find_by_unique_code(row.unique_code).id, { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
+              <td class="hidden"> <%= text_field_tag "services[]", Service.find_by_unique_code(row.unique_code).id, { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
+            <% else %>
+              <td class="hidden"> <%= text_field_tag "products[]", Product.find_by_unique_code(row.unique_code).id, { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
+            <% end %>
           </tr>
         <% end %>
         <tr>
@@ -302,7 +307,7 @@
 <% end %>
 
 <% if @bill == nil%>
-  <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
+  <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes, payment_key: @payment_key, payment_description: @payment_description, method_key: @method_key, method_description: @method_description, payment_form: @payment_form}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
 <% end %>
 
 <%= render 'add_masks' %>

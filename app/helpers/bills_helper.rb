@@ -232,9 +232,34 @@ module BillsHelper
 
   def quantity_options(row)
     @quantity_options = []
-    (row.quantity + 1).times do |i|
-      @quantity_options << i
-      i += 1
+    if row.bill.children == []
+      quant = 0
+      (row.quantity + 1).times do
+        @quantity_options << quant
+        quant += 1
+      end
+    else
+      row.bill.children.each do |child_bill|
+        child_bill.rows.each do |r|
+          if r.unique_code == row.unique_code
+            skip = true
+            number = row.quantity - r.quantity
+            quant = 0
+            (number + 1).times do
+              @quantity_options << quant
+              quant += 1
+            end
+          else
+            if skip == true
+              quant = 0
+              (row.quantity + 1).times do
+                @quantity_options << quant
+                quant += 1
+              end
+            end
+          end
+        end
+      end
     end
     @quantity_options
   end
@@ -497,7 +522,7 @@ module BillsHelper
   end
 
   def get_order_payments(order)
-    order.payments == [] ? pay = 0 : order.payments.sum(:total).round(2)
+    order.payments == [] ? pay = 0 : pay = order.payments.sum(:total).round(2)
     (order.total.to_f <= pay || order.total - pay < 1) ? @balance = content_tag(:span, 'pagado', class: 'label label-success') : @balance = number_to_currency(order.total - pay)
     @balance
   end
