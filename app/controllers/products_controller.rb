@@ -133,6 +133,21 @@ class ProductsController < ApplicationController
                                               store_id: 1
                                             }
                                           )
+        else
+          BillingAddress.find_or_create_by(
+                                            {
+                                              business_name: row['nombre_de_empresa_o_cliente'],
+                                              rfc: row['rfc'],
+                                              street: row['calle'],
+                                              exterior_number: row['num_ext'],
+                                              interior_number: row['num_int'],
+                                              zipcode: row['cod_postal'],
+                                              neighborhood: row['colonia'],
+                                              city: row['ciudad'],
+                                              state: row['estado'],
+                                              store_id: 1
+                                            }
+                                          )
         end
 
         delivery = DeliveryAddress.where(street: row['calle'], exterior_number: row['num_ext'], interior_number: row['num_int']).first

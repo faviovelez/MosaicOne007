@@ -3,7 +3,11 @@
     <thead>
       <tr class="table-titles">
         <th> </th>
-        <th class="col-md-1">Ticket</th>
+        <% if Store.where(store_type_id: 2).pluck(:id).include?(current_user.store.id) %>
+          <th class="col-md-1">Pedido</th>
+        <% else %>
+          <th class="col-md-1">Ticket</th>
+        <% end %>
         <th> Fecha </th>
         <th> Monto </th>
         <th> Forma pago </th>

@@ -531,6 +531,11 @@ class BillsController < ApplicationController
   end
 
   def select_info
+    if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
+      select_payment_forms
+      select_payment_conditions
+      select_payment_methods
+    end
     params[:tickets] == nil ? @tickets = nil : @tickets = Ticket.find(params[:tickets])
     (params[:orders] == nil || params[:orders] == "") ? @orders = nil : @orders = Order.find(params[:orders])
     params[:bills] == nil ? @bills = nil : @bills = Bill.find(params[:bills])
@@ -759,6 +764,17 @@ class BillsController < ApplicationController
               @payment_form
               rows(@general_bill, @objects)
               @rows
+            end
+          end
+          if @bill == nil
+            if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
+              pay_form = PaymentForm.find(params[:payment])
+              @payment_key = pay_form.payment_key
+              @payment_description = pay_form.description
+              pay_method = PaymentMethod.find(params[:method])
+              @method_key = pay_method.method
+              @method_description = pay_method.description
+              @payment_form = params[:payment_form]
             end
           end
           subtotal
@@ -1286,6 +1302,18 @@ class BillsController < ApplicationController
         rows_for_global_form
         @general_bill = true
       end
+      if @bill == nil
+        if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
+          pay_form = PaymentForm.where(payment_key: params[:payment_key]).first
+          @greatest_payment = pay_form
+          @payment_key = pay_form.payment_key
+          @payment_description = pay_form.description
+          @method = PaymentMethod.where(method: params[:method_key]).first
+          @method_key = @method.method
+          @method_description = @method.description
+          @payment_form = params[:payment_form]
+        end
+      end
       create_directories
       create_unsigned_xml_file
       generate_digital_stamp
@@ -1495,13 +1523,24 @@ class BillsController < ApplicationController
             n = 0
             quantities_unfiltered = params[:quantities]
             products_unfiltered = params[:products]
+            services_unfiltered = params[:services]
             zeroes = quantities_unfiltered.each_index.select{|i| quantities_unfiltered[i] == '0'}
             quantities_filtered = quantities_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) }
             products_filtered = products_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) }
+            services_filtered = services_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) }
             quantities_filtered.count.times do
-              product = Product.find(products_filtered[n])
+              if products_filtered[n] == services_filtered[n]
+                product = Service.find(products_filtered[n])
+              else
+                product = Product.find(products_filtered[n])
+              end
               id = product.id
-              row = @bill.rows.select{|row| row.product == id}.first
+              if products_filtered[n] == services_filtered[n]
+                unique_code = product.unique_code
+                row = @bill.rows.select{|row| row.product.to_s == unique_code}.first
+              else
+                row = @bill.rows.select{|row| row.product == id}.first
+              end
               new_row = Row.new.tap do |r|
                 r.unique_code = row.unique_code
                 r.quantity = quantities_filtered[n]
@@ -1589,6 +1628,18 @@ class BillsController < ApplicationController
             @relation_type = ''
             get_series_and_folio
           end
+        end
+      end
+      if @bill == nil
+        if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
+          pay_form = PaymentForm.where(payment_key: params[:payment_key]).first
+          @greatest_payment = pay_form
+          @payment_key = pay_form.payment_key
+          @payment_description = pay_form.description
+          @method = PaymentMethod.where(method: params[:method_key]).first
+          @method_key = @method.method
+          @method_description = @method.description
+          @payment_form = params[:payment_form]
         end
       end
       create_directories
