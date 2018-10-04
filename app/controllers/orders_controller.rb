@@ -792,7 +792,11 @@ class OrdersController < ApplicationController
       discount_applied = order.discount_applied
       order.movements.each do |mov|
         if mov.product == product
-          number = WarehouseEntry.where(product: product, store: order.corporate).order(:id).last.entry_number.to_i
+          if WarehouseEntry.where(product: product, store: order.corporate) != []
+            number = WarehouseEntry.where(product: product, store: order.corporate).order(:id).last.entry_number.to_i
+          else
+            number = 0
+          end
           entry_mov = mov.entry_movement
           if order.status != 'entregado'
             entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: order.store, movement: entry_mov, entry_number: number.next)
@@ -850,6 +854,8 @@ class OrdersController < ApplicationController
       if mov.product == product
         if WarehouseEntry.where(product: product, store: order.corporate) != []
           number = WarehouseEntry.where(product: product, store: order.corporate).order(:id).last.entry_number.to_i
+        else
+          number = 0
         end
         entry_mov = mov.entry_movement
         if order.status != 'entregado'

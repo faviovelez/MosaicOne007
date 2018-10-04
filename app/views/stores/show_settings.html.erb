@@ -5,8 +5,12 @@
     <p><strong> Tipo de costeo: </strong>
       <%= @store.cost_type.warehouse_cost_type %>
 
-    <p><strong> Meses de inventario deseados: </strong>
-      <%= @store.months_in_inventory %>
+    <p><strong> ¿Analizar ventas de cuántos tiempo?: </strong>
+      <%= @store.months_in_inventory %> meses
+    </p>
+
+    <p><strong> Días de inventario deseados: </strong>
+      <%= @store.days_inventory_desired %>
     </p>
 
     <p><strong> Punto de reorden: </strong>

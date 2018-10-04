@@ -42,7 +42,7 @@ class ApiController < ApplicationController
     else
       products =  Product.where(classification: 'de línea').where(current: true, shared: true)
     end
-    if current_user.role.name == 'admin-desk'
+    if current_user.role.name == 'admin-desk' || current_user.role.name == 'warehouse-staff' || current_user.role.name == 'warehouse-admin'
       special_products = Product.where(classification: 'especial').where(business_unit_id: current_user.store.business_unit.id)
       products = products + special_products
     end
@@ -58,7 +58,7 @@ class ApiController < ApplicationController
       words = product.description.split(' ') [0..5]
       words_clean = words.join(' ')
       string = product.unique_code + ' ' + words_clean  + ' ' + product.exterior_color_or_design.to_s + ' ' + product.only_measure.to_s
-      options << { "value" => string, "data" => product.id }
+      options << { "value" => string, "data" => product.id } unless options.include?({ "value" => string, "data" => product.id }) || product.classification == 'especial'
     end
     render json: { suggestions: options }
   end

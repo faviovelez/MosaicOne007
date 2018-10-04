@@ -11,6 +11,9 @@
         <% end %>
         <th>Precio</th>
         <th class="col-md-1">Medidas</th>
+        <% if current_user.role.name == 'store' || current_user.role.name == 'store-admin' %>
+          <th> Actualización manual </th>
+        <% end %>
         <th>Acciones</th>
       </tr>
     </thead>
@@ -30,6 +33,9 @@
             <td class="col-md-1"> <%= number_to_currency(product.price) %></td>
           <% end %>
           <td> <%= product.only_measure %> </td>
+          <% if current_user.role.name == 'store' || current_user.role.name == 'store-admin' %>
+            <td> <%= product.manual_price_update ? 'Sí' : 'No' %> </td>
+          <% end %>
           <td class="col-md-1">
             <%= link_to product do %>
               <i class="fa fa-plus-square link-to-details" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver"></i>

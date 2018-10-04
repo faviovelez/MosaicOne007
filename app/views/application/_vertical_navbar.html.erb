@@ -739,7 +739,7 @@
           <%= link_to 'Facturar pedidos', warehouse_sales_for_billing_path, class: 'text-link' %>
             </li>
 
-          <% if (params[:controller] == 'bills' && params[:action] == 'select_bills') %>
+          <% if (params[:controller] == 'bills' && params[:action] == 'index') %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
@@ -897,6 +897,15 @@
           <% end %>
           <i class="fa fa-folder-open other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Formulario Fact Global', bills_global_form_path, class: 'text-link' %>
+            </li>
+
+          <% if (params[:controller] == 'bills' && params[:action] == 'index') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-file-pdf-o other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Facturas emitidas', bills_path, class: 'text-link' %>
             </li>
 
         <% end %>

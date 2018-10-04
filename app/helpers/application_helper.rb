@@ -26,19 +26,23 @@ module ApplicationHelper
   end
 
   def get_discount(product_request)
-    if product_request.movements == []
-      @discount = (product_request.pending_movement.discount_applied / product_request.pending_movement.initial_price * 100).round(0)
+    if product_request.status == 'cancelada'
+      @discount = 0
     else
-      if product_request.movements.count > 1
-        subtotal = 0
-        discount = 0
-        product_request.movements.each do |mov|
-          discount += mov.discount_applied
-          subtotal += mov.subtotal
-        end
-        @discount = (discount / subtotal * 100).round(0)
+      if product_request.movements == []
+        @discount = (product_request.pending_movement.discount_applied / product_request.pending_movement.initial_price * 100).round(0)
       else
-        @discount = (product_request.movements.first.discount_applied / product_request.movements.first.subtotal * 100).round(0)
+        if product_request.movements.count > 1
+          subtotal = 0
+          discount = 0
+          product_request.movements.each do |mov|
+            discount += mov.discount_applied
+            subtotal += mov.subtotal
+          end
+          @discount = (discount / subtotal * 100).round(0)
+        else
+          @discount = (product_request.movements.first.discount_applied / product_request.movements.first.subtotal * 100).round(0)
+        end
       end
     end
     @discount.round(0)
@@ -102,21 +106,25 @@ module ApplicationHelper
   end
 
   def get_total_from_pr(pr, type)
-    if type == 'total'
-      if pr.movements == []
-        if pr.product.group
-          @mov_total = (pr.pending_movement.total * pr.quantity * pr.product.average).round(2)
+    if pr.status == 'cancelada'
+      @mov_total = 0
+    else
+      if type == 'total'
+        if pr.movements == []
+          if pr.product.group
+            @mov_total = (pr.pending_movement.total * pr.quantity * pr.product.average).round(2)
+          else
+            @mov_total = (pr.pending_movement.total * pr.quantity).round(2)
+          end
         else
-          @mov_total = (pr.pending_movement.total * pr.quantity).round(2)
+          @mov_total = pr.movements.sum(:total).round(2)
         end
       else
-        @mov_total = pr.movements.sum(:total).round(2)
-      end
-    else
-      if pr.movements == []
-        @mov_total = pr.pending_movement.quantity
-      else
-        @mov_total = pr.movements.sum(:quantity)
+        if pr.movements == []
+          @mov_total = pr.pending_movement.quantity
+        else
+          @mov_total = pr.movements.sum(:quantity)
+        end
       end
     end
     @mov_total

@@ -7,7 +7,11 @@ class BillsController < ApplicationController
   require 'base64'
 
   def index
-    @bills = Bill.includes(:payments, :receiving_company, :children).where(store: current_user.store, parent: nil).where.not(status: 'cancelada', receiving_company: nil, total: nil)
+    if current_user.role.name == 'viewer'
+      @bills = Bill.includes(:receiving_company, :children).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, parent: nil, from: 'Form').where.not(status: 'cancelada', receiving_company: nil, total: nil)
+    else
+      @bills = Bill.includes(:receiving_company, :children).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, parent: nil).where.not(status: 'cancelada', receiving_company: nil, total: nil)
+    end
   end
 
   def pending
