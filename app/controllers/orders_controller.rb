@@ -148,10 +148,13 @@ class OrdersController < ApplicationController
 
   def bill_received_summary
     select_dates
-    bills = BillReceived.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(store_id: current_user.store_id).where(created_at: @initial_date..@final_date).group("suppliers.name").pluck("suppliers.name, COUNT(DISTINCT bill_receiveds.id), SUM(bill_receiveds.total_amount), SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), array_agg(bill_receiveds.id), 'BillReceived'")
-
-    store_prospect = current_user.store.store_prospect.id
-    complement = Bill.joins(:prospect).joins('LEFT JOIN payments ON bills.id = payments.bill_id').where(receiving_company: store_prospect, status: 'creada', created_at: @initial_date..@final_date).group("prospects.legal_or_business_name").pluck("prospects.legal_or_business_name, COUNT(DISTINCT bills.id), SUM(bills.total), SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), array_agg(bills.id), 'Bill'")
+    bills = BillReceived.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(store_id: current_user.store_id).where(date_of_bill: @initial_date.to_date..@final_date.to_date).group("suppliers.name").pluck("suppliers.name, COUNT(DISTINCT bill_receiveds.id), SUM(bill_receiveds.total_amount), SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), array_agg(bill_receiveds.id), 'BillReceived'")
+    if Store.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
+      store_prospect = Prospect.where(store_prospect_id: current_user.store.business_unit.stores.pluck(:id)).pluck(:id).uniq
+    else
+      store_prospect = current_user.store.store_prospect.id
+    end
+    complement = Bill.joins(:prospect, :issuing_company).joins('LEFT JOIN payments ON bills.id = payments.bill_id').where(prospect_id: store_prospect, status: 'creada', created_at: @initial_date..@final_date).group('bills.issuing_company_id, billing_addresses.business_name').pluck("billing_addresses.business_name, COUNT(DISTINCT bills.id), SUM(bills.total), SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), array_agg(bills.id), 'Bill'")
     @bills = bills + complement
 
     render 'bill_received_summary'
@@ -164,7 +167,7 @@ class OrdersController < ApplicationController
     if params[:type] == 'BillReceived'
       @bills = params[:type].constantize.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(id: @ids).group("bill_receiveds.id, suppliers.name").pluck("bill_receiveds.id, bill_receiveds.folio, bill_receiveds.created_at, suppliers.name, bill_receiveds.total_amount, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
     else
-      @bills = params[:type].constantize.joins(:prospect).joins('LEFT JOIN payments ON bills.id = payments.bill_id, prospects.legal_or_business_name').where(id: @ids).group("bills.id").pluck("bills.id CONCAT(bills.sequence, ' ', bills.folio), bills.created_at, prospects.legal_or_business_name, bills.total, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
+      @bills = params[:type].constantize.joins(:issuing_company).joins('LEFT JOIN payments ON bills.id = payments.bill_id').where(id: @ids).group('bills.id, bills.issuing_company_id, billing_addresses.business_name').pluck("bills.id, CONCAT(bills.sequence, ' ', bills.folio), bills.created_at, billing_addresses.business_name, bills.total, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
     end
   end
 
