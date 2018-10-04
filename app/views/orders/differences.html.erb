@@ -77,7 +77,7 @@
               <%= link_to delete_order_path(order), class: 'link-extra-space', data: { confirm: "Desa cancelar el pedido #{order.id}?. Esta acción no se puede deshacer." } do %>
                 <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Borrar pedido"></i>
               <% end %>
-              <% if order.bill != nil %>
+              <% if order.bill != nil && order.bill.status != 'cancelada' %>
                 <% if order.bill.bill_type == 'global' %>
                   <%= link_to details_global_path(order.bill) do %>
                     <i class="fa fa-file-pdf-o link-to-details more-margin" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver factura"></i>

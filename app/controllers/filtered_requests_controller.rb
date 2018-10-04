@@ -48,6 +48,9 @@ class FilteredRequestsController < ApplicationController
 # Método de tienda: muestra solicitudes activas
   def filter_store_active_requests(store = current_user.store)
     @store_active = store.requests.where.not(:status => ['código asignado','creada','expirada','cancelada']).order(:created_at)
+    additional_requests = Request.where(prospect_id: current_user.store.store_prospect.id).where.not(:status => ['código asignado','creada','expirada','cancelada']).order(:created_at)
+    @store_active = @store_active + additional_requests if additional_requests != []
+    @store_active
   end
 
 # Método de tienda: muestra solicitudes expiradas y canceladas

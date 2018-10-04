@@ -72,7 +72,7 @@
             <%= order_confirm_user(order) %>
           </td>
           <td>
-            <% if order.bill != nil %>
+            <% if order.bill != nil && order.bill.status != 'cancelada' %>
               <%= order.bill.folio %>
             <% else %>
               <span class="label label-warning">
@@ -96,7 +96,7 @@
                 <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Borrar pedido"></i>
               <% end %>
             <% end %>
-            <% if order.bill != nil %>
+            <% if order.bill != nil && order.bill.status != 'cancelada' %>
               <% unless order.bill.pdf_url == nil %>
                 <%= link_to download_pdf_path(order.bill), download: "Factura.pdf", class: 'link-extra-space' do %>
                   <%= image_tag '/assets/pdf_icon.png', alt: 'Logo PDF', class: 'download-icon-table' %>
