@@ -165,7 +165,7 @@ class OrdersController < ApplicationController
     @final_date = Time.parse(params[:final_date])
     @ids = params[:ids].split('/')
     if params[:type] == 'BillReceived'
-      @bills = params[:type].constantize.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(id: @ids).group("bill_receiveds.id, suppliers.name").pluck("bill_receiveds.id, bill_receiveds.folio, bill_receiveds.created_at, suppliers.name, bill_receiveds.total_amount, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
+      @bills = params[:type].constantize.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(id: @ids).group("bill_receiveds.id, suppliers.name").pluck("bill_receiveds.id, bill_receiveds.folio, bill_receiveds.date_of_bill, suppliers.name, bill_receiveds.total_amount, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
     else
       @bills = params[:type].constantize.joins(:issuing_company).joins('LEFT JOIN payments ON bills.id = payments.bill_id').where(id: @ids).group('bills.id, bills.issuing_company_id, billing_addresses.business_name').pluck("bills.id, CONCAT(bills.sequence, ' ', bills.folio), bills.created_at, billing_addresses.business_name, bills.total, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
     end
