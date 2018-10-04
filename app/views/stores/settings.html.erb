@@ -10,8 +10,13 @@
     </div>
 
     <div class="form-inside-style">
-      <%= f.label :meses_de_inventario_deseados %>
-      <%= f.text_field :months_in_inventory, class: 'form-inside' %>
+      <%= f.label '¿Analizar ventas de cuántos tiempo? (solo números)' %>
+      <%= f.text_field :months_in_inventory, maxlength: 10, class: 'form-inside' %>
+    </div>
+
+    <div class="form-inside-style">
+      <%= f.label 'Días de inventario deseados (solo números)' %>
+      <%= f.text_field :days_inventory_desired, maxlength: 10, class: 'form-inside' %>
     </div>
 
     <div class="form-inside-style">

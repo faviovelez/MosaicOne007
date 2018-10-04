@@ -247,7 +247,7 @@ class RequestsController < ApplicationController
       elsif @request.update(request_params) && params[:enviar_dudas]
         redirect_to manager_after_path(@request), notice: "Los comentarios fueron enviados a la tienda."
       elsif @request.update(request_params)
-        @request.update(sales_price: params[:request][:internal_price].to_f, status: 'precio asignado') if ((@request.store.store_type.store_type == 'tienda propia' || @request.store.store_type.store_type == 'corporativo') && params[:request][:internal_price].present? && params[:request][:internal_cost].present?)
+        @request.update(sales_price: params[:request][:internal_price].to_f, status: 'precio asignado') if ((@request.store.store_type.store_type == 'tienda propia' || @request.store.store_type.store_type == 'corporativo') && params[:request][:internal_price].present? && params[:request][:internal_cost].present? && @request.prospect.store_prospect_id == nil)
         redirect_to manager_view_requests_path(@request), notice: "Los campos fueron actualizados correctamente."
       else
         respond_to do |format|
