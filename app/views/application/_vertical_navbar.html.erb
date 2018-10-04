@@ -407,6 +407,16 @@
           <i class="fa fa-money other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Cambio de precios masivo', products_massive_price_change_path, class: 'text-link' %>
             </li>
+
+          <% if (params[:controller] == 'orders' && (params[:action] == 'select_report' || params[:action] == 'payment_report' || params[:action] == 'billing_report' || params[:action] == 'collection_report' || params[:action] == 'stores_by_month_and_year' || params[:action] == 'show_sales' || params[:action] == 'process_report')) %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-th-large other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Reportes corporativo', orders_select_report_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para product-staff o product-admin %>
 
