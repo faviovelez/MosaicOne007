@@ -25,6 +25,15 @@
   </tbody>
 </table>
 
+<br / ><br / >
+
+<div>
+  <%= link_to orders_bill_received_extended_total_path(bills: @normal_bills, bill_receiveds: @bill_receiveds, initial_date: @initial_date, final_date: @final_date), class: 'space-between-links' do %>
+
+    Reporte detallado
+  <% end %>
+</div>
+
 <p id="initial_date" class="hidden"><%= l @initial_date.to_date %></p>
 <p id="final_date" class="hidden"><%= l @final_date.to_date %></p>
 <%= render 'dataTables' %>
