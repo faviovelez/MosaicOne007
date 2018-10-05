@@ -78,6 +78,10 @@ $(document).ready(function() {
             suggestion.value
           );
 
+          $("#credit_days").val(
+            suggestion.days
+          );
+
           $("#supplierId").val(
             suggestion.data
           );
@@ -94,7 +98,7 @@ $(document).ready(function() {
 
       $("#supplier_total_amount").val(
         0.0
-      );      
+      );
     }
 
 });

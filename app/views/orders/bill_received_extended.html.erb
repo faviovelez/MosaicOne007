@@ -2,11 +2,12 @@
   <thead>
     <tr class="table-titles">
       <th> Folio </th>
-      <th> Fecha </th>
+      <th> Emisión </th>
+      <th> Vencimiento </th>
       <th> Proveedor </th>
       <th> Total </th>
       <th> Pagos </th>
-      <th> Saldos </th>
+      <th> Saldo </th>
     </tr>
   </thead>
   <tbody>
@@ -14,6 +15,7 @@
       <tr>
         <td> <%= bill[1] %> </td>
         <td> <%= l bill[2].to_date %> </td>
+        <td> <%= l (bill[2].to_date + bill[6].days) %> </td>
         <td> <%= bill[3] %> </td>
         <td> <%= number_to_currency(bill[4]) %> </td>
         <td> <%= number_to_currency(bill[5]) %> </td>
