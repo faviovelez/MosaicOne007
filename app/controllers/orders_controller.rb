@@ -156,8 +156,24 @@ class OrdersController < ApplicationController
     end
     complement = Bill.joins(:prospect, :issuing_company).joins('LEFT JOIN payments ON bills.id = payments.bill_id').where(prospect_id: store_prospect, status: 'creada', created_at: @initial_date..@final_date).group('bills.issuing_company_id, billing_addresses.business_name').pluck("billing_addresses.business_name, COUNT(DISTINCT bills.id), SUM(bills.total), SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), array_agg(bills.id), 'Bill'")
     @bills = bills + complement
-
+    @bill_receiveds = bills.map{ |arr| arr[4]}.flatten
+    @normal_bills = complement.map{ |arr| arr[4]}.flatten
     render 'bill_received_summary'
+  end
+
+  def bill_received_extended_total
+    @initial_date = Time.parse(params[:initial_date])
+    @final_date = Time.parse(params[:final_date])
+    if params[:bills].present?
+      br_ids = params[:bill_receiveds].split('/')
+      bills_receiveds = BillReceived.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(id: br_ids).group("bill_receiveds.id, suppliers.name").pluck("bill_receiveds.id, bill_receiveds.folio, bill_receiveds.date_of_bill, suppliers.name, bill_receiveds.total_amount, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), bill_receiveds.credit_days")
+    end
+    if params[:bill_receiveds].present?
+      b_ids = params[:bills].split('/')
+      bills = Bill.joins(:issuing_company, :prospect).joins('LEFT JOIN payments ON bills.id = payments.bill_id').where(id: b_ids).group('bills.id, bills.issuing_company_id, billing_addresses.business_name, prospects.credit_days').pluck("bills.id, CONCAT(bills.sequence, ' ', bills.folio), bills.created_at, billing_addresses.business_name, bills.total, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), prospects.credit_days")
+    end
+    @bills = bills_receiveds + bills
+    render 'bill_received_extended'
   end
 
   def bill_received_extended
@@ -165,9 +181,9 @@ class OrdersController < ApplicationController
     @final_date = Time.parse(params[:final_date])
     @ids = params[:ids].split('/')
     if params[:type] == 'BillReceived'
-      @bills = params[:type].constantize.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(id: @ids).group("bill_receiveds.id, suppliers.name").pluck("bill_receiveds.id, bill_receiveds.folio, bill_receiveds.date_of_bill, suppliers.name, bill_receiveds.total_amount, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
+      @bills = params[:type].constantize.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(id: @ids).group("bill_receiveds.id, suppliers.name").pluck("bill_receiveds.id, bill_receiveds.folio, bill_receiveds.date_of_bill, suppliers.name, bill_receiveds.total_amount, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), bill_receiveds.credit_days")
     else
-      @bills = params[:type].constantize.joins(:issuing_company).joins('LEFT JOIN payments ON bills.id = payments.bill_id').where(id: @ids).group('bills.id, bills.issuing_company_id, billing_addresses.business_name').pluck("bills.id, CONCAT(bills.sequence, ' ', bills.folio), bills.created_at, billing_addresses.business_name, bills.total, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END)")
+      @bills = params[:type].constantize.joins(:issuing_company, :prospect).joins('LEFT JOIN payments ON bills.id = payments.bill_id').where(id: @ids).group('bills.id, bills.issuing_company_id, billing_addresses.business_name, prospects.credit_days').pluck("bills.id, CONCAT(bills.sequence, ' ', bills.folio), bills.created_at, billing_addresses.business_name, bills.total, SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), prospects.credit_days")
     end
   end
 
