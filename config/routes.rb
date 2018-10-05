@@ -258,7 +258,9 @@ Rails.application.routes.draw do
 
   get 'products/show_product_cost_for_corporate'
 
-  get 'orders/bill_received_extended/:ids/:type/:initial_date/:final_date', to: 'orders#bill_received_extended', as: 'orders_bill_received_extended'
+  get 'orders/bill_received_extended/:ids/:type/:initial_date/:final_date/', to: 'orders#bill_received_extended', as: 'orders_bill_received_extended'
+
+  get 'orders/bill_received_extended_total/:initial_date/:final_date/:bills/:bill_receiveds', to: 'orders#bill_received_extended_total', as: 'orders_bill_received_extended_total'
 
   get 'orders/bill_received_summary'
 
