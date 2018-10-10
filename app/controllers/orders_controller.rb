@@ -635,7 +635,7 @@ class OrdersController < ApplicationController
 
   def confirm_received
     order = Order.find(params[:order_id])
-    if params[:order_complete]
+    if params[:order_complete] == 'true'
       order.update(status: 'entregado', deliver_complete: true, confirm_user: current_user)
       requests = order.product_requests.where.not(status: 'cancelada')
       requests.each do |request|
@@ -686,16 +686,12 @@ class OrdersController < ApplicationController
     else
       complete = true
       alert = ""
-      params[:id].each_with_index do |val,index|
-        request = ProductRequest.find(val)
-        complete = false if (params[:excess][index].to_i != 0 || params[:surplus][index].to_i != 0)
-        if params[:excess][index].to_i != 0
-          alert = "Sobran #{params[:excess][index].to_i} piezas"
-        elsif params[:surplus][index].to_i != 0
-          alert = "Faltan #{params[:surplus][index].to_i} piezas"
-        end
-        # Posiblemente un mailer que avise de los faltantes
-        request.update(status: 'entregado', quantity: request.quantity.to_i + params[:excess][index].to_i - params[:surplus][index].to_i, alert: alert, excess: params[:excess][index].to_i, surplus: params[:surplus][index].to_i)
+      surplus = params.keys.select.with_index{ |k| k.include?("surplus") && params[k] != '' }
+      excess = params.keys.select.with_index{ |k| k.include?("excess") && params[k] != '' }
+      complete_pr = params[:complete]
+      complete_pr.each do |comp|
+        request = ProductRequest.find(comp)
+        request.update(status: 'entregado', quantity: request.quantity.to_i)
         counter = request.movements.count
         n = 0
         request.movements.each do |mov|
@@ -709,9 +705,138 @@ class OrdersController < ApplicationController
           new_mov["movement_type"] = 'alta automática'
           new_mov["store_id"] = current_user.store.id
           if counter == 1
-            new_mov["quantity"] = new_mov["quantity"].to_i + params[:excess][index].to_i - params[:surplus][index].to_i
+            new_mov["quantity"] = new_mov["quantity"].to_i
           elsif counter != 1 && n == counter
-            new_mov["quantity"] = new_mov["quantity"].to_i + params[:excess][index].to_i - params[:surplus][index].to_i
+            new_mov["quantity"] = new_mov["quantity"].to_i
+          else
+            new_mov["quantity"] = new_mov["quantity"].to_i
+          end
+          if (current_user.store.id == 1 || current_user.store.id == 2)
+            new_mov.delete("product_request_id")
+            Movement.create(new_mov)
+            if current_user.store.id == 1
+              inventory = Inventory.where(product: mov.product).first
+              inventory.update(quantity: inventory.quantity + mov.quantity)
+            else
+              inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+              inventory.update(quantity: inventory.quantity + mov.quantity)
+            end
+          else
+            new_mov.delete("identifier")
+            new_mov.delete("seller_user_id")
+            new_mov.delete("buyer_user_id")
+            new_mov.delete("business_unit_id")
+            new_mov.delete("unique_code")
+            new_mov.delete("entry_movement_id")
+            new_mov.delete("discount_rule_id")
+            new_mov.delete("confirm")
+            new_mov.delete("maximum_date")
+            new_mov.delete("return_billed")
+            new_mov["web"] = true
+            new_mov["pos"] = false
+            new_mov["cost"] = new_mov["final_price"]
+            new_mov["total_cost"] = new_mov["cost"] * new_mov["quantity"].to_i
+            if new_mov["kg"] != nil
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i * new_mov["kg"]
+            else
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
+            end
+            new_mov.delete("kg")
+            StoreMovement.create(new_mov)
+          end
+          n += 1
+        end
+      end
+      surplus.each do |surp|
+        pr_id = surp.partition("surplus_").last
+        request = ProductRequest.find(pr_id)
+        if params[surp] == ''
+        else
+          complete = false if params[surp].to_i != 0
+          alert = "Faltan #{params[surp].to_i} piezas"
+        end
+        request.update(status: 'entregado', quantity: request.quantity.to_i - params[surp].to_i, alert: alert, excess: nil, surplus: params[surp].to_i)
+        counter = request.movements.count
+        n = 0
+        request.movements.each do |mov|
+          new_mov = mov.as_json
+          new_mov.delete("id")
+          new_mov.delete("created_at")
+          new_mov.delete("updated_at")
+          new_mov["cost"] = new_mov["cost"].to_f
+          new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
+          new_mov["reason"] = "Pedido #{order.id}"
+          new_mov["movement_type"] = 'alta automática'
+          new_mov["store_id"] = current_user.store.id
+          if counter == 1
+            new_mov["quantity"] = new_mov["quantity"].to_i - params[surp].to_i
+          elsif counter != 1 && n == counter
+            new_mov["quantity"] = new_mov["quantity"].to_i - params[surp].to_i
+          else
+            new_mov["quantity"] = new_mov["quantity"].to_i
+          end
+          if (current_user.store.id == 1 || current_user.store.id == 2)
+            new_mov.delete("product_request_id")
+            Movement.create(new_mov)
+            if current_user.store.id == 1
+              inventory = Inventory.where(product: mov.product).first
+              inventory.update(quantity: inventory.quantity + mov.quantity)
+            else
+              inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+              inventory.update(quantity: inventory.quantity + mov.quantity)
+            end
+          else
+            new_mov.delete("identifier")
+            new_mov.delete("seller_user_id")
+            new_mov.delete("buyer_user_id")
+            new_mov.delete("business_unit_id")
+            new_mov.delete("unique_code")
+            new_mov.delete("entry_movement_id")
+            new_mov.delete("discount_rule_id")
+            new_mov.delete("confirm")
+            new_mov.delete("maximum_date")
+            new_mov.delete("return_billed")
+            new_mov["web"] = true
+            new_mov["pos"] = false
+            new_mov["cost"] = new_mov["final_price"]
+            new_mov["total_cost"] = new_mov["cost"] * new_mov["quantity"].to_i
+            if new_mov["kg"] != nil
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i * new_mov["kg"]
+            else
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
+            end
+            new_mov.delete("kg")
+            StoreMovement.create(new_mov)
+          end
+          n += 1
+        end
+      end
+      excess.each do |exces|
+        pr_id = exces.partition("excess_").last
+        request = ProductRequest.find(pr_id)
+        if params[exces] == ''
+        else
+          complete = false if params[exces].to_i != 0
+          alert = "Sobran #{params[exces].to_i} piezas"
+        end
+        request.update(status: 'entregado', quantity: request.quantity.to_i + params[exces].to_i, alert: alert, excess: params[exces].to_i, surplus: nil)
+
+        counter = request.movements.count
+        n = 0
+        request.movements.each do |mov|
+          new_mov = mov.as_json
+          new_mov.delete("id")
+          new_mov.delete("created_at")
+          new_mov.delete("updated_at")
+          new_mov["cost"] = new_mov["cost"].to_f
+          new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
+          new_mov["reason"] = "Pedido #{order.id}"
+          new_mov["movement_type"] = 'alta automática'
+          new_mov["store_id"] = current_user.store.id
+          if counter == 1
+            new_mov["quantity"] = new_mov["quantity"].to_i + params[exces].to_i
+          elsif counter != 1 && n == counter
+            new_mov["quantity"] = new_mov["quantity"].to_i + + params[exces].to_i
           else
             new_mov["quantity"] = new_mov["quantity"].to_i
           end
@@ -822,7 +947,7 @@ class OrdersController < ApplicationController
             if order.corporate_id == 1
               inventory = Inventory.find_by_product_id(product.id)
             else
-              inventory = StoresInventory.where(product: product, store: order.store).first
+              inventory = StoresInventory.where(product: product, store: order.corporate_id).first
             end
             inventory.update(quantity: inventory.quantity + mov.quantity)
           end
@@ -883,7 +1008,7 @@ class OrdersController < ApplicationController
           if order.corporate_id == 1
             inventory = Inventory.find_by_product_id(product.id)
           else
-            inventory = StoresInventory.where(product: product, store: order.store).first
+            inventory = StoresInventory.where(product: product, store: order.corporate_id).first
           end
           inventory.update(quantity: inventory.quantity + mov.quantity)
         end
@@ -1439,7 +1564,7 @@ class OrdersController < ApplicationController
         product_request.update(corporate: corporate)
       end
     else
-      inventory = StoresInventory.where(product: product_request.product, store_id: corporate.id).first
+      inventory = StoresInventory.where(product: product_request.product, store_id: 2).first
     end
     product = product_request.product
     if params[:discount] != nil

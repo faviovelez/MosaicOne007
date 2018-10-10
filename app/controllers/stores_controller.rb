@@ -751,7 +751,7 @@ private
                                   :email,
                                   :type_of_person,
                                   :prospect_status,
-                                  :zipcode,
+                                  :zip_code,
                                   :overprice,
                                   :certificate,
                                   :key,
@@ -770,7 +770,9 @@ private
                                   :prospects_file,
                                   :collection_active,
                                   :days_before,
-                                  :days_after
+                                  :days_after,
+                                  :bill_email,
+                                  :days_inventory_desired
                                   )
   end
 

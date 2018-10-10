@@ -68,7 +68,7 @@ class Store < ActiveRecord::Base
 
   after_create :gen_install_code
 
-  after_save :create_update_change_table
+#  after_save :create_update_change_table
 
   def create_update_change_table
     if change_table_dont_exists
