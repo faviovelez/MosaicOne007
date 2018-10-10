@@ -29,6 +29,7 @@ class BillingAddressesController < ApplicationController
     respond_to do |format|
       if @billing.save
         save_billing_address_to_owner
+        save_delivery_address
         format.html { redirect_to @billing, notice: 'Los datos de facturación fueron dados de alta exitosamente.' }
         format.json { render :show, status: :created, location: @billing }
       else
@@ -58,6 +59,23 @@ class BillingAddressesController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @owner, notice: 'Los datos de facturación fueron eliminados correctamente' }
       format.json { head :no_content }
+    end
+  end
+
+  def save_delivery_address
+    if !@owner.delivery_address.present?
+      delivery = DeliveryAddress.new(
+        street: @billing.street,
+        exterior_number: @billing.exterior_number,
+        interior_number: @billing.interior_number,
+        zipcode: @billing.zipcode,
+        neighborhood: @billing.neighborhood,
+        city: @billing.city,
+        state: @billing.state,
+        country: @billing.country
+      )
+      delivery.save
+      @owner.update(delivery_address: delivery)
     end
   end
 

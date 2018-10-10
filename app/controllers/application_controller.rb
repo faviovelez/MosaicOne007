@@ -62,7 +62,7 @@ class ApplicationController < ActionController::Base
 
     bills.each do |bill|
       prospect = bill
-      bill[0] = bill[0].to_date + bill[6].days
+      bill[0] = bill[0].to_date + bill[6].days + 10.days
     end
 
     @banned_prospects = []
