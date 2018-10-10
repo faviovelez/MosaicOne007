@@ -1,4 +1,4 @@
-<% if @bills.count >= 1 %>
+<% if @bills.length >= 1 %>
   <%= form_tag({ controller: 'bills', action: 'modify' }, method: 'get') do %>
     <table id="bills">
       <thead>
