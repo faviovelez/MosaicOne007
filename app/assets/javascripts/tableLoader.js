@@ -60,6 +60,16 @@ $(document).ready(function(){
       }
     },
     dom: 'Bfrtip',
+    "drawCallback": function(settings){
+      tableTwoPresent = true;
+      if ($('#order_complete').length > 0) {
+        if ($('#order_complete').is(":checked")) {
+          $(".all-hide").addClass("hidden");
+        } else {
+          $(".all-hide").removeClass("hidden");
+        }
+      }
+    },
     buttons: [
       {
         extend: 'print',
@@ -76,7 +86,6 @@ $(document).ready(function(){
         }
       }
     ]
-
   });
 
   var tableThree = $('.dataTableNoPaginationNoButton').DataTable({
@@ -583,6 +592,35 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceived').DataTable({
         }
       }
     });
+  });
+
+  $('.special-form-datatables').on('submit', function(e){
+    var $form = $(this);
+
+    tableTwo.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
+    
+    tableTwo.$('input[type="text"]').each(function(){
+      if(!$.contains(document, this)){
+        $form.append(
+          $('<input>')
+            .attr('type', 'hidden')
+            .attr('name', this.name)
+            .val(this.value)
+          );
+      }
+    });
+
   });
 
 });
