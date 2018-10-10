@@ -13,7 +13,7 @@
   <tbody>
     <% @order.product_requests.where.not(status: 'cancelada').each do |product_request| %>
       <tr>
-        <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
+        <td><%= product_request.product.unique_code %> <%= product_request.product.description %> <%= product_request.product.only_measure %> </td>
         <td><%= show_non_blank_field(product_request.product.exterior_color_or_design) %> </td>
         <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
         <td><%= show_non_blank_field(product_request.product&.warehouse&.name) %></td>
@@ -58,7 +58,7 @@
   <tbody>
     <tr>
       <td id="date"> <%= l Date.today, format: :short %> </td>
-      <td id="store"> <%= @order.store.store_name.capitalize %> </td>
+      <td id="prospect"> <%= @order.prospect.legal_or_business_name %> </td>
       <td id="hour"> <%= Time.now.strftime("%H:%M") %> </td>
       <td id="user"> <%= warehouse_name(@order) %> </td>
       <td id="orderNumber"> <%= @order.id %> </td>

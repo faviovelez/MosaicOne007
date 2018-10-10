@@ -21,7 +21,7 @@
             <td> <%= radio_button_tag :bill, "#{bill.id}", false, { id: "bills[#{bill.id}]" }%> </td>
             <td> <%= bill.sequence %> <%= bill.folio %> </td>
             <td> <%= l bill.created_at.to_date, format: :short %> </td>
-            <td> <%= show_non_blank_field(bill.receiving_company.business_name) %> </td>
+            <td> <%= show_non_blank_field(bill.prospect.legal_or_business_name) %> </td>
             <td> <%= number_to_currency(bill.total) %> </td>
             <td> <%= number_to_currency(sum_children(bill)) %> </td>
             <td> <%= number_to_currency(real_total(bill)) %> </td>

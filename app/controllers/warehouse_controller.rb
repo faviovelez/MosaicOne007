@@ -229,7 +229,11 @@ class WarehouseController < ApplicationController
       redirect_to warehouse_ready_orders_path, notice: "Se ha entregado a #{driver&.first_name.capitalize} #{driver&.last_name.capitalize} el pedido #{order.id} para entrega"
     else
       driver = Driver.find(params[:driver])
-      DeliveryAttempt.create(driver: driver, order: order)
+      if order.delivery_attempt.present?
+        order.delivery_attempt.update(driver: driver)
+      else
+        DeliveryAttempt.create(driver: driver, order: order)
+      end
       redirect_to warehouse_ready_orders_path, notice: "Se ha asignado el pedido #{order.id} a #{driver&.first_name.capitalize} #{driver&.last_name.capitalize} para entrega"
     end
   end
