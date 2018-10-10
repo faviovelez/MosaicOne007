@@ -11,7 +11,7 @@
 <% end %>
 
 
-<% if @orders.count >= 1 %>
+<% if @orders.length >= 1 %>
   <%= form_tag({ controller: 'bills', action: 'select_info' }, method: 'post') do %>
     <table id="orders">
       <thead>
