@@ -6,7 +6,7 @@
       <th> Estatus </th>
       <th> Cantidad</th>
       <% get_orders %>
-      <% if @orders.count > 1 %>
+      <% if @orders.length > 1 %>
         <% identify_kg_products_multiple(@orders) %>
       <% else %>
         <% identify_kg_products(@orders.first) %>
@@ -66,20 +66,20 @@
         <td></td>
         <td></td>
         <td> <strong> Total: </strong> </td>
-        <% if @orders.count > 1 %>
+        <% if @orders.length > 1 %>
           <td> <strong> <%= number_with_delimiter(sum_quantity_multiple_orders(@orders)) %> </strong> </td>
         <% else %>
           <td> <strong> <%= number_with_delimiter(sum_quantity_order(@orders.first)) %> </strong> </td>
         <% end %>
         <% if (!['warehouse-admin', 'warehouse-staff', 'store'].include?(current_user.role.name)) %>
-          <% if @orders.count > 1 %>
+          <% if @orders.length > 1 %>
             <td> <strong> <%= number_to_percentage(order_discount_multiple(@orders), precision: 1) %> </strong> </td>
           <% else %>
             <td> <strong> <%= number_to_percentage(order_discount(@orders.first.id), precision: 1) %> </strong> </td>
           <% end %>
           <td> <strong> <%= number_to_currency(get_total) %> </strong> </td>
         <% else %>
-        <% if @orders.count > 1 %>
+        <% if @orders.length > 1 %>
           <td class="hidden"> <strong> <%= number_to_percentage(order_discount_multiple(@orders), precision: 1) %> </strong> </td>
         <% else %>
           <td class="hidden"> <strong> <%= number_to_percentage(order_discount(@orders.first.id), precision: 1) %> </strong> </td>
