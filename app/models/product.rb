@@ -108,7 +108,7 @@ class Product < ActiveRecord::Base
   def create_store_inventories
     if self.classification == 'de línea' || self.classification == 'especial'
       corporate = StoreType.find_by_store_type('corporativo')
-      stores = Store.where.not(id: 1)
+      stores = Store.where.not(id: [1,2])
       stores.each do |store|
         StoresInventory.create(product: self, store: store) unless store.stores_inventories.where(product: self).count > 0
       end

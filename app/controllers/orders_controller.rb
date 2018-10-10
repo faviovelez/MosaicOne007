@@ -148,6 +148,7 @@ class OrdersController < ApplicationController
 
   def bill_received_summary
     select_dates
+    prev = BillReceived.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(store_id: current_user.store_id).where(date_of_bill: @initial_date.to_date..@final_date.to_date)
     bills = BillReceived.joins(:supplier).joins('LEFT JOIN payments ON bill_receiveds.id = payments.bill_received_id').where(store_id: current_user.store_id).where(date_of_bill: @initial_date.to_date..@final_date.to_date).group("suppliers.name").pluck("suppliers.name, COUNT(DISTINCT bill_receiveds.id), SUM(bill_receiveds.total_amount), SUM(CASE WHEN payments.payment_type = 'pago' THEN payments.total WHEN payments.payment_type = 'devolución' THEN -payments.total ELSE 0 END), array_agg(bill_receiveds.id), 'BillReceived'")
     if Store.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
       store_prospect = Prospect.where(store_prospect_id: current_user.store.business_unit.stores.pluck(:id)).pluck(:id).uniq
@@ -196,14 +197,14 @@ class OrdersController < ApplicationController
   def select_dates
     if params[:options] == 'Seleccionar día'
       date = Date.parse(params[:date]) unless (params[:date] == nil || params[:date] == '')
-      @initial_date = date.midnight + 6.hours
-      @final_date = date.end_of_day + 6.hours
+      @initial_date = date.midnight
+      @final_date = date.end_of_day
     elsif params[:options] == 'Mes actual'
-      @initial_date = Date.today.beginning_of_month.midnight + 6.hours
-      @final_date = Date.today + 6.hours
+      @initial_date = Date.today.beginning_of_month.midnight
+      @final_date = Date.today
     else
-      @initial_date = Date.parse(params[:initial_date]).midnight + 6.hours unless (params[:initial_date] == nil || params[:initial_date] == '')
-      @final_date = Date.parse(params[:final_date]).end_of_day + 6.hours unless (params[:final_date] == nil || params[:final_date] == '')
+      @initial_date = Date.parse(params[:initial_date]).midnight unless (params[:initial_date] == nil || params[:initial_date] == '')
+      @final_date = Date.parse(params[:final_date]).end_of_day unless (params[:final_date] == nil || params[:final_date] == '')
     end
   end
 

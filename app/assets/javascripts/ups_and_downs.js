@@ -162,6 +162,25 @@ $(document).ready(function() {
     }
   }
 
+  if ($("#supplier_folio").length > 0) {
+    $("#supplier_folio").bind('change', function() {
+      $.each($("[id^=reason_]"), function() {
+        thisId = $(this).attr('id').replace('reason_', '');
+        $(this).val($("#supplier_folio").val());
+      });
+    });
+  } else {
+    $(document).on('change', '.reason', function() {
+      if ($(".reason").length == 2) {
+        allValue = $(this).val();
+        $.each($("[id^=reason_]"), function() {
+          thisId = $(this).attr('id').replace('reason_', '');
+          $(this).val(allValue);
+        });
+      }
+    });
+  }
+
   function keyUpQuantity() {
     $('[id^=quantity_]').on('keyup', function(){
       if (!($(".weightKg").hasClass('hidden'))) {
