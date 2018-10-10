@@ -8,9 +8,9 @@ class BillsController < ApplicationController
 
   def index
     if current_user.role.name == 'viewer'
-      @bills = Bill.includes(:receiving_company, :children).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, parent: nil, from: 'Form').where.not(status: 'cancelada', receiving_company: nil, total: nil)
+      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, parent: nil, from: 'Form').where.not(status: 'cancelada', receiving_company: nil, total: nil)
     else
-      @bills = Bill.includes(:receiving_company, :children).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, parent: nil).where.not(status: 'cancelada', receiving_company: nil, total: nil)
+      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, parent: nil).where.not(status: 'cancelada', receiving_company: nil, total: nil)
     end
   end
 

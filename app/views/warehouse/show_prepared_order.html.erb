@@ -22,7 +22,7 @@
     <tbody>
       <% @order.product_requests.where(status: 'asignado').each do |product_request| %>
         <tr>
-          <td><%= product_request.product.unique_code %> <%= product_request.product.description %></td>
+          <td><%= product_request.product.unique_code %> <%= product_request.product.description %> <%= product_request.product.only_measure %> </td>
           <td><%= show_non_blank_field(product_request.product.exterior_color_or_design) %></td>
           <td><%= number_with_delimiter(product_request.quantity/product_request.product.pieces_per_package) %></td>
           <td><%= show_non_blank_field(product_request.product&.warehouse&.name) %></td>
@@ -56,12 +56,18 @@
     </tbody>
   </table>
 
+  <p class="hidden" id="orderNumber"><%= @order.id %></p>
+  <p class="hidden" id="prospect"><%= @order.prospect.legal_or_business_name %></p>
+  <p class="hidden" id="date"><%= l Date.today %></p>
+  <p class="hidden" id="hour"><%= Time.now.strftime('%H:%M') %></p>
+  <p class="hidden" id="user"><%= order_warehouse_user(@order) %></p>
+
 <br /> <br />
 
-  <% if (current_user.role.name == 'admin-desk' && @order.delivery_attempt == nil) %>
+  <% if (current_user.role.name == 'admin-desk') %>
     <div class="actions">
       <br />
-      <%= select_tag :driver, options_for_select(driver_names), class: 'form-control center-text width-reduced' %>
+      <%= select_tag :driver, options_for_select(driver_names, selected: @order.delivery_attempt.driver_id), class: 'form-control center-text width-reduced' %>
       <%= text_field_tag :id, params[:id], {class: 'hidden'} %>
       <br />
     </div>
