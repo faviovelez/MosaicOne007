@@ -1433,7 +1433,6 @@ class OrdersController < ApplicationController
 
   def index
     current_orders
-    debugger
   end
 
   def current_orders
@@ -1458,11 +1457,9 @@ class OrdersController < ApplicationController
     else
       orders = Order.where(prospect: current_user.store.store_prospect).where.not(status: status)
     end
-    debugger
     orders.each do |order|
       @orders << order unless @orders.include?(order)
     end
-    debugger
   end
 
   def for_delivery
