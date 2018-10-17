@@ -266,7 +266,7 @@ class Movement < ActiveRecord::Base
   end
 
   def is_entry_movement
-    !!(self.movement_type == 'alta')
+    !!(self.movement_type == 'alta' || self.movement_type == 'alta automática')
   end
 
   def check_for_pendings

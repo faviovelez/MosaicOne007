@@ -5,7 +5,7 @@ class WarehouseEntry < ActiveRecord::Base
   belongs_to :movement
   belongs_to :store
 
-  before_save :check_products
+#  before_save :check_products
 
   def check_products
     self.entry_number = WarehouseEntry.where(
