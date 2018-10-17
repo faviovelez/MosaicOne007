@@ -106,6 +106,7 @@ module ApplicationHelper
   end
 
   def get_total_from_pr(pr, type)
+    @mov_total = 0
     if pr.status == 'cancelada'
       @mov_total = 0
     else
@@ -121,7 +122,7 @@ module ApplicationHelper
         end
       else
         if pr.movements == []
-          @mov_total = pr.pending_movement.quantity
+          @mov_total = pr.pending_movement.quantity if pr.pending_movement != nil
         else
           @mov_total = pr.movements.sum(:quantity)
         end
