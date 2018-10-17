@@ -302,7 +302,7 @@
     <tbody>
       <tr>
         <td id="date"> <%= l Date.today, format: :short %> </td>
-        <td id="store"> <%= @order.store.store_name.capitalize %> </td>
+        <td id="prospect"> <%= @order.prospect.legal_or_business_name %> </td>
         <td id="hour"> <%= Time.now.strftime("%H:%M") %> </td>
         <td id="user"> <%= warehouse_name(@order) %> </td>
         <td id="orderNumber"> <%= @order.id %> </td>

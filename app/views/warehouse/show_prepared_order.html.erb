@@ -67,7 +67,11 @@
   <% if (current_user.role.name == 'admin-desk') %>
     <div class="actions">
       <br />
-      <%= select_tag :driver, options_for_select(driver_names, selected: @order.delivery_attempt.driver_id), class: 'form-control center-text width-reduced' %>
+      <% if @order.delivery_attempt != nil %>
+        <%= select_tag :driver, options_for_select(driver_names, selected: @order.delivery_attempt.driver_id), class: 'form-control center-text width-reduced' %>
+      <% else %>
+        <%= select_tag :driver, options_for_select(driver_names), class: 'form-control center-text width-reduced' %>
+      <% end %>
       <%= text_field_tag :id, params[:id], {class: 'hidden'} %>
       <br />
     </div>
