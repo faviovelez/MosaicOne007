@@ -1193,6 +1193,8 @@ class OrdersController < ApplicationController
       else
         if status.first == ['asignado']
           @order.update(status: 'mercancía asignada', corporate: @corporate)
+        else
+          @order.update(corporate: @corporate)
         end
       end
       @orders = []
@@ -1371,6 +1373,8 @@ class OrdersController < ApplicationController
       else
         if status.first == ['asignado']
           @order.update(status: 'mercancía asignada', corporate: @corporate)
+        else
+          @order.update(corporate: @corporate)
         end
       end
       @orders = []
