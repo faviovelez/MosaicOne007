@@ -944,7 +944,7 @@ class OrdersController < ApplicationController
           end
           entry_mov = mov.entry_movement
           if order.status != 'entregado'
-            entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: order.store, movement: entry_mov, entry_number: number.next)
+            entry = WarehouseEntry.create(quantity: mov.quantity, product: mov.product, store: mov.store, movement: entry_mov, entry_number: number.next)
             if order.corporate_id == 1
               inventory = Inventory.find_by_product_id(product.id)
             else
@@ -1583,6 +1583,8 @@ class OrdersController < ApplicationController
           if (@prospect.store_prospect.store_type.store_type == 'tienda propia')
             discount = @prospect.discount / 100
           elsif @prospect.store_prospect.store_type.store_type == 'franquicia'
+            discount = @prospect.discount / 100
+          elsif @prospect.store_prospect.store_type.store_type == 'corporativo'
             discount = @prospect.discount / 100
           end
         end
