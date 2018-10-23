@@ -1816,6 +1816,8 @@ class BillsController < ApplicationController
         payed += array[3] unless index == 0
         total = due unless index == 0
         due -= array[3] unless index == 0
+        due = 0 if due < 0
+        array[3] = total if array[3].to_f > total
         @rows << [array[12] + ' ' + array[13], array[14], count, total, array[3], due, array[4], array[3], array[1], array[15].to_s, array[8], array[17], array[11]]
         count += 1
       end
