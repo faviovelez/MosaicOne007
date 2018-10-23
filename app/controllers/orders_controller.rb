@@ -652,13 +652,15 @@ class OrdersController < ApplicationController
           new_mov["store_id"] = current_user.store.id
           if (current_user.store.id == 1 || current_user.store.id == 2)
             new_mov.delete("product_request_id")
-            Movement.create(new_mov)
-            if current_user.store.id == 1
-              inventory = Inventory.where(product: mov.product).first
-              inventory.update(quantity: inventory.quantity + mov.quantity)
-            else
-              inventory = StoresInventory.where(product: mov.product, store: mov.store).first
-              inventory.update(quantity: inventory.quantity + mov.quantity)
+            if mov.prospect.store_prospect.present? && Prospect.where(store_prospect_id: Store.where(store_type: 2).pluck(:id)).pluck(:id).include?(mov.prospect_id)
+              Movement.create(new_mov)
+              if current_user.store.id == 1
+                inventory = Inventory.where(product: mov.product).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              else
+                inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              end
             end
           else
             new_mov.delete("identifier")
@@ -714,13 +716,15 @@ class OrdersController < ApplicationController
           end
           if (current_user.store.id == 1 || current_user.store.id == 2)
             new_mov.delete("product_request_id")
-            Movement.create(new_mov)
-            if current_user.store.id == 1
-              inventory = Inventory.where(product: mov.product).first
-              inventory.update(quantity: inventory.quantity + mov.quantity)
-            else
-              inventory = StoresInventory.where(product: mov.product, store: mov.store).first
-              inventory.update(quantity: inventory.quantity + mov.quantity)
+            if mov.prospect.store_prospect.present? && Prospect.where(store_prospect_id: Store.where(store_type: 2).pluck(:id)).pluck(:id).include?(mov.prospect_id)
+              Movement.create(new_mov)
+              if current_user.store.id == 1
+                inventory = Inventory.where(product: mov.product).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              else
+                inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              end
             end
           else
             new_mov.delete("identifier")
@@ -778,13 +782,15 @@ class OrdersController < ApplicationController
           end
           if (current_user.store.id == 1 || current_user.store.id == 2)
             new_mov.delete("product_request_id")
-            Movement.create(new_mov)
-            if current_user.store.id == 1
-              inventory = Inventory.where(product: mov.product).first
-              inventory.update(quantity: inventory.quantity + mov.quantity)
-            else
-              inventory = StoresInventory.where(product: mov.product, store: mov.store).first
-              inventory.update(quantity: inventory.quantity + mov.quantity)
+            if mov.prospect.store_prospect.present? && Prospect.where(store_prospect_id: Store.where(store_type: 2).pluck(:id)).pluck(:id).include?(mov.prospect_id)
+              Movement.create(new_mov)
+              if current_user.store.id == 1
+                inventory = Inventory.where(product: mov.product).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              else
+                inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              end
             end
           else
             new_mov.delete("identifier")
@@ -843,13 +849,15 @@ class OrdersController < ApplicationController
           end
           if (current_user.store.id == 1 || current_user.store.id == 2)
             new_mov.delete("product_request_id")
-            Movement.create(new_mov)
-            if current_user.store.id == 1
-              inventory = Inventory.where(product: mov.product).first
-              inventory.update(quantity: inventory.quantity + mov.quantity)
-            else
-              inventory = StoresInventory.where(product: mov.product, store: mov.store).first
-              inventory.update(quantity: inventory.quantity + mov.quantity)
+            if mov.prospect.store_prospect.present? && Prospect.where(store_prospect_id: Store.where(store_type: 2).pluck(:id)).pluck(:id).include?(mov.prospect_id)
+              Movement.create(new_mov)
+              if current_user.store.id == 1
+                inventory = Inventory.where(product: mov.product).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              else
+                inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              end
             end
           else
             new_mov.delete("identifier")
