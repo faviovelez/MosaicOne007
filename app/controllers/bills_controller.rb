@@ -1515,11 +1515,11 @@ class BillsController < ApplicationController
             n = 0
             quantities_unfiltered = params[:quantities]
             products_unfiltered = params[:products]
-            services_unfiltered = params[:services]
+            params[:services].present? ? services_unfiltered = params[:services] : services_unfiltered = []
             zeroes = quantities_unfiltered.each_index.select{|i| quantities_unfiltered[i] == '0'}
             quantities_filtered = quantities_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) }
-            products_filtered = products_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) }
-            services_filtered = services_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) }
+            products_filtered = products_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) } if products_unfiltered != nil
+            services_unfiltered != nil ? services_filtered = services_unfiltered.delete_if.with_index{ |e,i| zeroes.include?(i) } : services_filtered = services_unfiltered
             quantities_filtered.count.times do
               if products_filtered[n] == services_filtered[n]
                 product = Service.find(products_filtered[n])
