@@ -1207,6 +1207,10 @@ class OrdersController < ApplicationController
         order = Order.find(order)
         order.product_requests.pluck(:status).uniq.length == 1 && order.product_requests.pluck(:status).uniq == ["asignado"] ? order.update(status: 'mercancía asignada') : order.update(status: 'en espera')
       end
+      @orders.each do |order|
+        ord = Order.find(order)
+        ord.update(corporate_id: ord.product_requests.first.corporate_id) if ord.corporate_id != ord.product_requests.first.corporate_id
+      end
       redirect_to orders_show_path(@orders), notice: 'Todos los registros almacenados.'
     else
       @orders = []
@@ -1219,6 +1223,10 @@ class OrdersController < ApplicationController
       @orders.each do |order|
         order = Order.find(order)
         order.product_requests.pluck(:status).uniq.length == 1 && order.product_requests.pluck(:status).uniq == ["asignado"] ? order.update(status: 'mercancía asignada') : order.update(status: 'en espera')
+      end
+      @orders.each do |order|
+        ord = Order.find(order)
+        ord.update(corporate_id: ord.product_requests.first.corporate_id) if ord.corporate_id != ord.product_requests.first.corporate_id
       end
       redirect_to orders_show_path(@orders), notice: 'Todos los registros almacenados.'
     end
@@ -1387,6 +1395,10 @@ class OrdersController < ApplicationController
         order = Order.find(order)
         order.product_requests.pluck(:status).uniq.length == 1 && order.product_requests.pluck(:status).uniq == ["asignado"] ? order.update(status: 'mercancía asignada') : order.update(status: 'en espera')
       end
+      @orders.each do |order|
+        ord = Order.find(order)
+        ord.update(corporate_id: ord.product_requests.first.corporate_id) if ord.corporate_id != ord.product_requests.first.corporate_id
+      end
       redirect_to orders_show_path(@orders), notice: 'Todos los registros almacenados.'
     else
       @orders = []
@@ -1399,6 +1411,10 @@ class OrdersController < ApplicationController
       @orders.each do |order|
         order = Order.find(order)
         order.product_requests.pluck(:status).uniq.length == 1 && order.product_requests.pluck(:status).uniq == ["asignado"] ? order.update(status: 'mercancía asignada') : order.update(status: 'en espera')
+      end
+      @orders.each do |order|
+        ord = Order.find(order)
+        ord.update(corporate_id: ord.product_requests.first.corporate_id) if ord.corporate_id != ord.product_requests.first.corporate_id
       end
       redirect_to orders_show_path(@orders), notice: 'Todos los registros almacenados.'
     end
