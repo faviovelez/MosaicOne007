@@ -15,7 +15,7 @@
       <tbody>
         <% @bills.each do |bill| %>
           <tr>
-            <td> <%= bill.folio %> </td>
+            <td> <%= bill.sequence %> <%= bill.folio %> </td>
             <td> <%= l bill.created_at.to_date, format: :short %> </td>
             <td> <%= show_non_blank_field(bill.receiving_company.business_name) %> </td>
             <td> <%= number_to_currency(bill.total) %> </td>
