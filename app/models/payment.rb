@@ -15,7 +15,6 @@ class Payment < ActiveRecord::Base
   has_one :date_advise
   belongs_to :payment_bill, class_name: 'Bill', foreign_key: 'payment_bill_id'
 
-
   before_update :create_update_summary
 
   after_create :save_web_id_and_set_web_true, :create_update_date_advise, :add_to_bill
@@ -70,6 +69,10 @@ class Payment < ActiveRecord::Base
 
   def add_to_bill
     self.update(bill: self.ticket.bill) if (self.ticket != nil && self.ticket.bill != nil && self.payment_type != 'cancelado')
+    if self.ticket.parent.present? && self.ticket.parent.bill.present?
+      self.update(bill_id: self.ticket.parent.bill_id) if self.payment_type != 'cancelado'
+      self.ticket.parent.update(bill_id: self.ticket.parent.bill_id) if self.ticket.parent.ticket_type != 'cancelado'
+    end
   end
 
   def create_update_date_advise
