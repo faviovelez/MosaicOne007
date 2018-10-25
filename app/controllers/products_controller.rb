@@ -759,7 +759,12 @@ class ProductsController < ApplicationController
         overp = Store.find(current_user.store.id).overprice / 100 + 1
         @products = Product.select("products.id, products.store_id, products.shared, products.only_measure, products.unique_code, products.description, products.exterior_color_or_design, products.line, CASE WHEN (stores_inventories.manual_price IS null OR stores_inventories.manual_price = 0) AND products.store_id IS null THEN products.price * #{overp} * 1.16 WHEN (stores_inventories.manual_price IS null OR stores_inventories.manual_price = 0) AND products.store_id IS NOT null THEN products.price * 1.16 WHEN (stores_inventories.manual_price IS NOT null AND stores_inventories.manual_price != 0) AND products.store_id IS null THEN stores_inventories.manual_price * 1.16 WHEN (stores_inventories.manual_price IS NOT null AND stores_inventories.manual_price != 0) AND products.store_id IS NOT null THEN stores_inventories.manual_price * 1.16 ELSE stores_inventories.manual_price * #{overp} * 1.16 END AS product_price, stores_inventories.manual_price_update").joins('RIGHT JOIN stores_inventories ON products.id = stores_inventories.product_id').where(stores_inventories: {store_id: current_user.store.id}, products: {child_id: nil}).order(:id)
       else
-        @products = Product.includes(:warehouse).where(current: true, shared: true).select(:id, :unique_code, :description, :exterior_color_or_design, :line, :price, :shared, :store_id, :warehouse_id, :only_measure)
+        if current_user.role.name == 'admin-desk'
+          @products = Product.joins(:warehouse, :business_unit, :supplier).where(current: true, shared: true).select("products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, products.price, products.shared, products.store_id, products.warehouse_id, products.only_measure, suppliers.name AS supplier_name, business_units.name AS business_unit_name")
+          debugger
+        else
+          @products = Product.includes(:warehouse).where(current: true, shared: true).select(:id, :unique_code, :description, :exterior_color_or_design, :line, :price, :shared, :store_id, :warehouse_id, :only_measure)
+        end
       end
       @products
     end
