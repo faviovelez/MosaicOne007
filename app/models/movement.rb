@@ -457,13 +457,13 @@ class Movement < ActiveRecord::Base
     hash_1 = hash.dup
     total_quantity = hash_1["quantity"]
     if total_quantity != 0
-      if hash_1["store_id"] == 1
+      if hash_1["store"].id == 1
         product.inventory.update(quantity: product.inventory.quantity - total_quantity)
       else
-        inventory = StoresInventory.where(product: product, store_id: hash_1["store_id"]).first
+        inventory = StoresInventory.where(product: product, store_id: hash_1["store"].id).first
         inventory.update(quantity: inventory.quantity - total_quantity)
       end
-      warehouses = WarehouseEntry.where(product: product, store_id: hash_1["store_id"])
+      warehouses = WarehouseEntry.where(product: product, store_id: hash_1["store"].id)
       if warehouses != []
         warehouses.order(:id).each do |entry|
           hash_1 = hash.dup
@@ -649,7 +649,7 @@ class Movement < ActiveRecord::Base
           inventory = StoresInventory.where(product: product, store: hash_1["store"]).first
           inventory.update(quantity: inventory.quantity.to_i - total_quantity)
         end
-        warehouses = WarehouseEntry.where(product: product, store_id: hash_1["store_id"])
+        warehouses = WarehouseEntry.where(product: product, store_id: hash_1["store"].id)
         if warehouses != []
           warehouses.order(:id).each do |entry|
             hash_1 = hash.dup
@@ -840,9 +840,9 @@ class Movement < ActiveRecord::Base
         hash["product_request"] = product_request
         hash["tax"] = Tax.find(2)
         if product.group
-          mov = WarehouseEntry.where(product: product, store: hash["store"]).order(:id).first.movement
-          hash["kg"] = mov.kg
-          hash["identifier"] = mov.identifier
+          mov = WarehouseEntry.where(product: product, store: hash["store"]).order(:id).first&.movement
+          hash["kg"] = mov&.kg
+          hash["identifier"] = mov&.identifier
         end
         if (user.role.name == 'store' || user.role.name == 'store-admin')
           hash["buyer_user"] = user
