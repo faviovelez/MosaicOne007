@@ -44,7 +44,7 @@ class BillMailer < ApplicationMailer
     attachments['Factura.xml'] = open(bill.xml_url).read
       mail(
         bcc: @mails,
-        subject: "Facturas Diseños de Cartón"
+        subject: "Facturas Diseños de Cartón folio #{@bill.sequence} #{@bill.folio}"
       )
   end
 
