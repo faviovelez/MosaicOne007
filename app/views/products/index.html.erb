@@ -14,6 +14,10 @@
         <% if current_user.role.name == 'store' || current_user.role.name == 'store-admin' %>
           <th> Actualización manual </th>
         <% end %>
+        <% if current_user.role.name == 'admin-desk' %>
+          <th> Empresa </th>
+          <th> Proveedor </th>
+        <% end %>
         <th>Acciones</th>
       </tr>
     </thead>
@@ -35,6 +39,10 @@
           <td> <%= product.only_measure %> </td>
           <% if current_user.role.name == 'store' || current_user.role.name == 'store-admin' %>
             <td> <%= product.manual_price_update ? 'Sí' : 'No' %> </td>
+          <% end %>
+          <% if current_user.role.name == 'admin-desk' %>
+            <td> <%= product.supplier_name %> </td>
+            <td> <%= product.business_unit_name %> </td>
           <% end %>
           <td class="col-md-1">
             <%= link_to product do %>
