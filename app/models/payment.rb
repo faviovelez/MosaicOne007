@@ -68,10 +68,12 @@ class Payment < ActiveRecord::Base
   end
 
   def add_to_bill
-    self.update(bill: self.ticket.bill) if (self.ticket != nil && self.ticket.bill != nil && self.payment_type != 'cancelado')
-    if self.ticket.parent.present? && self.ticket.parent.bill.present?
-      self.update(bill_id: self.ticket.parent.bill_id) if self.payment_type != 'cancelado'
-      self.ticket.parent.update(bill_id: self.ticket.parent.bill_id) if self.ticket.parent.ticket_type != 'cancelado'
+    if self.ticket != nil
+      self.update(bill: self.ticket.bill) if (self.ticket != nil && self.ticket.bill != nil && self.payment_type != 'cancelado')
+      if self.ticket.parent.present? && self.ticket.parent.bill.present?
+        self.update(bill_id: self.ticket.parent.bill_id) if self.payment_type != 'cancelado'
+        self.ticket.parent.update(bill_id: self.ticket.parent.bill_id) if self.ticket.parent.ticket_type != 'cancelado'
+      end
     end
   end
 
