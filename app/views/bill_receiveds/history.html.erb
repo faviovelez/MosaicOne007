@@ -46,14 +46,18 @@
             <td>
               <% if bill[9] == 'BillReceived' %>
                 <% BillReceived.find(bill[10]).documents.each do |document| %>
-                  <%= link_to get_document_path(document), download: "#{document.document_identifier}" do %>
-                    <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                  <% if document.document_url != nil %>
+                    <%= link_to get_document_path(document), download: "#{document.document_identifier}" do %>
+                      <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                    <% end %>
                   <% end %>
                 <% end %>
               <% else %>
                 <% Bill.find(bill[10]).documents.each do |document| %>
-                  <%= link_to get_document_path(document), download: "#{document.document_identifier}" do %>
-                    <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                  <% if document.document_url != nil %>
+                    <%= link_to get_document_path(document), download: "#{document.document_identifier}" do %>
+                      <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                    <% end %>
                   <% end %>
                 <% end %>
               <% end %>

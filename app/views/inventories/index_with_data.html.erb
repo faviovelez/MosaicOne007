@@ -1,12 +1,3 @@
-<% if Store.where(store_type: 2).pluck(:id).include?(current_user.store.id) %>
-  <%= form_tag({ controller: 'inventories', action: 'index_with_data' }, method: 'get', multipart: true) do %>
-    <%= label_tag :tienda %>
-    <%= select_tag :store, options_for_select(store_list_for_corporate, selected: @store_id) %>
-    <div class="actions">
-      <%= submit_tag 'Inventario', class: 'main-button' %>
-    </div>
-  <% end %>
-<% end %>
 <table id="inventory">
   <thead>
     <tr class="table-titles-inventories">
@@ -66,6 +57,17 @@
     <% end %>
   </tbody>
 </table>
+
+<% if Store.where(store_type: 2).pluck(:id).include?(current_user.store.id) %>
+  <%= form_tag({ controller: 'inventories', action: 'index_with_data' }, method: 'get', multipart: true) do %>
+    <%= label_tag :tienda %>
+    <%= select_tag :store, options_for_select(store_list_for_corporate, selected: @store_id) %>
+    <div class="actions">
+      <%= submit_tag 'Inventario', class: 'main-button' %>
+    </div>
+  <% end %>
+<% end %>
+
 <p class="hidden"><%= @low %><%= @critic %></p>
 <%= render 'data_tables_another' %>
 <%= content_for :javascript do %>

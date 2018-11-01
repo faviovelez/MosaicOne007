@@ -12,6 +12,15 @@ module ApplicationHelper
     @sat_unit_keys = SatUnitKey.joins(:products).select(:description, :id).distinct.pluck(:description, :id)
   end
 
+  def convert_status_payment(pay)
+    if pay.payment_type == 'pago'
+      @stats = 'activo'
+    else
+      @stats = pay.payment_type
+    end
+    @stats
+  end
+
   def convert_balance(object)
     object.balance < 1 ? @balance = content_tag(:span, 'pagado', class: 'label label-success') : @balance = number_to_currency(object.balance)
     @balance
@@ -180,19 +189,25 @@ module ApplicationHelper
   end
 
   def inventory_status(number, sales)
-    if number <= @critic && number > 0
+    @inv_desired = (current_user.store.days_inventory_desired / 30).round(2)
+    if number <= (@critic * @inv_desired) && number > 0
       @inv_status = content_tag(:span, 'crítico', class: 'label label-danger')
-    elsif number < 1 && number > @low
+    elsif number < @inv_desired && number > (@low * @inv_desired)
+      # ajustar utilizando los meses de inventario deseados
       @inv_status = content_tag(:span, 'adecuado', class: 'label label-primary')
-    elsif number <= @low && number > @critic
+    elsif number <= (@low * @inv_desired) && number > (@critic * @inv_desired)
       @inv_status = content_tag(:span, 'bajo', class: 'label label-warning')
-    elsif number == 1
+    elsif number == @inv_desired
       @inv_status = content_tag(:span, 'óptimo', class: 'label label-success')
-    elsif number > 1 && number.round(0) < 1000000000
+    elsif number > @inv_desired && number.round(0) < 1000000000
       @inv_status = content_tag(:span, 'en exceso', class: 'label label-default black-default')
     elsif number.round(0) == 1000000000 || number == 0
-      sales == 0 ? @inv_status = content_tag(:span, 'sin información', class: 'label label-default') : @inv_status = content_tag(:span, 'crítico', class: 'label label-danger')
+      sales.ceil == 0 ? @inv_status = content_tag(:span, 'sin información', class: 'label label-default') : @inv_status = content_tag(:span, 'crítico', class: 'label label-danger')
     end
+  end
+
+  def store_list_for_corporate
+    @store_list = Store.where(store_type: 1).order(:store_name).pluck(:store_name, :id)
   end
 
   def address_for_delivery(order)
