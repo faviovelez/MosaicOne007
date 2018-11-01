@@ -57,7 +57,7 @@ class InventoriesController < ApplicationController
     end
 
     month_sales.each do |arr|
-      this_cost = last_movs.find{|movs| movs[0] == arr[0]}[1].to_f
+      last_movs.find{|movs| movs[0] == arr[0]} == nil ? this_cost = 0 : this_cost = last_movs.find{|movs| movs[0] == arr[0]}[1].to_f
       total_cost = (this_cost * arr[6]).round(2)
       arr << this_cost
       arr << total_cost

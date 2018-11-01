@@ -1,0 +1,35 @@
+<%= form_tag({ controller: 'orders', action: 'report_date_index' }, method: 'get', class: 'form-data-tables') do %>
+
+  <br /><br />
+
+  <h2 class="blue-title">Por favor seleccione el mes del que desea ver la información </h2>
+
+  <div class="field group-options extra-margin-top to_white">
+    <%= label_tag :fecha_de_reporte %>
+    <%= select_tag :date, options_for_select(@month_options), {id: 'special_date'} %>
+  </div>
+
+  <div class="field hidden">
+    <%= text_field_tag :report_type, @report_type %>
+  </div>
+
+  <br /><br />
+
+  <div class="actions">
+    <%= submit_tag 'Ver reporte', class: 'main-button' %>
+  </div>
+
+  <br /><br />
+
+<% end %>
+
+<%= content_for :stylesheet do %>
+  <%= stylesheet_link_tag 'select2.min' %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'select2.min' %>
+  <%= javascript_include_tag 'es' %>
+  <%= javascript_include_tag 'reports' %>
+  <%= javascript_include_tag 'corporate_reports' %>
+<% end %>

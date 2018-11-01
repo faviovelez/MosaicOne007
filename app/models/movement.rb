@@ -457,13 +457,13 @@ class Movement < ActiveRecord::Base
     hash_1 = hash.dup
     total_quantity = hash_1["quantity"]
     if total_quantity != 0
-      if hash_1["store"].id == 1
+      if hash_1["store_id"] == 1
         product.inventory.update(quantity: product.inventory.quantity - total_quantity)
       else
-        inventory = StoresInventory.where(product: product, store_id: hash_1["store"].id).first
+        inventory = StoresInventory.where(product: product, store_id: hash_1["store_id"]).first
         inventory.update(quantity: inventory.quantity - total_quantity)
       end
-      warehouses = WarehouseEntry.where(product: product, store_id: hash_1["store"].id)
+      warehouses = WarehouseEntry.where(product: product, store_id: hash_1["store_id"])
       if warehouses != []
         warehouses.order(:id).each do |entry|
           hash_1 = hash.dup
@@ -473,7 +473,7 @@ class Movement < ActiveRecord::Base
           if product.group
             if mov == nil
               hash_1["kg"] = product.average
-              hash_1["identifier"] = Movement.where(product: product, store: hash_1["store"]).last.identifier.to_i.next.to_s
+              hash_1["identifier"] = Movement.where(product: product, store: hash_1["store_id"]).last.identifier.to_i.next.to_s
             else
               hash_1["kg"] = mov.kg
               hash_1["identifier"] = mov.identifier
@@ -558,11 +558,11 @@ class Movement < ActiveRecord::Base
         mov_sales = nil
         1.times do
           hash_1 = hash.dup
-          hash_1["entry_movement"] = Movement.where(product: product, store: hash_1["store"]).last
+          hash_1["entry_movement"] = Movement.where(product: product, store: hash_1["store_id"]).last
           if product.group
             if mov == nil
               hash_1["kg"] = product.average
-              hash_1["identifier"] = Movement.where(product: product, store: hash_1["store"]).last.identifier.to_i.next.to_s
+              hash_1["identifier"] = Movement.where(product: product, store: hash_1["store_id"]).last.identifier.to_i.next.to_s
             else
               hash_1["kg"] = mov.kg
               hash_1["identifier"] = mov.identifier
@@ -655,7 +655,9 @@ class Movement < ActiveRecord::Base
             hash_1 = hash.dup
             mov_sales = entry.movement&.sales
             mov = entry.movement
-            next if mov.kg.to_f != hash_1["kg"].to_f
+            if mov != nil
+              next if mov.kg.to_f != hash_1["kg"].to_f
+            end
             hash_1["entry_movement"] = mov
             if product.group
               if mov == nil
