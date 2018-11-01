@@ -230,6 +230,11 @@ input#boxesQuantity {
   width: 95%;
 }
 
+.to_white {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
 select#report_type,
 select#options,
 select#initial_date,
@@ -241,7 +246,10 @@ select#companies,
 select#store_options,
 select#group_options,
 select#client_list,
-select#stores {
+select#stores,
+select#store,
+select#special_date,
+select[id^=status] {
   background-color: #fff !important;
   color: #000 !important;
 }
