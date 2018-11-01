@@ -59,6 +59,27 @@
       </tbody>
     </table>
 
+    <div>
+      <%= link_to bill_receiveds_new_path, class: 'space-between-links' do %>
+        Nueva factura
+        <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
+      <% end %>
+
+      <% unless params[:action] == 'history' %>
+        <%= link_to bill_receiveds_history_path, class: 'space-between-links' do  %>
+          Facturas pagadas
+          <i class="fa fa-folder-open" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+
+      <% unless params[:action] == 'index' %>
+        <%= link_to bill_receiveds_index_path, class: 'space-between-links' do  %>
+          Facturas por pagar
+          <i class="fa fa-wpforms" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+    </div>
+
     <div class="form-inside-style center-field file-field">
       <div class="ind-form form-inside-style">
         <%= label_tag :comprobante %>
@@ -82,36 +103,13 @@
     </div>
 
     <div class="actions">
-      <%= submit_tag 'Confirmar pago(s)', class: 'main-button' %>
+      <%= submit_tag 'Confirmar pago(s)', class: 'main-button' %><br/><br/>
     </div><br />
 
   <% else %>
     <p class="individual-font"> No hay facturas pendientes de pago </p>
   <% end %>
 <% end %>
-
-<br/>
-<div>
-  <%= link_to bill_receiveds_new_path, class: 'space-between-links' do %>
-    Nueva factura
-    <i class="fa fa-plus-square link-to-details" aria-hidden="true"></i>
-  <% end %>
-
-  <% unless params[:action] == 'history' %>
-    <%= link_to bill_receiveds_history_path, class: 'space-between-links' do  %>
-      Facturas pagadas
-      <i class="fa fa-folder-open" aria-hidden="true"></i>
-    <% end %>
-  <% end %>
-
-  <% unless params[:action] == 'index' %>
-    <%= link_to bill_receiveds_index_path, class: 'space-between-links' do  %>
-      Facturas por pagar
-      <i class="fa fa-wpforms" aria-hidden="true"></i>
-    <% end %>
-  <% end %>
-</div>
-<br/>
 
 <%= render 'data_tables_another' %>
 <%= content_for :javascript do %>

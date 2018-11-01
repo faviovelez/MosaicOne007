@@ -761,7 +761,6 @@ class ProductsController < ApplicationController
       else
         if current_user.role.name == 'admin-desk'
           @products = Product.joins(:warehouse, :business_unit, :supplier).where(current: true, shared: true).select("products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, products.price, products.shared, products.store_id, products.warehouse_id, products.only_measure, suppliers.name AS supplier_name, business_units.name AS business_unit_name")
-          debugger
         else
           @products = Product.includes(:warehouse).where(current: true, shared: true).select(:id, :unique_code, :description, :exterior_color_or_design, :line, :price, :shared, :store_id, :warehouse_id, :only_measure)
         end
