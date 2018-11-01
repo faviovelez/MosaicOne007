@@ -6,9 +6,9 @@
   <thead>
     <tr>
       <% if current_user.role.name == 'viewer' %>
-        <th colspan="14" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+        <th colspan="15" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
       <% else %>
-        <th colspan="12" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
+        <th colspan="13" class="table-titles"> Resumen de ventas <%= params[:date] %> </th>
       <% end %>
     </tr>
     <tr>
@@ -16,6 +16,7 @@
         <th> Tienda </th>
       <% end %>
       <th class="hidden"> Ticket </th>
+      <th class="hidden"> Ticket original </th>
       <th> Fecha </th>
       <th> Movimiento </th>
       <th> Tipo de guía </th>
@@ -39,6 +40,7 @@
           <td> <%= service_offered.store.store_name %> </td>
         <% end %>
         <td class="hidden"> <%= service_offered.ticket.ticket_number %> </td>
+        <td class="hidden"> <%= service_offered.ticket.parent&.ticket_number %> </td>
         <td> <%= l service_offered.created_at.to_date %> </td>
         <td> <%= service_offered.service_type %> </td>
         <td> <%= service_offered.service.unique_code %> <span class="hidden"><%= service_offered.service.description %></span>  </td>
@@ -72,6 +74,7 @@
       <% if current_user.role.name == 'viewer' %>
         <td> </td>
       <% end %>
+      <td class="hidden"> </td>
       <td class="hidden"> </td>
       <td> </td>
       <td> </td>

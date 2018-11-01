@@ -1,3 +1,12 @@
+<% if Store.where(store_type: 2).pluck(:id).include?(current_user.store.id) %>
+  <%= form_tag({ controller: 'inventories', action: 'index_with_data' }, method: 'get', multipart: true) do %>
+    <%= label_tag :tienda %>
+    <%= select_tag :store, options_for_select(store_list_for_corporate, selected: @store_id) %>
+    <div class="actions">
+      <%= submit_tag 'Inventario', class: 'main-button' %>
+    </div>
+  <% end %>
+<% end %>
 <table id="inventory">
   <thead>
     <tr class="table-titles-inventories">
@@ -13,6 +22,8 @@
       <th> Pedido sugerido ventas <%= current_user.store.months_in_inventory %> meses atrás </th>
       <th class="hidden"> Pedido sugerido ventas <%= current_user.store.months_in_inventory %> meses sig. <%= (Date.today - 1.year).year %> </th>
       <th> Meses de Inv. </th>
+      <th class="hidden"> Costo Unitario</th>
+      <th class="hidden"> Costo total</th>
       <th> Estatus </th>
     </tr>
   </thead>
@@ -32,23 +43,30 @@
           <td> 0 </td>
           <td class="hidden"> 0 </td>
           <td> 0 </td>
+          <td class="hidden"> 0 </td>
+          <td class="hidden"> 0 </td>
           <td> <%= inventory_status(0, 0) %> </td>
         <% else %>
-          <td> <%= @average_sales_arr[key][0][3].to_i %> </td>
+          <% if @average_sales_arr[key][0][3].to_f < 1 %>
+          <td> <%= @average_sales_arr[key][0][3].to_f.round(2) %> </td>
+          <% else %>
+          <td> <%= @average_sales_arr[key][0][3].to_f.ceil.round(0) %> </td>
+          <% end %>
           <td class="hidden"> <%= @average_sales_arr[key][0][5].to_i %> </td>
           <td> <%= @average_sales_arr[key][0][8] %> </td>
           <td class="hidden"> <%= @average_sales_arr[key][0][9] %> </td>
           <td> <%= @average_sales_arr[key][0][10] > 0 ? @average_sales_arr[key][0][10] : 0 %> </td>
           <td class="hidden"> <%= @average_sales_arr[key][0][11] > 0 ? @average_sales_arr[key][0][11] : 0 %> </td>
-          <td> <%= @average_sales_arr[key][0][12].round(0) == 1000000000 ? '' : @average_sales_arr[key][0][12].round(2) %> </td>
-          <td> <%= inventory_status(@average_sales_arr[key][0][12].round(2), @average_sales_arr[key][0][3].to_i) %> </td>
+          <td> <%= @average_sales_arr[key][0][12].round(0) == 1000000000 ? '' : @average_sales_arr[key][0][12].round(1) %> </td>
+          <td class="hidden"> <%= @grouped_month_sales[key][0][7] %> </td>
+          <td class="hidden"> <%= @grouped_month_sales[key][0][8] %> </td>
+          <td> <%= inventory_status(@average_sales_arr[key][0][12].round(2), @average_sales_arr[key][0][3].to_f.ceil) %> </td>
         <% end %>
       </tr>
     <% end %>
   </tbody>
 </table>
 <p class="hidden"><%= @low %><%= @critic %></p>
-
 <%= render 'data_tables_another' %>
 <%= content_for :javascript do %>
   <%= javascript_include_tag 'inventory' %>

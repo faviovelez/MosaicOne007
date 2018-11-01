@@ -2,6 +2,8 @@ Rails.application.routes.draw do
 
   root 'pages#index'
 
+  get 'pages/date_filter'
+
   get 'pages/utilerias', defaults: { format: 'xml' }
 
   get 'movements/index'
@@ -9,6 +11,12 @@ Rails.application.routes.draw do
   get 'movements/edit'
 
   get 'bill_receiveds/new'
+
+  get 'orders/report_date_index'
+
+  get 'orders/cancel_payments'
+
+  post 'orders/edit_payments'
 
   get 'bill_receiveds/get_document/:id', to: 'bill_receiveds#get_document', as: 'get_document'
 
@@ -213,6 +221,8 @@ Rails.application.routes.draw do
   get 'bills/global_form'
 
   get 'inventories/index_with_data'
+
+  post 'inventories/index_with_data'
 
   get 'inventories/index'
 

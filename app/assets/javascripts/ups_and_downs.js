@@ -7,6 +7,48 @@ $(document).ready(function() {
   action = $("#action").html();
   newRows = $(".newRow");
 
+  function enableButton() {
+    // Falta una validación para las bajas (agregar que valide motivo para dejar agregar)
+    $("#generateEntry").prop("disabled", true);
+    validation = [];
+
+    if ($("#vincularSupplier").length > 0) {
+      $.each($("[id^=quantity_]"), function(){
+        myId = $(this).attr("id").replace("quantity_", "");
+        validReason = $("#reason_" + myId).val().length;
+        if (myId != "") {
+          myQuantity = parseInt($("#quantity_" + myId).val());
+          if ($("#vincularSupplier").hasClass("green") && (myQuantity > 0 && !isNaN(myQuantity) ) && validReason > 3 ) {
+            validation.push(1);
+          } else {
+            validation.push(0);
+          }
+        }
+      });
+    } else {
+      $.each($("[id^=quantity_]"), function(){
+        my_Id = $(this).attr("id").replace("quantity_", "");
+        my_Quantity = parseInt($("#quantity_" + my_Id).val());
+        validReason = $("#reason_" + my_Id).val().length;
+        if (my_Id != "") {
+          if (my_Quantity > 0 && !isNaN(my_Quantity) && validReason > 3) {
+            validation.push(1);
+          } else {
+            validation.push(0);
+          }
+        }
+      });
+    }
+    if (validation.length > 0) {
+      result = !!validation.reduce(function(a, b){ return (a === b) ? a : NaN; });
+      if (result == true && validation[0] == 1) {
+        $("#generateEntry").prop("disabled", false);
+      } else  {
+        $("#generateEntry").prop("disabled", true);
+      }
+    }
+  }
+
   $.ajax({
     url: '/api/get_just_products',
   })
@@ -99,52 +141,11 @@ $(document).ready(function() {
           rowTotal(this_id);
           addEvents(this_id);
           showKgField();
+          enableButton();
         }); //done function (response) segundo ajax
       } // onselect
     }); // autocomplete
   }); // done function (response)
-
-  function enableButton() {
-    // Falta una validación para las bajas (agregar que valide motivo para dejar agregar)
-    $("#generateEntry").prop("disabled", true);
-    validation = [];
-
-    if ($("#vincularSupplier").length > 0) {
-      $.each($("[id^=quantity_]"), function(){
-        myId = $(this).attr("id").replace("quantity_", "");
-        validReason = $("#reason_" + myId).val().length;
-        if (myId != "") {
-          myQuantity = parseInt($("#quantity_" + myId).val());
-          if ($("#vincularSupplier").hasClass("green") && (myQuantity > 0 && !isNaN(myQuantity) ) && validReason > 3 ) {
-            validation.push(1);
-          } else {
-            validation.push(0);
-          }
-        }
-      });
-    } else {
-      $.each($("[id^=quantity_]"), function(){
-        my_Id = $(this).attr("id").replace("quantity_", "");
-        my_Quantity = parseInt($("#quantity_" + my_Id).val());
-        validReason = $("#reason_" + my_Id).val().length;
-        if (my_Id != "") {
-          if (my_Quantity > 0 && !isNaN(my_Quantity) && validReason > 3) {
-            validation.push(1);
-          } else {
-            validation.push(0);
-          }
-        }
-      });
-    }
-    if (validation.length > 0) {
-      result = !!validation.reduce(function(a, b){ return (a === b) ? a : NaN; });
-      if (result == true && validation[0] == 1) {
-        $("#generateEntry").prop("disabled", false);
-      } else  {
-        $("#generateEntry").prop("disabled", true);
-      }
-    }
-  }
 
   function showKgField() {
     if (!($(".weightKg").hasClass('hidden'))) {
