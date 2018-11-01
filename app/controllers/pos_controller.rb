@@ -100,7 +100,7 @@ class PosController < ApplicationController
       end
       cad.gsub!("AND  AND", "AND")
       object = reg.class.where(cad).first unless reg.class == TicketsChild
-      return reg if object.nil?
+      return reg if object.nil? unless reg.web_id.present?
       updated_reg_for(object, reg)
       return object
     end

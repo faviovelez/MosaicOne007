@@ -15,6 +15,44 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def dates_generator(array)
+    string = "DATE_TRUNC('month', "
+    if array.first.class == BillReceived
+      string += array.first.class.to_s.pluralize.underscore + ".date_of_bill" + ")"
+    elsif array.first.class == Payment
+      string += array.first.class.to_s.pluralize.underscore + ".payment_date" + ")"
+    else
+      string += array.first.class.to_s.pluralize.underscore + ".created_at" + ")"
+    end
+    if array.first.class == Payment
+      options = array.first.class.where(store_id: nil).pluck(string).uniq
+    elsif array.first.class == Order
+      options = array.first.class.where(corporate_id: current_user.store.id).pluck(string).uniq
+    else
+      options = array.first.class.where(store_id: current_user.store.id).pluck(string).uniq
+    end
+    @month_options = options.map{ |arr| arr.to_date.strftime('%m/%Y') }
+  end
+
+  def get_array_type
+    if @report_type == "cancel payments bills received"
+      array = BillReceived.where(store_id: current_user.store.id).limit(2)
+      dates_generator(array)
+    elsif @report_type == "cancel payments bills issued"
+      array = Bill.where(store_id: current_user.store.id).limit(2)
+      dates_generator(array)
+    end
+  end
+
+  def get_report_type
+    @report_type = params[:report_type]
+  end
+
+  def filter_date
+    @initial_date = "#{params[:date].slice(3..7)}-#{params[:date].slice(0..1)}-01 00:00:00"
+    @final_date = Date.parse(@initial_date).end_of_month.strftime('%F 23:59:59')
+  end
+
   def reverse_params_array
     n = 0
     params.length.times do

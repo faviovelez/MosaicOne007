@@ -14,8 +14,9 @@ class InventoriesController < ApplicationController
       store_id = current_user.store.id
       store = Store.find(store_id)
     else
-      store_id = params[:store_id]
+      params[:store].nil? ? store_id = Store.where(store_type: 1).order(:store_name).pluck(:id).first : store_id = params[:store]
       store = Store.find(store_id)
+      @store_id = store_id
     end
     final_date = (Date.today - 1.month).end_of_month
     months = Store.find(store_id).months_in_inventory
@@ -31,6 +32,37 @@ class InventoriesController < ApplicationController
     month_sales = StoreMovement.joins('RIGHT JOIN products ON products.id = store_movements.product_id RIGHT JOIN stores_inventories ON products.id = stores_inventories.product_id').where(stores_inventories: {store_id: store_id}).where.not(movement_type: ['alta', 'baja', 'alta automática', 'baja automática']).where(store_id: store_id).where("(store_movements.created_at > '#{initial_date_for_query}' AND store_movements.created_at < '#{final_date_for_query}') OR (store_movements.created_at > '#{ly_after_initial_date_for_query}' AND store_movements.created_at < '#{ly_after_final_date_for_query}')").order("products.id, DATE_TRUNC('month', store_movements.created_at)").group("products.id, products.unique_code, products.description, DATE_TRUNC('month', store_movements.created_at), stores_inventories.quantity").pluck("products.id, products.unique_code, products.description, COALESCE(SUM(CASE WHEN store_movements.movement_type = 'devolución' THEN -store_movements.quantity WHEN store_movements.movement_type = 'venta' THEN store_movements.quantity ELSE 0 END), 0) as total, COUNT(DISTINCT DATE_TRUNC('month', store_movements.created_at)) AS months, DATE_TRUNC('month', store_movements.created_at) AS month, stores_inventories.quantity")
 
     @grouped_stores_inventories = StoresInventory.joins(:product).where(store_id: store_id).order(:product_id).pluck(:product_id, :unique_code, :description, :quantity, :exterior_material_color, :line).group_by{ |arr| arr[0]}
+
+    products = Product.all.order(:id).pluck(:id)
+
+    movs = StoreMovement.where(movement_type: ['alta', 'alta automática'], store_id: store_id, product_id: products).order(:product_id).order(created_at: :desc).pluck(:product_id, :cost, :created_at)
+
+    last_movs = []
+    products.each do |product|
+      if movs.find{ |arr| arr[0] == product } != [] && movs.find{ |arr| arr[0] == product } != nil
+        finded = movs.find{ |arr| arr[0] == product }
+        if finded[1].to_f == 0
+          store_type = Store.find(store_id).store_type.store_type
+          if store_type == 'franquicia'
+            product_finded = Product.find(product)
+            cost = (product_finded.price * (1 - (product_finded.discount_for_franchises / 100))).round(2)
+          elsif store_type == 'tienda propia'
+            product_finded = Product.find(product)
+            cost = (product_finded.price * (1 - (product_finded.discount_for_stores / 100))).round(2)
+          end
+          finded[1] = cost
+        end
+        last_movs << [finded[0], finded[1]]
+      end
+    end
+
+    month_sales.each do |arr|
+      this_cost = last_movs.find{|movs| movs[0] == arr[0]}[1].to_f
+      total_cost = (this_cost * arr[6]).round(2)
+      arr << this_cost
+      arr << total_cost
+    end
+
     @grouped_month_sales = month_sales.group_by{ |arr| arr[0]}
 
     @average_sales_arr = []
@@ -57,9 +89,9 @@ class InventoriesController < ApplicationController
         q_cy == nil ? avg_cy = nil : avg_cy = (q_cy / months).round(2)
         q_ly == nil ? avg_ly = nil : avg_ly = (q_ly / months).round(2)
       end
-      desired_cy = (times * avg_cy.to_i).round(0).to_i
-      desired_ly = (times * avg_ly.to_i).round(0).to_i
-      avg_cy.to_i == 0 ? mos = 999999999.999 : mos = (quant / avg_cy).to_f
+      desired_cy = (times * avg_cy.to_f).round(0).ceil
+      desired_ly = (times * avg_ly.to_f).round(0).ceil
+      avg_cy.to_f == 0 ? mos = 999999999.999 : mos = (quant / avg_cy).to_f
       order_cy = desired_cy - quant
       order_ly = desired_ly - quant
       @average_sales_arr << [id, code, desc, avg_cy, sales_arr_cy, avg_ly, sales_arr_ly, quant, desired_cy, desired_ly, order_cy, order_ly, mos]

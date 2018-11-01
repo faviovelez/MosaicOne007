@@ -10,4 +10,10 @@ class PagesController < ApplicationController
       format.xml { render  xml: @utilerias }
     end
   end
+
+  def date_filter
+    get_report_type
+    get_array_type
+  end
+
 end
