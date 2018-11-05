@@ -60,7 +60,7 @@ class PosController < ApplicationController
       return {
         "CashRegister" => ['balance'],
         "BillingAddress" => ['type_of_person', 'business_name', 'rfc', 'street', 'exterior_number', 'interior_number', 'zipcode', 'neighborhood', 'city', 'state', 'country', 'tax_regime_id', 'pos_id'],
-        "Prospect" => ['legal_or_business_name', 'prospect_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'contact_position', 'direct_phone', 'extension', 'cell_phone', 'business_type', 'prospect_status', 'billing_address_id', 'delivery_address_id', 'second_last_name', 'business_unit_id', 'email', 'business_group_id', 'store_code', 'store_type_id', 'store_prospect', 'credit_days', 'email_2', 'email_3', 'collection_active', 'discount', 'pos_id'],
+        "Prospect" => ['legal_or_business_name', 'prospect_type', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'contact_position', 'direct_phone', 'extension', 'cell_phone', 'business_type', 'prospect_status', 'billing_address_id', 'delivery_address_id', 'second_last_name', 'business_unit_id', 'email', 'business_group_id', 'store_code', 'store_type_id', 'store_prospect', 'credit_days', 'email_2', 'email_3', 'collection_active', 'discount', 'pos_id', 'store_id'],
         "Terminal" => ['debit_comission', 'credit_comission'],
         "Ticket" => ['ticket_number', 'parent_id', 'ticket_type', 'cfdi_use', 'subtotal', 'total', 'taxes', 'discount_applied', 'prospect_id', 'comments', 'payed', 'cost', 'payments_amount', 'cash_return'],
         "StoresInventory" => ['quantity', 'manual_price', 'rack', 'level', 'manual_price_update', 'pos_id', 'web_id'],
@@ -99,8 +99,16 @@ class PosController < ApplicationController
         cad << " AND " unless index == information.length - 1
       end
       cad.gsub!("AND  AND", "AND")
-      object = reg.class.where(cad).first unless reg.class == TicketsChild
-      return reg if object.nil? unless reg.web_id.present?
+      unless reg.class == TicketsChild
+        object = reg.class.where(cad).first
+        if reg.class == StoreMovement || reg.class == ServiceOffered
+          object = reg.class.where(id: reg.web_id).first if object == nil && reg.web_id.present?
+          object = nil if reg.quantity != object&.quantity.to_i
+        elsif reg.class == Prospect || reg.class == BillingAddress
+          object = reg.class.where(id: reg.web_id).first if object == nil && reg.web_id.present?
+        end
+      end
+      return reg if object.nil? (unless reg.web_id.present?)
       updated_reg_for(object, reg)
       return object
     end
