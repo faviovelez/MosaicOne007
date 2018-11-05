@@ -81,7 +81,7 @@
     <% @payments_ticket.each do |payment| %>
       <tr>
         <td colspan="3"> </td>
-        <td colspan="2"> <%= l payment.created_at.to_date, format: :short %> </td>
+        <td colspan="2"> <%= l payment.payment_date, format: :short %> </td>
         <td colspan="2"> <%= payment.payment_type %></td>
         <td colspan="2"> <%= payment.payment_form.description %> </td>
         <td colspan="2"> <%= number_to_currency(payment.total) %> </td>

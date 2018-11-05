@@ -56,13 +56,12 @@ class InventoriesController < ApplicationController
       end
     end
 
-    month_sales.each do |arr|
-      last_movs.find{|movs| movs[0] == arr[0]} == nil ? this_cost = 0 : this_cost = last_movs.find{|movs| movs[0] == arr[0]}[1].to_f
-      total_cost = (this_cost * arr[6]).round(2)
-      arr << this_cost
-      arr << total_cost
+    @grouped_stores_inventories.each do |arr|
+      last_movs.find{|movs| movs[0] == arr[1][0][0]} == nil ? this_cost = 0 : this_cost = last_movs.find{|movs| movs[0] == arr[0]}[1].to_f
+      total_cost = (this_cost * arr[1][0][3]).round(2)
+      arr[1][0] << this_cost
+      arr[1][0] << total_cost
     end
-
     @grouped_month_sales = month_sales.group_by{ |arr| arr[0]}
 
     @average_sales_arr = []

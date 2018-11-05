@@ -34,8 +34,8 @@
           <td> 0 </td>
           <td class="hidden"> 0 </td>
           <td> 0 </td>
-          <td class="hidden"> 0 </td>
-          <td class="hidden"> 0 </td>
+          <td class="hidden"> <%= value[0][6].round(2) %> </td>
+          <td class="hidden"> <%= value[0][7].round(2) %> </td>
           <td> <%= inventory_status(0, 0) %> </td>
         <% else %>
           <% if @average_sales_arr[key][0][3].to_f < 1 %>
@@ -49,8 +49,8 @@
           <td> <%= @average_sales_arr[key][0][10] > 0 ? @average_sales_arr[key][0][10] : 0 %> </td>
           <td class="hidden"> <%= @average_sales_arr[key][0][11] > 0 ? @average_sales_arr[key][0][11] : 0 %> </td>
           <td> <%= @average_sales_arr[key][0][12].round(0) == 1000000000 ? '' : @average_sales_arr[key][0][12].round(1) %> </td>
-          <td class="hidden"> <%= @grouped_month_sales[key][0][7] %> </td>
-          <td class="hidden"> <%= @grouped_month_sales[key][0][8] %> </td>
+          <td class="hidden"> <%= value[0][6].round(2) %> </td>
+          <td class="hidden"> <%= value[0][7].round(2) %> </td>
           <td> <%= inventory_status(@average_sales_arr[key][0][12].round(2), @average_sales_arr[key][0][3].to_f.ceil) %> </td>
         <% end %>
       </tr>

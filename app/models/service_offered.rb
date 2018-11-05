@@ -194,6 +194,7 @@ class ServiceOffered < ActiveRecord::Base
           taxes: taxes,
           total: total,
           cost: cost,
+          store_id: self.store_id,
           quantity: quantity,
           month: month,
           year: year
@@ -202,6 +203,7 @@ class ServiceOffered < ActiveRecord::Base
         object.create(
           subtotal: - subtotal,
           discount: - discount,
+          store_id: self.store_id,
           taxes: - taxes,
           total: - total,
           cost: - cost,
@@ -218,6 +220,7 @@ class ServiceOffered < ActiveRecord::Base
           taxes: - taxes,
           total: - total,
           cost: - cost,
+          store_id: self.store_id,
           quantity: - quantity,
           month: month,
           year: year
@@ -228,6 +231,7 @@ class ServiceOffered < ActiveRecord::Base
           discount: discount,
           taxes: taxes,
           total: total,
+          store_id: self.store_id,
           cost: cost,
           quantity: quantity,
           month: month,
