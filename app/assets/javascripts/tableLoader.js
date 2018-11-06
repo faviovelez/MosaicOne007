@@ -275,6 +275,62 @@ $(document).ready(function(){
     ]
   });
 
+  var tableTwo = $('.dataTableNoPaginationThree').DataTable({
+    "order": [[ 1, "asc" ]],
+    stateSave: true,
+    "language": {
+      "sProcessing":     "Procesando...",
+      "sLengthMenu":     "Mostrar _MENU_ registros",
+      "sZeroRecords":    "No se encontraron resultados",
+      "sEmptyTable":     "Ningún dato disponible en esta tabla",
+      "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix":    "",
+      "sSearch":         "Buscar:",
+      "sUrl":            "",
+      "sInfoThousands":  ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst":    "Primero",
+        "sLast":     "Último",
+        "sNext":     "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    },
+    dom: 'Bfrtip',
+    "drawCallback": function(settings){
+      tableTwoPresent = true;
+      if ($('#order_complete').length > 0) {
+        if ($('#order_complete').is(":checked")) {
+          $(".all-hide").addClass("hidden");
+        } else {
+          $(".all-hide").removeClass("hidden");
+        }
+      }
+    },
+    buttons: [
+      {
+        extend: 'print',
+        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + $("#date").html() + " " + $("#hour").html() + 'hrs',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4, 5, 6, 7]
+        }
+      },
+      {
+        extend: 'pdf',
+        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + $("#date").html() + " " + $("#hour").html() + 'hrs',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4, 5, 6, 7]
+        }
+      }
+    ]
+  });
+
   var tableThree = $('.dataTableNoPaginationNoButton').DataTable({
     "order": [[ 1, "asc" ]],
     "language": {
