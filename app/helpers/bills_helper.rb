@@ -192,26 +192,31 @@ module BillsHelper
 
   def number_to_letters(number)
     variables_to_number(number)
-    while @q_dec > 0
-      if @order == 0
-        centenas
-        decenas
-        agrupadores
-      elsif @order == 1
-        if @num_unit > 0
-          unidades
+    if @num_s.to_i < 10
+      unidades
+      agrupadores
+    else
+      while @q_dec > 0
+        if @order == 0
+          centenas
+          decenas
           agrupadores
+        elsif @order == 1
+          if @num_unit > 0
+            unidades
+            agrupadores
+          end
+          centenas
+          decenas
+          agrupadores
+        else @order == 2
+          decenas
+          agrupadores
+          centenas
         end
-        centenas
-        decenas
-        agrupadores
-      else @order == 2
-        decenas
-        agrupadores
-        centenas
       end
     end
-    if (@num_length == 1 && @unit_value)
+    if (@num_length == 1 && @unit_value == 1)
       @quantity_in_letters << ' peso '
     else
       @quantity_in_letters << ' pesos '
@@ -239,16 +244,13 @@ module BillsHelper
         quant += 1
       end
     else
+      number = row.quantity
       row.bill.children.each do |child_bill|
         child_bill.rows.each do |r|
+          quant = 0
           if r.unique_code == row.unique_code
-            skip = true
-            number = row.quantity - r.quantity
-            quant = 0
-            (number + 1).times do
-              @quantity_options << quant
-              quant += 1
-            end
+            skip = false
+            number -= r.quantity
           else
             if skip == true
               quant = 0
@@ -258,6 +260,17 @@ module BillsHelper
               end
             end
           end
+        end
+        (number + 1).times do
+          @quantity_options << quant
+          quant += 1
+        end
+      end
+      if @quantity_options == []
+        quant = 0
+        (row.quantity + 1).times do
+          @quantity_options << quant
+          quant += 1
         end
       end
     end
@@ -360,6 +373,9 @@ module BillsHelper
 
   def payments_for_bill_show(bill)
     @total_payments_bill = (bill.payments.where(payment_type: 'pago').sum(:total) - bill.payments.where(payment_type: 'devolución').sum(:total)).round(2)
+    bill.children.each do |child|
+      @total_payments_bill += (child.payments.where(payment_type: 'pago').sum(:total) - child.payments.where(payment_type: 'devolución').sum(:total)).round(2)
+    end
     @total_payments_bill
   end
 
@@ -430,7 +446,7 @@ module BillsHelper
   def subtotal
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.subtotal
       else
         amounts << row["subtotal"]
@@ -444,7 +460,7 @@ module BillsHelper
   def total_taxes
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.taxes
       else
         amounts << row["taxes"]
@@ -465,7 +481,7 @@ module BillsHelper
   def total_discount
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.discount
       else
         amounts << row["discount"]
