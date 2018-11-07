@@ -6,7 +6,7 @@
       </td>
       <td>
         <div class="top-right-preview">
-          <% if @bill == nil %>
+          <% if @bill == nil || @relation_type == '04' %>
             <h3 id="top-title"> FACTURA </h3>
           <% elsif (@bill != nil && @relation_type == '01') %>
             <h3 id="top-title"> NOTA DE CRÉDITO </h3>
@@ -77,7 +77,7 @@
 
 <table class="quantities-table full-width">
   <thead>
-    <% if @bill != nil %>
+    <% if @bill != nil && @relation_type != '04' %>
       <tr>
         <td colspan="10"> <strong> La siguiente tabla contiene información de la factura original, no se mostrarán en su Factura de egresos </strong></td>
       </tr>
@@ -98,7 +98,7 @@
     </tr>
   </thead>
   <tbody>
-    <% if (@bill == nil || @relation_type == '01') %>
+    <% if (@bill == nil || @relation_type == '01' || @relation_type == '04') %>
       <% @rows.each do |row|%>
         <tr>
           <td class="space-preview"> <%= row["sat_key"] %> </td>
@@ -205,19 +205,19 @@
         <td colspan="2" class="final-total right"> <%= number_to_currency(total_taxes) %> </td>
       </tr>
       <tr>
-        <% if @bill == nil %>
+        <% if @bill == nil || @relation_type == '04' %>
           <td colspan="5" class="letter"> <%= number_to_letters(total) %> <%= decimals(total) %> </td>
         <% else %>
           <td colspan="5" class="letter"> <%= number_to_letters(@bill.total) %> <%= decimals(@bill.total) %> </td>
         <% end %>
         <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
-        <% if @bill == nil %>
+        <% if @bill == nil || @relation_type == '04' %>
           <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(total) %> </strong> </td>
         <% else %>
           <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>
         <% end %>
       </tr>
-      <% if @bill != nil%>
+      <% if @bill != nil && @relation_type != '04' %>
         <tr>
           <td colspan="5"></td>
           <td colspan="3" class="final-total border-top left">  <strong> Total descontando NC y Dev </strong> </td>
@@ -306,8 +306,12 @@
   </table>
 <% end %>
 
-<% if @bill == nil%>
-  <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes, payment_key: @payment_key, payment_description: @payment_description, method_key: @method_key, method_description: @method_description, payment_form: @payment_form}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
+<% if @bill == nil || (@bill != nil && @relation_type == '04') %>
+  <% if @relation_type == '04' %>
+    <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes, payment_key: @payment_key, payment_description: @payment_description, method_key: @method_key, method_description: @method_description, payment_form: @payment_form, relation_type: @relation_type, bill: @bill&.id}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
+  <% else %>
+    <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes, payment_key: @payment_key, payment_description: @payment_description, method_key: @method_key, method_description: @method_description, payment_form: @payment_form, relation_type: @relation_type}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
+  <% end %>
 <% end %>
 
 <%= render 'add_masks' %>

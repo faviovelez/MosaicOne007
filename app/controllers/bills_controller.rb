@@ -8,9 +8,9 @@ class BillsController < ApplicationController
 
   def index
     if current_user.role.name == 'viewer'
-      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, parent: nil, from: 'Form').where.not(status: 'cancelada', receiving_company: nil, total: nil)
+      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, bill_folio_type: ['Factura', 'Sustitución'], from: 'Form').where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4])
     else
-      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, parent: nil).where.not(status: 'cancelada', receiving_company: nil, total: nil)
+      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, bill_folio_type: ['Factura', 'Sustitución']).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4])
     end
   end
 
@@ -144,7 +144,7 @@ class BillsController < ApplicationController
     store = Store.find(params[:store]) || current_user.store
     month = params[:month]
     year = params[:year]
-    @bills = store.bills.where('extract(month from created_at) = ? and extract(year from created_at) = ?', month, year).where(relation_type: nil).where.not(pdf: nil, xml: nil, status: 'cancelada')
+    @bills = store.bills.where('extract(month from created_at) = ? and extract(year from created_at) = ?', month, year).where(relation_type_id: [nil, 4]).where.not(pdf: nil, xml: nil, status: 'cancelada')
   end
 
   def select_bills
@@ -572,6 +572,21 @@ class BillsController < ApplicationController
     params[:bill] == nil ? @bill = nil : @bill = Bill.find(params[:bill])
     params[:tickets] == nil ? tickets = nil : tickets = Ticket.find(params[:tickets])
     (params[:orders] == nil || params[:orders] == "") ? orders = nil : orders = Order.find(params[:orders])
+    if (tickets.nil? && @bill.nil? || @bill != nil && params[:relation_type] == '04')
+      @objects = orders
+    elsif (orders.nil? && @bill.nil? || @bill != nil && params[:relation_type] == '04')
+      @objects = tickets
+    else
+      @objects = @bill
+    end
+    if @objects.class != Bill
+      @objects.each do |object|
+        if object.bill != nil
+          @bill = object.bill
+          @relation_type = '04'
+        end
+      end
+    end
     if @bill != nil
       @store = @bill.store
       @bill.bill_type == 'global' ? @cfdi_type = 'global' : @cfdi_type = nil
@@ -586,13 +601,6 @@ class BillsController < ApplicationController
       create_directories
       cancel_uuid
     else
-      if tickets == nil && @bill == nil
-        @objects = orders
-      elsif orders == nil && @bill == nil
-        @objects = tickets
-      else
-        @objects = @bill
-      end
       select_store if @bill == nil
       if @bill == nil
         @store = current_user.store
@@ -640,7 +648,6 @@ class BillsController < ApplicationController
           cfdi_use = CfdiUse.find_by_key('P01')
           @cfdi_use_key = cfdi_use.key
           @cfdi_use = cfdi_use.description
-
           if @bill != nil
             @payment_key  = @bill.payment_form.payment_key # Forma de pago
             @payment_description = @bill.payment_form.description # Forma de pago
@@ -680,21 +687,25 @@ class BillsController < ApplicationController
           else
             @discount_any = false
           end
-
-          if params[:relation_type] != nil
+          if params[:relation_type] != nil && params[:relation_type] != ''
             relation_type = RelationType.find_by_key(params[:relation_type])
             @relation = relation_type
             @relation_type = relation_type.key
           elsif @relation_type != nil
-            relation_type = RelationType.find(@relation_type)&.first
-            @relation = relation_type
-            @relation_type = relation_type.key
+            if @relation_type.class == String
+              relation_type = RelationType.where(key: @relation_type)&.first
+              @relation = relation_type
+            else
+              relation_type = RelationType.find(@relation_type)&.first
+              @relation = relation_type
+              @relation_type = relation_type.key
+            end
           end
           @relation_type == '01' ? @credit_note = true : @credit_note = false
 
           unless @objects.class == Bill
             if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
-              @relation_type = ''
+              @relation_type = '' if @relation_type != '04'
               get_series_and_folio
             end
           end
@@ -737,10 +748,12 @@ class BillsController < ApplicationController
             cfdi_use = CfdiUse.find(params[:cfdi_use]).first
           elsif (@bill != nil && (@relation_type == '01' || @relation_type == '03') )
             cfdi_use = CfdiUse.find_by_key('G02')
+          else
+            cfdi_use = CfdiUse.find(params[:cfdi_use]).first
           end
           @cfdi_use_key = cfdi_use.key
           @cfdi_use = cfdi_use.description
-          if @bill != nil
+          if @bill != nil && @relation_type != '04'
             @payment_key  = @bill.payment_form.payment_key # Forma de pago
             @payment_description = @bill.payment_form.description # Forma de pago
             @method_key = PaymentMethod.find_by_method('PUE').method # Método de pago
@@ -770,7 +783,7 @@ class BillsController < ApplicationController
               @rows
             end
           end
-          if @bill == nil
+          if @bill == nil && @method_key == nil && @method_description == nil
             if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
               pay_form = PaymentForm.find(params[:payment])
               @payment_key = pay_form.payment_key
@@ -790,20 +803,25 @@ class BillsController < ApplicationController
           else
             @discount_any = false
           end
-          if params[:relation_type] != nil
+          if params[:relation_type] != nil && params[:relation_type] != ''
             relation_type = RelationType.find_by_key(params[:relation_type])
             @relation = relation_type
             @relation_type = relation_type.key
           elsif @relation_type != nil
-            relation_type = RelationType.find(@relation_type)&.first
-            @relation = relation_type
-            @relation_type = relation_type.key
+            if @relation_type.class == String
+              relation_type = RelationType.where(key: @relation_type)&.first
+              @relation = relation_type
+            else
+              relation_type = RelationType.find(@relation_type)&.first
+              @relation = relation_type
+              @relation_type = relation_type.key
+            end
           end
           @relation_type == '01' ? @credit_note = true : @credit_note = false
 
           unless @objects.class == Bill
             if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
-              @relation_type = ''
+               @relation_type = '' if @relation_type != '04'
               get_series_and_folio
             end
           end
@@ -951,7 +969,7 @@ class BillsController < ApplicationController
   def subtotal
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.subtotal
       else
         amounts << row["subtotal"]
@@ -965,7 +983,7 @@ class BillsController < ApplicationController
   def total_taxes
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.taxes
       else
         amounts << row["taxes"]
@@ -979,7 +997,7 @@ class BillsController < ApplicationController
   def total
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.total
       else
         amounts << row["total"]
@@ -993,7 +1011,7 @@ class BillsController < ApplicationController
   def total_discount
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.discount
       else
         amounts << row["discount"]
@@ -1006,7 +1024,7 @@ class BillsController < ApplicationController
   def new_subtotal
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.subtotal
       else
         amounts << row["subtotal"]
@@ -1020,7 +1038,7 @@ class BillsController < ApplicationController
   def new_total_taxes
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.taxes
       else
         amounts << row["taxes"]
@@ -1034,7 +1052,7 @@ class BillsController < ApplicationController
   def new_total
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.total
       else
         amounts << row["total"]
@@ -1048,7 +1066,7 @@ class BillsController < ApplicationController
   def new_total_discount
     amounts = []
     @rows.each do |row|
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         amounts << row.discount
       else
         amounts << row["discount"]
@@ -1329,9 +1347,9 @@ class BillsController < ApplicationController
       (params[:tickets] == nil || params[:tickets] == "") ? tickets = nil : tickets = Ticket.where(id: params[:tickets].split("/"))
       (params[:orders] == nil || params[:orders] == "") ? orders = nil : orders = Order.find(params[:orders].split("/"))
       tickets == nil ? @objects = orders : @objects = tickets
-      if (tickets == nil && @bill == nil)
+      if (tickets.nil? && @bill.nil? || @bill != nil && params[:relation_type] == '04' && tickets.nil?)
         @objects = orders
-      elsif (orders == nil && @bill == nil)
+      elsif (orders.nil? && @bill.nil? || @bill != nil && params[:relation_type] == '04' && orders.nil?)
         @objects = tickets
       else
         @objects = @bill
@@ -1381,7 +1399,7 @@ class BillsController < ApplicationController
         @use = cfdi_use
         @cfdi_use_key = cfdi_use.key
         @cfdi_use = cfdi_use.description
-        if @bill != nil
+        if @bill != nil || (@bill != nil && @relation_type == '04')
           @payment_key  = @bill.payment_form.payment_key # Forma de pago
           @payment_description = @bill.payment_form.description # Forma de pago
           @method_key = PaymentMethod.find_by_method('PUE').method # Método de pago
@@ -1454,7 +1472,7 @@ class BillsController < ApplicationController
 
         unless @objects.class == Bill
           if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
-            @relation_type = ''
+            @relation_type = '' if @relation_type != '04'
             get_series_and_folio
           end
         end
@@ -1498,13 +1516,15 @@ class BillsController < ApplicationController
           cfdi_use = CfdiUse.find(params[:cfdi_use])
         elsif (@bill != nil && (@relation_type == '01' || @relation_type == '03') )
           cfdi_use = CfdiUse.find_by_key('G02')
+        else
+          cfdi_use = CfdiUse.find(params[:cfdi_use])
         end
         cfdi_use = cfdi_use.first if cfdi_use.class == Array
         @use = cfdi_use
         @cfdi_use_key = cfdi_use.key
         @cfdi_use = cfdi_use.description
 
-        if @bill != nil
+        if @bill != nil && @relation_type != '04'
           @payment_key  = @bill.payment_form.payment_key # Forma de pago
           @payment_description = @bill.payment_form.description # Forma de pago
           @method_key = PaymentMethod.find_by_method('PUE').method # Método de pago
@@ -1602,8 +1622,7 @@ class BillsController < ApplicationController
         else
           @discount_any = false
         end
-
-        if params[:relation_type] != nil
+        if params[:relation_type] != nil && params[:relation_type] != ''
           relation_type = RelationType.find_by_key(params[:relation_type])
           @relation = relation_type
           @relation_type = relation_type.key
@@ -1617,12 +1636,12 @@ class BillsController < ApplicationController
 
         unless @objects.class == Bill
           if (@objects.first.is_a?(Ticket) || @objects.first.is_a?(Order))
-            @relation_type = ''
+            @relation_type = '' if @relation_type != '04'
             get_series_and_folio
           end
         end
       end
-      if @bill == nil
+      if @bill == nil && @method_key == nil && @method_description == nil
         if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
           pay_form = PaymentForm.where(payment_key: params[:payment_key]).first
           @greatest_payment = pay_form
@@ -1760,7 +1779,7 @@ class BillsController < ApplicationController
   def get_payments_array
     filter_corporate_stores
     if @corporate_stores.include?(current_user.store.id)
-      @payments_array = Payment.where(id: params[:payments]).joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id, bills.sequence, bills.folio, bills.uuid, payments.operation_number")
+      @payments_array = Payment.where(id: params[:payments]).joins(:payment_form).joins("LEFT JOIN orders ON orders.id = payments.order_id LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id, bills.sequence, bills.folio, bills.uuid, payments.operation_number")
     else
       @payments_array = Payment.where(id: params[:payments]).joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("tickets.ticket_number, payments.payment_date, tickets.ticket_type, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id, bills.sequence, bills.folio, bills.uuid, payments.operation_number")
     end
@@ -1770,10 +1789,10 @@ class BillsController < ApplicationController
   def get_payments_array_secondary
     filter_corporate_stores
     if @corporate_stores.include?(current_user.store.id)
-      @cancelled_bills = Bill.where(id: Payment.where(id: params[:payments].split(" ")).joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck(:payment_bill_id)).pluck(:id, :uuid, :status)
+      @cancelled_bills = Bill.where(id: Payment.where(id: params[:payments].split(" ")).joins(:payment_form).joins("LEFT JOIN orders ON orders.id = payments.order_id LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck(:payment_bill_id)).pluck(:id, :uuid, :status)
       @relation_type = 4 unless @cancelled_bills == []
 
-      @payments_array = Payment.where(id: params[:payments].split(" ")).joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id, bills.sequence, bills.folio, bills.uuid, payments.operation_number, payments.id, payment_forms.payment_key")
+      @payments_array = Payment.where(id: params[:payments].split(" ")).joins(:payment_form).joins("LEFT JOIN orders ON orders.id = payments.order_id LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id, bills.sequence, bills.folio, bills.uuid, payments.operation_number, payments.id, payment_forms.payment_key")
     else
       @cancelled_bills = Bill.where(id: Payment.where(id: params[:payments].split(" ")).joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").order(:id).pluck(:payment_bill_id)).pluck(:id, :uuid, :status)
       @relation_type = 4 unless @cancelled_bills == []
@@ -1859,9 +1878,9 @@ class BillsController < ApplicationController
 
     filter_corporate_stores
     if @corporate_stores.include?(current_user.store.id)
-      @payments = Payment.joins(:order, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("(payments.payment_bill_id IS NOT null AND bills.status != 'creada') OR (bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status = 'creada' AND payments.payment_bill_id IS null)").where(store_id: nil, bills: {store_id: current_user.store.id}).where.not(payment_type: 'crédito').order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
+      @payments = Payment.joins(:payment_form).joins("LEFT JOIN orders ON orders.id = payments.order_id LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("(payments.payment_bill_id IS NOT null AND bills.status != 'creada') OR (bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status = 'creada' AND payments.payment_bill_id IS null)").where(store_id: nil, bills: {store_id: current_user.store.id}).where.not(payment_type: 'crédito').order(:id).pluck("orders.id, payments.payment_date, orders.category, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
     else
-      @payments = pp Payment.joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("(payments.payment_bill_id IS NOT null AND bills.status != 'creada') OR (bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status = 'creada' AND payments.payment_bill_id IS null)").where(store_id: current_user.store.id).where.not(payment_type: 'crédito').order(:id).pluck("tickets.ticket_number, payments.payment_date, tickets.ticket_type, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
+      @payments = Payment.joins(:ticket, :payment_form).joins("LEFT JOIN bills ON payments.bill_id = bills.id LEFT JOIN prospects ON bills.prospect_id = prospects.id").where("(payments.payment_bill_id IS NOT null AND bills.status != 'creada') OR (bills.created_at > '#{initial_date}' AND bills.created_at < '#{final_date}' AND bills.payment_method_id = 2 AND bills.status = 'creada' AND payments.payment_bill_id IS null)").where(store_id: current_user.store.id).where.not(payment_type: 'crédito').order(:id).pluck("tickets.ticket_number, payments.payment_date, tickets.ticket_type, payments.total, payment_forms.description, prospects.legal_or_business_name, bills.total, bills.folio, payments.id, payments.payment_bill_id, prospects.id, payments.bill_id")
     end
   end
 
@@ -2353,7 +2372,7 @@ XML
       if @bill != nil
         @bill.children << bill
       end
-      if @bill == nil && !@pay_bill
+      if @bill == nil && !@pay_bill || @relation_type == '04'
         @rows.each do |row|
           row_for_bill = Row.new.tap do |r|
             r.bill = bill
@@ -2388,7 +2407,7 @@ XML
           @objects.each do |object|
             object.update(bill: bill)
             object.payments.each do |payment|
-              payment.update(bill: bill) if bill.bill_folio_type == 'Factura'
+              payment.update(bill: bill) if bill.bill_folio_type != 'Pago'
             end
             if object.is_a?(Ticket)
               object.store_movements.each do |mov|
