@@ -3,7 +3,7 @@
   <%= wicked_pdf_image_tag 'logo-disenos-decarton.png', class: 'img-bill' %>
 
   <div class="top-right">
-    <% if @bill == nil %>
+    <% if @bill == nil || @bill != nil && @relation_type == '04' %>
       <h3 id="top-title"> FACTURA </h3>
     <% elsif (@bill != nil && @relation_type == '01') %>
       <h3 id="top-title"> NOTA DE CRÉDITO </h3>
@@ -85,7 +85,7 @@
     <thead>
       <tr class="header-main">
         <th class="grow space"> Clave Prod / Serv </th>
-        <% if (@bill == nil || @relation_type == '03') %>
+        <% if (@bill == nil || @relation_type == '03' || @relation_type == '04') %>
           <th class="grow space"> No. Identificación </th>
         <% end %>
         <th class="grow space"> Cantidad </th>
@@ -100,7 +100,7 @@
       </tr>
     </thead>
     <tbody>
-      <% if (@bill == nil || @relation_type == '03') %>
+      <% if (@bill == nil || @relation_type == '03'|| @relation_type == '04') %>
         <% @rows.each do |row|%>
           <tr>
             <td class="grow space"> <%= row["sat_key"] %> </td>
@@ -119,7 +119,7 @@
         <% @rows.each do |row|%>
           <tr>
             <td class="grow space"> <%= row.sat_key %> </td>
-            <% if (@bill == nil || @relation_type == '03') %>
+            <% if (@bill == nil || @relation_type == '03' || @relation_type == '04') %>
               <td class="grow space"> <%= row.unique_code %> </td>
             <% end %>
             <td class="grow space"> <%= row.quantity %> </td>
