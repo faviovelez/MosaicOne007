@@ -100,37 +100,38 @@
       </tr>
     </thead>
     <tbody>
+      <% if (@bill == nil || @relation_type == '03'|| @relation_type == '04') %>
+        <% @rows.each do |row|%>
+        <tr>
+          <td class="grow space"> <%= row["sat_key"] %> </td>
+          <% if (@bill == nil || @relation_type == '03' || @relation_type == '04') %>
+          <td class="grow space"> <%= row["ticket"] %> </td>
+          <% end %>
+          <td class="grow space"> 1 </td>
+          <td class="grow space"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
+          <td class="grow space"> Venta </td>
+          <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <td class="grow space"> <%= number_to_currency(row["discount"]) %> </td>
+          <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
+          <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+        </tr>
+        <% end %>
+      <% else %>
         <% @rows.each do |row|%>
           <tr>
-            <td class="grow space"> <%= row["sat_key"] %> </td>
+            <td class="grow space"> <%= row.sat_key %> </td>
             <% if (@bill == nil || @relation_type == '03' || @relation_type == '04') %>
-              <td class="grow space"> <%= row["ticket"] %> </td>
+              <td class="grow space"> <%= row.ticket %> </td>
             <% end %>
-            <td class="grow space"> 1 </td>
-            <td class="grow space"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
-            <td class="grow space"> Venta </td>
-            <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
-            <td class="grow space"> <%= number_to_currency(row["discount"]) %> </td>
-            <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
-            <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+            <td class="grow space"> <%= row.quantity %> </td>
+            <td class="grow space"> <%= row.sat_unit_key %> </strong> </td>
+            <td class="grow space"> <%= row.description %> </td>
+            <td class="grow space"> <%= number_to_currency(row.unit_value) %> </td>
+            <td class="grow space"> <%= number_to_currency(row.discount) %> </td>
+            <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
+            <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
           </tr>
         <% end %>
-        <% if (@bill != nil || @relation_type == '03') %>
-          <% @rows.each do |row|%>
-            <tr>
-              <td class="grow space"> <%= row.sat_key %> </td>
-              <% if @bill == nil || @relation_type == '03'%>
-                <td class="grow space"> <%= row.ticket %> </td>
-              <% end %>
-              <td class="grow space"> <%= row.quantity %> </td>
-              <td class="grow space"> <%= row.sat_unit_key %> </strong> </td>
-              <td class="grow space"> <%= row.description %> </td>
-              <td class="grow space"> <%= number_to_currency(row.unit_value) %> </td>
-              <td class="grow space"> <%= number_to_currency(row.discount) %> </td>
-              <td class="grow space"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
-              <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
-            </tr>
-          <% end %>
       <% end %>
       <tr>
         <td> <br/> </td>

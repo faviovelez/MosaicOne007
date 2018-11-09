@@ -194,13 +194,13 @@
         <td colspan="2" class="final-total right"> <%= number_to_currency(total_taxes) %> </td>
       </tr>
       <tr>
-        <% if @bill == nil %>
+        <% if @bill == nil || @relation_type == '04' %>
           <td colspan="5" class="letter"> <%= number_to_letters(total) %> <%= decimals(total) %> </td>
         <% else %>
           <td colspan="5" class="letter"> <%= number_to_letters(@bill.total) %> <%= decimals(@bill.total) %> </td>
         <% end %>
         <td colspan="3" class="final-total border-top left"> <strong> Total </strong> </td>
-        <% if @bill == nil %>
+        <% if @bill == nil || @relation_type == '04' %>
           <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(total) %> </strong> </td>
         <% else %>
           <td colspan="2" class="final-total border-top right"> <strong> <%= number_to_currency(@bill.total) %> </strong> </td>

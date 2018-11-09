@@ -90,14 +90,13 @@ class ApplicationController < ActionController::Base
   end
 
   def banned_prospects_validation
-    bills = Bill.where(payed: false, store_id: [1, 2]).pluck(:created_at, :total, :folio, :id)
+    bills = Bill.where(payed: false, store_id: [1, 2]).where.not(status: 'cancelada').pluck(:created_at, :total, :folio, :id)
     bills.each_with_index do |val, index|
       bill = Bill.find(val[3])
       bills[index] << bill.payments.sum(:total)
       bills[index] << bill.prospect.id
       bills[index] << bill.prospect.credit_days.to_i
     end
-
     bills.each do |bill|
       prospect = bill
       bill[0] = bill[0].to_date + bill[6].days + 10.days
@@ -105,6 +104,7 @@ class ApplicationController < ActionController::Base
 
     @banned_prospects = []
     bills.each_with_index do |val, index|
+      this_bill = Bill.find(val[3])
       if Date.today > val[0]
         if (val[1].to_f - val[4].to_f).round(2) > 1
           @banned_prospects << val[5] unless @banned_prospects.include?(val[5])
