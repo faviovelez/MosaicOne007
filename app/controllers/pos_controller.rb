@@ -104,11 +104,11 @@ class PosController < ApplicationController
         if reg.class == StoreMovement || reg.class == ServiceOffered
           object = reg.class.where(id: reg.web_id).first if object == nil && reg.web_id.present?
           object = nil if reg.quantity != object&.quantity.to_i
-        elsif reg.class == Prospect || reg.class == BillingAddress
+        elsif reg.class == Prospect || reg.class == BillingAddress || reg.class == DeliveryService || reg.class == Payment || reg.class == Ticket
           object = reg.class.where(id: reg.web_id).first if object == nil && reg.web_id.present?
         end
       end
-      return reg if object.nil? (unless reg.web_id.present?)
+      return reg if object.nil? unless reg.web_id.present?
       updated_reg_for(object, reg)
       return object
     end
