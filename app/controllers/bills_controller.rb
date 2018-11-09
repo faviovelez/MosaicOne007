@@ -791,7 +791,7 @@ class BillsController < ApplicationController
               @rows
             end
           end
-          if @bill == nil && @method_key == nil && @method_description == nil
+          if params[:payment].present? && params[:method].present? && params[:payment_form].present?
             if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
               pay_form = PaymentForm.find(params[:payment])
               @payment_key = pay_form.payment_key
@@ -1674,7 +1674,7 @@ class BillsController < ApplicationController
           end
         end
       end
-      if @bill == nil && @method_key == nil && @method_description == nil
+      if params[:payment_form].present? && params[:payment_key].present? && params[:method_key].present?
         if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id)
           pay_form = PaymentForm.where(payment_key: params[:payment_key]).first
           @greatest_payment = pay_form
