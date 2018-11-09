@@ -587,7 +587,7 @@ class BillsController < ApplicationController
         end
       end
     end
-    if @bill != nil
+    if @bill != nil && @relation_type != '04'
       @store = @bill.store
       @bill.bill_type == 'global' ? @cfdi_type = 'global' : @cfdi_type = nil
       get_series_and_folio
@@ -654,7 +654,11 @@ class BillsController < ApplicationController
             @method_key = PaymentMethod.find_by_method('PUE').method # Método de pago
             @method_description = PaymentMethod.find_by_method('PUE').description # método de pago
             @payment_form = @bill.payment_conditions # Condiciones de pago
-            @rows = @bill.rows
+            if @bill.status == 'cancelada'
+              rows(@general_bill, @objects)
+            else
+              @rows = @bill.rows
+            end
           else
             greatest_payment_key
             if @greatest_payment == nil
@@ -759,7 +763,11 @@ class BillsController < ApplicationController
             @method_key = PaymentMethod.find_by_method('PUE').method # Método de pago
             @method_description = PaymentMethod.find_by_method('PUE').description # método de pago
             @payment_form = @bill.payment_conditions # Condiciones de pago
-            @rows = @bill.rows
+            if @bill.status == 'cancelada'
+              rows(@general_bill, @objects)
+            else
+              @rows = @bill.rows
+            end
           else
             greatest_payment_key
             if @greatest_payment == nil
@@ -1354,7 +1362,7 @@ class BillsController < ApplicationController
       else
         @objects = @bill
       end
-      if @bill != nil
+      if @bill != nil && @relation_type != '04'
         @store = @bill.store
         @bill.bill_type == 'global' ? @cfdi_type == 'global' : @cfdi_type == nil
         @relation_type = params[:relation_type]
@@ -1399,6 +1407,7 @@ class BillsController < ApplicationController
         @use = cfdi_use
         @cfdi_use_key = cfdi_use.key
         @cfdi_use = cfdi_use.description
+
         if @bill != nil || (@bill != nil && @relation_type == '04')
           @payment_key  = @bill.payment_form.payment_key # Forma de pago
           @payment_description = @bill.payment_form.description # Forma de pago
@@ -1424,6 +1433,30 @@ class BillsController < ApplicationController
               r.taxes = taxes
             end
             @rows << @new_row
+          else
+            if @greatest_payment == nil
+              @greatest_payment = PaymentForm.find_by_payment_key('99')
+              # aquí revisar los pagos para orders
+              @payment_key = @greatest_payment.payment_key
+              @payment_description = @greatest_payment.description
+              get_payments
+              payment_method_(@objects, @total_payment, @list_of_real_payments)
+              @method_description = @method.description
+              @method_key = @method.method
+              @payment_form
+              rows(@general_bill, @objects)
+              @rows
+            else
+              @payment_key = @greatest_payment.payment_key
+              @payment_description = @payments.first.first
+              get_payments
+              payment_method_(@objects, @total_payment, @list_of_real_payments)
+              @method_description = @method.description
+              @method_key = @method.method
+              @payment_form
+              rows(@general_bill, @objects)
+              @rows
+            end
           end
         else
           greatest_payment_key

@@ -84,6 +84,7 @@ class WarehouseController < ApplicationController
 
   def ready_orders
     banned_prospects_validation
+    debugger
     @orders = Order.where(status: 'preparado', corporate: current_user.store).where.not(prospect_id: @banned_prospects)
   end
 
