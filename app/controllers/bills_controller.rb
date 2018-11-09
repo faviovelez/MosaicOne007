@@ -16,9 +16,9 @@ class BillsController < ApplicationController
 
   def pending
     if ['store', 'store-admin'].include?(current_user.role.name)
-      @bills = Bill.includes(:payments, :receiving_company, :children).where(prospect: current_user.store.store_prospect, parent: nil, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil)
+      @bills = Bill.includes(:payments, :receiving_company, :children).where(prospect: current_user.store.store_prospect, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4])
     else
-      @bills = Bill.includes(:payments, :receiving_company, :children).where(store: current_user.store, parent: nil, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil)
+      @bills = Bill.includes(:payments, :receiving_company, :children).where(store: current_user.store, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4])
     end
   end
 
