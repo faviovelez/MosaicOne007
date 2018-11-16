@@ -1,5 +1,5 @@
-<%= form_tag({ controller: 'orders', action: 'update_discount' }, method: 'post') do %>
-<table class="table dataTableNoPagination">
+<%= form_tag({ controller: 'orders', action: 'update_discount' }, method: 'post', class: 'second-special-form-datatables') do %>
+<table class="table dataTableNoPaginationTwo">
   <thead>
     <% identify_kg_products(@order) %>
     <tr class="table-titles">
