@@ -1,0 +1,78 @@
+<%= form_tag({ controller: 'orders', action: 'edit_payments' }, method: 'post', class: 'second-special-form-datatables') do %>
+
+  <table class="dataTablestandardClone">
+    <thead>
+      <tr class="table-titles">
+        <th> Factura </th>
+        <th> Cliente </th>
+        <th> Empresa </th>
+        <th> Total factura </th>
+        <th> Cantidad pagada </th>
+        <th> Fecha de pago </th>
+        <th> Fecha de registro </th>
+        <th> Forma de pago </th>
+        <th> No. de pedido </th>
+        <th> Comprobante </th>
+        <th> Estatus </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @payments.each do |pay| %>
+        <tr>
+          <% if pay.bill.present? %>
+            <td> <%= pay.bill.sequence %> <%= pay.bill.folio %> </td>
+            <td> <%= pay.bill.prospect.legal_or_business_name %> </td>
+            <td> <%= pay.bill.issuing_company.business_name %> </td>
+            <td> <%= number_to_currency(pay.bill.total) %> </td>
+          <% else %>
+            <td> <%= pay.bill_received.folio %> </td>
+            <td> <%= pay.bill_received.store.store_name %> </td>
+            <td> <%= pay.bill_received.supplier.name %> </td>
+            <td> <%= number_to_currency(pay.bill_received.total_amount) %> </td>
+          <% end %>
+          <td> <%= number_to_currency(pay.total) %> </td>
+          <td> <%= l pay.payment_date %> </td>
+          <td> <%= l pay.date %> </td>
+          <td> <%= pay.payment_form.description %> </td>
+          <td> <%= number_with_delimiter(pay.order_id) %> </td>
+          <td>
+            <% if pay.bill.present? %>
+              <% if pay.bill.documents != [] %>
+                <% pay.bill.documents.each do |document| %>
+                  <% if document.document_url != nil %>
+                    <%= link_to get_document_path(document), download: "#{document.document_identifier}", class: 'link-extra-space' do %>
+                    <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% else %>
+              <% if pay.bill_received.documents != [] %>
+                <% pay.bill_received.documents.each do |document| %>
+                  <% if document.document_url != nil %>
+                    <%= link_to get_document_path(document), download: "#{document.document_identifier}", class: 'link-extra-space' do %>
+                    <i class="fa fa-money link-to-details" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver pago"></i>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </td>
+          <td>
+            <%= select_tag "status[]", options_for_select([["activo"],["cancelado"]], selected: convert_status_payment(pay)) %>
+            <%= text_field_tag "id[]", pay.id, {class: 'hidden'} %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<br /> <br />
+
+  <div class="actions">
+    <%= submit_tag :modificar, name: 'editar', class: 'main-button capitalize' %>
+  </div><br /><br />
+<% end %>
+
+
+<%= render 'dataTables' %>

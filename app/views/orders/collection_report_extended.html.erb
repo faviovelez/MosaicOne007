@@ -11,6 +11,7 @@
       <th> Total </th>
       <th> Pagos </th>
       <th> Saldo </th>
+      <th> Fact. original </th>
       <th> Estatus </th>
       <th> Pedidos </th>
       <th> Comprobantes </th>
@@ -23,12 +24,29 @@
         <td> <%= l bill[9].to_date %> </td>
         <td> <%= bill[0] %> </td>
         <td> <%= bill[1] %> </td>
-        <td> <%= number_to_currency(bill[3].to_f) %> </td>
-        <td> <%= number_to_currency(bill[4].to_f) %> </td>
-        <td> <%= number_to_currency(bill[5].to_f) %> </td>
-        <td> <%= number_to_currency(bill[6].to_f) %> </td>
+        <% if bill[2] == 'Factura' %>
+          <td> <%= number_to_currency(bill[3].to_f) %> </td>
+          <td> <%= number_to_currency(bill[4].to_f) %> </td>
+          <td> <%= number_to_currency(bill[5].to_f) %> </td>
+          <td> <%= number_to_currency(bill[6].to_f) %> </td>
+        <% else %>
+          <td> <%= number_to_currency(bill[3].to_f * -1) %> </td>
+          <td> <%= number_to_currency(bill[4].to_f * -1) %> </td>
+          <td> <%= number_to_currency(bill[5].to_f * -1) %> </td>
+          <td> <%= number_to_currency(bill[6].to_f * -1) %> </td>
+        <% end %>
         <td> <%= number_to_currency(bill[7].to_f) %> </td>
-        <td> <%= number_to_currency(bill[6].to_f - bill[7].to_f) %> </td>
+        <% if bill[2] == 'Factura' %>
+          <td> <%= number_to_currency(bill[6].to_f - bill[7].to_f) %> </td>
+          <td> </td>
+        <% else %>
+          <td> <%= number_to_currency((bill[6].to_f * -1) - bill[7].to_f) %> </td>
+          <% if bill[14] != nil %>
+            <td> <%= Bill.find(bill[14]).sequence %> <%= Bill.find(bill[14]).folio %> </td>
+          <% else %>
+            <td> </td>
+          <% end %>
+        <% end %>
         <td> <%= current_bill(bill[10].to_date) %> </td>
         <td> <%= number_with_delimiter(bill[13].join(', ')) %> </td>
         <td>
