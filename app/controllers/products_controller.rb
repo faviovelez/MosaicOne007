@@ -38,6 +38,13 @@ class ProductsController < ApplicationController
       else
         redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
       end
+    elsif params[:migrate_inventory] != nil
+      migrate_inventory
+      if (@product_undefined == nil || @product_undefined == '' || @product_undefined == [] || @product_undefined == [''])
+        redirect_to root_path, notice: 'Se ha cargado la lista de productos de Patria exitosamente.'
+      else
+        redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
+      end
     elsif params[:special_products] != nil
       upload_special_products
       redirect_to root_path, notice: 'Se ha cargado la lista de productos especiales exitosamente.'
@@ -64,6 +71,37 @@ class ProductsController < ApplicationController
       else
         redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
       end
+    end
+  end
+
+  def migrate_inventory
+    if params[:migrate_inventory] != nil
+      ListPriceChange.create(user: current_user, document_list: params[:migrate_inventory], list_type: 'migrate_inventory')
+      price_list = ListPriceChange.last
+      url = price_list.document_list_url
+      csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+      unfinded = []
+      csv.each do |row|
+        product = Product.find_by_unique_code(row['cod'])
+        if product.present?
+          if product.supplier_id == 1
+            inventory = Inventory.where(product_id: product.id)
+            Movement.create(store_id: 1, user_id: current_user.id, quantity: inventory.quantity, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost, total_cost: product.cost * inventory.quantity, business_unit_id: 2, reason: 'migración')
+            inv_patria = StoresInventory.where(store_id: 2, product_id: product.id)
+            if inv_patria.quantity > row['cant'].to_i
+              result = inv_patria.quantity - row['cant'].to_i
+              Movement.create(store_id: 2, user_id: current_user.id, quantity: result, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost, total_cost: product.cost * inventory.quantity, business_unit_id: 2, reason: 'migración')
+            elsif inv_patria.quantity < row['cant'].to_i
+              result = row['cant'].to_i - inv_patria.quantity
+              Movement.create(store_id: 2, user_id: current_user.id, quantity: inventory.quantity, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost, total_cost: product.cost * inventory.quantity, business_unit_id: 2, reason: 'migración')
+            end
+          end
+        end
+      else
+        unfinded << row['cod']
+      end
+      unfinded.join(", ")
+      @product_undefined = unfinded
     end
   end
 

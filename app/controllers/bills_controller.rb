@@ -2731,7 +2731,7 @@ XML
             new_hash["description"] = mov.product.description.capitalize
             new_hash["unique_code"] = mov.product.unique_code
             new_hash["total"] = mov.total.round(2)
-            mov.product.group ? new_hash["subtotal"] = mov.subtotal.round(2)
+            new_hash["subtotal"] = mov.subtotal.round(2)
             new_hash["taxes"] = mov.taxes.round(2)
             new_hash["discount"] += mov.discount_applied.round(2) unless mov.discount_applied == nil
             @rows << new_hash
