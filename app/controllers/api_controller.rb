@@ -116,7 +116,7 @@ class ApiController < ApplicationController
     end
     separated = 0
     pending_orders = 0
-    product_requests = ProductRequest.joins(:order).where(product: p, corporate_id: params[:store_id].to_i).where.not(status: ['entregado', 'cancelada']).where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] })
+    product_requests = ProductRequest.joins(:order).where(product: p, corporate_id: p.business_unit.stores.where(store_type_id: 2).first).where.not(status: ['entregado', 'cancelada']).where.not(orders: {status: ['en ruta', 'entregado', 'cancelado'] })
     product_requests.each do |request|
       if request.status == "asignado"
         separated += request.quantity.to_i
@@ -125,14 +125,14 @@ class ApiController < ApplicationController
       end
     end
     kg_available = []
-    WarehouseEntry.where(product: p, store_id: params[:store_id].to_i).order(:id).each do |we|
+    WarehouseEntry.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).order(:id).each do |we|
       kg_available << {we.movement.identifier => we.movement.kg} if p.group
     end
     kg_available << {"avg" => (p.average || 100)}
-    if params[:store_id].to_i == 1
+    if p.business_unit.stores.where(store_type_id: 2).first.id.to_i == 1
       quantity = Inventory.where(product: p).first.quantity.to_i
     else
-      quantity = StoresInventory.where(product: p, store_id: params[:store_id].to_i).first.quantity.to_i
+      quantity = StoresInventory.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).first.quantity.to_i
     end
     product_info << [
       { description: "#{p.unique_code} #{p.description}" },
@@ -218,14 +218,14 @@ class ApiController < ApplicationController
       end
     end
     kg_available = []
-    WarehouseEntry.where(product: p, store_id: params[:store_id].to_i).order(:id).each do |we|
+    WarehouseEntry.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).order(:id).each do |we|
       kg_available << {we.movement.identifier => we.movement.kg} if p.group
     end
     kg_available << {"avg" => (p.average || 100)}
-    if params[:store_id].to_i == 1
+    if p.business_unit.stores.where(store_type_id: 2).first.id.to_i == 1
       quantity = Inventory.where(product: p).first.quantity.to_i
     else
-      quantity = StoresInventory.where(product: p, store_id: params[:store_id].to_i).first.quantity.to_i
+      quantity = StoresInventory.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).first.quantity.to_i
     end
     product_info << [
       { description: "#{p.unique_code} #{p.description}" },
@@ -311,14 +311,14 @@ class ApiController < ApplicationController
       end
     end
     kg_available = []
-    WarehouseEntry.where(product: p, store_id: params[:store_id].to_i).order(:id).each do |we|
+    WarehouseEntry.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).order(:id).each do |we|
       kg_available << {we.movement.identifier => we.movement.kg} if p.group
     end
     kg_available << {"avg" => (p.average || 100)}
-    if params[:store_id].to_i == 1
+    if p.business_unit.stores.where(store_type_id: 2).first.id.to_i == 1
       quantity = Inventory.where(product: p).first.quantity.to_i
     else
-      quantity = StoresInventory.where(product: p, store_id: params[:store_id].to_i).first.quantity.to_i
+      quantity = StoresInventory.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).first.quantity.to_i
     end
     product_info << [
       { description: "#{p.unique_code} #{p.description}" },
