@@ -104,6 +104,8 @@ Rails.application.routes.draw do
 
   get 'products/special'
 
+  get 'products/migrate_inventory'
+
   get 'tickets/prospect_view/:id', to: 'tickets#prospect_view', as: 'tickets_prospect_view'
 
   get 'tickets/tickets_closure_day_pdf'
