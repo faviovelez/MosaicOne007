@@ -311,14 +311,14 @@ class ApiController < ApplicationController
       end
     end
     kg_available = []
-    WarehouseEntry.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).order(:id).each do |we|
+    WarehouseEntry.where(product: p, store_id: params[:store_id].to_i).order(:id).each do |we|
       kg_available << {we.movement.identifier => we.movement.kg} if p.group
     end
     kg_available << {"avg" => (p.average || 100)}
-    if p.business_unit.stores.where(store_type_id: 2).first.id.to_i == 1
+    if params[:store_id].to_i == 1
       quantity = Inventory.where(product: p).first.quantity.to_i
     else
-      quantity = StoresInventory.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).first.quantity.to_i
+      quantity = StoresInventory.where(product: p, store_id: params[:store_id].to_i).first.quantity.to_i
     end
     product_info << [
       { description: "#{p.unique_code} #{p.description}" },
@@ -336,8 +336,8 @@ class ApiController < ApplicationController
       { armed: p.armed},
       { armed_price: armed_price},
       { armed_discount: armed_discount}
-  ]
-  render json: {response: product_info}
+    ]
+    render json: {response: product_info}
   end
 
   def get_all_suppliers_for_corporate(bu = current_user.store.business_unit.business_group)

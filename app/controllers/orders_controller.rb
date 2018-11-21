@@ -1129,6 +1129,7 @@ class OrdersController < ApplicationController
                   delivery_address: current_user.store.delivery_address,
                   prospect: @prospect
                 )
+    @order = Order.last
     @order.update(deliver_complete: true) if params[:deliver_complete] == "true" && @prospect.store_prospect_id != 2
     @order.users << current_user
     @order.save
@@ -1147,17 +1148,6 @@ class OrdersController < ApplicationController
           end
           @order.pending_movements.each do |mov|
             pend_movs << mov
-          end
-          if status.uniq.length != 1 && params[:deliver_complete] != "true" && stores.uniq.length == 1
-            @new_order = Order.create(
-              store: current_user.store,
-              request_user: current_user,
-              category: 'de línea',
-              corporate: corporate,
-              delivery_address: current_user.store.delivery_address,
-              status: 'en espera',
-              prospect: @prospect
-            )
           end
           assigned_mov_compresor = []
           assigned_mov_patria = []
@@ -1180,6 +1170,17 @@ class OrdersController < ApplicationController
               assigned_pr_compresor << pr if (pr.product_id == mov.product_id && (assigned_pr_compresor.include?(pr) == false) && mov.store_id == 1)
               assigned_pr_patria << pr if (pr.product_id == mov.product_id && (assigned_pr_patria.include?(pr) == false) && mov.store_id == 2)
             end
+          end
+          if pendings_compresor != [] && assigned_mov_compresor != []
+            @new_order = Order.create(
+              store: current_user.store,
+              request_user: current_user,
+              category: 'de línea',
+              corporate: @order.store,
+              delivery_address: current_user.store.delivery_address,
+              status: 'en espera',
+              prospect: @prospect
+            )
           end
           if params[:deliver_complete] == "true"
             pendings_patria != [] ? status = 'sin asignar' : status = 'mercancía asignada'
@@ -1340,17 +1341,6 @@ class OrdersController < ApplicationController
           @order.pending_movements.each do |mov|
             pend_movs << mov
           end
-          if status.uniq.length != 1 && params[:deliver_complete] != "true" && stores.uniq.length == 1
-            @new_order = Order.create(
-              store: current_user.store,
-              request_user: current_user,
-              category: @category,
-              corporate: corporate,
-              delivery_address: current_user.store.delivery_address,
-              status: 'en espera',
-              prospect: @prospect
-            )
-          end
           assigned_mov_compresor = []
           assigned_mov_patria = []
           unassigned_pr_compresor = []
@@ -1372,6 +1362,17 @@ class OrdersController < ApplicationController
               assigned_pr_compresor << pr if (pr.product_id == mov.product_id && (assigned_pr_compresor.include?(pr) == false) && mov.store_id == 1)
               assigned_pr_patria << pr if (pr.product_id == mov.product_id && (assigned_pr_patria.include?(pr) == false) && mov.store_id == 2)
             end
+          end
+          if pendings_compresor != [] && assigned_mov_compresor != []
+            @new_order = Order.create(
+              store: current_user.store,
+              request_user: current_user,
+              category: @category,
+              corporate: @order.store,
+              delivery_address: current_user.store.delivery_address,
+              status: 'en espera',
+              prospect: @prospect
+            )
           end
           if params[:deliver_complete] == "true"
             pendings_patria != [] ? status = 'sin asignar' : status = 'mercancía asignada'
@@ -1758,8 +1759,8 @@ class OrdersController < ApplicationController
       movement_type: 'venta',
       user: current_user,
       cost: cost,
-      total: unit_price * 1.16,
-      taxes: unit_price * 0.16,
+      total: (unit_price * 1.16).round(2),
+      taxes: (unit_price * 0.16).round(2),
       subtotal: product.price,
       business_unit: store.business_unit,
       product_request: product_request,

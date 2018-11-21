@@ -425,7 +425,12 @@ class WarehouseController < ApplicationController
       supplier: supplier
     )
     counter.times do
-      product = Product.find(params[:id][n])
+      if params[:id][n].include?('_')
+        valid_id = params[:id][n].slice(0..(params[:id][n].index('_') -1))
+        product = Product.find(valid_id)
+      else
+        product = Product.find(params[:id][n])
+      end
       br.products << product
       n += 1
     end

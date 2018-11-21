@@ -24,6 +24,11 @@
     <%= file_field_tag :patria_products, accept: '.csv' %>
   </div>
 
+  <div class="form-inside-style">
+    <%= label_tag :productos_que_fabrica_compresor %>
+    <%= file_field_tag :compresor_products, accept: '.csv' %>
+  </div>
+
   <% Store.where(store_type: StoreType.find_by_store_type('corporativo')).each do |store| %>
     <div class="form-inside-style">
       <%= label_tag "clientes tienda #{store.store_name}" %>
