@@ -585,16 +585,16 @@ class OrdersController < ApplicationController
               subtotal += mov.subtotal.to_f
               discount += mov.discount_applied.to_f
               taxes += (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
-              mov.update(taxes: (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2))
-              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
+#              mov.update(taxes: (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2))
+#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
               total += mov.total.to_f
             elsif mov.movement_type == 'devolución'
               cost -= mov.total_cost.to_f
               subtotal -= mov.subtotal.to_f
               discount -= mov.discount_applied.to_f
               taxes -= (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
-              mov.update(taxes: (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2))
-              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
+#              mov.update(taxes: (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2))
+#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
               total -= mov.total.to_f
             end
           end
@@ -611,16 +611,16 @@ class OrdersController < ApplicationController
               subtotal += mov.subtotal.to_f * mov.quantity * product.average
               discount += mov.discount_applied.to_f * mov.quantity * product.average
               taxes += (mov.final_price.to_f * mov.quantity.to_i * product.average * 0.16).round(2)
-              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
-              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
+#              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
+#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
               total += (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
             elsif mov.movement_type == 'devolución'
               cost -= mov.total_cost.to_f * mov.quantity * product.average
               subtotal -= mov.subtotal.to_f * mov.quantity * product.average
               discount -= mov.discount_applied.to_f * mov.quantity * product.average
               taxes -= (mov.final_price.to_f * mov.quantity.to_i * product.average * 0.16).round(2)
-              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
-              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
+#              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
+#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
               total -= (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
             end
           else
@@ -629,16 +629,16 @@ class OrdersController < ApplicationController
               subtotal += mov.subtotal.to_f * mov.quantity
               discount += mov.discount_applied.to_f * mov.quantity
               taxes += (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
-              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
-              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
+#              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
+#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
               total += (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
             elsif mov.movement_type == 'devolución'
               cost -= mov.total_cost.to_f * mov.quantity
               subtotal -= mov.subtotal.to_f * mov.quantity
               discount -= mov.discount_applied.to_f * mov.quantity
               taxes -= (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
-              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
-              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
+#              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
+#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
               total -= (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
             end
           end
@@ -662,11 +662,66 @@ class OrdersController < ApplicationController
       orders_total += order.total
     end
     @orders_total = orders_total
+    update_movs_totals(@orders)
   end
 
   def show_for_store
     update_order_total
     @order = Order.find(params[:id])
+  end
+
+  def update_movs_totals(orders)
+    orders.each do |order|
+      products_and_prices = []
+      order.movements.each do |mov|
+        products_and_prices << [mov.product_id, mov.final_price] unless products_and_prices.include?([mov.product_id, mov.final_price])
+      end
+      order.pending_movements.each do |mov|
+        products_and_prices << [mov.product_id, mov.final_price] unless products_and_prices.include?([mov.product_id, mov.final_price])
+      end
+      order.movements.each do |mov|
+        array_price = products_and_prices.find{|arr| arr[0] == mov.product_id }
+        unless array_price == nil || array_price == []
+          array_price = array_price[1].to_f
+          if mov.product.group
+            final_price = array_price
+            subtotal = ('%.2f' % (mov.initial_price * mov.quantity * mov.kg)).to_f.round(2)
+            discount = ('%.2f' % ((mov.initial_price - array_price) * mov.quantity * mov.kg)).to_f.round(2)
+            taxes = ((subtotal - discount) * 0.16).round(2)
+            total = (subtotal - discount + taxes).round(2)
+            mov.update(final_price: final_price, taxes: taxes, total: total, discount_applied: discount, automatic_discount: discount, subtotal: subtotal)
+          else
+            final_price = array_price
+            subtotal = ('%.2f' % (mov.initial_price * mov.quantity)).to_f.round(2)
+            discount = ('%.2f' % ((mov.initial_price - array_price) * mov.quantity)).to_f.round
+            taxes = ((subtotal - discount) * 0.16).round(2)
+            total = (subtotal - discount + taxes).round(2)
+            mov.update(final_price: final_price, taxes: taxes, total: total, discount_applied: discount, automatic_discount: discount, subtotal: subtotal)
+          end
+        end
+      end
+      order.pending_movements.each do |mov|
+        array_price = products_and_prices.find{|arr| arr[0] == mov.product_id }
+        unless array_price == nil || array_price == []
+          array_price = array_price[1].to_f
+          if mov.product.group
+            final_price = array_price
+            subtotal = ('%.2f' % (mov.initial_price * mov.kg)).to_f.round(2)
+            discount = ('%.2f' % ((mov.initial_price - array_price) * mov.kg)).to_f.round(2)
+            taxes = ((subtotal - discount) * 0.16).round(2)
+            total = (subtotal - discount + taxes).round(2)
+            mov.update(final_price: final_price, taxes: taxes, total: total, discount_applied: discount, automatic_discount: discount, subtotal: subtotal)
+          else
+            final_price = array_price
+            subtotal = ('%.2f' % (mov.initial_price)).to_f.round(2)
+            discount = ('%.2f' % ((mov.initial_price - array_price))).to_f.round
+            taxes = ((subtotal - discount) * 0.16).round(2)
+            total = (subtotal - discount + taxes).round(2)
+            mov.update(final_price: final_price, taxes: taxes, total: total, discount_applied: discount, automatic_discount: discount, subtotal: subtotal)
+          end
+        end
+      end
+    end
   end
 
   def show_for_differences

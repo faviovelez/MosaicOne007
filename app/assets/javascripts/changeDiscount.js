@@ -37,7 +37,7 @@ $(document).ready(function() {
     if (isNaN(thisDiscount) || thisDiscount == 0) {
       thisDiscount = 0;
 
-      $('#new_discount_' + thisDiscId).html("35.0" + "%");
+      $('#new_discount_' + thisDiscId).html(thisDiscount + "%");
       $('#unit_value_' + thisDiscId).html("$" +
       (unitPrice * (1 - (initialDiscount / 100)))
       .toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
@@ -87,7 +87,7 @@ $(document).ready(function() {
       $('#unit_value_' + checkId).html("$" +
         parseFloat($('#secondary_unit_price_' + checkId).html().replace(/ /g, '').replace(/,/g, '').replace('$',''))
       );
-      $('#new_discount_' + checkId).html("35.0" + "%");
+      $('#new_discount_' + checkId).html(initialDiscount + "%");
       $('#discount_new_' + checkId).val(0);
       $('#discount_new_' + checkId).addClass('hidden');
       $('#unit_price_new_' + checkId).val(
