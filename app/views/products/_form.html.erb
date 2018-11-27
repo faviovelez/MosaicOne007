@@ -171,13 +171,13 @@
 
       <div class="form-inside-style">
         <%= f.label :proveedor %>
-        <%= f.select :supplier_id, options_for_select(suppliers) %>
+        <%= f.select :supplier_id, options_for_select(suppliers, selected: @product.supplier_id) %>
       </div>
 
       <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
         <div class="form-inside-style hidden">
           <%= f.label :tienda %>
-          <%= f.select :store_id, options_for_select([[current_user.store.store_name, current_user.store.id]]) %>
+          <%= f.select :store_id, options_for_select([[current_user.store.store_name, current_user.store.id]], selected: @product.supplier_id) %>
         </div>
       <% end %>
 

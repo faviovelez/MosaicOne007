@@ -490,22 +490,24 @@ class Movement < ActiveRecord::Base
             hash_1["quantity"] = q
             hash_1["cost"] = cost
             hash_1["total_cost"] = (cost * q).round(2)
-            subtotal = hash_1["subtotal"]
-            actual_subtotal = ('%.2f' % (subtotal * q)).to_f
-            discount = hash_1["discount_applied"]
-            actual_discount = ('%.2f' % (discount * q)).to_f
-            if product.group
-              actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
-              actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
-              hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+            unless hash_1["subtotal"] == nil
+              subtotal = hash_1["subtotal"]
+              actual_subtotal = ('%.2f' % (subtotal * q)).to_f
+              discount = hash_1["discount_applied"]
+              actual_discount = ('%.2f' % (discount * q)).to_f
+              if product.group
+                actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
+                actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
+                hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+              end
+              hash_1["subtotal"] = actual_subtotal
+              hash_1["discount_applied"] = actual_discount
+              hash_1["automatic_discount"] = actual_discount
+              to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
+              actual_taxes = to_appy_taxes
+              hash_1["taxes"] = actual_taxes
+              hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
             end
-            hash_1["subtotal"] = actual_subtotal
-            hash_1["discount_applied"] = actual_discount
-            hash_1["automatic_discount"] = actual_discount
-            to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
-            actual_taxes = to_appy_taxes
-            hash_1["taxes"] = actual_taxes
-            hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
             Movement.create(hash_1)
             update_movement_and_requests(Movement.last) unless Movement.last.movement_type == 'baja'
             if mov_sales != nil
@@ -521,22 +523,24 @@ class Movement < ActiveRecord::Base
             hash_1["quantity"] = q
             hash_1["cost"] = cost
             hash_1["total_cost"] = (cost * q).round(2)
-            subtotal = hash_1["subtotal"]
-            actual_subtotal = ('%.2f' % (subtotal * q)).to_f
-            discount = hash_1["discount_applied"]
-            actual_discount = ('%.2f' % (discount * q)).to_f
-            if product.group
-              actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
-              actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
-              hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+            unless hash_1["subtotal"] == nil
+              subtotal = hash_1["subtotal"]
+              actual_subtotal = ('%.2f' % (subtotal * q)).to_f
+              discount = hash_1["discount_applied"]
+              actual_discount = ('%.2f' % (discount * q)).to_f
+              if product.group
+                actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
+                actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
+                hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+              end
+              hash_1["subtotal"] = actual_subtotal
+              hash_1["discount_applied"] = actual_discount
+              hash_1["automatic_discount"] = actual_discount
+              to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
+              actual_taxes = to_appy_taxes
+              hash_1["taxes"] = actual_taxes
+              hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
             end
-            hash_1["subtotal"] = actual_subtotal
-            hash_1["discount_applied"] = actual_discount
-            hash_1["automatic_discount"] = actual_discount
-            to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
-            actual_taxes = to_appy_taxes
-            hash_1["taxes"] = actual_taxes
-            hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
             Movement.create(hash_1)
             update_movement_and_requests(Movement.last) unless Movement.last.movement_type == 'baja'
             @model_collection << Movement.last.id
@@ -574,22 +578,24 @@ class Movement < ActiveRecord::Base
           hash_1["quantity"] = q
           hash_1["cost"] = cost
           hash_1["total_cost"] = (cost * q).round(2)
-          subtotal = hash_1["subtotal"]
-          actual_subtotal = ('%.2f' % (subtotal * q)).to_f
-          discount = hash_1["discount_applied"]
-          actual_discount = ('%.2f' % (discount * q)).to_f
-          if product.group
-            actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
-            actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
-            hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+          unless hash_1["subtotal"] == nil
+            subtotal = hash_1["subtotal"]
+            actual_subtotal = ('%.2f' % (subtotal * q)).to_f
+            discount = hash_1["discount_applied"]
+            actual_discount = ('%.2f' % (discount * q)).to_f
+            if product.group
+              actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
+              actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
+              hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+            end
+            hash_1["subtotal"] = actual_subtotal
+            hash_1["discount_applied"] = actual_discount
+            hash_1["automatic_discount"] = actual_discount
+            to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
+            actual_taxes = to_appy_taxes
+            hash_1["taxes"] = actual_taxes
+            hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
           end
-          hash_1["subtotal"] = actual_subtotal
-          hash_1["discount_applied"] = actual_discount
-          hash_1["automatic_discount"] = actual_discount
-          to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
-          actual_taxes = to_appy_taxes
-          hash_1["taxes"] = actual_taxes
-          hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
           Movement.create(hash_1)
           update_movement_and_requests(Movement.last) unless Movement.last.movement_type == 'baja'
           @model_collection << Movement.last.id
@@ -607,7 +613,7 @@ class Movement < ActiveRecord::Base
   end
 
   def vinculate_warehouse
-    WarehouseEntry.last.update(movement: self)
+    WarehouseEntry.last.update(movement: self) if self.product_id == WarehouseEntry.last.product_id
   end
 
   class << self
@@ -674,22 +680,24 @@ class Movement < ActiveRecord::Base
               hash_1["quantity"] = q
               hash_1["cost"] = cost
               hash_1["total_cost"] = (cost * q).round(2)
-              subtotal = hash_1["subtotal"]
-              actual_subtotal = ('%.2f' % (subtotal * q)).to_f
-              discount = hash_1["discount_applied"]
-              actual_discount = ('%.2f' % (discount * q)).to_f
-              if product.group
-                actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).round(2)
-                actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).round(2)
-                hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+              unless hash_1["subtotal"] == nil
+                subtotal = hash_1["subtotal"]
+                actual_subtotal = ('%.2f' % (subtotal * q)).to_f
+                discount = hash_1["discount_applied"]
+                actual_discount = ('%.2f' % (discount * q)).to_f
+                if product.group
+                  actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f.round(2)
+                  actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f.round(2)
+                  hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+                end
+                hash_1["subtotal"] = actual_subtotal
+                hash_1["discount_applied"] = actual_discount
+                hash_1["automatic_discount"] = actual_discount
+                to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
+                actual_taxes = to_appy_taxes
+                hash_1["taxes"] = actual_taxes
+                hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
               end
-              hash_1["subtotal"] = actual_subtotal
-              hash_1["discount_applied"] = actual_discount
-              hash_1["automatic_discount"] = actual_discount
-              to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
-              actual_taxes = to_appy_taxes
-              hash_1["taxes"] = actual_taxes
-              hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
               Movement.create(hash_1)
               if hash_1.class == Hash
                 update_movement_and_requests_for_class(Movement.last) unless Movement.last.movement_type == 'baja'
@@ -709,23 +717,25 @@ class Movement < ActiveRecord::Base
               hash_1["quantity"] = q
               hash_1["cost"] = cost
               hash_1["total_cost"] = (cost * q).round(2)
-              subtotal = hash_1["subtotal"]
-              actual_subtotal = ('%.2f' % (subtotal * q)).to_f
-              discount = hash_1["discount_applied"]
-              actual_discount = ('%.2f' % (discount * q)).to_f
-              if product.group
-                actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
-                actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
-                hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
-                hash_1["identifier"] = mov.identifier
+              unless hash_1["subtotal"] == nil
+                subtotal = hash_1["subtotal"]
+                actual_subtotal = ('%.2f' % (subtotal * q)).to_f
+                discount = hash_1["discount_applied"]
+                actual_discount = ('%.2f' % (discount * q)).to_f
+                if product.group
+                  actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
+                  actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
+                  hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+                  hash_1["identifier"] = mov.identifier
+                end
+                hash_1["subtotal"] = actual_subtotal
+                hash_1["discount_applied"] = actual_discount
+                hash_1["automatic_discount"] = actual_discount
+                to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
+                actual_taxes = to_appy_taxes
+                hash_1["taxes"] = actual_taxes
+                hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
               end
-              hash_1["subtotal"] = actual_subtotal
-              hash_1["discount_applied"] = actual_discount
-              hash_1["automatic_discount"] = actual_discount
-              to_appy_taxes = ('%.2f' % (actual_subtotal - actual_discount) * 0.16).to_f
-              actual_taxes = to_appy_taxes
-              hash_1["taxes"] = actual_taxes
-              hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
               Movement.create(hash_1)
               if hash.class == Hash
                 update_movement_and_requests_for_class(Movement.last) unless Movement.last.movement_type == 'baja'
@@ -767,22 +777,24 @@ class Movement < ActiveRecord::Base
             hash_1["quantity"] = q
             hash_1["cost"] = cost
             hash_1["total_cost"] = (cost * q).round(2)
-            subtotal = hash_1["subtotal"]
-            actual_subtotal = ('%.2f' % (subtotal * q)).to_f
-            discount = hash_1["discount_applied"]
-            actual_discount = ('%.2f' % (discount * q)).to_f
-            if product.group
-              actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
-              actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
-              hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+            unless hash_1["subtotal"] == nil
+              subtotal = hash_1["subtotal"]
+              actual_subtotal = ('%.2f' % (subtotal * q)).to_f
+              discount = hash_1["discount_applied"]
+              actual_discount = ('%.2f' % (discount * q)).to_f
+              if product.group
+                actual_subtotal = ('%.2f' % (subtotal * q * hash_1["kg"])).to_f
+                actual_discount = ('%.2f' % (discount * q * hash_1["kg"])).to_f
+                hash_1["total_cost"] = (cost * q * hash_1["kg"]).round(2)
+              end
+              hash_1["subtotal"] = actual_subtotal
+              hash_1["discount_applied"] = actual_discount
+              hash_1["automatic_discount"] = actual_discount
+              to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
+              actual_taxes = to_appy_taxes
+              hash_1["taxes"] = actual_taxes
+              hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
             end
-            hash_1["subtotal"] = actual_subtotal
-            hash_1["discount_applied"] = actual_discount
-            hash_1["automatic_discount"] = actual_discount
-            to_appy_taxes = ('%.2f' % ((actual_subtotal - actual_discount) * 0.16)).to_f
-            actual_taxes = to_appy_taxes
-            hash_1["taxes"] = actual_taxes
-            hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
             Movement.create(hash_1)
             if hash.class == Hash
               update_movement_and_requests_for_class(Movement.last) unless Movement.last.movement_type == 'baja'
