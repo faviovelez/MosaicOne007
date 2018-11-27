@@ -81,15 +81,19 @@
       <%= f.text_field :zip_code, maxlength: 5, class: 'form-inside' %>
     </div>
 
-    <div class="form-inside-style hidden">
-      <%= f.label :empresa %>
-      <%= f.select :business_unit_id, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}, selected: @store.business_unit_id) %>
-    </div>
+    <% if current_user.role.name == 'platform-admin' %>
+      <div class="form-inside-style">
+        <%= f.label :empresa %>
+        <%= f.select :business_unit_id, options_for_select(BusinessUnit.all.collect{|b| [b.name, b.id]}, selected: @store.business_unit_id) %>
+      </div>
+    <% end %>
 
-    <div class="form-inside-style hidden">
-      <%= f.label :grupo_de_negocios %>
-      <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}, selected: @store.business_group_id) %>
-    </div>
+    <% if current_user.role.name == 'platform-admin' %>
+      <div class="form-inside-style">
+        <%= f.label :grupo_de_negocios %>
+        <%= f.select :business_group_id, options_for_select(BusinessGroup.all.collect{|b| [b.name, b.id]}, selected: @store.business_group_id) %>
+      </div>
+    <% end %>
 
     <div class="form-inside-style">
       <%= f.label :sobreprecio %>

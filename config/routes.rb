@@ -448,7 +448,7 @@ Rails.application.routes.draw do
 
   get '/api/get_info_from_product/:id/:store_id', to: 'api#get_info_from_product', as: "get_info_from_product"
 
-  get '/api/get_info_from_product_store/:id/:store_id/:this_store', to: 'api#get_info_from_product', as: "get_info_from_product_store"
+  get '/api/get_info_from_product_store/:id/:store_id/:this_store', to: 'api#get_info_from_product_store', as: "get_info_from_product_store"
 
   get '/api/get_info_from_product_with_prospect/:id/:store_id/:prospect_id', to: 'api#get_info_from_product_with_prospect', as: "get_info_from_product_with_prospect"
 
