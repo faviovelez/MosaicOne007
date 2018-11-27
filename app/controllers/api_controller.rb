@@ -36,7 +36,7 @@ class ApiController < ApplicationController
     render json: { suggestions: options }
   end
 
-  def get_just_products
+  def get_just_products 
     if current_user.role.name == 'warehouse-staff' || current_user.role.name == 'warehouse-admin'
       products =  Product.where(classification: 'de línea').where(current: true, shared: true)
     else
