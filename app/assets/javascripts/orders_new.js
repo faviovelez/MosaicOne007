@@ -174,6 +174,7 @@ $(document).ready(function() {
       var row = $(this).parent().parent();
       row.remove();
       realTotal();
+      disableButton();
     });
 
     $("#packages_" + idProd).keyup(function(){
@@ -183,6 +184,7 @@ $(document).ready(function() {
 
     $("#discount_" + idProd).keyup(function(){
       rowTotal(idProd);
+      disableButton();
     });
   }
 

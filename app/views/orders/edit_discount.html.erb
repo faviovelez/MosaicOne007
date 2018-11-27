@@ -20,7 +20,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @order.product_requests.each do |product_request| %>
+    <% @order.product_requests.where.not(status: 'cancelada').each do |product_request| %>
       <tr>
         <td> <%= product_request.product.unique_code %> <%= product_request.product.description %> </td>
         <td> <%= show_non_blank_field(product_request.product.exterior_color_or_design) %> </td>
