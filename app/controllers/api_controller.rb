@@ -36,13 +36,13 @@ class ApiController < ApplicationController
     render json: { suggestions: options }
   end
 
-  def get_just_products 
-    if current_user.role.name == 'warehouse-staff' || current_user.role.name == 'warehouse-admin'
+  def get_just_products
+    if (current_user.role.name == 'warehouse-staff' || current_user.role.name == 'warehouse-admin')
       products =  Product.where(classification: 'de línea').where(current: true, shared: true)
     else
       products =  Product.where(classification: 'de línea').where(current: true, shared: true)
     end
-    if current_user.role.name == 'admin-desk' || current_user.role.name == 'warehouse-staff' || current_user.role.name == 'warehouse-admin'
+    if (current_user.role.name == 'admin-desk' || current_user.role.name == 'warehouse-staff' || current_user.role.name == 'warehouse-admin' || current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff')
       special_products = Product.where(classification: 'especial').where(business_unit_id: current_user.store.business_unit.id)
       products = products + special_products
     end
