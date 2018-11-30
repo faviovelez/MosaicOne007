@@ -475,9 +475,42 @@ class OrdersController < ApplicationController
     params[:id].each_with_index do |pay, index|
       payment = Payment.find(pay)
       status = params[:status][index]
+      pay_form = PaymentForm.find(params[:payment_forms][index])
       status == 'activo' ? status = 'pago' : params[:status][index]
-      if status != payment.payment_type
-        payment.update(payment_type: status)
+      payment.update(payment_type: status, payment_form: pay_form)
+      if payment.bill != nil
+        bill = payment.bill
+        if payment.bill.status == 'creada'
+          bill_total = payment.bill.total
+        else
+          bill_total = 0
+        end
+        if bill.children != []
+          bill.children.each do |child|
+            bill_total -= child.total
+          end
+        end
+        total_payments = bill.payments.where(payment_type: 'pago').sum(:total)
+        total_payments -= bill.payments.where(payment_type: 'devolución').sum(:total)
+        if (bill_total - total_payments) >= 1
+          bill.update(payed: false)
+        else
+          bill.update(payed: true)
+        end
+      else
+        bill = payment.bill_received
+        if payment.bill_received.status == 'activa'
+          bill_total = payment.bill_received.total_amount
+        else
+          bill_total = 0
+        end
+        total_payments = bill.payments.where(payment_type: 'pago').sum(:total)
+        total_payments -= bill.payments.where(payment_type: 'devolución').sum(:total)
+        if (bill_total - total_payments) >= 1
+          bill.update(payment_complete: false)
+        else
+          bill.update(payment_complete: true)
+        end
       end
     end
     redirect_to root_path, notice: 'Se han actualizado el estatus de los pagos'

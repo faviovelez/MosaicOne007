@@ -1,4 +1,4 @@
-<%= form_tag({ controller: 'orders', action: 'edit_payments' }, method: 'post', class: 'second-special-form-datatables') do %>
+<%= form_tag({ controller: 'orders', action: 'edit_payments' }, method: 'post', class: 'third-special-form-datatables') do %>
 
   <table class="dataTablestandardClone">
     <thead>
@@ -33,7 +33,7 @@
           <td> <%= number_to_currency(pay.total) %> </td>
           <td> <%= l pay.payment_date %> </td>
           <td> <%= l pay.date %> </td>
-          <td> <%= pay.payment_form.description %> </td>
+          <td> <%= select_tag "payment_forms[]", options_for_select(PaymentForm.all.pluck(:description, :id), selected: pay.payment_form_id) %> </td>
           <td> <%= number_with_delimiter(pay.order_id) %> </td>
           <td>
             <% if pay.bill.present? %>

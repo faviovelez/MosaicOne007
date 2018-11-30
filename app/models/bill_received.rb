@@ -3,6 +3,7 @@ class BillReceived < ActiveRecord::Base
   belongs_to :supplier
   has_many :products_bills_receiveds
   has_many :products, through: :products_bills_receiveds
+  belongs_to :store
   has_many :payments
   has_many :documents
 

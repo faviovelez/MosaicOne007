@@ -26,6 +26,7 @@ class Store < ActiveRecord::Base
   has_many :stores_inventories
   has_many :stores_warehouse_entries
   has_many :bill_sales
+  has_many :bill_receiveds
   has_many :services
   has_many :service_offereds
   has_many :store_use_inventories
