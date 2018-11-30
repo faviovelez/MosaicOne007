@@ -36,10 +36,10 @@ class ApplicationController < ActionController::Base
 
   def get_array_type
     if @report_type == "cancel payments bills received"
-      array = BillReceived.where(store_id: current_user.store.id).limit(2)
+      array = BillReceived.where(store_id: current_user.store.id)
       dates_generator(array)
     elsif @report_type == "cancel payments bills issued"
-      array = Bill.where(store_id: current_user.store.id).limit(2)
+      array = Bill.where(store_id: current_user.store.id)
       dates_generator(array)
     end
   end

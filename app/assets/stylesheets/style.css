@@ -249,6 +249,7 @@ select#client_list,
 select#stores,
 select#store,
 select#special_date,
+select[id^=payment_forms],
 select[id^=status] {
   background-color: #fff !important;
   color: #000 !important;

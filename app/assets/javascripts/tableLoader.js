@@ -946,6 +946,47 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
 
   });
 
+  $('.third-special-form-datatables').on('submit', function(e){
+    var $form = $(this);
+
+    tableFourClone.$('select').each(function(){
+      if(!$.contains(document, this)){
+        $form.append(
+          $('<input>')
+            .attr('type', 'hidden')
+            .attr('name', this.name)
+            .val(this.value)
+          );
+      }
+    });
+
+    tableFourClone.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
+
+    tableFourClone.$('input[type="text"]').each(function(){
+      if(!$.contains(document, this)){
+        $form.append(
+          $('<input>')
+            .attr('type', 'hidden')
+            .attr('name', this.name)
+            .val(this.value)
+          );
+      }
+    });
+
+  });
+
+
   $('.second-special-form-datatables').on('submit', function(e){
     var $form = $(this);
 
