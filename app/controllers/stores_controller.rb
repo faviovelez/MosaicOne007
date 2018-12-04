@@ -57,6 +57,9 @@ class StoresController < ApplicationController
     assign_cost_type
     respond_to do |format|
       if @store.save
+        if @store.bill_email == nil || @store.bill_email == ""
+          @store.update(bill_email: @store.email)
+        end
         assign_series
         certificate_saving_process
         key_savign_process
@@ -81,6 +84,9 @@ class StoresController < ApplicationController
 ############################################################
     assign_cost_type
     @prospect = Prospect.find_by_store_code(@store.store_code) || Prospect.find_by_store_prospect_id(@store)
+    if @store.bill_email == nil || @store.bill_email == ""
+      @store.update(bill_email: @store.email)
+    end
     respond_to do |format|
       if @store.update(store_params)
         certificate_saving_process

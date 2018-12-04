@@ -9,4 +9,7 @@ every :day, at: '07:30am' do
  rake 'send_collection_email'
 end
 
+every :day, at: '11:00pm' do
+ rake 'delete_bills_folders'
+end
 # Learn more: http://github.com/javan/whenever
