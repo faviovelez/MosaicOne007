@@ -1,4 +1,4 @@
-<%= form_tag({ controller: 'bill_receiveds', action: 'attach_payment'}, multipart: true) do %>
+<%= form_tag({ controller: 'bill_receiveds', action: 'attach_payment'}, multipart: true, class: 'form-data-tables') do %>
   <% if @bills.length >= 1 %>
     <table id="bills">
       <thead>
