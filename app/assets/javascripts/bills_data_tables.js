@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $('#bills').DataTable({
+  var table = $('#bills').DataTable({
     "order": [[ 1, "asc" ]],
     stateSave: true,
     "language": {
@@ -48,6 +48,18 @@ $(document).ready(function() {
         }
       }
     });
+
+    table.$('input[type="text"]').each(function(){
+      if(!$.contains(document, this)){
+        $form.append(
+          $('<input>')
+            .attr('type', 'hidden')
+            .attr('name', this.name)
+            .val(this.value)
+          );
+      }
+    });
+
   });
 
 });
