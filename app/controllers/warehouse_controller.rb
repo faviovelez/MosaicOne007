@@ -249,9 +249,19 @@ class WarehouseController < ApplicationController
   end
 
   def save_supplier_product
-    create_movements('alta')
-    attach_bill_received
-    redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
+    check_for_duplicated_bill_receiveds
+  end
+
+  def check_for_duplicated_bill_receiveds
+    supplier = Supplier.find(params[:supplier])
+    finded = BillReceived.where(supplier: supplier, folio: params[:folio])
+    if finded == []
+      create_movements('alta')
+      attach_bill_received
+      redirect_to warehouse_show_path(@codes), notice: 'Todos los registros almacenados.'
+    else
+      redirect_to :back, alert: "No se procesó la entrada de mercancía. Ya hay una factura del proveedor #{supplier.name} con folio #{params[:folio]}"
+    end
   end
 
   def remove_inventory

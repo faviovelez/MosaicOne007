@@ -2,6 +2,7 @@
   <table class="dataTableFour">
     <thead>
       <tr class="table-titles">
+        <th class="col-md-1">Código de proveedor</th>
         <th class="col-md-3">Nombre del proveedor</th>
         <th class="col-md-2">Contacto</th>
         <th class="col-md-1">Correo</th>
@@ -14,6 +15,7 @@
     <tbody>
       <% @suppliers.each do |supplier| %>
         <tr>
+          <td> <%= supplier.id %> </td>
           <td><%= supplier.name %></td>
           <td>
             <% if supplier.contact_first_name.present? || supplier.contact_last_name.present? %>
@@ -53,7 +55,7 @@
             <% end %>
             <% if current_user.store.id == supplier.store_id || current_user.role.name == 'platform-admin' %>
               <%= link_to edit_supplier_path(supplier), class: 'link-extra-space' do %>
-                <i class="fa fa-plus-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar"></i>
+                <i class="fa fa-pencil-square link-to-confirm" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Modificar"></i>
               <% end %>
             <% end %>
             <% link_to supplier, method: :delete, data: { confirm: '¿Está seguro que desea eliminar este Proveedor?' } do %>

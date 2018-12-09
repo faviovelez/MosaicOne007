@@ -204,14 +204,14 @@ $(document).ready(function(){
     buttons: [
       {
         extend: 'print',
-        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + $("#date").html() + " " + $("#hour").html() + 'hrs',
+        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + "Creado el " + $("#date").html() + " " + $("#hour").html() + 'hrs',
         exportOptions: {
           columns: [0, 1, 2, 3, 4]
         }
       },
       {
         extend: 'pdf',
-        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + $("#date").html() + " " + $("#hour").html() + 'hrs',
+        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + "Creado el " + $("#date").html() + " " + $("#hour").html() + 'hrs',
         exportOptions: {
           columns: [0, 1, 2, 3, 4]
         }
@@ -260,14 +260,14 @@ $(document).ready(function(){
     buttons: [
       {
         extend: 'print',
-        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + $("#date").html() + " " + $("#hour").html() + 'hrs',
+        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + "Creado el " + $("#date").html() + " " + $("#hour").html() + 'hrs',
         exportOptions: {
           columns: [0, 1, 2, 3, 4]
         }
       },
       {
         extend: 'pdf',
-        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + $("#date").html() + " " + $("#hour").html() + 'hrs',
+        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + "Creado el " + $("#date").html() + " " + $("#hour").html() + 'hrs',
         exportOptions: {
           columns: [0, 1, 2, 3, 4]
         }
@@ -316,14 +316,14 @@ $(document).ready(function(){
     buttons: [
       {
         extend: 'print',
-        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + $("#date").html() + " " + $("#hour").html() + 'hrs',
+        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + "Creado el " + $("#date").html(),
         exportOptions: {
           columns: [0, 1, 2, 3, 4, 5, 6, 7]
         }
       },
       {
         extend: 'pdf',
-        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + $("#date").html() + " " + $("#hour").html() + 'hrs',
+        title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + "Creado el " + $("#date").html(),
         exportOptions: {
           columns: [0, 1, 2, 3, 4, 5, 6, 7]
         }

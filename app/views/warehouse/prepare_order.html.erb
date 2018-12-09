@@ -116,7 +116,7 @@
   <% end %>
 <% end %>
 
-<% if @order.users.count <= 1 %>
+<% if @order.users.where(role_id: [8, 9]).count < 0 %>
 
   <% if current_user.role.name == 'warehouse-staff' %>
 
@@ -144,9 +144,9 @@
 <table class="hidden">
   <tbody>
     <tr>
-      <td id="date"> <%= l Date.today, format: :short %> </td>
-      <td id="store"> <%= @order.store.store_name.capitalize %> </td>
-      <td id="hour"> <%= Time.now.strftime("%H:%M") %> </td>
+      <td id="date"> <%= l @order.created_at.to_date, format: :short %> </td>
+      <td id="prospect"> <%= @order.prospect.legal_or_business_name %> </td>
+      <td id="hour"> <%= @order.created_at.strftime("%H:%M") %> </td>
       <td id="user"> <%= warehouse_name(@order) %> </td>
       <td id="orderNumber"> <%= @order.id %> </td>
       <td></td>

@@ -21,7 +21,7 @@
         <td> <%= bill[1] %> </td>
         <td> <%= l bill[9].to_date %> </td>
         <td> <%= number_with_delimiter(bill[10].join(', ')) %> </td>
-        <% if bill[2] == 'Factura' %>
+        <% if bill[2] == 'Factura' || bill[2] == 'Sustitución' %>
           <td> <%= number_to_currency(bill[4].to_f) %> </td>
           <td> <%= number_to_currency(bill[5].to_f) %> </td>
           <td> <%= number_to_currency(bill[6].to_f) %> </td>
@@ -35,7 +35,7 @@
           <% if bill[11] != nil %>
             <td> <%= Bill.find(bill[11]).sequence %> <%= Bill.find(bill[11]).folio %> </td>
           <% else %>
-            <td> </td>
+            <td></td>
           <% end %>
         <% end %>
       </tr>

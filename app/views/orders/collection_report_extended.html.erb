@@ -15,6 +15,7 @@
       <th> Estatus </th>
       <th> Pedidos </th>
       <th> Comprobantes </th>
+      <th> Días vencidos </th>
     </tr>
   </thead>
   <tbody>
@@ -24,7 +25,7 @@
         <td> <%= l bill[9].to_date %> </td>
         <td> <%= bill[0] %> </td>
         <td> <%= bill[1] %> </td>
-        <% if bill[2] == 'Factura' %>
+        <% if bill[2] == 'Factura' || bill[2] == 'Sustitución' %>
           <td> <%= number_to_currency(bill[3].to_f) %> </td>
           <td> <%= number_to_currency(bill[4].to_f) %> </td>
           <td> <%= number_to_currency(bill[5].to_f) %> </td>
@@ -58,6 +59,11 @@
             <% end %>
           <% end %>
         </td>
+        <% if ((bill[6].to_f - bill[7].to_f >= 1) && bill[2] == 'Factura' || bill[2] == 'Sustitución') %>
+          <td> <%= Date.today.mjd - bill[9].to_date.mjd %></td>
+        <% else %>
+          <td> </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

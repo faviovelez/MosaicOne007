@@ -67,6 +67,11 @@
       <%= f.text_field :store_id, value: current_user.store.id, class: 'form-inside' %>
     </div>
 
+    <div class="form-inside-style">
+      <%= f.label :días_de_crédito %>
+      <%= f.text_field :credit_days, value: @supplier.credit_days.to_i, class: 'form-inside' %>
+    </div>
+
     <div class="button-container">
       <div class="actions">
         <%= f.submit :guardar, class: 'main-button capitalize' %>
