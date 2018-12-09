@@ -29,7 +29,11 @@
       <%= f.select :type_of_person, options_for_select(['persona física', 'persona moral'], selected: @store.type_of_person) %>
     </div>
 
-    <div class="form-inside-style hidden">
+    <% if current_user.role.name == 'platform-admin' %>
+      <div class="form-inside-style">
+    <% else %>
+      <div class="form-inside-style hidden">
+    <% end %>
       <%= f.label :tipo_de_tienda %>
       <%= f.select :store_type_id, options_for_select(StoreType.all.collect{|t| [t.store_type, t.id]}, selected: @store.store_type_id) %>
     </div>

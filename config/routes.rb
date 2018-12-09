@@ -38,6 +38,8 @@ Rails.application.routes.draw do
 
   patch 'bill_receiveds/update'
 
+  get 'prospects/delete_prospect/:prospect', to: 'prospects#delete_prospect', as: 'prospects_delete_prospect'
+
   get 'prospects/sales_view/:id', to: 'prospects#sales_view', as: 'prospects_sales_view'
 
   get 'delivery_services/filter_for_viewers'

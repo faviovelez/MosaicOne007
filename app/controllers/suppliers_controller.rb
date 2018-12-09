@@ -109,7 +109,8 @@ class SuppliersController < ApplicationController
       :last_purchase_bill_date,
       :last_purhcase_folio,
       :store_id,
-      :business_group_id
+      :business_group_id,
+      :credit_days
       )
     end
 

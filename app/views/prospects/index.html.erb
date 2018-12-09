@@ -44,6 +44,11 @@
               <i class="fa fa-send-o link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Pedidos"></i>
             <% end %>
           <% end %>
+          <% if (prospect.tickets == [] && prospect.orders == [] && prospect.bills == [] && prospect.requests == []) %>
+            <%= link_to prospects_delete_prospect_path(prospect) do %>
+              <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Pedidos"></i>
+            <% end %>
+          <% end %>
         </td>
       </tr>
     <% end %>
