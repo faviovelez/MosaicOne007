@@ -344,7 +344,7 @@ class ApiController < ApplicationController
     suppliers_group = []
     suppliers = Supplier.where(store_id: current_user.store.id)
     suppliers.each do |sup|
-      suppliers_group << {"value" => sup.name, "data" => sup.id, "days" => sup.credit_days }
+      suppliers_group << {"value" => sup.id.to_s + ' ' + sup.name, "data" => sup.id, "days" => sup.credit_days }
     end
     render json: { suggestions: suppliers_group }
   end
