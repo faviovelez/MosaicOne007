@@ -27,7 +27,45 @@ class BillReceivedsController < ApplicationController
     @bills = bills + real_bills
   end
 
+  def check_duplicated_bill_receiveds
+    supplier = Supplier.find(params[:supplierName].split(" ").first)
+    finded = BillReceived.where(supplier: supplier, folio: params[:supplier_folio])
+    if finded == []
+      if params[:action] == 'create'
+        creating_process
+      else
+        updating_process
+      end
+    else
+      redirect_to :back, alert: "No se procesó la entrada de mercancía. Ya hay una factura del proveedor #{supplier.name} con folio #{params[:supplier_folio]}"
+    end
+  end
+
   def update
+    check_duplicated_bill_receiveds
+  end
+
+  def creating_process
+    supplier = Supplier.find(params[:supplierId])
+    bill   = BillReceived.create(
+      folio: params[:supplier_folio],
+      date_of_bill: Date.parse(params[:supplier_date_of_bill]),
+      store_id: current_user.store.id,
+      subtotal: params[:supplier_subtotal].to_f,
+      discount: params[:supplier_discount].to_f,
+      payment_complete: false,
+      business_unit_id: current_user.store.business_unit.id,
+      subtotal_with_discount: params[:supplier_subtotal_with_discount].to_f,
+      taxes: params[:supplier_total_amount].to_f - params[:supplier_subtotal].to_f,
+      taxes_rate: params[:supplier_taxes_rate].to_f,
+      total_amount: params[:supplier_total_amount].to_f,
+      credit_days: params[:credit_days].to_i,
+      supplier: supplier
+    )
+    redirect_to bill_receiveds_index_path, notice: "Se ha creado correctamente la factura #{bill.folio} del proveedor #{bill.supplier.name}"
+  end
+
+  def updating_process
     supplier = Supplier.find(params[:supplierId])
     bill = BillReceived.find(params[:id])
     bill.update(
@@ -50,23 +88,7 @@ class BillReceivedsController < ApplicationController
   end
 
   def create
-    supplier = Supplier.find(params[:supplierId])
-    bill   = BillReceived.create(
-      folio: params[:supplier_folio],
-      date_of_bill: Date.parse(params[:supplier_date_of_bill]),
-      store_id: current_user.store.id,
-      subtotal: params[:supplier_subtotal].to_f,
-      discount: params[:supplier_discount].to_f,
-      payment_complete: false,
-      business_unit_id: current_user.store.business_unit.id,
-      subtotal_with_discount: params[:supplier_subtotal_with_discount].to_f,
-      taxes: params[:supplier_total_amount].to_f - params[:supplier_subtotal].to_f,
-      taxes_rate: params[:supplier_taxes_rate].to_f,
-      total_amount: params[:supplier_total_amount].to_f,
-      credit_days: params[:credit_days].to_i,
-      supplier: supplier
-    )
-    redirect_to bill_receiveds_index_path, notice: "Se ha creado correctamente la factura #{bill.folio} del proveedor #{bill.supplier.name}"
+    check_duplicated_bill_receiveds
   end
 
   def attach_payment
