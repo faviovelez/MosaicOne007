@@ -116,7 +116,7 @@
   <% end %>
 <% end %>
 
-<% if @order.users.where(role_id: [8, 9]).count < 0 %>
+<% if @order.users.where(role_id: [8, 9]).count < 1 %>
 
   <% if current_user.role.name == 'warehouse-staff' %>
 
