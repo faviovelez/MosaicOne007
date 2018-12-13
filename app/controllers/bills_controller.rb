@@ -1407,7 +1407,6 @@ class BillsController < ApplicationController
         @use = cfdi_use
         @cfdi_use_key = cfdi_use.key
         @cfdi_use = cfdi_use.description
-
         if @bill != nil || (@bill != nil && @relation_type == '04')
           @payment_key  = @bill.payment_form.payment_key # Forma de pago
           @payment_description = @bill.payment_form.description # Forma de pago
@@ -1594,10 +1593,10 @@ class BillsController < ApplicationController
                 r.sat_unit_key = row.sat_unit_key
                 r.sat_unit_description = row.sat_unit_description
                 r.sat_key = row.sat_key
-                r.total = (row.total / row.quantity * quantities_filtered[n].to_i).round(2)
-                r.subtotal = (row.subtotal / row.quantity * quantities_filtered[n].to_i).round(2)
-                r.discount = (row.discount / row.quantity * quantities_filtered[n].to_i).round(2)
-                r.taxes = (row.taxes / row.quantity * quantities_filtered[n].to_i).round(2)
+                r.subtotal = (('%.2f' % (row.subtotal / row.quantity)).to_f * quantities_filtered[n].to_i).round(2)
+                r.discount = (('%.2f' % (row.discount / row.quantity)).to_f * quantities_filtered[n].to_i).round(2)
+                r.taxes = ((r.subtotal - r.discount) * 0.16).round(2)
+                r.total = (r.subtotal - r.discount + r.taxes).round(2)
               end
               n += 1
               @rows << new_row
