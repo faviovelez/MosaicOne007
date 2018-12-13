@@ -28,7 +28,10 @@ class BillReceivedsController < ApplicationController
   end
 
   def check_duplicated_bill_receiveds
-    supplier = Supplier.find(params[:supplierName].split(" ").first)
+    supplier = Supplier.where(id: params[:supplierName].split(" ").first).first
+    if supplier == nil
+      supplier = Supplier.where(name: params[:supplierName]).first
+    end
     finded = BillReceived.where(supplier: supplier, folio: params[:supplier_folio])
     if finded == []
       if params[:action] == 'create'
