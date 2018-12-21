@@ -2811,7 +2811,7 @@ XML
     receptor = @prospect_rfc
     total = @total.round(2).to_s
     sello = @cfd_last_8
-    qr = site + '&id=' + id + '&re=' + emisor + '&rr=' + receptor + '&tt' + total + '&fe=' + sello
+    qr = site + '?id=' + id + '&re=' + emisor + '&rr=' + receptor + '&tt' + total + '&fe=' + sello
     @qr_string = qr
   end
 

@@ -37,7 +37,7 @@
           <td> <%= number_to_currency(bill[6].to_f * -1) %> </td>
         <% end %>
         <td> <%= number_to_currency(bill[7].to_f) %> </td>
-        <% if bill[2] == 'Factura' %>
+        <% if bill[2] == 'Factura' || bill[2] == 'Sustitución' %>
           <td> <%= number_to_currency(bill[6].to_f - bill[7].to_f) %> </td>
           <td> </td>
         <% else %>
