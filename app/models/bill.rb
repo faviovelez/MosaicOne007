@@ -35,10 +35,16 @@ class Bill < ActiveRecord::Base
   mount_uploader :xml, BillUploader
   mount_uploader :cancel_receipt, BillUploader
 
+  after_create :update_preferred_bill_option
   after_create :send_mail_prospect_email_fields, on: :create
 
   def send_mail_prospect_email_fields
     BillMailer.send_bill_files(self).deliver_later
+  end
+
+  def update_preferred_bill_option
+    preferred = self.prospect.preferred_bill_option
+    preferred.update(payment_form_id: self.payment_form_id, payment_method_id: self.payment_method_id, cfdi_use_id: self.cfdi_use_id, payment_condition: self.payment_conditions)
   end
 
 end

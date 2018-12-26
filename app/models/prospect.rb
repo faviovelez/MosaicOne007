@@ -21,12 +21,17 @@ class Prospect < ActiveRecord::Base
   has_many :estimate_docs
   has_many :date_advises
   has_many :payments, through: :tickets
+  has_one :preferred_bill_option
 
-  after_create :save_web_id
+  after_create :save_web_id, :create_preferred_bill_option
 
 #  after_save :create_update_change_table
 
   after_create :update_web_true
+
+  def create_preferred_bill_option
+    PreferredBillOption.create(prospect: self)
+  end
 
   def update_web_true
     self.update(web: true)

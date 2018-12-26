@@ -39,21 +39,21 @@
   <% if Store.all.where(store_type_id: 2).pluck(:id).include?(current_user.store.id) %>
     <div class="field form-inside-style">
       <%= label_tag :forma_de_pago %>
-      <%= select_tag :payment, options_for_select(@payment_forms), class: 'form-control' %>
+      <%= select_tag :payment, options_for_select(@payment_forms, selected: @payment_form), class: 'form-control' %>
     </div>
     <div class="field form-inside-style">
       <%= label_tag :método_de_pago %>
-      <%= select_tag :method, options_for_select(@payment_methods), class: 'form-control' %>
+      <%= select_tag :method, options_for_select(@payment_methods, selected: @payment_method), class: 'form-control' %>
     </div>
     <div class="field form-inside-style">
       <%= label_tag :condiciones_de_pago %>
-      <%= select_tag :payment_form, options_for_select(@payment_conditions), class: 'form-control' %>
+      <%= select_tag :payment_form, options_for_select(@payment_conditions, selected: @payment_condition), class: 'form-control' %>
     </div>
   <% end %>
 
   <div class="field form-inside-style">
     <%= label_tag :notas %>
-    <%= text_field_tag :notes, nil, class: 'form-control', placeholder: 'Notas' %>
+    <%= text_field_tag :notes, @notes, class: 'form-control', placeholder: 'Notas' %>
   </div>
 
   <div class="actions">

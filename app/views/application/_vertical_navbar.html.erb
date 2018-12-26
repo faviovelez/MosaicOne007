@@ -463,22 +463,22 @@
 
           <% if current_user.store.id == 1 %>
             <% if (params[:controller] == 'orders' && params[:action] == 'index') %>
-              <li class="vertical-link actual-vertical-link">
+              <li class="vertical-link actual-vertical-link hidden">
             <% else %>
-              <li class="vertical-link">
+              <li class="vertical-link hidden">
             <% end %>
                 <i class="fa fa-dropbox other-nav-icons" aria-hidden="true"></i>
                 <%= link_to 'Pedidos solicitados', store_orders_path(current_user.store), class: 'text-link'  %>
               </li>
           <% end %>
 
-          <% if params[:controller] == 'warehouse' && (params[:action] == 'orders' || params[:action] == 'prepare_order')  %>
+          <% if params[:controller] == 'orders' && params[:action] == 'general_tray' %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
           <% end %>
-          <i class="fa fa-cubes other-nav-icons" aria-hidden="true"></i>
-          <%= link_to 'Pedidos con disponibilidad', warehouse_orders_path, class: 'text-link' %>
+              <i class="fa fa-list-alt other-nav-icons" aria-hidden="true"></i>
+              <%= link_to 'Todos los pedidos', orders_general_tray_path, class: 'text-link'  %>
             </li>
 
           <% if (params[:controller] == 'warehouse' && (params[:action] == 'ready_orders'))  %>
@@ -648,20 +648,20 @@
               <%= link_to 'Pedidos especiales', filtered_requests_current_view_path, class: 'text-link'  %>
             </li>
 
-          <% if params[:controller] == 'orders' && params[:action] == 'for_delivery' %>
+          <% if params[:controller] == 'orders' && params[:action] == 'general_tray' %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
           <% end %>
               <i class="fa fa-list-alt other-nav-icons" aria-hidden="true"></i>
-              <%= link_to 'Pedidos por entregar', orders_for_delivery_path, class: 'text-link'  %>
+              <%= link_to 'Todos los pedidos', orders_general_tray_path, class: 'text-link'  %>
             </li>
 
           <% if current_user.store.id == 1 %>
             <% if params[:controller] == 'orders' && params[:action] == 'index' %>
-              <li class="vertical-link actual-vertical-link">
+              <li class="vertical-link actual-vertical-link hidden">
             <% else %>
-              <li class="vertical-link">
+              <li class="vertical-link hidden">
             <% end %>
                 <i class="fa fa-dropbox other-nav-icons" aria-hidden="true"></i>
                 <%= link_to 'Pedidos solicitados', store_orders_path(current_user.store), class: 'text-link'  %>
