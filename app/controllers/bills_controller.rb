@@ -547,17 +547,32 @@ class BillsController < ApplicationController
       objects = @bills
     elsif (@tickets == nil && @bills == nil)
       objects = @orders
+      if objects.length > 1
+        @notes = "Pedidos "
+        @orders.each do |order|
+          @notes << "#{order.id}, "
+        end
+        @notes.chomp!(", ")
+      else
+        @notes = "Pedido #{@orders.first.id}"
+      end
     elsif (@bills == nil  && @orders == nil)
       objects = @tickets
     end
+    get_prospect_from_objects(objects)
     if objects.first.is_a?(Ticket)
       get_cfdi_use_from_tickets(@tickets)
-    elsif objects.first.is_a?(Order)
-      @cfdi_use = CfdiUse.first
     else
-      @cfdi_use = nil
+      preferred = @prospect&.preferred_bill_option
+      @payment_form = preferred&.payment_form_id
+      @payment_method = preferred&.payment_method_id
+      @payment_condition = preferred&.payment_condition
+      if preferred != nil && preferred.cfdi_use_id != nil
+        @cfdi_use = CfdiUse.find(preferred.cfdi_use_id)
+      else
+        @cfdi_use = CfdiUse.first
+      end
     end
-    get_prospect_from_objects(objects)
     @type_of_bill = TypeOfBill.first
     @tickets = params[:tickets] unless params[:tickets] == nil
     @orders = params[:orders] unless params[:orders] == nil

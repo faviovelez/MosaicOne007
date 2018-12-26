@@ -1,4 +1,4 @@
-<div>
+<div class="hidden">
     <% unless current_user.role.name == 'viewer' %>
       <% if (current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff' || current_user.role.name == 'admin-desk') %>
         <% if !(params[:controller] == 'warehouse' && params[:action] == 'orders') %>
@@ -28,15 +28,6 @@
     <% end %>
   <% end %>
 
-  <% if !(params[:controller] == 'orders' && params[:action] == 'history') %>
-    <% if (current_user.role.name != 'warehouse-admin' && current_user.role.name != 'warehouse-staff') %>
-      <%= link_to orders_history_path(current_user.store), class: 'space-between-links' do  %>
-        Historial de pedidos
-        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-      <% end %>
-    <% end %>
-  <% end %>
-
   <% unless current_user.role.name == 'viewer' %>
     <% if !(params[:controller] == 'warehouse' && params[:action] == 'pending_orders') %>
       <% if (current_user.role.name != 'store' && current_user.role.name != 'store-admin') %>
@@ -55,6 +46,17 @@
           Pedidos en espera
           <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
         <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<div>
+  <% if !(params[:controller] == 'orders' && params[:action] == 'history') %>
+    <% if (current_user.role.name != 'warehouse-admin' && current_user.role.name != 'warehouse-staff') %>
+      <%= link_to orders_history_path(current_user.store), class: 'space-between-links' do  %>
+        Historial de pedidos
+        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
       <% end %>
     <% end %>
   <% end %>
@@ -85,5 +87,4 @@
       <% end %>
     <% end %>
   <% end %>
-
 </div>

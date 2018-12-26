@@ -326,7 +326,7 @@ Rails.application.routes.draw do
 
   get 'orders/history'
 
-  get 'orders/for_delivery'
+  get 'orders/general_tray'
 
   get 'orders/differences'
 
