@@ -29,7 +29,11 @@ class WarehouseController < ApplicationController
 
   def current_orders
     banned_prospects_validation
-    orders = Order.where.not(status: ['enviado', 'entregado', 'cancelado']).where(corporate: current_user.store).where.not(prospect_id: @banned_prospects)
+    if current_user.role.name == 'admin-desk'
+      orders = Order.where.not(status: ['enviado', 'entregado', 'cancelado']).where(corporate: current_user.store).where.not(prospect_id: @banned_prospects)
+    else
+      orders = Order.where.not(status: ['enviado', 'en ruta', 'entregado', 'cancelado']).where(corporate: current_user.store).where.not(prospect_id: @banned_prospects)
+    end
     @orders = []
     orders.each do |order|
       @status = []
@@ -234,6 +238,7 @@ class WarehouseController < ApplicationController
       else
         DeliveryAttempt.create(driver: driver, order: order)
       end
+      order.update(status: 'en ruta')
       redirect_to warehouse_ready_orders_path, notice: "Se ha asignado el pedido #{order.id} a #{driver&.first_name.capitalize} #{driver&.last_name.capitalize} para entrega"
     end
   end
