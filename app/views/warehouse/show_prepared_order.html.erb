@@ -79,6 +79,11 @@
       <%= submit_tag 'Asignar', class: 'main-button' %>
     </div>
     <br /><br />
+  <% elsif ((current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') && (@order.delivery_attempt != nil && @order.status != 'en ruta')) %>
+    <div class="actions">
+      <%= submit_tag 'Confirmar entrega a chofer', class: 'main-button' %>
+    </div>
+    <br /><br />
   <% end %>
 
 <% end %>
