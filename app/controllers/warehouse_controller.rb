@@ -363,7 +363,7 @@ class WarehouseController < ApplicationController
     @order.users << user
     if @order.save
       change_status
-      redirect_to warehouse_orders_path, notice: "Se asignó el pedido a #{name}."
+      redirect_to orders_general_tray_path, notice: "Se asignó el pedido a #{name}."
     else
       redirect_to warehouse_prepare_order_path(@order), alert: 'No se pudo asignar el pedido.'
     end
@@ -377,7 +377,7 @@ class WarehouseController < ApplicationController
     name = user.first_name + " " + user.last_name
     if @order.save
       change_status
-      redirect_to warehouse_orders_path, notice: "Se asignó el pedido a #{name}."
+      redirect_to orders_general_tray_path, notice: "Se asignó el pedido a #{name}."
     else
       redirect_to warehouse_prepare_order_path, alert: 'No se pudo asignar el pedido.'
     end
