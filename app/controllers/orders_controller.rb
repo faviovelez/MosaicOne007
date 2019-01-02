@@ -1201,7 +1201,11 @@ class OrdersController < ApplicationController
   def save_products
     @store = Store.find(params[:store_id])
     @prospect = Prospect.find_by_store_prospect_id(current_user.store.id)
-    corporate = Store.find(params[:corporate_store])
+    if Product.where(id: params[:products]).pluck(:supplier_id).uniq.first == 1
+      corporate = Store.find(2)
+    else
+      corporate = Store.find(1)
+    end
     @corporate = corporate
     status = []
     prod_req = []
@@ -1299,7 +1303,11 @@ class OrdersController < ApplicationController
 
   def save_products_for_prospects
     @prospect = Prospect.find(params[:prospect_id])
-    corporate = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).first
+    if Product.where(id: params[:products]).pluck(:supplier_id).uniq.first == 1
+      corporate = Store.find(2)
+    else
+      corporate = Store.find(1)
+    end
     @corporate = corporate
     status = []
     prod_req = []
