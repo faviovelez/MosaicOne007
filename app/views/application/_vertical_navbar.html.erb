@@ -463,9 +463,9 @@
 
           <% if current_user.store.id == 1 %>
             <% if (params[:controller] == 'orders' && params[:action] == 'index') %>
-              <li class="vertical-link actual-vertical-link hidden">
+              <li class="vertical-link actual-vertical-link">
             <% else %>
-              <li class="vertical-link hidden">
+              <li class="vertical-link">
             <% end %>
                 <i class="fa fa-dropbox other-nav-icons" aria-hidden="true"></i>
                 <%= link_to 'Pedidos solicitados', store_orders_path(current_user.store), class: 'text-link'  %>
@@ -659,9 +659,9 @@
 
           <% if current_user.store.id == 1 %>
             <% if params[:controller] == 'orders' && params[:action] == 'index' %>
-              <li class="vertical-link actual-vertical-link hidden">
+              <li class="vertical-link actual-vertical-link">
             <% else %>
-              <li class="vertical-link hidden">
+              <li class="vertical-link">
             <% end %>
                 <i class="fa fa-dropbox other-nav-icons" aria-hidden="true"></i>
                 <%= link_to 'Pedidos solicitados', store_orders_path(current_user.store), class: 'text-link'  %>
