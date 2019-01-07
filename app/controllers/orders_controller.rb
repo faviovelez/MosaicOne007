@@ -739,8 +739,8 @@ class OrdersController < ApplicationController
           array_price = array_price[1].to_f
           if mov.product.group
             final_price = array_price
-            subtotal = ('%.2f' % (mov.initial_price * mov.kg)).to_f.round(2)
-            discount = ('%.2f' % ((mov.initial_price - array_price) * mov.kg)).to_f.round(2)
+            subtotal = ('%.2f' % (mov.initial_price * mov.product.average.to_i)).to_f.round(2)
+            discount = ('%.2f' % ((mov.initial_price - array_price) * mov.product.average.to_i)).to_f.round(2)
             taxes = ((subtotal - discount) * 0.16).round(2)
             total = (subtotal - discount + taxes).round(2)
             mov.update(final_price: final_price, taxes: taxes, total: total, discount_applied: discount, automatic_discount: discount, subtotal: subtotal)

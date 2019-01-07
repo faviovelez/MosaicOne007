@@ -509,7 +509,7 @@ class Movement < ActiveRecord::Base
               hash_1["taxes"] = actual_taxes
               hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
             end
-            if total_quantity >= 1
+            if total_quantity > 0
               Movement.create(hash_1)
             end
             update_movement_and_requests(Movement.last) unless Movement.last.movement_type == 'baja'
@@ -519,9 +519,14 @@ class Movement < ActiveRecord::Base
               end
             end
             @model_collection << Movement.last.id
-            total_quantity -= entry.fix_quantity
-            warehouse_q -= entry.fix_quantity
-            entry.destroy
+            if product.group
+              total_quantity -= entry.fix_quantity
+              warehouse_q -= entry.fix_quantity
+              entry.destroy
+            else
+              total_quantity = 0
+              warehouse_q = 0
+            end
           else
             warehouse_q = total_quantity
             q = total_quantity
@@ -546,7 +551,7 @@ class Movement < ActiveRecord::Base
               hash_1["taxes"] = actual_taxes
               hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
             end
-            if total_quantity >= 1
+            if total_quantity > 0
               Movement.create(hash_1)
             end
             update_movement_and_requests(Movement.last) unless Movement.last.movement_type == 'baja'
@@ -557,10 +562,16 @@ class Movement < ActiveRecord::Base
               end
             end
             entry.update(quantity: entry.quantity - total_quantity)
-            total_quantity -= entry.fix_quantity
-            warehouse_q -= entry.fix_quantity
+            if product.group
+              total_quantity -= entry.fix_quantity
+              warehouse_q -= entry.fix_quantity
+              entry.destroy
+            else
+              total_quantity = 0
+              warehouse_q = 0
+            end
           end
-          break if warehouse_q < 1 && total_quantity < 1
+          break if total_quantity < 1
         end
       else
         mov = nil
@@ -605,7 +616,7 @@ class Movement < ActiveRecord::Base
             hash_1["taxes"] = actual_taxes
             hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
           end
-          if total_quantity >= 1
+          if total_quantity > 0
             new_movement = Movement.new(hash_1)
             new_movement.save
           end
@@ -616,11 +627,17 @@ class Movement < ActiveRecord::Base
               mov_sales << Movement.last
             end
           end
-          if total_quantity >= 1
-            total_quantity -= new_movement.quantity
-            warehouse_q -= new_movement.quantity
+          if total_quantity > 0
+            if product.group
+              total_quantity -= entry.fix_quantity
+              warehouse_q -= entry.fix_quantity
+              entry.destroy
+            else
+              total_quantity = 0
+              warehouse_q = 0
+            end
           end
-          break if warehouse_q < 1 && total_quantity < 1
+          break if total_quantity < 1
         end
       end
       return @model_collection
@@ -714,7 +731,7 @@ class Movement < ActiveRecord::Base
                 hash_1["taxes"] = actual_taxes
                 hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
               end
-              if total_quantity >= 1
+              if total_quantity > 0
                 Movement.create(hash_1)
               end
               if hash_1.class == Hash
@@ -729,9 +746,14 @@ class Movement < ActiveRecord::Base
               end
               @model_collection << Movement.last.id
 
-              total_quantity -= entry.fix_quantity
-              warehouse_q -= entry.fix_quantity
-              entry.destroy
+              if product.group
+                total_quantity -= entry.fix_quantity
+                warehouse_q -= entry.fix_quantity
+                entry.destroy
+              else
+                total_quantity = 0
+                warehouse_q = 0
+              end
             else
               warehouse_q = total_quantity
               q = total_quantity
@@ -757,7 +779,7 @@ class Movement < ActiveRecord::Base
                 hash_1["taxes"] = actual_taxes
                 hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
               end
-              if total_quantity >= 1
+              if total_quantity > 0
                 Movement.create(hash_1)
               end
               if hash.class == Hash
@@ -772,10 +794,16 @@ class Movement < ActiveRecord::Base
                 end
               end
               entry.update(quantity: entry.quantity - total_quantity)
-              total_quantity -= entry.fix_quantity
-              warehouse_q -= entry.fix_quantity
+              if product.group
+                total_quantity -= entry.fix_quantity
+                warehouse_q -= entry.fix_quantity
+                entry.destroy
+              else
+                total_quantity = 0
+                warehouse_q = 0
+              end
             end
-            break if warehouse_q < 1 && total_quantity < 1
+            break if total_quantity < 1
           end
         else
           mov = nil
@@ -820,7 +848,7 @@ class Movement < ActiveRecord::Base
               hash_1["taxes"] = actual_taxes
               hash_1["total"] = actual_subtotal - actual_discount + actual_taxes
             end
-            if total_quantity >= 1
+            if total_quantity > 0
               new_movement = Movement.new(hash_1)
               new_movement.save
             end
@@ -835,11 +863,17 @@ class Movement < ActiveRecord::Base
                 mov_sales << Movement.last
               end
             end
-            if total_quantity >= 1
-              total_quantity -= new_movement.quantity
-              warehouse_q -= new_movement.quantity
+            if total_quantity > 0
+              if product.group
+                total_quantity -= entry.fix_quantity
+                warehouse_q -= entry.fix_quantity
+                entry.destroy
+              else
+                total_quantity = 0
+                warehouse_q = 0
+              end
             end
-            break if warehouse_q < 1 && total_quantity < 1
+            break if total_quantity < 1
           end
         end
         return @model_collection
