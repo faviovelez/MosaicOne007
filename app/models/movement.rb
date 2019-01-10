@@ -465,7 +465,7 @@ class Movement < ActiveRecord::Base
         inventory.update(quantity: inventory.quantity - total_quantity)
       end
       warehouses = WarehouseEntry.where(product: product, store_id: hash_1["store_id"])
-      if warehouses != []
+      if warehouses != [] && product.group
         warehouses.order(:id).each do |entry|
           hash_1 = hash.dup
           mov_sales = entry.movement&.sales
@@ -684,7 +684,7 @@ class Movement < ActiveRecord::Base
           inventory.update(quantity: inventory.quantity.to_i - total_quantity)
         end
         warehouses = WarehouseEntry.where(product: product, store_id: hash_1["store"].id)
-        if warehouses != []
+        if warehouses != [] && product.group
           warehouses.order(:id).each do |entry|
             hash_1 = hash.dup
             mov_sales = entry.movement&.sales
