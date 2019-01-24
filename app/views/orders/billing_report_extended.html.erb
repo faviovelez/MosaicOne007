@@ -32,8 +32,8 @@
           <td> <%= number_to_currency(bill[5].to_f * -1) %> </td>
           <td> <%= number_to_currency(bill[6].to_f * -1) %> </td>
           <td> <%= number_to_currency(bill[7].to_f * -1) %> </td>
-          <% if bill[11] != nil %>
-            <td> <%= Bill.find(bill[11]).sequence %> <%= Bill.find(bill[11]).folio %> </td>
+          <% if bill[12] != nil %>
+            <td> <%= Bill.find(bill[12]).sequence %> <%= Bill.find(bill[12]).folio %> </td>
           <% else %>
             <td></td>
           <% end %>

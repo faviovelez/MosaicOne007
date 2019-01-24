@@ -141,6 +141,11 @@
             <br /><br />
           </td>
         </tr>
+        <td colspan="3 letter" class="center"></td>
+        <td colspan="7">
+          <%= text_field_tag :notes, nil, class: 'form-control', placeholder: 'Notas' %>
+        </td>
+
         <tr>
           <td><br /></td>
           <td class="hidden">
@@ -182,10 +187,16 @@
         </tr>
       <% end %>
       <tr>
-        <td colspan="3 letter" class="center"> __________________________ </td>
+        <td colspan="3"></td>
         <td></td>
         <td></td>
         <td colspan="5"></td>
+      </tr>
+      <tr>
+        <td colspan="3 letter" class="center"> __________________________ </td>
+        <td colspan="7">
+          <%= text_field_tag :notes, nil, class: 'form-control', placeholder: 'Notas' %>
+        </td>
       </tr>
       <tr>
         <td colspan="3" class="center"> Firma de conformidad </td>

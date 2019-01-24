@@ -227,13 +227,13 @@ class OrdersController < ApplicationController
   end
 
   def report_of_collection
-    @collection_consolidated_query = "SELECT store_name, legal_or_business_name, COUNT(bills.id) AS count, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -subtotal WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN subtotal ELSE 0 END) AS subtotal, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -discount_applied WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN discount_applied ELSE 0 END) AS discount, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -taxes WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN taxes ELSE 0 END) AS taxes, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -bills.total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN bills.total ELSE 0 END) AS total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END) AS payments, prospects.id FROM bills INNER JOIN stores ON bills.store_id = stores.id INNER JOIN prospects ON bills.prospect_id = prospects.id LEFT JOIN payments ON payments.bill_id = bills.id WHERE bills.bill_folio_type != 'Pago' AND bills.store_id = #{@store_id} AND bills.status = 'creada' AND bills.created_at > '#{@initial_date}' AND bills.created_at < '#{@final_date}' GROUP BY legal_or_business_name, store_name, prospects.id"
+    @collection_consolidated_query = "SELECT store_name, legal_or_business_name, COUNT(bills.id) AS count, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -subtotal WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN subtotal ELSE 0 END) AS subtotal, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -discount_applied WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN discount_applied ELSE 0 END) AS discount, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -taxes WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN taxes ELSE 0 END) AS taxes, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -bills.total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN bills.total ELSE 0 END) AS total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END) AS payments, prospects.id FROM bills INNER JOIN stores ON bills.store_id = stores.id INNER JOIN prospects ON bills.prospect_id = prospects.id LEFT JOIN payments ON payments.bill_id = bills.id WHERE bills.bill_folio_type != 'Pago' AND bills.store_id = #{@store_id} AND bills.status = 'creada' AND bills.created_at > '#{@initial_date}' AND bills.created_at < '#{@final_date}' AND payments.created_at > '#{@initial_date}' AND payments.created_at < '#{@final_date}' GROUP BY legal_or_business_name, store_name, prospects.id"
 
     if params[:extended_collection].present?
-      @bills = Bill.uniq.joins(:store, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id LEFT JOIN orders ON orders.bill_id = bills.id').where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id")
+      @bills = Bill.uniq.joins(:store, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id LEFT JOIN orders ON orders.bill_id = bills.id').where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date).where(payments: {created_at: @initial_date..@final_date}).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id")
       render 'collection_report_extended'
     elsif params[:extended_collection_billing].present?
-      @bills = Bill.uniq.joins(:store, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id LEFT JOIN orders ON orders.bill_id = bills.id').where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date, prospect_id: @prospect_id).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id")
+      @bills = Bill.uniq.joins(:store, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id LEFT JOIN orders ON orders.bill_id = bills.id').where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date, prospect_id: @prospect_id).where(payments: {created_at: @initial_date..@final_date}).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id")
       render 'collection_report_extended'
     else
       @bills = Bill.connection.select_all(@collection_consolidated_query).rows
@@ -779,7 +779,7 @@ class OrdersController < ApplicationController
       requests = order.product_requests.where.not(status: 'cancelada')
       requests.each do |request|
         request.update(status: 'entregado')
-        request.movements.each do |mov|
+        request.movements.where.not(movement_type: ['devolución', 'alta', 'alta automática', 'baja']).each do |mov|
           new_mov = mov.as_json
           new_mov.delete("id")
           new_mov.delete("created_at")
@@ -823,6 +823,51 @@ class OrdersController < ApplicationController
             StoreMovement.create(new_mov)
           end
         end
+        if request.pending_movement != nil
+          mov = request.pending_movement
+          new_mov = mov.as_json
+          new_mov.delete("id")
+          new_mov.delete("created_at")
+          new_mov.delete("updated_at")
+          new_mov["cost"] = new_mov["cost"].to_f
+          new_mov["reason"] = "Pedido #{order.id}"
+          new_mov["movement_type"] = 'alta automática'
+          new_mov["store_id"] = current_user.store.id
+          if (current_user.store.id == 1 || current_user.store.id == 2)
+            new_mov.delete("product_request_id")
+            if mov.prospect.store_prospect.present? && Prospect.where(store_prospect_id: Store.where(store_type: 2).pluck(:id)).pluck(:id).include?(mov.prospect_id)
+              Movement.create(new_mov)
+              if current_user.store.id == 1
+                inventory = Inventory.where(product: mov.product).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              else
+                inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+                inventory.update(quantity: inventory.quantity + mov.quantity)
+              end
+            end
+          else
+            new_mov.delete("identifier")
+            new_mov.delete("seller_user_id")
+            new_mov.delete("buyer_user_id")
+            new_mov.delete("business_unit_id")
+            new_mov.delete("unique_code")
+            new_mov.delete("entry_movement_id")
+            new_mov.delete("discount_rule_id")
+            new_mov.delete("confirm")
+            new_mov.delete("maximum_date")
+            new_mov.delete("return_billed")
+            new_mov["web"] = true
+            new_mov["pos"] = false
+            new_mov["cost"] = new_mov["final_price"]
+            if new_mov["kg"] != nil && !Product.find(new_mov["product_id"]).group
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i * new_mov["kg"]
+            else
+              new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
+            end
+            new_mov.delete("kg")
+            StoreMovement.create(new_mov)
+          end
+        end
       end
     else
       complete = true
@@ -836,7 +881,7 @@ class OrdersController < ApplicationController
           request.update(status: 'entregado', quantity: request.quantity.to_i)
           counter = request.movements.count
           n = 0
-          request.movements.each do |mov|
+          request.movements.where.not(movement_type: ['devolución', 'alta', 'alta automática', 'baja']).each do |mov|
             new_mov = mov.as_json
             new_mov.delete("id")
             new_mov.delete("created_at")
@@ -889,6 +934,51 @@ class OrdersController < ApplicationController
               StoreMovement.create(new_mov)
             end
             n += 1
+          end
+          if request.pending_movement != nil
+            mov = request.pending_movement
+            new_mov = mov.as_json
+            new_mov.delete("id")
+            new_mov.delete("created_at")
+            new_mov.delete("updated_at")
+            new_mov["cost"] = new_mov["cost"].to_f
+            new_mov["reason"] = "Pedido #{order.id}"
+            new_mov["movement_type"] = 'alta automática'
+            new_mov["store_id"] = current_user.store.id
+            if (current_user.store.id == 1 || current_user.store.id == 2)
+              new_mov.delete("product_request_id")
+              if mov.prospect.store_prospect.present? && Prospect.where(store_prospect_id: Store.where(store_type: 2).pluck(:id)).pluck(:id).include?(mov.prospect_id)
+                Movement.create(new_mov)
+                if current_user.store.id == 1
+                  inventory = Inventory.where(product: mov.product).first
+                  inventory.update(quantity: inventory.quantity + mov.quantity)
+                else
+                  inventory = StoresInventory.where(product: mov.product, store: mov.store).first
+                  inventory.update(quantity: inventory.quantity + mov.quantity)
+                end
+              end
+            else
+              new_mov.delete("identifier")
+              new_mov.delete("seller_user_id")
+              new_mov.delete("buyer_user_id")
+              new_mov.delete("business_unit_id")
+              new_mov.delete("unique_code")
+              new_mov.delete("entry_movement_id")
+              new_mov.delete("discount_rule_id")
+              new_mov.delete("confirm")
+              new_mov.delete("maximum_date")
+              new_mov.delete("return_billed")
+              new_mov["web"] = true
+              new_mov["pos"] = false
+              new_mov["cost"] = new_mov["final_price"]
+              if new_mov["kg"] != nil && !Product.find(new_mov["product_id"]).group
+                new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i * new_mov["kg"]
+              else
+                new_mov["total_cost"] = new_mov["cost"].to_f * new_mov["quantity"].to_i
+              end
+              new_mov.delete("kg")
+              StoreMovement.create(new_mov)
+            end
           end
         end
       end
