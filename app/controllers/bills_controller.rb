@@ -2777,14 +2777,14 @@ XML
             new_hash["unique_code"] = mov.product.unique_code
             if mov.product.group
               new_hash["subtotal"] = (mov.subtotal * new_hash["quantity"]).round(2)
-              taxes = (((mov.subtotal - mov.discount_applied) * 0.16) * new_hash["quantity"]).round(2)
-              new_hash["total"] = new_hash["subtotal"].round(2) - (mov.discount_applied.to_f * new_hash["quantity"]).round(2) + taxes
-              new_hash["discount"] = (mov.discount_applied.to_f * new_hash["quantity"]).round(2) unless mov.discount_applied == nil
+              new_hash["discount"] = (('%.2f' % (mov.initial_price - mov.final_price)).to_f * new_hash["quantity"]).round(2) unless mov.discount_applied == nil
+              taxes = ( ('%.2f' % (mov.subtotal - ('%.2f' % (mov.initial_price - mov.final_price)).to_f)).to_f * new_hash["quantity"] * 0.16).round(2)
+              new_hash["total"] = new_hash["subtotal"].round(2) - new_hash["discount"] + taxes
             else
-              new_hash["subtotal"] = (mov.subtotal * mov.quantity).round(2)
-              taxes = (((mov.subtotal - mov.discount_applied) * 0.16) * mov.quantity).round(2)
-              new_hash["total"] = new_hash["subtotal"].round(2) - (mov.discount_applied.to_f * mov.quantity).round(2) + taxes
-              new_hash["discount"] = (mov.discount_applied.to_f * mov.quantity).round(2) unless mov.discount_applied == nil
+              new_hash["subtotal"] = (mov.subtotal * new_hash["quantity"]).round(2)
+              new_hash["discount"] = (('%.2f' % (mov.initial_price - mov.final_price)).to_f * new_hash["quantity"]).round(2) unless mov.discount_applied == nil
+              taxes = ( ('%.2f' % (mov.subtotal - ('%.2f' % (mov.initial_price - mov.final_price)).to_f)).to_f * new_hash["quantity"] * 0.16).round(2)
+              new_hash["total"] = new_hash["subtotal"].round(2) - new_hash["discount"] + taxes
             end
             new_hash["taxes"] = taxes
             @rows << new_hash
