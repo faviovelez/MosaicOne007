@@ -122,9 +122,9 @@ module ApplicationHelper
       if type == 'total'
         if pr.movements == []
           if pr.product.group
-            @mov_total = (pr.pending_movement.total * pr.quantity * pr.product.average).round(2)
+            @mov_total = (pr.pending_movement.final_price * 1.16 * pr.quantity * pr.product.average).round(2)
           else
-            @mov_total = (pr.pending_movement.total * pr.quantity).round(2)
+            @mov_total = (pr.pending_movement.final_price * 1.16 * pr.quantity).round(2)
           end
         else
           @mov_total = pr.movements.sum(:total).round(2)

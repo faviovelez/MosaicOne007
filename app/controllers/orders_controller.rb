@@ -640,39 +640,43 @@ class OrdersController < ApplicationController
           product = mov.product
           if product.group
             if mov.movement_type == 'venta'
+              mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
               cost += mov.total_cost.to_f * mov.quantity * product.average
               subtotal += mov.subtotal.to_f * mov.quantity * product.average
               discount += mov.discount_applied.to_f * mov.quantity * product.average
               taxes += (mov.final_price.to_f * mov.quantity.to_i * product.average * 0.16).round(2)
 #              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
 #              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total += (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
+              total += subtotal - discount + taxes
             elsif mov.movement_type == 'devolución'
+              mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
               cost -= mov.total_cost.to_f * mov.quantity * product.average
               subtotal -= mov.subtotal.to_f * mov.quantity * product.average
               discount -= mov.discount_applied.to_f * mov.quantity * product.average
               taxes -= (mov.final_price.to_f * mov.quantity.to_i * product.average * 0.16).round(2)
 #              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
 #              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total -= (mov.subtotal.to_f * mov.quantity * product.average) - (mov.discount_applied.to_f * mov.quantity * product.average) + (mov.taxes.to_f * mov.quantity * product.average)
+              total -= subtotal - discount + taxes
             end
           else
             if mov.movement_type == 'venta'
+              mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
               cost += mov.total_cost.to_f * mov.quantity
               subtotal += mov.subtotal.to_f * mov.quantity
               discount += mov.discount_applied.to_f * mov.quantity
               taxes += (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
 #              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
 #              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total += (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
+              total += subtotal - discount + taxes
             elsif mov.movement_type == 'devolución'
+              mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
               cost -= mov.total_cost.to_f * mov.quantity
               subtotal -= mov.subtotal.to_f * mov.quantity
               discount -= mov.discount_applied.to_f * mov.quantity
               taxes -= (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
 #              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
 #              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total -= (mov.subtotal.to_f * mov.quantity) - (mov.discount_applied.to_f * mov.quantity) + (mov.taxes.to_f * mov.quantity)
+              total -= subtotal - discount + taxes
             end
           end
         end
