@@ -195,7 +195,9 @@
       <tr>
         <td colspan="3 letter" class="center"> __________________________ </td>
         <td colspan="7">
-          <%= text_field_tag :notes, nil, class: 'form-control', placeholder: 'Notas' %>
+          <% if  @relation_type == '01' || @relation_type == '03' %>
+            <%= text_field_tag :notes, nil, class: 'form-control', placeholder: 'Notas' %>
+          <% end %>
         </td>
       </tr>
       <tr>
