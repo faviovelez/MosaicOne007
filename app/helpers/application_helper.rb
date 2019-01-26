@@ -39,7 +39,11 @@ module ApplicationHelper
       @discount = 0
     else
       if product_request.movements == []
-        @discount = (product_request.pending_movement.discount_applied / product_request.pending_movement.initial_price * 100).round(0)
+        if product_request.pending_movement.product.group
+          @discount = (product_request.pending_movement.discount_applied / (product_request.pending_movement.initial_price * product_request.pending_movement.product.average) * 100).round(0)
+        else
+          @discount = (product_request.pending_movement.discount_applied / product_request.pending_movement.initial_price * 100).round(0)
+        end
       else
         if product_request.movements.count > 1
           subtotal = 0

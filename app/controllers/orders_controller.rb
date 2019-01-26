@@ -227,13 +227,13 @@ class OrdersController < ApplicationController
   end
 
   def report_of_collection
-    @collection_consolidated_query = "SELECT store_name, legal_or_business_name, COUNT(bills.id) AS count, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -subtotal WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN subtotal ELSE 0 END) AS subtotal, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -discount_applied WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN discount_applied ELSE 0 END) AS discount, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -taxes WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN taxes ELSE 0 END) AS taxes, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -bills.total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN bills.total ELSE 0 END) AS total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END) AS payments, prospects.id FROM bills INNER JOIN stores ON bills.store_id = stores.id INNER JOIN prospects ON bills.prospect_id = prospects.id LEFT JOIN payments ON payments.bill_id = bills.id WHERE bills.bill_folio_type != 'Pago' AND bills.store_id = #{@store_id} AND bills.status = 'creada' AND bills.created_at > '#{@initial_date}' AND bills.created_at < '#{@final_date}' AND payments.created_at > '#{@initial_date}' AND payments.created_at < '#{@final_date}' GROUP BY legal_or_business_name, store_name, prospects.id"
+    @collection_consolidated_query = "SELECT store_name, legal_or_business_name, COUNT(bills.id) AS count, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -subtotal WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN subtotal ELSE 0 END) AS subtotal, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -discount_applied WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN discount_applied ELSE 0 END) AS discount, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -taxes WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN taxes ELSE 0 END) AS taxes, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -bills.total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN bills.total ELSE 0 END) AS total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END) AS payments, prospects.id FROM bills INNER JOIN stores ON bills.store_id = stores.id INNER JOIN prospects ON bills.prospect_id = prospects.id LEFT JOIN payments ON payments.bill_id = bills.id WHERE bills.bill_folio_type != 'Pago' AND bills.store_id = #{@store_id} AND bills.status = 'creada' AND bills.created_at > '#{@initial_date}' AND bills.created_at < '#{@final_date}' GROUP BY legal_or_business_name, store_name, prospects.id"
 
     if params[:extended_collection].present?
-      @bills = Bill.uniq.joins(:store, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id LEFT JOIN orders ON orders.bill_id = bills.id').where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date).where(payments: {created_at: @initial_date..@final_date}).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id")
+      @bills = Bill.uniq.joins(:store, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id LEFT JOIN orders ON orders.bill_id = bills.id').where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id")
       render 'collection_report_extended'
     elsif params[:extended_collection_billing].present?
-      @bills = Bill.uniq.joins(:store, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id LEFT JOIN orders ON orders.bill_id = bills.id').where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date, prospect_id: @prospect_id).where(payments: {created_at: @initial_date..@final_date}).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id")
+      @bills = Bill.uniq.joins(:store, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id LEFT JOIN orders ON orders.bill_id = bills.id').where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date, prospect_id: @prospect_id).order('bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id")
       render 'collection_report_extended'
     else
       @bills = Bill.connection.select_all(@collection_consolidated_query).rows
@@ -591,6 +591,7 @@ class OrdersController < ApplicationController
 
   def show
     update_order_total
+    update_order_total
   end
 
   def update_order_total
@@ -608,84 +609,46 @@ class OrdersController < ApplicationController
       discount = 0
       taxes = 0
       total = 0
-      if order.movements != []
-        order.movements.each do |mov|
-          if mov.quantity == nil
-            mov.delete
-          else
-            if mov.movement_type == 'venta'
-              cost += mov.total_cost.to_f
-              subtotal += mov.subtotal.to_f
-              discount += mov.discount_applied.to_f
-              taxes += (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
-#              mov.update(taxes: (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2))
-#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total += mov.total.to_f
-            elsif mov.movement_type == 'devolución'
-              cost -= mov.total_cost.to_f
-              subtotal -= mov.subtotal.to_f
-              discount -= mov.discount_applied.to_f
-              taxes -= (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
-#              mov.update(taxes: (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2))
-#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total -= mov.total.to_f
-            end
-          end
-        end
-      end
+      cost = order.movements.where(movement_type: 'venta').sum(:total_cost).to_f
+      subtotal = order.movements.where(movement_type: 'venta').sum(:subtotal).to_f
+      total = order.movements.where(movement_type: 'venta').sum(:total).to_f
+      taxes = order.movements.where(movement_type: 'venta').sum(:taxes).to_f
+      discount = order.movements.where(movement_type: 'venta').sum(:discount_applied).to_f
+
+      cost -= order.movements.where(movement_type: 'devolución').sum(:total_cost).to_f
+      subtotal -= order.movements.where(movement_type: 'devolución').sum(:subtotal).to_f
+      total -= order.movements.where(movement_type: 'devolución').sum(:total).to_f
+      taxes -= order.movements.where(movement_type: 'devolución').sum(:taxes).to_f
+      discount -= order.movements.where(movement_type: 'devolución').sum(:discount_applied).to_f
+
       order.pending_movements.each do |mov|
         if mov.quantity == nil
           mov.delete
         else
           product = mov.product
           if product.group
-            if mov.movement_type == 'venta'
-              mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
-              cost += mov.total_cost.to_f * mov.quantity * product.average
-              subtotal += mov.subtotal.to_f * mov.quantity * product.average
-              discount += mov.discount_applied.to_f * mov.quantity * product.average
-              taxes += (mov.final_price.to_f * mov.quantity.to_i * product.average * 0.16).round(2)
-#              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
-#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total += subtotal - discount + taxes
-            elsif mov.movement_type == 'devolución'
-              mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
-              cost -= mov.total_cost.to_f * mov.quantity * product.average
-              subtotal -= mov.subtotal.to_f * mov.quantity * product.average
-              discount -= mov.discount_applied.to_f * mov.quantity * product.average
-              taxes -= (mov.final_price.to_f * mov.quantity.to_i * product.average * 0.16).round(2)
-#              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
-#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total -= subtotal - discount + taxes
-            end
+            mov.update(discount_applied: ((mov.initial_price - mov.final_price).round(2) * product.average).round(2), automatic_discount: ((mov.initial_price - mov.final_price).round(2) * product.average).round(2))
+            cost += mov.total_cost.to_f
+            subtotal += mov.subtotal.to_f
+            discount += mov.discount_applied.to_f
+            taxes += ((subtotal - discount).round(2) * 0.16).round(2)
           else
-            if mov.movement_type == 'venta'
-              mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
-              cost += mov.total_cost.to_f * mov.quantity
-              subtotal += mov.subtotal.to_f * mov.quantity
-              discount += mov.discount_applied.to_f * mov.quantity
-              taxes += (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
-#              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
-#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total += subtotal - discount + taxes
-            elsif mov.movement_type == 'devolución'
-              mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
-              cost -= mov.total_cost.to_f * mov.quantity
-              subtotal -= mov.subtotal.to_f * mov.quantity
-              discount -= mov.discount_applied.to_f * mov.quantity
-              taxes -= (mov.final_price.to_f * mov.quantity.to_i * 0.16).round(2)
-#              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
-#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
-              total -= subtotal - discount + taxes
-            end
+            mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
+            cost += mov.total_cost.to_f * mov.quantity.to_i
+            subtotal += mov.subtotal.to_f * mov.quantity.to_i
+            discount += mov.discount_applied.to_f * mov.quantity.to_i
+            taxes += ((subtotal - discount).round(2) * 0.16).round(2)
           end
+#              mov.update(taxes: (mov.final_price.to_f * 0.16).round(2))
+#              mov.update(total: (mov.subtotal - mov.discount_applied + mov.taxes).round(2))
+          total += (subtotal - discount + taxes).round(2)
         end
       end
       subtotal = subtotal.round(2)
       discount = discount.round(2)
-      taxes = taxes.round(2)
+      taxes = ((subtotal - discount) * 0.16).round(2)
+      total = (subtotal - discount + taxes).round(2)
       cost = cost.round(2)
-      total = total.round(2)
       order.update(
         subtotal: subtotal,
         discount_applied: discount,
@@ -751,7 +714,7 @@ class OrdersController < ApplicationController
           else
             final_price = array_price
             subtotal = ('%.2f' % (mov.initial_price)).to_f.round(2)
-            discount = ('%.2f' % ((mov.initial_price - array_price))).to_f.round
+            discount = ('%.2f' % ((mov.initial_price - array_price))).to_f.round(2)
             taxes = ((subtotal - discount) * 0.16).round(2)
             total = (subtotal - discount + taxes).round(2)
             mov.update(final_price: final_price, taxes: taxes, total: total, discount_applied: discount, automatic_discount: discount, subtotal: subtotal)
