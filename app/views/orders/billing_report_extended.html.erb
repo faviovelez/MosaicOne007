@@ -14,7 +14,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @bills.each do |bill| %>
+    <% @bills.each_with_index do |bill, index| %>
       <tr>
         <td> <%= bill[8] %> </td>
         <td> <%= bill[0] %> </td>
@@ -39,6 +39,96 @@
           <% end %>
         <% end %>
       </tr>
+      <% unless index + 1 == @bills.length %>
+        <% if @bills[index][11] != @bills[index + 1][11] %>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Total</td>
+
+            <td>
+              <strong>
+                <%= number_to_currency(@bills.select{ |arr| arr[11] == bill[11] }.map{ |arr| [arr[4], arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              </strong>
+            </td>
+            <td>
+              <strong>
+                <%= number_to_currency(@bills.select{ |arr| arr[11] == bill[11] }.map{ |arr| [arr[5], arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              </strong>
+            </td>
+            <td>
+              <strong>
+                <%= number_to_currency(@bills.select{ |arr| arr[11] == bill[11] }.map{ |arr| [arr[6], arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              </strong>
+            </td>
+            <td>
+              <strong>
+                <%= number_to_currency(@bills.select{ |arr| arr[11] == bill[11] }.map{ |arr| [arr[7], arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              </strong>
+            </td>
+
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        <% end %>
+      <% end %>
+      <% if index + 1 == @bills.length && @same %>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Total</td>
+
+          <td>
+            <strong>
+              <%= number_to_currency(@bills.select{ |arr| arr[11] == bill[11] }.map{ |arr| [arr[4], arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+            </strong>
+          </td>
+          <td>
+            <strong>
+              <%= number_to_currency(@bills.select{ |arr| arr[11] == bill[11] }.map{ |arr| [arr[5], arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+            </strong>
+          </td>
+          <td>
+            <strong>
+              <%= number_to_currency(@bills.select{ |arr| arr[11] == bill[11] }.map{ |arr| [arr[6], arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+            </strong>
+          </td>
+          <td>
+            <strong>
+              <%= number_to_currency(@bills.select{ |arr| arr[11] == bill[11] }.map{ |arr| [arr[7], arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+            </strong>
+          </td>
+
+          <td></td>
+        </tr>
+      <% end %>
     <% end %>
   </tbody>
 </table>
