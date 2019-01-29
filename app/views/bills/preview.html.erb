@@ -62,10 +62,19 @@
   <tbody class="border-around">
     <tr>
       <td class="half first"> Moneda: <span> <strong> MXN </strong> - Peso Mexicano </span> </td>
-      <td class="half"> Forma de pago: <span> <strong> <%= @payment_key %> </strong> - <%= @payment_description %> </span> </td>
+    <%= form_tag({ controller: 'bills', action: 'cfdi_process' }, method: 'get') do %>
+      <% if (@relation_type == '01' && [1,2].include?(current_user.store.id)) || (@relation_type == '03' && [1,2].include?(current_user.store.id)) %>
+        <td class="half"> Forma de pago: <%= select_tag :payment, options_for_select(@payment_forms), class: 'form-control' %> </td>
+      <% else %>
+        <td class="half"> Forma de pago: <span> <strong> <%= @payment_key %> </strong> - <%= @payment_description %> </span> </td>
+      <% end %>
     </tr>
     <tr>
-      <td class="half first"> Método de pago:  <span> <strong> <%= @method_key %> </strong> - <%= @method_description %> </span> </td>
+      <% if (@relation_type == '01' && [1,2].include?(current_user.store.id)) || (@relation_type == '03' && [1,2].include?(current_user.store.id)) %>
+        <td class="half first"> Método de pago: <%= select_tag :method, options_for_select(@payment_methods), class: 'form-control' %> </td>
+      <% else %>
+        <td class="half first"> Método de pago:  <span> <strong> <%= @method_key %> </strong> - <%= @method_description %> </span> </td>
+      <% end %>
       <td class="half"> Condiciones de pago: <span> <%= @payment_form %> </span> </td>
     </tr>
     <tr class="hidden">
@@ -243,7 +252,6 @@
         <td colspan="5" class="letter"></td>
         <td colspan="3" class="final-total border-top"> <strong> Nota de crédito </strong> </td>
         <td colspan="2" class="final-total border-top right">
-          <%= form_tag({ controller: 'bills', action: 'cfdi_process'}, method: 'get', class: 'form-inline') do %>
             <div class="form-group">
               <div class="input-group">
                 <div class="input-group-addon blue-background">$</div>

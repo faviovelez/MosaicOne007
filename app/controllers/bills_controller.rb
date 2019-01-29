@@ -582,6 +582,8 @@ class BillsController < ApplicationController
   end
 
   def preview
+    select_payment_forms
+    select_payment_methods
     @notes = params[:notes]
     @relation_type = params[:relation_type]
     params[:bill] == nil ? @bill = nil : @bill = Bill.find(params[:bill])
@@ -1422,6 +1424,7 @@ class BillsController < ApplicationController
         @use = cfdi_use
         @cfdi_use_key = cfdi_use.key
         @cfdi_use = cfdi_use.description
+
         if @bill != nil || (@bill != nil && @relation_type == '04')
           @payment_key  = @bill.payment_form.payment_key # Forma de pago
           @payment_description = @bill.payment_form.description # Forma de pago
@@ -1700,6 +1703,17 @@ class BillsController < ApplicationController
           @payment_form = params[:payment_form]
         end
       end
+
+      if params[:payment].present? && params[:method].present?
+        @pay_form = PaymentForm.find(params['payment'])
+        @payment_form = params['payment_form']
+        @payment_key = @pay_form.payment_key
+        @payment_description = @pay_form.description
+        @method = PaymentMethod.find(params['method'])
+        @method_key = @method.method
+        @method_description = @method.description
+      end
+
       create_directories
       create_unsigned_xml_file
       generate_digital_stamp

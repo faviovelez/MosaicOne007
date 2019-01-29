@@ -822,6 +822,7 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
   });
 
   var tableFour = $('.dataTablestandard').DataTable({
+    "ordering": false,
     "language": {
       "sProcessing":     "Procesando...",
       "sLengthMenu":     "Mostrar _MENU_ registros",

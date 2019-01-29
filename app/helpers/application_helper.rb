@@ -212,6 +212,7 @@ module ApplicationHelper
 
   def store_list_for_corporate
     @store_list = Store.where(store_type: 1).order(:store_name).pluck(:store_name, :id)
+    @store_list << Store.where(id: current_user.store.id).pluck(:store_name, :id)[0]
   end
 
   def address_for_delivery(order)

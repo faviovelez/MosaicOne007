@@ -18,6 +18,7 @@ class InventoriesController < ApplicationController
       store = Store.find(store_id)
       @store_id = store_id
     end
+
     final_date = (Date.today - 1.month).end_of_month
     months = Store.find(store_id).months_in_inventory
     initial_date = final_date - months.month + 1.day
@@ -29,13 +30,30 @@ class InventoriesController < ApplicationController
     ly_after_initial_date_for_query = ly_after_initial_date.strftime('%F %H:%M:%S')
     ly_after_final_date_for_query = ly_after_final_date.strftime('%F 23:59:59')
 
-    month_sales = StoreMovement.joins('RIGHT JOIN products ON products.id = store_movements.product_id RIGHT JOIN stores_inventories ON products.id = stores_inventories.product_id').where(stores_inventories: {store_id: store_id}).where.not(movement_type: ['alta', 'baja', 'alta automática', 'baja automática']).where(store_id: store_id).where("(store_movements.created_at > '#{initial_date_for_query}' AND store_movements.created_at < '#{final_date_for_query}') OR (store_movements.created_at > '#{ly_after_initial_date_for_query}' AND store_movements.created_at < '#{ly_after_final_date_for_query}')").order("products.id, DATE_TRUNC('month', store_movements.created_at)").group("products.id, products.unique_code, products.description, DATE_TRUNC('month', store_movements.created_at), stores_inventories.quantity").pluck("products.id, products.unique_code, products.description, COALESCE(SUM(CASE WHEN store_movements.movement_type = 'devolución' THEN -store_movements.quantity WHEN store_movements.movement_type = 'venta' THEN store_movements.quantity ELSE 0 END), 0) as total, COUNT(DISTINCT DATE_TRUNC('month', store_movements.created_at)) AS months, DATE_TRUNC('month', store_movements.created_at) AS month, stores_inventories.quantity")
+    if Store.where(store_type: 2).pluck(:id).include?(current_user.store.id) && (store_id  == "1" || store_id  == "2")
+      if current_user.store.id == 1
+        month_sales = Movement.joins('RIGHT JOIN products ON products.id = movements.product_id RIGHT JOIN inventories ON products.id = inventories.product_id').where.not(movement_type: ['alta', 'baja', 'alta automática', 'baja automática']).where(store_id: store_id).where("(movements.created_at > '#{initial_date_for_query}' AND movements.created_at < '#{final_date_for_query}') OR (movements.created_at > '#{ly_after_initial_date_for_query}' AND movements.created_at < '#{ly_after_final_date_for_query}')").order("products.id, DATE_TRUNC('month', movements.created_at)").group("products.id, products.unique_code, products.description, DATE_TRUNC('month', movements.created_at), inventories.quantity").pluck("products.id, products.unique_code, products.description, COALESCE(SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.quantity WHEN movements.movement_type = 'venta' THEN movements.quantity ELSE 0 END), 0) as total, COUNT(DISTINCT DATE_TRUNC('month', movements.created_at)) AS months, DATE_TRUNC('month', movements.created_at) AS month, inventories.quantity")
 
-    @grouped_stores_inventories = StoresInventory.joins(:product).where(store_id: store_id).order(:product_id).pluck(:product_id, :unique_code, :description, :quantity, :exterior_material_color, :line).group_by{ |arr| arr[0]}
+        @grouped_stores_inventories = Inventory.joins(:product).order(:product_id).pluck(:product_id, :unique_code, :description, :quantity, :exterior_material_color, :line).group_by{ |arr| arr[0]}
+      else
+        month_sales = Movement.joins('RIGHT JOIN products ON products.id = movements.product_id RIGHT JOIN stores_inventories ON products.id = stores_inventories.product_id').where(stores_inventories: {store_id: store_id}).where.not(movement_type: ['alta', 'baja', 'alta automática', 'baja automática']).where(store_id: store_id).where("(movements.created_at > '#{initial_date_for_query}' AND movements.created_at < '#{final_date_for_query}') OR (movements.created_at > '#{ly_after_initial_date_for_query}' AND movements.created_at < '#{ly_after_final_date_for_query}')").order("products.id, DATE_TRUNC('month', movements.created_at)").group("products.id, products.unique_code, products.description, DATE_TRUNC('month', movements.created_at), stores_inventories.quantity").pluck("products.id, products.unique_code, products.description, COALESCE(SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.quantity WHEN movements.movement_type = 'venta' THEN movements.quantity ELSE 0 END), 0) as total, COUNT(DISTINCT DATE_TRUNC('month', movements.created_at)) AS months, DATE_TRUNC('month', movements.created_at) AS month, stores_inventories.quantity")
+
+        @grouped_stores_inventories = StoresInventory.joins(:product).where(store_id: store_id).order(:product_id).pluck(:product_id, :unique_code, :description, :quantity, :exterior_material_color, :line).group_by{ |arr| arr[0]}
+      end
+
+    else
+      month_sales = StoreMovement.joins('RIGHT JOIN products ON products.id = store_movements.product_id RIGHT JOIN stores_inventories ON products.id = stores_inventories.product_id').where(stores_inventories: {store_id: store_id}).where.not(movement_type: ['alta', 'baja', 'alta automática', 'baja automática']).where(store_id: store_id).where("(store_movements.created_at > '#{initial_date_for_query}' AND store_movements.created_at < '#{final_date_for_query}') OR (store_movements.created_at > '#{ly_after_initial_date_for_query}' AND store_movements.created_at < '#{ly_after_final_date_for_query}')").order("products.id, DATE_TRUNC('month', store_movements.created_at)").group("products.id, products.unique_code, products.description, DATE_TRUNC('month', store_movements.created_at), stores_inventories.quantity").pluck("products.id, products.unique_code, products.description, COALESCE(SUM(CASE WHEN store_movements.movement_type = 'devolución' THEN -store_movements.quantity WHEN store_movements.movement_type = 'venta' THEN store_movements.quantity ELSE 0 END), 0) as total, COUNT(DISTINCT DATE_TRUNC('month', store_movements.created_at)) AS months, DATE_TRUNC('month', store_movements.created_at) AS month, stores_inventories.quantity")
+
+      @grouped_stores_inventories = StoresInventory.joins(:product).where(store_id: store_id).order(:product_id).pluck(:product_id, :unique_code, :description, :quantity, :exterior_material_color, :line).group_by{ |arr| arr[0]}
+    end
 
     products = Product.all.order(:id).pluck(:id)
 
-    movs = StoreMovement.where(movement_type: ['alta', 'alta automática'], store_id: store_id, product_id: products).order(:product_id).order(created_at: :desc).pluck(:product_id, :cost, :created_at)
+    if Store.where(store_type: 2).pluck(:id).include?(current_user.store.id) && (store_id  == "1" || store_id  == "2")
+      movs = Movement.where(movement_type: ['alta', 'alta automática'], store_id: current_user.store.id, product_id: products).order(:product_id).order(created_at: :desc).pluck(:product_id, :cost, :created_at)
+    else
+      movs = StoreMovement.where(movement_type: ['alta', 'alta automática'], store_id: store_id, product_id: products).order(:product_id).order(created_at: :desc).pluck(:product_id, :cost, :created_at)
+    end
 
     last_movs = []
     products.each do |product|
