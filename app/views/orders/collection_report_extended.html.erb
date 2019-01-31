@@ -78,40 +78,40 @@
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[3].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[3].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[4].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[4].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[5].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[5].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <% if bill[2] == 'Factura' || bill[2] == 'Sustitución' %>
             <td>
               <strong>
-                <%= number_to_currency((@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) - (@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+))) %>
+                <%= number_to_currency((@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) - (@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+))) %>
               </strong>
             </td>
             <td> </td>
           <% else %>
             <td>
               <strong>
-                <%= number_to_currency((@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+) * -1) - (@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+))) %>
+                <%= number_to_currency((@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) - (@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+))) %>
               </strong>
             </td>
             <td> </td>
@@ -169,40 +169,40 @@
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[3].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[3].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[4].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[4].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[5].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[5].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <td>
             <strong>
-              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
+              <%= number_to_currency(@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) %>
             </strong>
           </td>
           <% if bill[2] == 'Factura' || bill[2] == 'Sustitución' %>
             <td>
               <strong>
-                <%= number_to_currency((@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) - (@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+))) %>
+                <%= number_to_currency((@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) - (@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+))) %>
               </strong>
             </td>
             <td> </td>
           <% else %>
             <td>
               <strong>
-                <%= number_to_currency((@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+) * -1) - (@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[1]] }.map{ |arr| arr[2] == "Devolución" || arr[2] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+))) %>
+                <%= number_to_currency((@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[6].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+)) - (@bills.select{ |arr| arr[15] == bill[15] }.map{ |arr| [arr[7].to_f, arr[2]] }.map{ |arr| arr[1] == "Devolución" || arr[1] == "Nota de Crédito"  ? arr[0] = -arr[0] : arr[0] = arr[0] }.inject(0, &:+))) %>
               </strong>
             </td>
             <td> </td>
