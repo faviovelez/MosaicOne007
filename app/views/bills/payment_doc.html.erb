@@ -136,9 +136,15 @@
         <td colspan="4" class="final-total grow-pay right"> </td>
       </tr>
       <tr>
-        <td colspan="6" class="grow-pay letter"> <%= number_to_letters(@total) %> <%= decimals(@total) %> </td>
-        <td colspan="2" class="final-total grow-pay border-top"> <strong> Total </strong> </td>
-        <td colspan="4" class="final-total grow-pay border-top right"> <strong> <%= number_to_currency(@total) %> </strong> </td>
+        <% if @total == 0 %>
+          <td colspan="6" class="grow-pay letter"> <%= number_to_letters(@total) %> <%= decimals(@total) %> </td>
+          <td colspan="2" class="final-total grow-pay border-top"> <strong> Total </strong> </td>
+          <td colspan="4" class="final-total grow-pay border-top right"> <strong> <%= number_to_currency(@total) %> </strong> </td>
+        <% else %>
+          <td colspan="6" class="grow-pay letter"></td>
+          <td colspan="2" class="final-total grow-pay border-top"></td>
+          <td colspan="4" class="final-total grow-pay border-top right"></td>
+        <% end %>
       </tr>
     </tbody>
   </table>
