@@ -126,7 +126,7 @@ class ApiController < ApplicationController
     end
     kg_available = []
     WarehouseEntry.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).order(:id).each do |we|
-      kg_available << {we.movement.identifier => we.movement.kg} if p.group
+      kg_available << {we.movement.identifier => we.movement.kg} if p.group && we.movement != nil
     end
     kg_available << {"avg" => (p.average || 100)}
     if p.business_unit.stores.where(store_type_id: 2).first.id.to_i == 1
@@ -219,7 +219,7 @@ class ApiController < ApplicationController
     end
     kg_available = []
     WarehouseEntry.where(product: p, store_id: p.business_unit.stores.where(store_type_id: 2).first).order(:id).each do |we|
-      kg_available << {we.movement.identifier => we.movement.kg} if p.group
+      kg_available << {we.movement.identifier => we.movement.kg} if p.group && we.movement != nil
     end
     kg_available << {"avg" => (p.average || 100)}
     if p.business_unit.stores.where(store_type_id: 2).first.id.to_i == 1
@@ -312,7 +312,7 @@ class ApiController < ApplicationController
     end
     kg_available = []
     WarehouseEntry.where(product: p, store_id: params[:store_id].to_i).order(:id).each do |we|
-      kg_available << {we.movement.identifier => we.movement.kg} if p.group
+      kg_available << {we.movement.identifier => we.movement.kg} if p.group && we.movement != nil
     end
     kg_available << {"avg" => (p.average || 100)}
     if params[:store_id].to_i == 1

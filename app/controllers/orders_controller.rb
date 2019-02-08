@@ -630,10 +630,10 @@ class OrdersController < ApplicationController
           product = mov.product
           if product.group
             mov.update(discount_applied: ((mov.initial_price - mov.final_price).round(2) * product.average).round(2), automatic_discount: ((mov.initial_price - mov.final_price).round(2) * product.average).round(2))
-            cost += mov.total_cost.to_f
-            subtotal += mov.subtotal.to_f
-            discount += mov.discount_applied.to_f
-            taxes += ((subtotal - discount).round(2) * 0.16).round(2)
+            cost += mov.total_cost.to_f * mov.quantity
+            subtotal += mov.subtotal.to_f * mov.quantity
+            discount += mov.discount_applied.to_f * mov.quantity
+            taxes += ((subtotal - discount).round(2) * mov.quantity * 0.16).round(2)
           else
             mov.update(discount_applied: (mov.initial_price - mov.final_price).round(2), automatic_discount: (mov.initial_price - mov.final_price).round(2))
             cost += mov.total_cost.to_f * mov.quantity.to_i

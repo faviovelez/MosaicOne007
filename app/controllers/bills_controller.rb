@@ -2782,7 +2782,7 @@ XML
             end
             new_hash["product_id"] = mov.product.id
             new_hash["ticket"] = mov.order.id
-            mov.product.group ? new_hash["quantity"] = mov.product.average : new_hash["quantity"] = mov.quantity
+            mov.product.group ? new_hash["quantity"] = mov.product.average * mov.quantity : new_hash["quantity"] = mov.quantity
             new_hash["unit_value"] = mov.initial_price.round(2)
             new_hash["sat_key"] = mov.product.sat_key.sat_key
             new_hash["sat_unit_key"] = mov.product.sat_unit_key.unit
@@ -2790,9 +2790,9 @@ XML
             new_hash["description"] = mov.product.description.capitalize
             new_hash["unique_code"] = mov.product.unique_code
             if mov.product.group
-              new_hash["subtotal"] = (mov.subtotal * new_hash["quantity"]).round(2)
-              new_hash["discount"] = ('%.2f' % ('%.2f' % (mov.initial_price - mov.final_price)).to_f).to_f * new_hash["quantity"] * mov.product.average.round(2) unless mov.discount_applied == nil
-              taxes = ('%.2f' % ((new_hash["subtotal"].round(2) - new_hash["discount"].round(2)) * new_hash["quantity"] * 0.16)).to_f
+              new_hash["subtotal"] = (mov.subtotal * mov.quantity).round(2)
+              new_hash["discount"] = ('%.2f' % ('%.2f' % (mov.initial_price - mov.final_price)).to_f).to_f * mov.quantity * mov.product.average unless mov.discount_applied == nil
+              taxes = ('%.2f' % ((new_hash["subtotal"].round(2) - new_hash["discount"].round(2)) * 0.16)).to_f
               new_hash["total"] = new_hash["subtotal"].round(2) - new_hash["discount"] + taxes
             else
               new_hash["subtotal"] = (mov.subtotal * new_hash["quantity"]).round(2)

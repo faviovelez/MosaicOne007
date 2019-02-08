@@ -1,4 +1,4 @@
-<% if ((current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @request.status != 'devuelta') %>
+<% if ((current_user.role.name == 'store' || current_user.role.name == 'store-admin' || current_user.role.name == 'admin-desk') && @request.status != 'devuelta') %>
   <%= render 'update' %>
 <% elsif ((current_user.role.name == 'store' || current_user.role.name == 'store-admin') && @request.status == 'devuelta') %>
   <%= render 'update_if_notes' %>
