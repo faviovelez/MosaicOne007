@@ -138,7 +138,6 @@
             <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row.taxes) %> </span> </td>
             <td class="space-preview"> <%= number_to_currency(row.subtotal) %> </td>
             <% if Product.find_by_unique_code(row.unique_code) == nil %>
-              <td class="hidden"> <%= text_field_tag "products[]", Service.find_by_unique_code(row.unique_code).id, { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
               <td class="hidden"> <%= text_field_tag "services[]", Service.find_by_unique_code(row.unique_code).id, { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
             <% else %>
               <td class="hidden"> <%= text_field_tag "products[]", Product.find_by_unique_code(row.unique_code).id, { id: "quantity[#{row.id}]", class: 'form-control'} %> </td>
