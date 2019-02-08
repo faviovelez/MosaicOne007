@@ -245,7 +245,7 @@ module BillsHelper
       end
     else
       number = row.quantity
-      row.bill.children.each do |child_bill|
+      row.bill.children.where.not(status: 'cancelada').each do |child_bill|
         child_bill.rows.each do |r|
           quant = 0
           if r.unique_code == row.unique_code

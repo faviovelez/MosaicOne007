@@ -629,9 +629,8 @@ class Movement < ActiveRecord::Base
           end
           if total_quantity > 0
             if product.group
-              total_quantity -= entry.fix_quantity
-              warehouse_q -= entry.fix_quantity
-              entry.destroy
+              total_quantity -= total_quantity
+              warehouse_q -= total_quantity
             else
               total_quantity = 0
               warehouse_q = 0
@@ -865,9 +864,8 @@ class Movement < ActiveRecord::Base
             end
             if total_quantity > 0
               if product.group
-                total_quantity -= entry.fix_quantity
-                warehouse_q -= entry.fix_quantity
-                entry.destroy
+                total_quantity -= total_quantity
+                warehouse_q -= total_quantity
               else
                 total_quantity = 0
                 warehouse_q = 0
