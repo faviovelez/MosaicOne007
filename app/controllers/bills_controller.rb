@@ -8,17 +8,17 @@ class BillsController < ApplicationController
 
   def index
     if current_user.role.name == 'viewer'
-      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, bill_folio_type: ['Factura', 'Sustitución'], from: 'Form').where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4])
+      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, bill_folio_type: ['Factura', 'Sustitución'], from: 'Form').where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4]).uniq
     else
-      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, bill_folio_type: ['Factura', 'Sustitución']).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4])
+      @bills = Bill.includes(:receiving_company, :children, :prospect).joins('LEFT JOIN payments ON payments.bill_id = bills.id').where(store: current_user.store, bill_folio_type: ['Factura', 'Sustitución']).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4]).uniq
     end
   end
 
   def pending
     if ['store', 'store-admin'].include?(current_user.role.name)
-      @bills = Bill.includes(:payments, :receiving_company, :children).where(prospect: current_user.store.store_prospect, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4])
+      @bills = Bill.includes(:payments, :receiving_company, :children).where(prospect: current_user.store.store_prospect, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4]).uniq
     else
-      @bills = Bill.includes(:payments, :receiving_company, :children).where(store: current_user.store, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4])
+      @bills = Bill.includes(:payments, :receiving_company, :children).where(store: current_user.store, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4]).uniq
     end
   end
 
