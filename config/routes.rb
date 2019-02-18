@@ -2,6 +2,8 @@ Rails.application.routes.draw do
 
   root 'pages#index'
 
+  get 'pages/help'
+  
   get 'pages/date_filter'
 
   get 'pages/utilerias', defaults: { format: 'xml' }
