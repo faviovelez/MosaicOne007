@@ -45,8 +45,8 @@
             <% end %>
           <% end %>
           <% if (prospect.tickets == [] && prospect.orders == [] && prospect.bills == [] && prospect.requests == []) %>
-            <%= link_to prospects_delete_prospect_path(prospect) do %>
-              <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Pedidos"></i>
+            <%= link_to prospects_delete_prospect_path(prospect), {data: {confirm:'¿Está seguro que desea borrar este prospecto?'}} do %>
+              <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Borrar prospecto"></i>
             <% end %>
           <% end %>
         </td>

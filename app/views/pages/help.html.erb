@@ -1,0 +1,23 @@
+<table class="dataTable">
+  <thead>
+    <tr class="table-titles">
+      <th> Tema </th>
+      <th> Video </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @options.each do |option| %>
+      <tr>
+        <td> <%= option[0] %> </td>
+        <td>
+          <%= link_to option[1], target: '_blank' do %>
+            <i class="fa fa-youtube-play link-to-price" aria-hidden="true"></i>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render 'dataTables' %>

@@ -732,10 +732,16 @@ class OrdersController < ApplicationController
   end
 
   def solve_differences
-    params[:id].each_with_index do |val, index|
-      pr = ProductRequest.find(val)
-      params[:solved][index] == 'true' ? solved = true : solved = false
-      pr.update(solved: solved)
+    if params[:order_solved].present?
+      order = Order.find(params[:order_id])
+      order.product_requests.where.not(status: 'cancelada').each do |pr|
+        pr.update(solved: true)
+      end
+    else
+      params[:id].each_with_index do |val, index|
+        pr = ProductRequest.find(val)
+        pr.update(solved: true)
+      end
     end
     pr = ProductRequest.find(params[:id][0])
     redirect_to orders_differences_path, notice: "Se ha actualizado el pedido #{pr.order.id}"
@@ -1179,7 +1185,7 @@ class OrdersController < ApplicationController
         end
       end
       request.update(status: 'cancelada')
-      order.product_requests.each do |pr|
+      order.product_requests.where.not(status: 'cancelada').each do |pr|
         status << pr.status
       end
     end
