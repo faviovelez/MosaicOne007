@@ -23,6 +23,11 @@
           <%= link_to 'Ingresa', '#' %>
         </li>
         <% else %>
+          <% if current_user.role.name == 'admin-desk' || current_user.role.name == 'platform-admin' %>
+            <li>
+              <%= link_to 'Ayuda', pages_help_path %>
+            </li>
+          <% end %>
             <li class="dropdown">
               <a href="<%= root_url %>" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="mydropdown">Administración <span class="caret"></span></a>
               <ul class="dropdown-menu">
