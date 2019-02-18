@@ -17,6 +17,7 @@ class ProspectsController < ApplicationController
 
   def delete_prospect
     prospect = Prospect.find(params[:prospect])
+    prospect.preferred_bill_option.delete
     prospect.delete
     redirect_to root_path, notice: 'Se ha eliminado el prospecto'
   end

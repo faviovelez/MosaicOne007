@@ -10,7 +10,7 @@
         <% if ['store-admin', 'store', 'admin-desk'].include?(current_user.role.name) %>
           <th> Total </th>
         <% end %>
-        <th> ¿Resuelto? </th>
+        <th class="group-solved"> ¿Resuelto? </th>
         <th> Acciones </th>
       </tr>
     </thead>
@@ -47,7 +47,7 @@
           <% else %>
             <td class="hidden"> <%= number_to_currency(get_total_from_pr(product_request, 'total')) %> </td>
           <% end %>
-          <td>
+          <td class="group-solved">
             <% if current_user.role.name == 'admin-desk' %>
               <%= select_tag 'solved[]', options_for_select([['No', false], ['Sí', true]]), class: 'form-control select-margin' %>
               <%= text_field_tag 'id[]', product_request.id, class: 'hidden' %>
@@ -87,6 +87,11 @@
   <br />
   <% if current_user.role.name == 'admin-desk' %>
     <div class="actions">
+
+      ¿Pedido resuelto?
+      <%= check_box_tag :order_solved, true, true, { multiple: true, class: 'for-hide-checkbox'} %><br />
+      <%= text_field_tag :order_id, @order.id, {class: 'hidden'} %>
+
       <%= submit_tag 'Confirmar', class: 'main-button', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
     </div><br /><br />
   <% end %>
@@ -98,5 +103,5 @@
 <%= render partial: 'product_details' %>
 
 <%= content_for :javascript do %>
-  <%= javascript_include_tag 'confirmDelivery' %>
+  <%= javascript_include_tag 'solveDelivery' %>
 <% end %>
