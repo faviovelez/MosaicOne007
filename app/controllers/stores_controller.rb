@@ -68,6 +68,7 @@ class StoresController < ApplicationController
         create_prospect_from_store
         create_supplier_for_store
         create_cash_register
+        create_global_prospects
         format.html { redirect_to @store, notice: 'La tienda fue dada de alta exitosamente.' }
         format.json { render :show, status: :created, location: @store }
       else
@@ -75,6 +76,52 @@ class StoresController < ApplicationController
         format.json { render json: @store.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def create_global_prospects
+    billing_general_prospect = BillingAddress.find_or_create_by(
+                                                                  {
+                                                                    business_name: 'Público en General',
+                                                                    rfc: 'XAXX010101000',
+                                                                    country: 'México',
+                                                                    store: @store
+                                                                  }
+                                                                )
+
+    general_prospect = Prospect.find_or_create_by(
+                                        {
+                                          legal_or_business_name: 'Público en General',
+                                          prospect_type: 'público en general',
+                                          contact_first_name: 'ninguno',
+                                          contact_last_name: 'ninguno',
+                                          direct_phone: 1111111111,
+                                          store: @store,
+                                          store_prospect: nil,
+                                          billing_address: billing_general_prospect
+                                        }
+                                      )
+
+    billing_foreign_prospect = BillingAddress.find_or_create_by(
+                                                                  {
+                                                                    business_name: 'Residente en el extranjero',
+                                                                    rfc: 'XEXX010101000',
+                                                                    country: '',
+                                                                    store: @store
+                                                                  }
+                                                                )
+
+    foreign_prospect = Prospect.find_or_create_by(
+                                        {
+                                          legal_or_business_name: 'Residente en el extranjero',
+                                          prospect_type: 'residente en el extranjero',
+                                          contact_first_name: 'ninguno',
+                                          contact_last_name: 'ninguno',
+                                          direct_phone: 1111111111,
+                                          store: @store,
+                                          store_prospect: nil,
+                                          billing_address: billing_foreign_prospect
+                                        }
+                                      )
   end
 
   def update
@@ -167,9 +214,9 @@ class StoresController < ApplicationController
           entries = store.stores_warehouse_entries.where(product: product)
           quantity = row['cant'].to_i
           if store.store_type.store_type == 'franquicia'
-            discount_percent = product.discount_for_franchises / 100
+            discount_percent = product.discount_for_franchises.to_f / 100
           elsif store.store_type.store_type == 'tienda propia' || store.store_type.store_type == 'corporativo'
-            discount_percent = product.discount_for_stores / 100
+            discount_percent = product.discount_for_stores.to_f / 100
           end
           cost = product.price * (1 - discount_percent)
           discount = product.price * discount_percent * quantity
@@ -245,9 +292,9 @@ class StoresController < ApplicationController
           entries = store.stores_warehouse_entries.where(product: product)
           quantity = row['cant'].to_i
           if store.store_type.store_type == 'franquicia'
-            discount_percent = product.discount_for_franchises / 100
+            discount_percent = product.discount_for_franchises.to_f / 100
           elsif store.store_type.store_type == 'tienda propia' || store.store_type.store_type == 'corporativo'
-            discount_percent = product.discount_for_stores / 100
+            discount_percent = product.discount_for_stores.to_f / 100
           end
           cost = product.price * (1 - discount_percent)
           discount = product.price * discount_percent * quantity
