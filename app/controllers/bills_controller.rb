@@ -625,7 +625,12 @@ class BillsController < ApplicationController
         @store = @bill.store
       end
       if (params[:cfdi_type] == 'global' || @cfdi_type == 'global')
-        @prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno', store: @store).first
+        if params[:foreigner].present?
+          @prospect = Prospect.where(legal_or_business_name:'Residente en el extranjero', direct_phone: 1111111111, prospect_type: 'residente en el extranjero', contact_first_name: 'ninguno', contact_last_name: 'ninguno', store: @store).first
+          @foreign = true
+        else
+          @prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno', store: @store).first
+        end
       else
         if @bill == nil
           get_prospect_from_objects(@objects)
@@ -1273,6 +1278,7 @@ class BillsController < ApplicationController
   end
 
   def cfdi_process
+    @foreign = true if params[:foreign].present?
     @notes = params[:notes]
     if (params['form'].present? || params['global_form'].present?)
       @relation_type = ''
@@ -1397,7 +1403,11 @@ class BillsController < ApplicationController
         s_billing = store.business_unit.billing_address
         @s_billing = s_billing
         # CAMBIAR ESTA PARTE CUANDO SEA GLOBAL prospect = Prospect.find_by_legal_or_business_name('Público en General')
-        prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno', store: @store).first
+        if @foreign == true
+          prospect = Prospect.where(legal_or_business_name:'Residente en el extranjero', direct_phone: 1111111111, prospect_type: 'residente en el extranjero', contact_first_name: 'ninguno', contact_last_name: 'ninguno', store: @store).first
+        else
+          prospect = Prospect.where(legal_or_business_name:'Público en General', direct_phone: 1111111111, prospect_type: 'público en general', contact_first_name: 'ninguno', contact_last_name: 'ninguno', store: @store).first
+        end
         @prospect = prospect
         p_billing = prospect.billing_address
         @p_billing = p_billing
@@ -2102,7 +2112,11 @@ class BillsController < ApplicationController
     total_transfer = Hash.new.tap do |hash|
       hash["Impuesto"] = "002"
       hash["TipoFactor"] = "Tasa"
-      hash["TasaOCuota"] = "0.160000"
+      if @foreign == true
+        hash["TasaOCuota"] = "0.000000"
+      else
+        hash["TasaOCuota"] = "0.160000"
+      end
       hash["Importe"] = '%.2f' % @total_taxes
     end
     builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
@@ -2136,7 +2150,13 @@ class BillsController < ApplicationController
               hash["Base"] = '%.2f' % (row["subtotal"] - row["discount"])
               hash["Impuesto"] = "002"
               hash["TipoFactor"] = "Tasa"
-              hash["TasaOCuota"] = "0.160000"
+
+              if @foreign == true
+                hash["TasaOCuota"] = "0.000000"
+              else
+                hash["TasaOCuota"] = "0.160000"
+              end
+
               hash["Importe"] = '%.2f' % row["taxes"]
             end
             xml['cfdi'].Concepto(concept) do
@@ -2532,16 +2552,25 @@ XML
           hash["taxes"] = 0
           hash["discount"] = 0
         end
-        new_tax = ((o.subtotal.round(2) - o.discount_applied).round(2) * 0.16).round(2)
         new_hash["ticket"] = o.ticket_number
-        new_hash["total"] += (o.subtotal.round(2) - o.discount_applied.round(2) + new_tax).round(2) unless o.total == nil
+        if @foreign == true
+          new_tax = ((o.subtotal.round(2) - o.discount_applied).round(2) * 0.16).round(2)
+          tax_number = 0
+          new_hash["total"] += (o.subtotal.round(2) - o.discount_applied.round(2) + new_tax).round(2) unless o.total == nil
+          new_hash["taxes"] += 0 unless o.taxes == nil
+          new_hash["subtotal"] += (o.subtotal * 1.16).round(2) unless o.subtotal == nil
+        else
+          tax_number = 0.16
+          new_tax = ((o.subtotal.round(2) - o.discount_applied).round(2) * 0.16).round(2)
+          new_hash["total"] += (o.subtotal.round(2) - o.discount_applied.round(2) + new_tax).round(2) unless o.total == nil
+          new_hash["taxes"] += new_tax unless o.taxes == nil
+          new_hash["subtotal"] += o.subtotal.round(2) unless o.subtotal == nil
+        end
         new_hash["unit_value"] += o.subtotal.round(2) unless o.subtotal == nil
-        new_hash["subtotal"] += o.subtotal.round(2) unless o.subtotal == nil
-        new_hash["taxes"] += new_tax unless o.taxes == nil
         new_hash["discount"] += o.discount_applied.round(2) unless o.discount_applied == nil
         o.children.each do |children|
           if children.ticket_type == 'devolución'
-            new_tax_child = ((children.subtotal.round(2) - children.discount_applied.round(2)).round(2) * 0.16).round(2)
+            new_tax_child = ((children.subtotal.round(2) - children.discount_applied.round(2)).round(2) * tax_number).round(2)
             new_hash["total"] -= (children.subtotal.round(2) - children.discount_applied.round(2) + new_tax_child).round(2) unless children.total == nil
             new_hash["subtotal"] -= children.subtotal.round(2) unless children.subtotal == nil
             new_hash["taxes"] -= new_tax_child unless children.taxes == nil
