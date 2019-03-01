@@ -112,7 +112,11 @@
           <td class="grow space"> Venta </td>
           <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
           <td class="grow space"> <%= number_to_currency(row["discount"]) %> </td>
-          <td class="grow space"> <span> <strong> 002 </strong> - IVA 16% <%= number_to_currency(row["taxes"]) %> </span> </td>
+          <% if @foreign == true %>
+            <td class="grow space"> <span> <strong> 002 </strong> - IVA 0% <%= number_to_currency(row["taxes"]) %> </span> </td>
+          <% else %>
+            <td class="grow space"> <span> <strong> 002 </strong> - IVA 16% <%= number_to_currency(row["taxes"]) %> </span> </td>
+          <% end %>
           <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
         </tr>
         <% end %>
@@ -128,7 +132,11 @@
             <td class="grow space"> <%= row.description %> </td>
             <td class="grow space"> <%= number_to_currency(row.unit_value) %> </td>
             <td class="grow space"> <%= number_to_currency(row.discount) %> </td>
-            <td class="grow space"> <span> <strong> 002 </strong> - IVA 16% <%= number_to_currency(row.taxes) %> </span> </td>
+            <% if @foreign == true %>
+              <td class="grow space"> <span> <strong> 002 </strong> - IVA 0% <%= number_to_currency(row.taxes) %> </span> </td>
+            <% else %>
+              <td class="grow space"> <span> <strong> 002 </strong> - IVA 16% <%= number_to_currency(row.taxes) %> </span> </td>
+            <% end %>
             <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
           </tr>
         <% end %>
@@ -179,7 +187,11 @@
       </tr>
       <tr>
         <td colspan="5" class="grow letter"> <strong> Importe con letra </strong> </td>
-        <td colspan="3" class="final-total grow"> Total Impuestos Trasladados IVA 16% </td>
+        <% if @foreign == true %>
+          <td colspan="3" class="final-total grow"> Total Impuestos Trasladados IVA 0% </td>
+        <% else %>
+          <td colspan="3" class="final-total grow"> Total Impuestos Trasladados IVA 16% </td>
+        <% end %>
         <td colspan="2" class="final-total grow right"> <%= number_to_currency(total_taxes) %> </td>
       </tr>
       <tr>
