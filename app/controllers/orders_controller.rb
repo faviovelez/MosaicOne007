@@ -431,7 +431,6 @@ class OrdersController < ApplicationController
     # @month_sales = Movement.joins(:prospect).where(prospect_id: @prospect_ids).group("prospects.legal_or_business_name, DATE_TRUNC('month', movements.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN movements.movement_type = 'devolución' THEN -movements.total WHEN movements.movement_type = 'venta' THEN movements.total ELSE 0 END) as total, DATE_TRUNC('month', movements.created_at) AS month")
 
     @month_sales = Bill.joins(:prospect).where(prospect_id: @prospect_ids).group("prospects.legal_or_business_name, DATE_TRUNC('month', bills.created_at)").order('prospects.legal_or_business_name').pluck("prospects.legal_or_business_name, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN total ELSE 0 END) as total, DATE_TRUNC('month', bills.created_at) AS month")
-
     if @month_sales != []
       grouped_values = {}
       @month_sales = @month_sales.group_by{|arr| arr[0]}.each{|k, v| v.each{ |a| a.delete_at(0); a[1] = a[1].strftime('%m/%Y') } }
@@ -529,7 +528,7 @@ class OrdersController < ApplicationController
 
   def report_of_sales
     if params[:store_options] == 'Todas las tiendas'
-      stores_id = Store.joins(:store_type).where(store_types: {store_type: 'tienda propia'}).pluck(:id)
+      stores_id = Store.joins(:store_type).where(store_types: {store_type: 'tienda propia'}).order(:store_name).pluck(:id)
     else
       stores_id = params[:store_list]
     end
@@ -545,8 +544,8 @@ class OrdersController < ApplicationController
 
     stores_query = "SELECT SUM(total) AS total, store_name, EXTRACT(day FROM day) AS day FROM (SELECT COALESCE(SUM (CASE WHEN movement_type = 'venta' THEN store_movements.total WHEN movement_type = 'devolución' THEN -store_movements.total ELSE 0 END ), 0) AS total, store_name, DATE_TRUNC('day', store_movements.created_at) AS day FROM store_movements LEFT JOIN stores ON store_movements.store_id = stores.id WHERE store_movements.created_at > '#{initial_date}' AND store_movements.created_at < '#{final_date}' AND store_movements.store_id IN (#{stores_id_string}) AND store_movements.ticket_id IS NOT null GROUP BY store_name, day UNION ALL SELECT COALESCE(SUM (CASE WHEN service_type = 'venta' THEN service_offereds.total WHEN service_type = 'devolución' THEN -service_offereds.total ELSE 0 END ), 0) AS total, store_name, DATE_TRUNC('day', service_offereds.created_at) AS day FROM service_offereds LEFT JOIN stores ON service_offereds.store_id = stores.id WHERE service_offereds.created_at > '#{initial_date}' AND service_offereds.created_at < '#{final_date}' AND service_offereds.store_id IN (#{stores_id_string}) AND service_offereds.ticket_id IS NOT null GROUP BY store_name, day ORDER BY day) join_fields GROUP BY store_name, day ORDER BY store_name, day"
 
-    @store_names = Store.where(id: stores_id).pluck(:store_name).sort
-    @stores_and_bus = Store.joins(:business_unit).where(id: stores_id).pluck('stores.store_name', 'business_units.name').sort
+    @store_names = Store.where(id: stores_id).order(:store_name).pluck(:store_name)
+    @stores_and_bus = Store.joins(:business_unit).where(id: stores_id).order(:store_name).pluck('stores.store_name', 'business_units.name')
     @stores = {}
     @big_totals = {}
     results = StoreMovement.connection.select_all(stores_query).rows

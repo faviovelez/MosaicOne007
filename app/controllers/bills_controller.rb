@@ -16,9 +16,12 @@ class BillsController < ApplicationController
 
   def pending
     if ['store', 'store-admin'].include?(current_user.role.name)
-      @bills = Bill.includes(:payments, :receiving_company, :children).where(prospect: current_user.store.store_prospect, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4]).uniq
+      @bills = Bill.includes(:payments, :receiving_company, :children, :prospect).where(prospect: current_user.store.store_prospect, payed: false, bill_folio_type: ["Factura", "Sustitución"]).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4]).uniq
     else
-      @bills = Bill.includes(:payments, :receiving_company, :children).where(store: current_user.store, payed: false).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4]).uniq
+      @bills = Bill.includes(:payments, :receiving_company, :children, :prospect).where(store: current_user.store, payed: false, bill_folio_type: ["Factura", "Sustitución"]).where.not(status: 'cancelada', receiving_company: nil, total: nil).where(relation_type_id: [nil, 4]).uniq
+    end
+    Bill.where.not(bill_folio_type: ["Factura", "Sustitución", "Pago"]).find_each do |bill|
+      validate_payed(bill.parent)
     end
   end
 
@@ -2270,6 +2273,7 @@ XML
     @receipt_file = File.open(File.join(@final_dir, 'acuse.xml'), 'r')
 
     if (@cancel_status == '201' || @cancel_status == nil)
+      validate_payed(@bill)
       @bill.update(cancel_receipt: @receipt_file, status: 'cancelada')
       redirect_to root_path, notice: "Se ha cancelado exitosamente la factura con Folio #{@bill.folio}."
     else
