@@ -35,7 +35,7 @@ module ApplicationHelper
   end
 
   def get_discount(product_request)
-    if product_request.status == 'cancelada'
+    if product_request.status == 'cancelada' || product_request.quantity == 0
       @discount = 0
     else
       if product_request.movements == []
@@ -120,7 +120,7 @@ module ApplicationHelper
 
   def get_total_from_pr(pr, type)
     @mov_total = 0
-    if pr.status == 'cancelada'
+    if pr.status == 'cancelada' || pr.quantity == 0
       @mov_total = 0
     else
       if type == 'total'

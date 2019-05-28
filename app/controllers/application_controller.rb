@@ -29,14 +29,21 @@ class ApplicationController < ActionController::Base
     elsif array.first.class == Order
       options = array.first.class.where(corporate_id: current_user.store.id).pluck(string).uniq
     else
+      new_string = "DATE_TRUNC('month', "
+      new_string += array.last.class.to_s.pluralize.underscore + ".created_at" + ")"
       options = array.first.class.where(store_id: current_user.store.id).pluck(string).uniq
+      more_options = Bill.where(receiving_company: current_user.store.business_unit.billing_address).where.not(status: 'cancelada').where(bill_folio_type: ['Factura', 'Sustitución']).pluck(new_string).uniq
+      more_options.each do |option|
+        options << option unless options.include?(option)
+      end
     end
-    @month_options = options.map{ |arr| arr.to_date.strftime('%m/%Y') }
+    @month_options = options.map{ |arr| arr.to_date.strftime('%m/%Y') }.uniq
   end
 
   def get_array_type
     if @report_type == "cancel payments bills received"
       array = BillReceived.where(store_id: current_user.store.id)
+      array += Bill.where(receiving_company: current_user.store.business_unit.billing_address).where.not(status: 'cancelada').where(bill_folio_type: ['Factura', 'Sustitución'])
       dates_generator(array)
     elsif @report_type == "cancel payments bills issued"
       array = Bill.where(store_id: current_user.store.id)
