@@ -1,0 +1,77 @@
+<table class="dataTablestandard">
+  <thead>
+    <tr class="table-titles">
+      <th> Fecha </th>
+      <th> Folio </th>
+      <th> Concepto </th>
+      <th> Cargos </th>
+      <th> Abonos </th>
+      <th> Saldo </th>
+      <th> Vence </th>
+      <th> Estatus </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @customer_codes.each do |customer| %>
+      <% unless @customer_codes[0] == customer %>
+        <tr>
+          <td> <strong>Fecha</strong> </td>
+          <td> <strong>Folio</strong> </td>
+          <td> <strong>Concepto</strong> </td>
+          <td> <strong>Cargos</strong> </td>
+          <td> <strong>Abonos</strong> </td>
+          <td> <strong>Saldo</strong> </td>
+          <td> <strong>Vence</strong> </td>
+          <td> <strong>Estatus</strong> </td>
+        </tr>
+      <% end %>
+      <tr>
+        <td>
+          <strong> Cliente: <%= @arranged_bills_and_payments[customer][0][0] %> <%= @arranged_bills_and_payments[customer][0][1] %> </strong>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <% @arranged_bills_and_payments[customer].each do |row| %>
+        <tr>
+          <td> <%= l row[2].to_date %> </td>
+          <td> <%= row[7] %> </td>
+          <td> <%= row[4] %> </td>
+          <% if row[5] > 0 %>
+            <td> <%= number_to_currency(row[5].to_f) %> </td>
+            <td> </td>
+          <% else %>
+            <td> </td>
+            <td> <%= number_to_currency(row[5].to_f) %> </td>
+          <% end %>
+          <td> <%= number_to_currency(row[9].to_f) %> </td>
+          <td> <%= l row[8].to_date %> </td>
+          <% if row[4] == 'Factura' && row[9].to_f < 1 %>
+            <td> Pagada </td>
+          <% elsif row[4] == 'Factura' && row[9].to_f > 1 %>
+            <td> Por pagar </td>
+            <% else %>
+            <td></td>
+          <% end %>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render 'dataTables' %>

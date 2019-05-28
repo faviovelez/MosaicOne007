@@ -13,13 +13,18 @@
     <% if current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff' %>
       <%= select_tag :report_type, options_for_select([['Facturas recibidas']]) %>
     <% else %>
-      <%= select_tag :report_type, options_for_select([['Facturación por empresa'], ['Pagos por empresa'], ['Saldo por clientes'], ['Ventas por tienda'], ['Compras por tienda por mes'], ['Comparativo compras por mes'], ['Facturas recibidas']]) %>
+      <%= select_tag :report_type, options_for_select([['Facturación por empresa'], ['Pagos por empresa'], ['Saldo por clientes'], ['Ventas por tienda'], ['Compras por tienda por mes'], ['Comparativo compras por mes'], ['Facturas recibidas'], ['Estado de cuenta']]) %>
     <% end %>
   </div>
 
   <div class="field group-options hidden">
     <%= label_tag :opciones_de_reporte %>
     <%= select_tag :group_options, options_for_select([['Franquicias y distribuidores'], ['Solo tiendas'], ['Solo franquicias'], ['Solo distribuidores'], ['Seleccionar clientes']]) %>
+  </div>
+
+  <div class="field balance-options hidden">
+    <%= label_tag :opciones_para_estado_de_cuenta %>
+    <%= select_tag :options_for_balance_report, options_for_select([['Todas las facturas'], ['Solo facturas sin pagar'], ['Solo facturas pagadas']]) %>
   </div>
 
   <br /><div class="field client-list hidden">

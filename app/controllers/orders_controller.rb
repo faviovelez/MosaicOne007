@@ -4,17 +4,22 @@ class OrdersController < ApplicationController
   before_action :reverse_params_array, only: [:save_products, :save_products_for_prospects]
 
   def new(role = current_user.role.name)
-    @order = Order.new(store: current_user.store,
-                       category: 'de línea',
-                       prospect: Prospect.find_by_store_prospect_id(current_user.store)
-                      )
-    @order.users << current_user
-    if (role == 'store' || role == 'store-admin')
-      current_prospect_validation
-      @due_debt = ActionController::Base.helpers.number_to_currency(@due_debt)
-      redirect_to root_path, alert: "Presenta un saldo vencido de #{@due_debt} de #{@delay} días. Favor de ponerse al corriente para reestablecer el servicio" if (@delay > 10 && @due_debt)
+    validation = false
+    if validation
+      redirect_to root_path, alert: "Durante inventario se desactiva la realización de pedidos"
     else
-      redirect_to root_path, alert: 'No cuenta con los permisos necesarios.'
+      @order = Order.new(store: current_user.store,
+        category: 'de línea',
+        prospect: Prospect.find_by_store_prospect_id(current_user.store)
+      )
+      @order.users << current_user
+      if (role == 'store' || role == 'store-admin')
+        current_prospect_validation
+        @due_debt = ActionController::Base.helpers.number_to_currency(@due_debt)
+        redirect_to root_path, alert: "Presenta un saldo vencido de #{@due_debt} de #{@delay} días. Favor de ponerse al corriente para reestablecer el servicio" if (@delay > 10 && @due_debt)
+      else
+        redirect_to root_path, alert: 'No cuenta con los permisos necesarios.'
+      end
     end
   end
 
@@ -63,28 +68,38 @@ class OrdersController < ApplicationController
   end
 
   def new_order_for_prospects(role = current_user.role.name)
-    @prospect = Prospect.find(params[:prospect_id])
-    @order = Order.new(store: current_user.store,
-                       category: 'de línea',
-                       prospect: @prospect
-                      )
-    @order.users << current_user
-    if (role == 'admin-desk')
-      current_prospect_validation
-      @due_debt = ActionController::Base.helpers.number_to_currency(@due_debt)
-      redirect_to root_path, alert: "El cliente #{@prospect.legal_or_business_name} presenta un saldo vencido de #{@due_debt} de #{@delay} días. Favor de registrar los pagos necesarios para reestablecer el servicio" if (@delay > 10 && @due_debt)
+    validation = false
+    if validation
+      redirect_to root_path, alert: "Durante inventario se desactiva la realización de pedidos"
     else
-      redirect_to root_path, alert: 'No cuenta con los permisos necesarios.'
+      @prospect = Prospect.find(params[:prospect_id])
+      @order = Order.new(store: current_user.store,
+        category: 'de línea',
+        prospect: @prospect
+      )
+      @order.users << current_user
+      if (role == 'admin-desk')
+        current_prospect_validation
+        @due_debt = ActionController::Base.helpers.number_to_currency(@due_debt)
+        redirect_to root_path, alert: "El cliente #{@prospect.legal_or_business_name} presenta un saldo vencido de #{@due_debt} de #{@delay} días. Favor de registrar los pagos necesarios para reestablecer el servicio" if (@delay > 10 && @due_debt)
+      else
+        redirect_to root_path, alert: 'No cuenta con los permisos necesarios.'
+      end
     end
   end
 
   def new_corporate(role = current_user.role.name)
-    @order = Order.new(store: Store.find(2),
-                       category: 'de línea',
-                       prospect: Prospect.find_by_store_prospect_id(current_user.store)
-                      )
-    @order.users << current_user
-    redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'admin-desk' || role == 'product-admin' || role == 'product-staff' || role == 'warehouse-staff' || role == 'warehouse-admin')
+    validation = false
+    if validation
+      redirect_to root_path, alert: "Durante inventario se desactiva la realización de pedidos"
+    else
+      @order = Order.new(store: Store.find(2),
+      category: 'de línea',
+      prospect: Prospect.find_by_store_prospect_id(current_user.store)
+      )
+      @order.users << current_user
+      redirect_to root_path, alert: 'No cuenta con los permisos necesarios.' unless (role == 'admin-desk' || role == 'product-admin' || role == 'product-staff' || role == 'warehouse-staff' || role == 'warehouse-admin')
+    end
   end
 
   def current_prospect_validation
@@ -146,7 +161,74 @@ class OrdersController < ApplicationController
       monthly_report_stores
     elsif params[:report_type] == 'Facturas recibidas'
       bill_received_summary
+    elsif params[:report_type] == 'Estado de cuenta'
+      account_summary
     end
+  end
+
+  def account_summary
+    if params[:options_for_balance_report] == 'Todas las facturas'
+      @conditions = [true, false, nil] #todas las facturas
+    elsif params[:options_for_balance_report] == 'Solo facturas sin pagar'
+      @conditions = [false] # solo facturas sin pagar
+    elsif params[:options_for_balance_report] == 'Solo facturas pagadas'
+      @conditions = [true] # solo facturas pagadas
+    end
+
+    first_date = Date.parse('2017-01-01')
+    day_before_initial = @initial_date - 1.days
+
+    bills_before = Bill.where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago'])
+    bills_before_ids = Bill.where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).pluck(:id)
+    payments_before = Payment.where(bill_id: bills_before_ids).where.not(payment_type: ['crédito', 'cancelado'])
+
+    positive_payments_before = payments_before.where(payment_type: 'pago', bill_id: bills_before.pluck(:id)).sum(:total)
+    negative_payments_before = payments_before.where(payment_type: 'devolución', bill_id: bills_before.pluck(:id)).sum(:total)
+    total_payments_before = positive_payments_before - negative_payments_before
+
+    positive_bills_before = bills_before.where(bill_folio_type: ['Factura', 'Sustitución']).sum(:total)
+    negative_bills_before = bills_before.where(bill_folio_type: ['Devolución', 'Nota de Crédito']).sum(:total)
+    total_bills_before = positive_payments_before - negative_payments_before
+
+    @balance_before = total_bills_before - total_payments_before
+
+    bills = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago'],billing_addresses: {id: 56406}).order(:receiving_company_id, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days')
+
+    bills_ids = Bill.where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).pluck(:id)
+    payments = Payment.joins(bill: :receiving_company).joins(bill: :prospect).where(bill_id: bills_ids).where.not(payment_type: ['crédito', 'cancelado'],billing_addresses: {id: 56406}).uniq.order('billing_addresses.id', :payment_date).pluck('billing_addresses.id', 'billing_addresses.business_name', :payment_date, :id, :payment_type, :total, :bank_id, :bill_id, 'prospects.credit_days')
+
+    bills_and_payments = bills + payments
+
+    strings = {'Sustitución' => 'Factura', 'pago' => 'Pago'}
+
+    bills_and_payments.each do |ar|
+      ar[6] = ar[6].to_s if ar[6] == nil
+      ar[8] = ar[2] + ar[8].to_i.days
+      ar[4].gsub!(/Sustitución|pago/) { |match| strings[match] }
+      ar[5] = -ar[5] if (ar[4] == "Pago" || ar[4] == "Nota de Crédito" || ar[4] == "Devolución")
+    end
+
+    @arranged_bills_and_payments = bills_and_payments.sort_by{|a| a[1]}.group_by{ |arr| arr[0]}
+
+    @customer_codes = @arranged_bills_and_payments.keys
+
+    @customer_codes.each do |code|
+      arr_keys = @arranged_bills_and_payments[code].map{|a| a[7]}.uniq
+      arr = @arranged_bills_and_payments[code].sort_by!{|arr| arr[2]}
+      arr_keys.each do |b|
+        balance = arr.select{|selection| selection[7] == b}.sum{|arrr| arrr[5]}
+        bill = arr.select{|selection| selection[7] == b && selection[4] == "Factura"}
+        the_rest = arr.select{|selection| selection[7] == b && selection[4] != "Factura"}
+        bill.each do |c|
+          c << balance unless c.include?(balance)
+        end
+        the_rest.each do |d|
+          d << nil unless d.include?(nil)
+        end
+      end
+    end
+
+    render 'balance_summary'
   end
 
   def bill_received_summary
@@ -228,13 +310,13 @@ class OrdersController < ApplicationController
   end
 
   def report_of_collection
-    @collection_consolidated_query = "SELECT store_name, legal_or_business_name, COUNT(bills.id) AS count, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -subtotal WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN subtotal ELSE 0 END) AS subtotal, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -discount_applied WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN discount_applied ELSE 0 END) AS discount, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -taxes WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN taxes ELSE 0 END) AS taxes, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -bills.total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN bills.total ELSE 0 END) AS total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END) AS payments, prospects.id FROM bills INNER JOIN stores ON bills.store_id = stores.id INNER JOIN prospects ON bills.prospect_id = prospects.id LEFT JOIN payments ON payments.bill_id = bills.id AND payments.payment_date < '#{@final_date}' WHERE bills.bill_folio_type != 'Pago' AND bills.store_id = #{@store_id} AND bills.status = 'creada' AND bills.created_at > '#{@initial_date}' AND bills.created_at < '#{@final_date}' GROUP BY legal_or_business_name, store_name, prospects.id ORDER BY prospects.legal_or_business_name"
+    @collection_consolidated_query = "SELECT store_name, legal_or_business_name, COUNT(bills.id) AS count, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -subtotal WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN subtotal ELSE 0 END) AS subtotal, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -discount_applied WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN discount_applied ELSE 0 END) AS discount, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -taxes WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN taxes ELSE 0 END) AS taxes, SUM(CASE WHEN bill_folio_type = 'Devolución' OR bill_folio_type = 'Nota de Crédito' THEN -bills.total WHEN bill_folio_type = 'Factura' OR bill_folio_type = 'Sustitución' OR bill_folio_type = 'Nota de Débito' THEN bills.total ELSE 0 END) AS total, SUM(CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END) AS payments, prospects.id FROM bills INNER JOIN stores ON bills.store_id = stores.id INNER JOIN prospects ON bills.prospect_id = prospects.id LEFT JOIN payments ON payments.bill_id = bills.id AND payments.payment_date < '#{@final_date}' WHERE bills.bill_folio_type != 'Pago' AND bills.store_id = #{@store_id} AND bills.status = 'creada' AND bills.created_at > '#{@initial_date}' AND bills.created_at < '#{@final_date}' GROUP BY legal_or_business_name, store_name, prospects.id ORDER BY prospects.legal_or_business_name"
 
     if params[:extended_collection].present?
-      @bills = Bill.uniq.joins(:store, :prospect).joins("LEFT JOIN payments ON payments.bill_id = bills.id AND payments.payment_date < '#{@final_date}' LEFT JOIN orders ON orders.bill_id = bills.id").where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date).order('prospects.legal_or_business_name, bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days, prospects.id ').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id, prospects.id")
+      @bills = Bill.uniq.joins(:store, :prospect).joins("LEFT JOIN payments ON payments.bill_id = bills.id AND payments.payment_date < '#{@final_date}' LEFT JOIN orders ON orders.bill_id = bills.id").where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date).order('prospects.legal_or_business_name, bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days, prospects.id ').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id, prospects.id")
       render 'collection_report_extended'
     elsif params[:extended_collection_billing].present?
-      @bills = Bill.uniq.joins(:store, :prospect).joins("LEFT JOIN payments ON payments.bill_id = bills.id AND payments.payment_date < '#{@final_date}' LEFT JOIN orders ON orders.bill_id = bills.id").where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date, prospect_id: @prospect_id).order('prospects.legal_or_business_name, bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days, prospects.id').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(DISTINCT CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id, prospects.id")
+      @bills = Bill.uniq.joins(:store, :prospect).joins("LEFT JOIN payments ON payments.bill_id = bills.id AND payments.payment_date < '#{@final_date}' LEFT JOIN orders ON orders.bill_id = bills.id").where("bills.store_id = #{@store_id} AND bills.status = 'creada'").where.not(bill_folio_type: 'Pago').where(created_at: @initial_date..@final_date, prospect_id: @prospect_id).order('prospects.legal_or_business_name, bills.id').group('stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.id, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, prospects.credit_days, prospects.id').pluck("stores.store_name, prospects.legal_or_business_name, bills.bill_folio_type, bills.subtotal, bills.discount_applied, bills.taxes, bills.total, SUM(CASE WHEN payment_type = 'pago' THEN payments.total WHEN payment_type = 'devolución' THEN -payments.total ELSE 0 END), CONCAT(bills.sequence,' ', bills.folio), DATE_TRUNC('DAY', bills.created_at), (DATE_TRUNC('DAY', bills.created_at) + CAST(COALESCE(prospects.credit_days,0)|| ' DAYS' AS interval)) AS due_date, bills.id, CONCAT(bills.sequence,' ', bills.folio), array_agg(orders.id), bills.parent_id, prospects.id")
       @same = true
       render 'collection_report_extended'
     else
