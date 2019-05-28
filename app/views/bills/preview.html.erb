@@ -62,7 +62,7 @@
   <tbody class="border-around">
     <tr>
       <td class="half first"> Moneda: <span> <strong> MXN </strong> - Peso Mexicano </span> </td>
-    <%= form_tag({ controller: 'bills', action: 'cfdi_process' }, method: 'get') do %>
+    <%= form_tag({ controller: 'bills', action: 'cfdi_process' }, method: 'post') do %>
       <% if (@relation_type == '01' && [1,2].include?(current_user.store.id)) || (@relation_type == '03' && [1,2].include?(current_user.store.id)) %>
         <td class="half"> Forma de pago: <%= select_tag :payment, options_for_select(@payment_forms), class: 'form-control' %> </td>
       <% else %>
@@ -124,7 +124,7 @@
         </tr>
       <% end %>
     <% else %>
-      <%= form_tag({ controller: 'bills', action: 'cfdi_process' }, method: 'get') do %>
+      <%= form_tag({ controller: 'bills', action: 'cfdi_process' }, method: 'post') do %>
         <% @rows.each do |row|%>
           <tr>
             <td class="space-preview"> <%= row.sat_key %> </td>
@@ -328,9 +328,9 @@
 
 <% if @bill == nil || (@bill != nil && @relation_type == '04') %>
   <% if @relation_type == '04' %>
-    <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes, payment_key: @payment_key, payment_description: @payment_description, method_key: @method_key, method_description: @method_description, payment_form: @payment_form, relation_type: @relation_type, bill: @bill&.id}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
+    <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process', method: 'post'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes, payment_key: @payment_key, payment_description: @payment_description, method_key: @method_key, method_description: @method_description, payment_form: @payment_form, relation_type: @relation_type, bill: @bill&.id}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
   <% else %>
-    <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes, payment_key: @payment_key, payment_description: @payment_description, method_key: @method_key, method_description: @method_description, payment_form: @payment_form, relation_type: @relation_type}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
+    <%= button_to 'Generar factura', {controller: 'bills', action: 'cfdi_process', method: 'post'}, params: {tickets: params[:tickets], orders: params[:orders], prospect: params[:prospect], cfdi_type: params[:cfdi_type], cfdi_use: params[:cfdi_use], type_of_bill: params[:type_of_bill], notes: @notes, payment_key: @payment_key, payment_description: @payment_description, method_key: @method_key, method_description: @method_description, payment_form: @payment_form, relation_type: @relation_type}, data: { disable_with: "Por favor espere mientras se procesa su solicitud..." }, class: 'main-button' %>
   <% end %>
 <% end %>
 

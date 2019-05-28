@@ -13,11 +13,16 @@ $(document).ready(function(){
 
   $("#report_type").bind('change', function() {
     var reportType = $(this).val();
-    if (reportType == 'Facturación por empresa' || reportType == 'Pagos por empresa' || reportType == 'Saldo por clientes' || reportType == 'Facturas recibidas') {
+    if (reportType == 'Facturación por empresa' || reportType == 'Pagos por empresa' || reportType == 'Saldo por clientes' || reportType == 'Facturas recibidas' || reportType == 'Estado de cuenta') {
       $(".month-list").addClass('hidden');
       $(".store-options").addClass('hidden');
       $(".date-options").removeClass('hidden');
       $(".companies-list").removeClass('hidden');
+      if (reportType == 'Estado de cuenta') {
+        $(".balance-options").removeClass('hidden');
+      } else {
+        $(".balance-options").addClass('hidden');
+      }
       if ($("#options").val() == 'Seleccionar día') {
         $(".group_fields").addClass("hidden");
         $(".extra-margin-top").removeClass("hidden");
@@ -35,6 +40,7 @@ $(document).ready(function(){
       $(".date-options").addClass('hidden');
       $(".single-date").addClass('hidden');
       $(".group_fields").addClass("hidden");
+      $(".balance-options").addClass('hidden');
     } else {
       if (reportType == 'Comparativo compras por mes') {
         $(".group_options").removeClass('hidden');
@@ -43,6 +49,7 @@ $(document).ready(function(){
         $(".group_options").addClass('hidden');
         $(".store-options").removeClass('hidden');
       }
+      $(".balance-options").addClass('hidden');
       $(".select2.select2-container").addClass("width-200");
       $(".companies-list").addClass('hidden');
       $(".month-list").removeClass('hidden');

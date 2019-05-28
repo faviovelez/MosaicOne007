@@ -91,22 +91,38 @@ class ProductsController < ApplicationController
       csv.each do |row|
         product = Product.find_by_unique_code(row['cod'])
         if product.present?
-          if product.supplier_id == 1
-            inventory = Inventory.where(product_id: product.id).first
-            Movement.create(product_id: product.id, store_id: 1, user_id: current_user.id, quantity: inventory.quantity, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * inventory.quantity, business_unit_id: 2, reason: 'migración')
-            inv_patria = StoresInventory.where(store_id: 2, product_id: product.id).first
-            if inv_patria.quantity < 0
-              inv_patria.update(quantity: 0)
+          if row['store'].to_i == 1
+            if product.group
+              inventory = Inventory.where(product_id: product.id).first
+              Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: 1, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019', kg: row['kg'].to_f, identifier: Movement.where(product: product, store: row['store'].to_i).last.identifier.to_i.next.to_s)
+              inventory.update(quantity: inventory.quantity + 1)
+            else
+              inventory = Inventory.where(product_id: product.id).first
+              if row['cant'].to_i < inventory.quantity
+                result = inventory.quantity - row['cant'].to_i
+                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019')
+              elsif row['cant'].to_i > inventory.quantity
+                result = row['cant'].to_i - inventory.quantity
+                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019')
+              end
+              inventory.update(quantity: row['cant'].to_i)
             end
-            if inv_patria.quantity > row['cant'].to_i
-              result = inv_patria.quantity - row['cant'].to_i
-              Movement.create(product_id: product.id, store_id: 2, user_id: current_user.id, quantity: result, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * inventory.quantity, business_unit_id: 2, reason: 'migración')
-            elsif inv_patria.quantity < row['cant'].to_i
-              result = row['cant'].to_i - inv_patria.quantity
-              Movement.create(product_id: product.id, store_id: 2, user_id: current_user.id, quantity: inventory.quantity, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * inventory.quantity, business_unit_id: 2, reason: 'migración')
+          elsif row['store'].to_i == 2
+              if product.group
+              inventory = StoresInventory.where(store_id: row['store'].to_i, product_id: product.id).first
+              Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: 1, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019', kg: row['kg'].to_f, identifier: Movement.where(product: product, store: row['store'].to_i).last.identifier.to_i.next.to_s)
+              inventory.update(quantity: inventory.quantity + 1)
+            else
+              inventory = StoresInventory.where(store_id: row['store'].to_i, product_id: product.id).first
+              if row['cant'].to_i < inventory.quantity
+                result = inventory.quantity - row['cant'].to_i
+                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019')
+              elsif row['cant'].to_i > inventory.quantity
+                result = row['cant'].to_i - inventory.quantity
+                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019')
+              end
+              inventory.update(quantity: row['cant'].to_i)
             end
-            inventory.update(quantity: 0)
-            inv_patria.update(quantity: row['cant'].to_i)
           end
         else
           unfinded << row['cod']
@@ -824,6 +840,8 @@ class ProductsController < ApplicationController
       if role == 'store-admin' || role == 'store'
         overp = Store.find(current_user.store.id).overprice / 100 + 1
         @products = Product.select("products.id, products.store_id, products.shared, products.only_measure, products.unique_code, products.description, products.exterior_color_or_design, products.line, CASE WHEN (stores_inventories.manual_price IS null OR stores_inventories.manual_price = 0) AND products.store_id IS null THEN products.price * #{overp} * 1.16 WHEN (stores_inventories.manual_price IS null OR stores_inventories.manual_price = 0) AND products.store_id IS NOT null THEN products.price * 1.16 WHEN (stores_inventories.manual_price IS NOT null AND stores_inventories.manual_price != 0) AND products.store_id IS null THEN stores_inventories.manual_price * 1.16 WHEN (stores_inventories.manual_price IS NOT null AND stores_inventories.manual_price != 0) AND products.store_id IS NOT null THEN stores_inventories.manual_price * 1.16 ELSE stores_inventories.manual_price * #{overp} * 1.16 END AS product_price, stores_inventories.manual_price_update").joins('RIGHT JOIN stores_inventories ON products.id = stores_inventories.product_id').where(stores_inventories: {store_id: current_user.store.id}, products: {child_id: nil}).order(:id)
+      elsif role == 'product-admin' || role == 'product-staff'
+        @products = Product.joins(:warehouse, :business_unit, :supplier).select("products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, products.price, products.shared, products.store_id, products.warehouse_id, products.only_measure, suppliers.name AS supplier_name, business_units.name AS business_unit_name")
       else
         if current_user.role.name == 'admin-desk'
           @products = Product.joins(:warehouse, :business_unit, :supplier).where(current: true, shared: true).select("products.id, products.unique_code, products.description, products.exterior_color_or_design, products.line, products.price, products.shared, products.store_id, products.warehouse_id, products.only_measure, suppliers.name AS supplier_name, business_units.name AS business_unit_name")
@@ -898,7 +916,8 @@ class ProductsController < ApplicationController
       :discount_for_franchises,
       :only_measure,
       :parent_id,
-      :child_id
+      :child_id,
+      :shared
       )
     end
 

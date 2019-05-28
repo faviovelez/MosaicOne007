@@ -210,67 +210,73 @@ class StoresController < ApplicationController
         if product.nil? || (product.classification != 'de línea' && product.store_id != current_user.store.id)
           unfinded << row['cod']
         else
-          store.id == 1 ? inventory = Inventory.where(product: product).first : inventory = store.stores_inventories.where(product: product).first
-          entries = store.stores_warehouse_entries.where(product: product)
-          quantity = row['cant'].to_i
-          if store.store_type.store_type == 'franquicia'
-            discount_percent = product.discount_for_franchises.to_f / 100
-          elsif store.store_type.store_type == 'tienda propia' || store.store_type.store_type == 'corporativo'
-            discount_percent = product.discount_for_stores.to_f / 100
-          end
-          cost = product.price * (1 - discount_percent)
-          discount = product.price * discount_percent * quantity
-          final_price = product.price * (1 - discount_percent)
-          entries.each do |entry|
-            entry.delete
-          end
           if store.id == 1
-            WarehouseEntry.create(
-              product: product,
-              store: store,
-              quantity: quantity,
-            )
-            we = WarehouseEntry.last
-            inventory.update(quantity: inventory.quantity.to_i + quantity)
-            movement = Movement.new(
-              store: store,
-              product: product,
-              quantity: quantity.abs,
-              cost: cost,
-              total_cost: (cost * quantity).round(2),
-              supplier: product.supplier,
-              discount_applied: discount.round(2),
-              automatic_discount: discount.round(2),
-              user: current_user
-            )
+            inventory = Inventory.where(product: product).first
           else
-            StoresWarehouseEntry.create(
-              product: product,
-              store: store,
-              quantity: quantity,
-            )
-            we = StoresWarehouseEntry.last
-            inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
-            movement = StoreMovement.new(
-              store: store,
-              product: product,
-              quantity: quantity.abs,
-              web: true,
-              pos: false,
-              cost: cost,
-              total_cost: (cost * quantity).round(2),
-              supplier: product.supplier,
-              discount_applied: discount.round(2),
-              automatic_discount: discount.round(2),
-              user: current_user
-            )
+            inventory = store.stores_inventories.where(product: product).first
           end
+          unless inventory == nil
+            entries = store.stores_warehouse_entries.where(product: product)
+            quantity = row['cant'].to_i
+            if store.store_type.store_type == 'franquicia'
+              discount_percent = product.discount_for_franchises.to_f / 100
+            elsif store.store_type.store_type == 'tienda propia' || store.store_type.store_type == 'corporativo'
+              discount_percent = product.discount_for_stores.to_f / 100
+            end
+            cost = product.price * (1 - discount_percent)
+            discount = product.price * discount_percent * quantity
+            final_price = product.price * (1 - discount_percent)
+            entries.each do |entry|
+              entry.delete
+            end
+            if store.id == 1
+              WarehouseEntry.create(
+                product: product,
+                store: store,
+                quantity: quantity,
+              )
+              we = WarehouseEntry.last
+              inventory.update(quantity: inventory.quantity.to_i + quantity)
+              movement = Movement.new(
+                store: store,
+                product: product,
+                quantity: quantity.abs,
+                cost: cost,
+                total_cost: (cost * quantity).round(2),
+                supplier: product.supplier,
+                discount_applied: discount.round(2),
+                automatic_discount: discount.round(2),
+                user: current_user
+              )
+            else
+              StoresWarehouseEntry.create(
+                product: product,
+                store: store,
+                quantity: quantity,
+              )
+              we = StoresWarehouseEntry.last
+              inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
+              movement = StoreMovement.new(
+                store: store,
+                product: product,
+                quantity: quantity.abs,
+                web: true,
+                pos: false,
+                cost: cost,
+                total_cost: (cost * quantity).round(2),
+                supplier: product.supplier,
+                discount_applied: discount.round(2),
+                automatic_discount: discount.round(2),
+                user: current_user
+              )
+            end
 
-          quantity >= 0 ? movement.movement_type = 'alta' : movement.movement_type = 'baja'
+            quantity >= 0 ? movement.movement_type = 'alta' : movement.movement_type = 'baja'
 
-          if movement.save
-            @product_counter += 1
-            we.class == WarehouseEntry ? we.update(movement: movement) : we.update(store_movement: movement)
+            if movement.save
+              @product_counter += 1
+              we.class == WarehouseEntry ? we.update(movement: movement) : we.update(store_movement: movement)
+            end
           end
         end
       end
@@ -288,65 +294,71 @@ class StoresController < ApplicationController
         if product.nil? || (product.classification != 'de línea' && product.store_id != current_user.store.id)
           unfinded << row['cod']
         else
-          store.id == 1 ? inventory = Inventory.where(product: product).first : inventory = store.stores_inventories.where(product: product).first
-          entries = store.stores_warehouse_entries.where(product: product)
-          quantity = row['cant'].to_i
-          if store.store_type.store_type == 'franquicia'
-            discount_percent = product.discount_for_franchises.to_f / 100
-          elsif store.store_type.store_type == 'tienda propia' || store.store_type.store_type == 'corporativo'
-            discount_percent = product.discount_for_stores.to_f / 100
-          end
-          cost = product.price * (1 - discount_percent)
-          discount = product.price * discount_percent * quantity
-          final_price = product.price * (1 - discount_percent)
-          entries.each do |entry|
-            entry.delete
-          end
           if store.id == 1
-            WarehouseEntry.create(
-              product: product,
-              store: store,
-              quantity: quantity,
-            )
-            we = WarehouseEntry.last
-            inventory.update(quantity: inventory.quantity.to_i + quantity)
-            movement = Movement.new(
-              store: store,
-              product: product,
-              quantity: quantity.abs,
-              cost: cost,
-              total_cost: (cost * quantity).round(2),
-              supplier: product.supplier,
-              discount_applied: discount.round(2),
-              automatic_discount: discount.round(2),
-              user: current_user
-            )
+            inventory = Inventory.where(product: product).first
           else
-            StoresWarehouseEntry.create(
-              product: product,
-              store: store,
-              quantity: quantity,
-            )
-            we = StoresWarehouseEntry.last
-            inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
-            movement = StoreMovement.new(
-              store: store,
-              product: product,
-              quantity: quantity.abs,
-              web: true,
-              pos: false,
-              cost: cost,
-              total_cost: (cost * quantity).round(2),
-              supplier: product.supplier,
-              discount_applied: discount.round(2),
-              automatic_discount: discount.round(2),
-              user: current_user
-            )
+            inventory = store.stores_inventories.where(product: product).first
           end
-          quantity >= 0 ? movement.movement_type = 'alta' : movement.movement_type = 'baja'
-          if movement.save
-            @product_counter += 1
-            we.class == WarehouseEntry ? we.update(movement: movement) : we.update(store_movement: movement)
+          unless inventory == nil
+            entries = store.stores_warehouse_entries.where(product: product)
+            quantity = row['cant'].to_i
+            if store.store_type.store_type == 'franquicia'
+              discount_percent = product.discount_for_franchises.to_f / 100
+            elsif store.store_type.store_type == 'tienda propia' || store.store_type.store_type == 'corporativo'
+              discount_percent = product.discount_for_stores.to_f / 100
+            end
+            cost = product.price * (1 - discount_percent)
+            discount = product.price * discount_percent * quantity
+            final_price = product.price * (1 - discount_percent)
+            entries.each do |entry|
+              entry.delete
+            end
+            if store.id == 1
+              WarehouseEntry.create(
+                product: product,
+                store: store,
+                quantity: quantity,
+              )
+              we = WarehouseEntry.last
+              inventory.update(quantity: inventory.quantity.to_i + quantity)
+              movement = Movement.new(
+                store: store,
+                product: product,
+                quantity: quantity.abs,
+                cost: cost,
+                total_cost: (cost * quantity).round(2),
+                supplier: product.supplier,
+                discount_applied: discount.round(2),
+                automatic_discount: discount.round(2),
+                user: current_user
+              )
+            else
+              StoresWarehouseEntry.create(
+                product: product,
+                store: store,
+                quantity: quantity,
+              )
+              we = StoresWarehouseEntry.last
+              inventory.update(quantity: inventory.quantity.to_i + quantity, rack: row['estante'], level: row['nivel'])
+              movement = StoreMovement.new(
+                store: store,
+                product: product,
+                quantity: quantity.abs,
+                web: true,
+                pos: false,
+                cost: cost,
+                total_cost: (cost * quantity).round(2),
+                supplier: product.supplier,
+                discount_applied: discount.round(2),
+                automatic_discount: discount.round(2),
+                user: current_user
+              )
+            end
+            quantity >= 0 ? movement.movement_type = 'alta' : movement.movement_type = 'baja'
+            if movement.save
+              @product_counter += 1
+              we.class == WarehouseEntry ? we.update(movement: movement) : we.update(store_movement: movement)
+            end
           end
         end
       end

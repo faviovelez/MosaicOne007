@@ -1299,7 +1299,7 @@ class BillsController < ApplicationController
         if (current_user.store.id == 1 || current_user.store.id == 2)
           bl = BillingAddress.where(business_name: params['prospect_name'], rfc: params['prospect_rfc'])
         else
-          bl = BillingAddress.where(business_name: params['prospect_name'], store: @store, rfc: params['prospect_rfc'])
+          bl = BillingAddress.where(business_name: params['prospect_name'], rfc: params['prospect_rfc'])
         end
         bl.each do |b|
           b.prospects.each do |p|
