@@ -192,10 +192,15 @@ class OrdersController < ApplicationController
 
     @balance_before = total_bills_before - total_payments_before
 
-    bills = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago'],billing_addresses: {id: 56406}).order(:receiving_company_id, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days')
+# PARA QUE FUNCIONE, NECESITO (SI ES NC O DEV, PONER EL FOLIO DE LA FACTURA ORIGINAL EN ALGUN LADO, ADEMAS DEL FOLIO DE LA FACTURA Y RELACIONARLO CON LA ORIGINAL Y ORDENARLO DE ESA MANERA, PARA QUE AL SACAR EL BALANCE balance = arr.select{|selection| selection[7] == b}.sum{|arrr| arrr[5]}, OBTENGA EL SALDO CORRECTO)
+
+# FALTA AGREGAR LOS TITULOS Y EL SALDO INICIAL
+
+    bills = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
 
     bills_ids = Bill.where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).pluck(:id)
-    payments = Payment.joins(bill: :receiving_company).joins(bill: :prospect).where(bill_id: bills_ids).where.not(payment_type: ['crédito', 'cancelado'],billing_addresses: {id: 56406}).uniq.order('billing_addresses.id', :payment_date).pluck('billing_addresses.id', 'billing_addresses.business_name', :payment_date, :id, :payment_type, :total, :bank_id, :bill_id, 'prospects.credit_days')
+
+    payments = Payment.joins(bill: :receiving_company).joins(bill: :prospect).joins(:payment_form).where(bill_id: bills_ids).where.not(payment_type: ['crédito', 'cancelado']).uniq.order('billing_addresses.id', 'bills.folio', :payment_date).pluck('billing_addresses.id', 'billing_addresses.business_name', :payment_date, 'bills.folio', "CASE WHEN payments.total = 0 THEN CONCAT(payment_type, ' ', payment_forms.description) ELSE CONCAT(payment_type, ' ', payment_forms.description) END", :total, :bank_id, :bill_id, 'prospects.credit_days', "CASE WHEN payments.total = 0 THEN payments.bill_id ELSE payments.bill_id END")
 
     bills_and_payments = bills + payments
 
@@ -205,25 +210,39 @@ class OrdersController < ApplicationController
       ar[6] = ar[6].to_s if ar[6] == nil
       ar[8] = ar[2] + ar[8].to_i.days
       ar[4].gsub!(/Sustitución|pago/) { |match| strings[match] }
-      ar[5] = -ar[5] if (ar[4] == "Pago" || ar[4] == "Nota de Crédito" || ar[4] == "Devolución")
+      ar[5] = -ar[5] if (ar[4].include?("Pago") || ar[4] == "Nota de Crédito" || ar[4] == "Devolución")
     end
 
+    @store_name = current_user.store.business_unit.billing_address.business_name
     @arranged_bills_and_payments = bills_and_payments.sort_by{|a| a[1]}.group_by{ |arr| arr[0]}
-
     @customer_codes = @arranged_bills_and_payments.keys
 
+    @totals = {}
+    @total_bills = 0
+    @total_not_bills = 0
+
     @customer_codes.each do |code|
-      arr_keys = @arranged_bills_and_payments[code].map{|a| a[7]}.uniq
-      arr = @arranged_bills_and_payments[code].sort_by!{|arr| arr[2]}
+      if @totals[code] == nil
+        @totals[code] = []
+      end
+      arr_keys = @arranged_bills_and_payments[code].map{|a| a[9]}.uniq
+      arr = @arranged_bills_and_payments[code].sort_by!{|arr| arr[2]; arr[3]}
+      bills = @arranged_bills_and_payments[code].select{|selection| selection[4] == "Factura"}.sum{|arrr| arrr[5]}
+      not_bills = @arranged_bills_and_payments[code].select{|selection| selection[4] != "Factura"}.sum{|arrr| arrr[5]}
+      @totals[code] << bills
+      @totals[code] << not_bills
+      @totals[code] << bills + not_bills
+      @total_bills += @arranged_bills_and_payments[code].select{|selection| selection[4] == "Factura"}.sum{|arrr| arrr[5]}.round(2)
+      @total_not_bills += @arranged_bills_and_payments[code].select{|selection| selection[4] != "Factura"}.sum{|arrr| arrr[5]}.round(2)
       arr_keys.each do |b|
-        balance = arr.select{|selection| selection[7] == b}.sum{|arrr| arrr[5]}
-        bill = arr.select{|selection| selection[7] == b && selection[4] == "Factura"}
-        the_rest = arr.select{|selection| selection[7] == b && selection[4] != "Factura"}
+        balance = arr.select{|selection| selection[9] == b}.sum{|arrr| arrr[5]}
+        bill = arr.select{|selection| selection[9] == b && selection[4] == "Factura"}
+        the_rest = arr.select{|selection| selection[9] == b && selection[4] != "Factura"}
         bill.each do |c|
-          c << balance unless c.include?(balance)
+          c << balance
         end
         the_rest.each do |d|
-          d << nil unless d.include?(nil)
+          d << nil
         end
       end
     end
