@@ -1,4 +1,4 @@
-<table class="dataTablestandard">
+<table class="balanceSUmmary">
   <thead>
     <tr class="table-titles">
       <th> Fecha </th>
@@ -13,7 +13,18 @@
   </thead>
   <tbody>
     <% @customer_codes.each do |customer| %>
-      <% unless @customer_codes[0] == customer %>
+      <% if @customer_codes[0] == customer %>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      <% else %>
         <tr>
           <td> <strong>Fecha</strong> </td>
           <td> <strong>Folio</strong> </td>
@@ -37,10 +48,20 @@
         <td></td>
         <td></td>
       </tr>
-      <% @arranged_bills_and_payments[customer].each do |row| %>
+      <tr>
+        <td>Saldo inicial</td>
+        <td> <%= number_to_currency(0) %> </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <% @arranged_bills_and_payments[customer].each_with_index do |row, index| %>
         <tr>
           <td> <%= l row[2].to_date %> </td>
-          <td> <%= row[7] %> </td>
+          <td> <%= row[3] %> </td>
           <td> <%= row[4] %> </td>
           <% if row[5] > 0 %>
             <td> <%= number_to_currency(row[5].to_f) %> </td>
@@ -49,29 +70,116 @@
             <td> </td>
             <td> <%= number_to_currency(row[5].to_f) %> </td>
           <% end %>
-          <td> <%= number_to_currency(row[9].to_f) %> </td>
+          <td> <%= number_to_currency(row[10].to_f) %> </td>
           <td> <%= l row[8].to_date %> </td>
-          <% if row[4] == 'Factura' && row[9].to_f < 1 %>
+          <% if row[4] == 'Factura' && row[10].to_f < 1 %>
             <td> Pagada </td>
-          <% elsif row[4] == 'Factura' && row[9].to_f > 1 %>
+          <% elsif row[4] == 'Factura' && row[10].to_f > 1 %>
             <td> Por pagar </td>
-            <% else %>
+          <% else %>
             <td></td>
           <% end %>
         </tr>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
+        <% if @arranged_bills_and_payments[customer].length - 1 ==  index %>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td> <%= number_to_currency(@totals[customer][0]) %> </td>
+            <td> <%= number_to_currency(@totals[customer][1]) %> </td>
+            <td> <%= number_to_currency(@totals[customer][2]) %> </td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>Resumen</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td> (+) Cargos </td>
+            <td> <%= number_to_currency(@totals[customer][0]) %> </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td> (-) Abonos </td>
+            <td> <%= number_to_currency(@totals[customer][1]) %> </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td> (=) Saldo final  </td>
+            <td> <%= number_to_currency(@totals[customer][2]) %> </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        <% end %>
       <% end %>
     <% end %>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td><%= number_to_currency(@total_bills) %></td>
+      <td><%= number_to_currency(@total_not_bills) %></td>
+      <td><%= number_to_currency(@total_bills + @total_not_bills) %></td>
+      <td></td>
+      <td></td>
+    </tr>
   </tbody>
 </table>
+
+<p class="hidden" id="initialDate"> <%= l @initial_date.to_date %> </p>
+<p class="hidden" id="finalDate"> <%= l @final_date.to_date %> </p>
+<p class="hidden" id="dateToday"> <%= l Date.today %> </p>
+<p class="hidden" id="storeName"> <%= @store_name %> </p>
 
 <%= render 'dataTables' %>
