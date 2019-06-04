@@ -178,23 +178,28 @@ class OrdersController < ApplicationController
     first_date = Date.parse('2017-01-01')
     day_before_initial = @initial_date - 1.days
 
-    bills_before = Bill.where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago'])
-    bills_before_ids = Bill.where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).pluck(:id)
-    payments_before = Payment.where(bill_id: bills_before_ids).where.not(payment_type: ['crédito', 'cancelado'])
+    bills_before = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
 
-    positive_payments_before = payments_before.where(payment_type: 'pago', bill_id: bills_before.pluck(:id)).sum(:total)
-    negative_payments_before = payments_before.where(payment_type: 'devolución', bill_id: bills_before.pluck(:id)).sum(:total)
-    total_payments_before = positive_payments_before - negative_payments_before
+    bills_before_ids = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).uniq.pluck(:id)
 
-    positive_bills_before = bills_before.where(bill_folio_type: ['Factura', 'Sustitución']).sum(:total)
-    negative_bills_before = bills_before.where(bill_folio_type: ['Devolución', 'Nota de Crédito']).sum(:total)
-    total_bills_before = positive_payments_before - negative_payments_before
+    payments_before = Payment.joins(bill: :receiving_company).joins(bill: :prospect).joins(:payment_form).where(bill_id: bills_before_ids).where.not(payment_type: ['crédito', 'cancelado']).uniq.order('billing_addresses.id', 'bills.folio', :payment_date).pluck('billing_addresses.id', 'billing_addresses.business_name', :payment_date, 'bills.folio', "CASE WHEN payments.total = 0 THEN CONCAT(payment_type, ' ', payment_forms.description) ELSE CONCAT(payment_type, ' ', payment_forms.description) END", :total, :bank_id, :bill_id, 'prospects.credit_days', "CASE WHEN payments.total = 0 THEN payments.bill_id ELSE payments.bill_id END")
 
-    @balance_before = total_bills_before - total_payments_before
+    bills_and_payments_before = bills_before + payments_before
+
+    strings = {'Sustitución' => 'Factura', 'pago' => 'Pago'}
+
+    bills_and_payments_before.each do |ar|
+      ar[6] = ar[6].to_s if ar[6] == nil
+      ar[8] = ar[2] + ar[8].to_i.days
+      ar[4].gsub!(/Sustitución|pago/) { |match| strings[match] }
+      ar[5] = -ar[5] if (ar[4].include?("Pago") || ar[4] == "Nota de Crédito" || ar[4] == "Devolución")
+    end
+
+    @store_name = current_user.store.business_unit.billing_address.business_name
+    @arranged_bills_and_payments_before = bills_and_payments_before.sort_by{|a| a[1]}.group_by{ |arr| arr[0]}
+    @customer_codes_before = @arranged_bills_and_payments_before.keys
 
 # PARA QUE FUNCIONE, NECESITO (SI ES NC O DEV, PONER EL FOLIO DE LA FACTURA ORIGINAL EN ALGUN LADO, ADEMAS DEL FOLIO DE LA FACTURA Y RELACIONARLO CON LA ORIGINAL Y ORDENARLO DE ESA MANERA, PARA QUE AL SACAR EL BALANCE balance = arr.select{|selection| selection[7] == b}.sum{|arrr| arrr[5]}, OBTENGA EL SALDO CORRECTO)
-
-# FALTA AGREGAR LOS TITULOS Y EL SALDO INICIAL
 
     bills = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
 
@@ -204,8 +209,6 @@ class OrdersController < ApplicationController
 
     bills_and_payments = bills + payments
 
-    strings = {'Sustitución' => 'Factura', 'pago' => 'Pago'}
-
     bills_and_payments.each do |ar|
       ar[6] = ar[6].to_s if ar[6] == nil
       ar[8] = ar[2] + ar[8].to_i.days
@@ -213,17 +216,22 @@ class OrdersController < ApplicationController
       ar[5] = -ar[5] if (ar[4].include?("Pago") || ar[4] == "Nota de Crédito" || ar[4] == "Devolución")
     end
 
-    @store_name = current_user.store.business_unit.billing_address.business_name
     @arranged_bills_and_payments = bills_and_payments.sort_by{|a| a[1]}.group_by{ |arr| arr[0]}
     @customer_codes = @arranged_bills_and_payments.keys
 
     @totals = {}
     @total_bills = 0
     @total_not_bills = 0
+    @total_before = {}
 
     @customer_codes.each do |code|
       if @totals[code] == nil
         @totals[code] = []
+      end
+      unless @arranged_bills_and_payments_before[code] == nil
+        if @total_before[code] == nil
+          @total_before[code] = @arranged_bills_and_payments_before[code].sum{|arrr| arrr[5]}
+        end
       end
       arr_keys = @arranged_bills_and_payments[code].map{|a| a[9]}.uniq
       arr = @arranged_bills_and_payments[code].sort_by!{|arr| arr[2]; arr[3]}
@@ -246,7 +254,6 @@ class OrdersController < ApplicationController
         end
       end
     end
-
     render 'balance_summary'
   end
 
