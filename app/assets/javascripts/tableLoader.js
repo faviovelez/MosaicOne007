@@ -899,6 +899,8 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
       {
         extend: 'pdfHtml5',
         orientation: 'landscape',
+        title: $("#storeName").html(),
+        messageTop: "Estado de cuenta del " +  $("#initialDate").html() + "al " + $("#finalDate").html() + ". Fecha de impresión: " + $("#dateToday").html(),
       },
     ]
   });
