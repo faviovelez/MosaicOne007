@@ -50,7 +50,7 @@
       </tr>
       <tr>
         <td>Saldo inicial</td>
-        <td> <%= number_to_currency(0) %> </td>
+        <td> <%= number_to_currency(@total_before[customer].to_f.round(2)) %> </td>
         <td></td>
         <td></td>
         <td></td>
@@ -114,6 +114,16 @@
           <tr>
             <td></td>
             <td></td>
+            <td> Saldo inicial </td>
+            <td> <%= number_to_currency(@total_before[customer].to_f.round(2)) %> </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
             <td> (+) Cargos </td>
             <td> <%= number_to_currency(@totals[customer][0]) %> </td>
             <td></td>
@@ -135,7 +145,7 @@
             <td></td>
             <td></td>
             <td> (=) Saldo final  </td>
-            <td> <%= number_to_currency(@totals[customer][2]) %> </td>
+            <td> <%= number_to_currency(@totals[customer][2] + @total_before[customer].to_f.round(2)) %> </td>
             <td></td>
             <td></td>
             <td></td>
