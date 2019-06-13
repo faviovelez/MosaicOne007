@@ -23,8 +23,18 @@
   </div>
 
   <div class="field balance-options hidden">
-    <%= label_tag :opciones_para_estado_de_cuenta %>
+    <%= label_tag :opciones_estado_de_cuenta %>
     <%= select_tag :options_for_balance_report, options_for_select([['Todas las facturas'], ['Solo facturas sin pagar'], ['Solo facturas pagadas']]) %>
+  </div>
+
+  <div class="field balance-options hidden">
+    <%= label_tag "¿Qué clientes?" %>
+    <%= select_tag :client_options, options_for_select([['Todos los clientes'], ['Seleccionar clientes']]) %>
+  </div>
+
+  <br /><div class="field client-list-balance hidden">
+    <%= label_tag :clientes_estado_de_cuenta %>
+    <%= select_tag :client_list_balance, options_for_select(@client_list_balance, selected: @client_list_balance.first), {include_blank: true, multiple: true} %>
   </div>
 
   <br /><div class="field client-list hidden">

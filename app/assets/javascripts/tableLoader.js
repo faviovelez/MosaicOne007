@@ -894,16 +894,60 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
         extend: 'excel',
         orientation: 'landscape',
         title: $("#storeName").html(),
-        messageTop: "Estado de cuenta del " +  $("#initialDate").html() + "al " + $("#finalDate").html() + ". Fecha de impresión: " + $("#dateToday").html(),
+        messageTop: "Estado de cuenta del " +  $("#initialDate").html() + "al " + $("#finalDate").html() + ". Fecha de impresión: " + $("#dateToday").html()
       },
       {
         extend: 'pdfHtml5',
         orientation: 'landscape',
         title: $("#storeName").html(),
         messageTop: "Estado de cuenta del " +  $("#initialDate").html() + "al " + $("#finalDate").html() + ". Fecha de impresión: " + $("#dateToday").html(),
+        customize: function(doc) {
+          doc['footer'] = (function(page, pages) {
+            return {
+              columns: [
+                {
+                  alignment: 'center',
+                  text: [
+                    'Página ',
+                    { text: page.toString() },
+          ' de ',
+                    { text: pages.toString() }
+          ]
+              }],
+              margin: [10, 0]
+            }
+          });
+        }
       },
     ]
   });
+
+  $(document).ready(function() {
+  var table = $('#example').DataTable({
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: "pdfHtml5",
+        customize: function(doc) {
+          doc['footer'] = (function(page, pages) {
+            return {
+              columns: [
+                {
+                  alignment: 'center',
+                  text: [
+                    { text: page.toString(), italics: true },
+					' of ',
+                    { text: pages.toString(), italics: true }
+				  ]
+              }],
+              margin: [10, 0]
+            }
+          });
+        }
+      }
+    ]
+  });
+});
 
   var tableFourClone = $('.dataTablestandardClone').DataTable({
     "order": [[ 1, "asc" ]],

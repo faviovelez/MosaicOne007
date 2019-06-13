@@ -11,6 +11,11 @@ $(document).ready(function(){
      maximumSelectionLength: 1
   });
 
+  $('#client_list_balance').select2({
+     placeholder: 'Seleccionar cliente',
+     language: "es",
+  });
+
   $("#report_type").bind('change', function() {
     var reportType = $(this).val();
     if (reportType == 'Facturación por empresa' || reportType == 'Pagos por empresa' || reportType == 'Saldo por clientes' || reportType == 'Facturas recibidas' || reportType == 'Estado de cuenta') {
@@ -22,6 +27,7 @@ $(document).ready(function(){
         $(".balance-options").removeClass('hidden');
       } else {
         $(".balance-options").addClass('hidden');
+        $(".client-list-balance").addClass('hidden');
       }
       if ($("#options").val() == 'Seleccionar día') {
         $(".group_fields").addClass("hidden");
@@ -41,6 +47,7 @@ $(document).ready(function(){
       $(".single-date").addClass('hidden');
       $(".group_fields").addClass("hidden");
       $(".balance-options").addClass('hidden');
+      $(".client-list-balance").addClass('hidden');
     } else {
       if (reportType == 'Comparativo compras por mes') {
         $(".group_options").removeClass('hidden');
@@ -50,6 +57,7 @@ $(document).ready(function(){
         $(".store-options").removeClass('hidden');
       }
       $(".balance-options").addClass('hidden');
+      $(".client-list-balance").addClass('hidden');
       $(".select2.select2-container").addClass("width-200");
       $(".companies-list").addClass('hidden');
       $(".month-list").removeClass('hidden');
@@ -58,6 +66,16 @@ $(document).ready(function(){
       $(".single-date").addClass('hidden');
       $(".group_fields").addClass("hidden");
       $(".group-options").addClass("hidden");
+    }
+  });
+
+  $("#client_options").bind('change', function() {
+    var client_options = $(this).val();
+    if (client_options == 'Seleccionar clientes') {
+      $(".client-list-balance").removeClass('hidden');
+      $(".select2.select2-container").addClass("width-450");
+    } else {
+      $(".client-list-balance").addClass('hidden');
     }
   });
 

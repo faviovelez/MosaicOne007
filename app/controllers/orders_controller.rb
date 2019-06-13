@@ -167,6 +167,11 @@ class OrdersController < ApplicationController
   end
 
   def account_summary
+    if params[:client_options] == 'Todos los clientes'
+      @client_list = Bill.where(store_id: current_user.store.id).where.not(status: 'cancelada').joins(:receiving_company).pluck("billing_addresses.id").uniq
+    else
+      @client_list = params[:client_list_balance]
+    end
     if params[:options_for_balance_report] == 'Todas las facturas'
       @conditions = [true, false, nil] #todas las facturas
     elsif params[:options_for_balance_report] == 'Solo facturas sin pagar'
@@ -178,11 +183,13 @@ class OrdersController < ApplicationController
     first_date = Date.parse('2017-01-01')
     day_before_initial = @initial_date - 1.days
 
-    bills_before = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
+    bills_ids = Bill.where(store_id: current_user.store.id, receiving_company_id: @client_list).where.not(status: 'cancelada', bill_folio_type: ['Pago'])
 
-    bills_before_ids = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).uniq.pluck(:id)
+    bills_before = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions, receiving_company_id: @client_list).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
 
-    payments_before = Payment.joins(bill: :receiving_company).joins(bill: :prospect).joins(:payment_form).where(bill_id: bills_before_ids).where.not(payment_type: ['crédito', 'cancelado']).uniq.order('billing_addresses.id', 'bills.folio', :payment_date).pluck('billing_addresses.id', 'billing_addresses.business_name', :payment_date, 'bills.folio', "CASE WHEN payments.total = 0 THEN CONCAT(payment_type, ' ', payment_forms.description) ELSE CONCAT(payment_type, ' ', payment_forms.description) END", :total, :bank_id, :bill_id, 'prospects.credit_days', "CASE WHEN payments.total = 0 THEN payments.bill_id ELSE payments.bill_id END")
+    #bills_before_ids = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).uniq.pluck(:id)
+
+    payments_before = Payment.joins(bill: :receiving_company).joins(bill: :prospect).joins(:payment_form).where(bill_id: bills_ids, payment_date: first_date..day_before_initial).where.not(payment_type: ['crédito', 'cancelado']).uniq.order('billing_addresses.id', 'bills.folio', :payment_date).pluck('billing_addresses.id', 'billing_addresses.business_name', :payment_date, 'bills.folio', "CASE WHEN payments.total = 0 THEN CONCAT(payment_type, ' ', payment_forms.description) ELSE CONCAT(payment_type, ' ', payment_forms.description) END", :total, :bank_id, :bill_id, 'prospects.credit_days', "CASE WHEN payments.total = 0 THEN payments.bill_id ELSE payments.bill_id END")
 
     bills_and_payments_before = bills_before + payments_before
 
@@ -201,11 +208,11 @@ class OrdersController < ApplicationController
 
 # PARA QUE FUNCIONE, NECESITO (SI ES NC O DEV, PONER EL FOLIO DE LA FACTURA ORIGINAL EN ALGUN LADO, ADEMAS DEL FOLIO DE LA FACTURA Y RELACIONARLO CON LA ORIGINAL Y ORDENARLO DE ESA MANERA, PARA QUE AL SACAR EL BALANCE balance = arr.select{|selection| selection[7] == b}.sum{|arrr| arrr[5]}, OBTENGA EL SALDO CORRECTO)
 
-    bills = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
+    bills = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions, receiving_company_id: @client_list).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
 
-    bills_ids = Bill.where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).pluck(:id)
+    #bills_ids = Bill.where(store_id: current_user.store.id, created_at: @initial_date..@final_date, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).pluck(:id)
 
-    payments = Payment.joins(bill: :receiving_company).joins(bill: :prospect).joins(:payment_form).where(bill_id: bills_ids).where.not(payment_type: ['crédito', 'cancelado']).uniq.order('billing_addresses.id', 'bills.folio', :payment_date).pluck('billing_addresses.id', 'billing_addresses.business_name', :payment_date, 'bills.folio', "CASE WHEN payments.total = 0 THEN CONCAT(payment_type, ' ', payment_forms.description) ELSE CONCAT(payment_type, ' ', payment_forms.description) END", :total, :bank_id, :bill_id, 'prospects.credit_days', "CASE WHEN payments.total = 0 THEN payments.bill_id ELSE payments.bill_id END")
+    payments = Payment.joins(bill: :receiving_company).joins(bill: :prospect).joins(:payment_form).where(bill_id: bills_ids, payment_date: @initial_date..@final_date).where.not(payment_type: ['crédito', 'cancelado']).uniq.order('billing_addresses.id', 'bills.folio', :payment_date).pluck('billing_addresses.id', 'billing_addresses.business_name', :payment_date, 'bills.folio', "CASE WHEN payments.total = 0 THEN CONCAT(payment_type, ' ', payment_forms.description) ELSE CONCAT(payment_type, ' ', payment_forms.description) END", :total, :bank_id, :bill_id, 'prospects.credit_days', "CASE WHEN payments.total = 0 THEN payments.bill_id ELSE payments.bill_id END")
 
     bills_and_payments = bills + payments
 
@@ -626,6 +633,7 @@ class OrdersController < ApplicationController
   end
 
   def cancel_payments
+    debugger
     if @report_type == "cancel payments bills received"
       @payments = Payment.joins(:payment_form).joins("LEFT JOIN bill_receiveds ON payments.bill_received_id = bill_receiveds.id LEFT JOIN suppliers ON bill_receiveds.supplier_id = suppliers.id").where.not(bill_received: nil).where(ticket: nil, payment_date: @initial_date..@final_date).where("bill_receiveds.store_id IN (#{@store_id})").uniq
     else
@@ -696,6 +704,7 @@ class OrdersController < ApplicationController
     stores_id = current_user.store.business_unit.business_group.stores.joins(:store_type).where(store_types: {store_type: 'corporativo'}).pluck(:id)
     current_user.role.name == 'director' ? prospects = Prospect.where(store_id: stores_id).pluck(:legal_or_business_name, :id) : prospects = Prospect.where(store_id: current_user.store.id).pluck(:legal_or_business_name, :id)
     @client_list = stores + prospects
+    @client_list_balance = Bill.where(store_id: current_user.store.id).where.not(status: 'cancelada').joins(:receiving_company).order("billing_addresses.business_name").pluck("billing_addresses.business_name", "billing_addresses.id").uniq
   end
 
   def show
