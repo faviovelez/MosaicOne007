@@ -187,7 +187,7 @@ $(document).ready(function() {
       if (!($(".weightKg").hasClass('hidden'))) {
         var kgId = parseInt($(this).attr('id').replace("quantity_", ""));
         if (!(kgProducts[kgId] == undefined)) {
-          if (action == 'remove_inventory' && $("#totalInventory_" + this_id).html() < 1) {
+          if (action == 'remove_inventory' && $("#actualInventory_" + this_id).html() < 1) {
             var limitKg = 0;
           } else {
             var limitKg = 1;
@@ -211,7 +211,7 @@ $(document).ready(function() {
     if (action == 'remove_inventory') {
       $('[id^=quantity_]').on('keyup', function(){
         var id = $(this).attr('id').replace('quantity_', '');
-        var limitValue = parseInt($(this).parent().parent().find('#totalInventory_' + id).html());
+        var limitValue = parseInt($(this).parent().parent().find('#actualInventory_' + id).html());
         var tryValue = parseInt($(this).val());
         if ( tryValue > limitValue ){
           $(this).val(limitValue);
