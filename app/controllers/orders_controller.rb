@@ -163,19 +163,60 @@ class OrdersController < ApplicationController
       bill_received_summary
     elsif params[:report_type] == 'Estado de cuenta'
       account_summary
+    elsif params[:report_type] == 'Movimientos de inventario agrupados'
+      grouped_inventory
     end
+  end
+
+  def grouped_inventory
+    first_date = Date.parse('2017-01-01')
+    day_before_initial = @initial_date - 1.days
+
+    all_movs = Movement.joins(:product).where(store_id: current_user.store_id, created_at: first_date..@final_date).select(:unique_code, 'products.description', "SUM(CASE WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS entradas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity ELSE 0 END) AS salidas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS saldo").uniq.order(:unique_code).group(:unique_code, 'products.description', 'products.price').pluck(:unique_code, 'products.description', "SUM(CASE WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS entradas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity ELSE 0 END) AS salidas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS saldo", 'products.price')
+
+    movs_before = Movement.joins(:product).where(store_id: current_user.store_id, created_at: first_date..day_before_initial).select(:unique_code, 'products.description', "SUM(CASE WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS entradas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity ELSE 0 END) AS salidas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS saldo").uniq.order(:unique_code).group(:unique_code, 'products.description').pluck(:unique_code, 'products.description', "SUM(CASE WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS entradas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity ELSE 0 END) AS salidas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS saldo")
+
+    movs = Movement.joins(:product).where(store_id: current_user.store_id, created_at: @initial_date..@final_date).select(:unique_code, 'products.description', "SUM(CASE WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS entradas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity ELSE 0 END) AS salidas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS saldo").uniq.order(:unique_code).group(:unique_code, 'products.description').pluck(:unique_code, 'products.description', "SUM(CASE WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS entradas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity ELSE 0 END) AS salidas", "SUM(CASE WHEN movement_type = 'venta' OR movement_type = 'baja' THEN -quantity WHEN movement_type = 'alta' OR movement_type = 'alta automática' OR movement_type = 'devolución' THEN quantity ELSE 0 END) AS saldo")
+
+    @all_movs = []
+    all_movs.each do |ar|
+      array = [ar[0], ar[1]]
+      if movs_before.select{ |arr| arr[0] == ar[0]}.first != nil
+        array << movs_before.select{ |arr| arr[0] == ar[0]}.first[4]
+      else
+        array << 0
+      end
+      if movs.select{ |arr| arr[0] == ar[0]}.first != nil
+        array << movs.select{ |arr| arr[0] == ar[0]}.first[2]
+        array << movs.select{ |arr| arr[0] == ar[0]}.first[3]
+        balance = array[2] + movs.select{ |arr| arr[0] == ar[0]}.first[4]
+        price_balance = balance * ar[5]
+        array << balance
+        array << price_balance
+      else
+        array << 0
+        array << 0
+        array << 0
+        array << 0
+      end
+      @all_movs << array
+    end
+
+    @store_name = current_user.store.business_unit.billing_address.business_name
+
+    render 'grouped_inventory'
   end
 
   def account_summary
     if params[:client_options] == 'Todos los clientes'
-      @client_list = Bill.where(store_id: current_user.store.id).where.not(status: 'cancelada').joins(:receiving_company).pluck("billing_addresses.id").uniq
+      @client_list = Bill.where(store_id: current_user.store.id).joins(:receiving_company).pluck("billing_addresses.id").uniq
     else
       @client_list = params[:client_list_balance]
     end
     if params[:options_for_balance_report] == 'Todas las facturas'
       @conditions = [true, false, nil] #todas las facturas
     elsif params[:options_for_balance_report] == 'Solo facturas sin pagar'
-      @conditions = [false] # solo facturas sin pagar
+      @conditions = [false, nil] # solo facturas sin pagar
     elsif params[:options_for_balance_report] == 'Solo facturas pagadas'
       @conditions = [true] # solo facturas pagadas
     end
@@ -185,7 +226,9 @@ class OrdersController < ApplicationController
 
     bills_ids = Bill.where(store_id: current_user.store.id, receiving_company_id: @client_list).where.not(status: 'cancelada', bill_folio_type: ['Pago'])
 
-    bills_before = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions, receiving_company_id: @client_list).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
+    all_bills = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
+
+    bills_before = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: first_date..day_before_initial).where.not(status: 'cancelada', bill_folio_type: ['Pago']).order(:receiving_company_id, :folio, :id).uniq.pluck(:receiving_company_id, 'billing_addresses.business_name', :created_at, :folio, :bill_folio_type, :total, :payed, :id, 'prospects.credit_days', "CASE WHEN bills.bill_folio_type = 'Nota de Crédito' THEN bills.parent_id WHEN bills.bill_folio_type = 'Devolución' THEN bills.parent_id ELSE bills.id END")
 
     #bills_before_ids = Bill.joins(:receiving_company, :prospect).joins("LEFT JOIN payments ON bills.id = payments.bill_id").where(store_id: current_user.store.id, created_at: first_date..day_before_initial, payed: @conditions).where.not(status: 'cancelada', bill_folio_type: ['Pago']).uniq.pluck(:id)
 
@@ -633,7 +676,6 @@ class OrdersController < ApplicationController
   end
 
   def cancel_payments
-    debugger
     if @report_type == "cancel payments bills received"
       @payments = Payment.joins(:payment_form).joins("LEFT JOIN bill_receiveds ON payments.bill_received_id = bill_receiveds.id LEFT JOIN suppliers ON bill_receiveds.supplier_id = suppliers.id").where.not(bill_received: nil).where(ticket: nil, payment_date: @initial_date..@final_date).where("bill_receiveds.store_id IN (#{@store_id})").uniq
     else
