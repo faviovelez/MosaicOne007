@@ -1,0 +1,33 @@
+<table class="movementSummary">
+  <thead>
+    <tr class="table-titles">
+      <th> Código </th>
+      <th> Descripción </th>
+      <th> Saldo inicial </th>
+      <th> Entradas </th>
+      <th> Salidas </th>
+      <th> Saldo final </th>
+      <th> Valor de mercancía </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @all_movs.each do |product| %>
+      <tr>
+        <td> <%= product[0] %> </td>
+        <td> <%= product[1] %> </td>
+        <td> <%= number_with_delimiter(product[2].to_i) %> </td>
+        <td> <%= number_with_delimiter(product[3].to_i) %> </td>
+        <td> <%= number_with_delimiter(product[4].to_i) %> </td>
+        <td> <%= number_with_delimiter(product[5].to_i) %> </td>
+        <td> <%= number_to_currency(product[6].to_f) %> </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table><br /><br />
+
+<p class="hidden" id="initialDate"> <%= l @initial_date.to_date %> </p>
+<p class="hidden" id="finalDate"> <%= l @final_date.to_date %> </p>
+<p class="hidden" id="dateToday"> <%= l Date.today %> </p>
+<p class="hidden" id="storeName"> <%= @store_name %> </p>
+
+<%= render 'dataTables' %>
