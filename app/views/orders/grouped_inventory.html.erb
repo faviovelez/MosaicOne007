@@ -22,6 +22,15 @@
         <td> <%= number_to_currency(product[6].to_f) %> </td>
       </tr>
     <% end %>
+    <tr>
+      <td> <strong> Total </strong> </td>
+      <td> <strong> </strong> </td>
+      <td> <strong> <%= number_with_delimiter(@sum_initial_balance) %> </strong> </td>
+      <td> <strong> <%= number_with_delimiter(@sum_entries) %> </strong> </td>
+      <td> <strong> <%= number_with_delimiter(@sum_exits) %> </strong> </td>
+      <td> <strong> <%= number_with_delimiter(@sum_balance) %> </strong> </td>
+      <td> <strong> <%= number_to_currency(@sum_price) %> </strong> </td>
+    </tr>
   </tbody>
 </table><br /><br />
 

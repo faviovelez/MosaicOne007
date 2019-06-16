@@ -923,6 +923,7 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
   });
 
   var tableFour = $('.movementSummary').DataTable({
+    "ordering": false,
     "language": {
       "sProcessing":     "Procesando...",
       "sLengthMenu":     "Mostrar _MENU_ registros",
