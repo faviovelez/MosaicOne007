@@ -202,6 +202,14 @@ class OrdersController < ApplicationController
       @all_movs << array
     end
 
+    @all_movs.sort_by!{|ar| ar[0]}
+
+    @sum_initial_balance = @all_movs.sum{|arr| arr[2]}
+    @sum_entries = @all_movs.sum{|arr| arr[3]}
+    @sum_exits = @all_movs.sum{|arr| arr[4]}
+    @sum_balance = @all_movs.sum{|arr| arr[5]}
+    @sum_price = @all_movs.sum{|arr| arr[6]}
+
     @store_name = current_user.store.business_unit.billing_address.business_name
 
     render 'grouped_inventory'
