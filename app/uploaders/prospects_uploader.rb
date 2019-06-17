@@ -1,10 +1,10 @@
-class ProspectsUploader < CarrierWave::Uploader::Base
+class PriceListUploader < CarrierWave::Uploader::Base
 
   # Include RMagick or MiniMagick support:
   include CarrierWave::RMagick
 
   # Choose what kind of storage to use for this uploader:
-  storage :file
+  #storage :file
   #storage :fog
 
   # Override the directory where uploaded files will be stored.
@@ -39,7 +39,7 @@ class ProspectsUploader < CarrierWave::Uploader::Base
   # Override the filename of the uploaded files:
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
   def filename
-    "prospects.csv" if original_filename
+    "price_list_#{Date.today.to_date.strftime("%Y-%m-%d")}.csv" if original_filename
   end
 
 
