@@ -760,6 +760,7 @@ class OrdersController < ApplicationController
   def show
     update_order_total
     update_order_total
+    confirmable
   end
 
   def update_order_total
@@ -833,9 +834,18 @@ class OrdersController < ApplicationController
     update_movs_totals(@orders)
   end
 
+  def confirmable
+    if @order.product_requests.pluck(:status).uniq.length == 1 && @order.product_requests.pluck(:status).uniq.first == 'asignado'
+      @can_confirm = true
+    else
+      @can_confirm = false
+    end
+  end
+
   def show_for_store
     update_order_total
     @order = Order.find(params[:id])
+    confirmable
   end
 
   def update_movs_totals(orders)

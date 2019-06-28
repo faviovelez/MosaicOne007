@@ -293,7 +293,9 @@
         <%= text_field_tag :order_id, @order.id, {class: 'hidden'} %>
       </div>
       <div class="actions">
-        <%= submit_tag 'Confirmar', class: 'main-button', id: 'submit_complete', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
+        <% if @can_confirm %>
+          <%= submit_tag 'Confirmar', class: 'main-button', id: 'submit_complete', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
+        <% end %>
       </div><br /><br />
     <% end %>
   <% end %>
