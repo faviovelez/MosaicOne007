@@ -835,10 +835,20 @@ class OrdersController < ApplicationController
   end
 
   def confirmable
-    if @order.product_requests.pluck(:status).uniq.length == 1 && @order.product_requests.pluck(:status).uniq.first == 'asignado'
-      @can_confirm = true
+    if @orders == nil
+      if (@order.product_requests.where.not(status: 'cancelada').pluck(:status).uniq.length == 1 && @order.product_requests.where.not(status: 'cancelada').pluck(:status).uniq.first == 'asignado')
+        @can_confirm = true
+      else
+        @can_confirm = false
+      end
     else
-      @can_confirm = false
+      @orders.each do |order|
+        if (order.product_requests.where.not(status: 'cancelada').pluck(:status).uniq.length == 1 && order.product_requests.where.not(status: 'cancelada').pluck(:status).uniq.first == 'asignado')
+          @can_confirm = true
+        else
+          @can_confirm = false
+        end
+      end
     end
   end
 
