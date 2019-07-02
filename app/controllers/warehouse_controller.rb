@@ -96,6 +96,11 @@ class WarehouseController < ApplicationController
   end
 
   def prepare_order
+    if (@order.product_requests.where.not(status: 'cancelada').pluck(:status).uniq.length == 1 && @order.product_requests.where.not(status: 'cancelada').pluck(:status).uniq.first == 'asignado')
+      @can_confirm = true
+    else
+      @can_confirm = false
+    end
     if @order.status == 'preparado'
       redirect_to warehouse_show_prepared_order_path(@order.id)
     end

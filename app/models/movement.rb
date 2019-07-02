@@ -485,7 +485,7 @@ class Movement < ActiveRecord::Base
           else
             cost = ('%.2f' % mov.cost.to_f).to_f
           end
-          if total_quantity >= entry.fix_quantity
+          if total_quantity <= entry.fix_quantity
             warehouse_q = total_quantity
             q = total_quantity
             hash_1["quantity"] = q
@@ -520,8 +520,8 @@ class Movement < ActiveRecord::Base
             end
             @model_collection << Movement.last.id
             if product.group
-              total_quantity -= entry.fix_quantity
-              warehouse_q -= entry.fix_quantity
+              total_quantity -= q
+              warehouse_q -= q
               entry.destroy
             else
               total_quantity = 0
@@ -563,8 +563,8 @@ class Movement < ActiveRecord::Base
             end
             entry.update(quantity: entry.quantity - total_quantity)
             if product.group
-              total_quantity -= entry.fix_quantity
-              warehouse_q -= entry.fix_quantity
+              total_quantity -= entry.quantity
+              warehouse_q -= entry.quantity
               entry.destroy
             else
               total_quantity = 0
