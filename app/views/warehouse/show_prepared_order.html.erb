@@ -87,22 +87,16 @@
   <% if (current_user.role.name == 'admin-desk') %>
     <div class="actions">
       <br />
-      <% if @can_confirm %>
         <% if @order.delivery_attempt != nil %>
-        <%= select_tag :driver, options_for_select(driver_names, selected: @order.delivery_attempt.driver_id), class: 'form-control center-text width-reduced' %>
+          <%= select_tag :driver, options_for_select(driver_names, selected: @order.delivery_attempt.driver_id), class: 'form-control center-text width-reduced' %>
         <% else %>
-        <%= select_tag :driver, options_for_select(driver_names), class: 'form-control center-text width-reduced' %>
+          <%= select_tag :driver, options_for_select(driver_names), class: 'form-control center-text width-reduced' %>
         <% end %>
-      <% else %>
-        <p> <strong>Favor de dar entrada de mercancías a los productos sin asignar</strong></p>
-      <% end %>
       <%= text_field_tag :id, params[:id], {class: 'hidden'} %>
       <br />
     </div>
     <div class="actions">
-      <% if @can_confirm %>
-        <%= submit_tag 'Asignar', class: 'main-button' %>
-      <% end %>
+      <%= submit_tag 'Asignar', class: 'main-button' %>
     </div>
     <br /><br />
   <% elsif ((current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-staff') && (@order.delivery_attempt != nil && @order.status != 'en ruta')) %>

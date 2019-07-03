@@ -111,7 +111,11 @@
 <br /> <br />
 <% if (@order.users.where(role_id: [8, 9]).count >= 1 && (@order.users.include?(current_user) || current_user.role.name == 'warehouse-admin') && @order.status != 'preparado') %>
     <div class="actions">
-      <%= submit_tag 'Completar ', class: 'main-button', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
+      <% if @can_confirm %>
+        <%= submit_tag 'Completar ', class: 'main-button', data: { disable_with: "Espere mientras se procesa su solicitud..." } %>
+      <% else %>
+        <p> <strong>Favor de dar entrada de mercancías a los productos sin asignar</strong></p>
+      <% end %>
     </div><br /><br />
   <% end %>
 <% end %>
