@@ -247,6 +247,7 @@ class OrdersController < ApplicationController
     bills_and_payments_before.each do |ar|
       ar[6] = ar[6].to_s if ar[6] == nil
       ar[8] = ar[2] + ar[8].to_i.days
+      ar[3] = ar[3].to_i
       ar[4].gsub!(/Sustitución|pago/) { |match| strings[match] }
       ar[5] = -ar[5] if (ar[4].include?("Pago") || ar[4] == "Nota de Crédito" || ar[4] == "Devolución")
     end
@@ -276,6 +277,7 @@ class OrdersController < ApplicationController
     bills_and_payments.each do |ar|
       ar[6] = ar[6].to_s if ar[6] == nil
       ar[8] = ar[2] + ar[8].to_i.days
+      ar[3] = ar[3].to_i
       ar[4].gsub!(/Sustitución|pago/) { |match| strings[match] }
       ar[5] = -ar[5] if (ar[4].include?("Pago") || ar[4] == "Nota de Crédito" || ar[4] == "Devolución")
     end
@@ -317,6 +319,7 @@ class OrdersController < ApplicationController
           d << nil
         end
       end
+      @arranged_bills_and_payments[code].sort_by! { |a| [ a[7], a[4] ] }
     end
     render 'balance_summary'
   end
