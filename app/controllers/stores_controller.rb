@@ -502,7 +502,7 @@ class StoresController < ApplicationController
                           ]).each do |supplier|
                             suppliers_id << supplier.id
                           end
-    Product.where(supplier: suppliers_id).where.not(classification: ['especial', 'de tienda'])
+    Product.where(supplier: suppliers_id).where("shared = true AND current = true AND (classification = 'de línea' OR classification = 'especial') AND child_id is NULL OR store_id = #{@store.id}")
   end
 
   def create_stores_inventory(store)
