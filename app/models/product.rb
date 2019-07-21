@@ -106,7 +106,7 @@ class Product < ActiveRecord::Base
   end
 
   def create_store_inventories
-    if self.classification == 'de línea' || self.classification == 'especial'
+    if ((self.classification == 'de línea' || self.classification == 'especial') && self.shared == true && self.current == true)
       corporate = StoreType.find_by_store_type('corporativo')
       stores = Store.where.not(id: [1,2])
       stores.each do |store|
@@ -119,7 +119,9 @@ class Product < ActiveRecord::Base
     if self.classification == 'de tienda'
       inventory = StoresInventory.create(product: self, store: self.store) unless self.store.stores_inventories.where(product: self).count > 0
     else
-      self.update(shared: true)
+      if self.shared == nil
+        self.update(shared: true)
+      end
       create_store_inventories
       create_corporate_inventory
     end
@@ -129,7 +131,7 @@ class Product < ActiveRecord::Base
     inventory_corp = Inventory.create(product: self, unique_code: self.unique_code) if Inventory.where(product: self) == []
     stores = Store.joins(:store_type).where(store_types: {store_type: 'corporativo'}).where.not(id: 1)
     stores.each do |store|
-      StoresInventory.create(product: self, store: store)
+      StoresInventory.create(product: self, store: store) unless store.stores_inventories.where(product: self).count > 0
     end
   end
 

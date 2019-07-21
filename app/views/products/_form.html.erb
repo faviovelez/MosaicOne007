@@ -166,7 +166,7 @@
 
       <div class="form-inside-style">
         <%= f.label :empresa %>
-        <%= f.select :business_unit_id, options_for_select(current_user.store.business_unit.business_group.business_units.collect{|bu| [bu.name, bu.id]}, selected: @product.business_unit) %>
+        <%= f.select :business_unit_id, options_for_select(current_user.store.business_unit.business_group.business_units.where.not(name: "").collect{|bu| [bu.name, bu.id]}, selected: @product.business_unit_id) %>
       </div>
 
       <div class="form-inside-style">
