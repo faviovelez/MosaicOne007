@@ -1302,7 +1302,7 @@ class OrdersController < ApplicationController
       @orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved = true').where(store: current_user.store, status: 'entregado')
       orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved = true').where(prospect: current_user.store.store_prospect, status: 'entregado')
       orders.each do |order|
-        @orders << order
+        @orders << order unless @orders.include?(order)
       end
     elsif ['admin-desk', 'warehouse-admin', 'warehouse-staff'].include?(current_user.role.name)
       @orders = Order.uniq.joins(:product_requests).where('product_requests.excess IS NOT null OR product_requests.surplus IS NOT null').where('product_requests.solved = true').where(corporate: current_user.store, status: 'entregado')
