@@ -47,6 +47,22 @@ class Product < ActiveRecord::Base
 
   after_create :save_web_id
 
+  after_save :validate_special
+
+  after_save :validate_line
+
+  def validate_special
+    if self.classification == 'especial' && self.line != 'diseños especiales'
+      self.update(line: 'diseños especiales')
+    end
+  end
+
+  def validate_line
+    if self.classification == 'de línea'
+      create_inventory_or_store_inventories
+    end
+  end
+
 #  after_save :create_update_change_table
 
   def store_price(store)

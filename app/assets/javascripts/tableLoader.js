@@ -362,7 +362,7 @@ $(document).ready(function(){
     ]
   });
 
-  var tableFour = $('.dataTableFour').DataTable({
+  var dataTableFour = $('.dataTableFour').DataTable({
     "order": [[ 1, "asc" ]],
     "language": {
       "sProcessing":     "Procesando...",
@@ -659,7 +659,7 @@ $(document).ready(function(){
     ]
   });
 
-  var tableFour = $('.dataTableFourNoOrder').DataTable({
+  var tableFourNoOrder = $('.dataTableFourNoOrder').DataTable({
     "ordering": false,
     "language": {
       "sProcessing":     "Procesando...",
@@ -702,7 +702,7 @@ $(document).ready(function(){
     ]
   });
 
-var tableFour = $('.dataTableFourNoOrderPortraitBillsReceived').DataTable({
+var tableFourNoOrderPortraitBillsReceived = $('.dataTableFourNoOrderPortraitBillsReceived').DataTable({
   "language": {
     "sProcessing":     "Procesando...",
     "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -741,7 +741,7 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceived').DataTable({
   ]
 });
 
-var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
+var tableFourNoOrderPortraitBillsReceivedtwo = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
   "order": [[ 3, "asc" ]],
   "language": {
     "sProcessing":     "Procesando...",
@@ -781,7 +781,7 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
   ]
 });
 
-  var tableFour = $('.dataTableFourNoOrderPortrait').DataTable({
+  var tableFourNoOrderPortrait = $('.dataTableFourNoOrderPortrait').DataTable({
     "ordering": false,
     "language": {
       "sProcessing":     "Procesando...",
@@ -821,7 +821,7 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
     ]
   });
 
-  var tableFour = $('.dataTablestandard').DataTable({
+  var dataTablestandard = $('.dataTablestandard').DataTable({
     "ordering": false,
     "language": {
       "sProcessing":     "Procesando...",
@@ -861,7 +861,7 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
     ]
   });
 
-  var tableFour = $('.balanceSUmmary').DataTable({
+  var balanceSUmmary = $('.balanceSUmmary').DataTable({
     "ordering": false,
     "language": {
       "sProcessing":     "Procesando...",
@@ -922,7 +922,7 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
     ]
   });
 
-  var tableFour = $('.movementSummary').DataTable({
+  var movementSummary = $('.movementSummary').DataTable({
     "ordering": false,
     "language": {
       "sProcessing":     "Procesando...",
@@ -1024,9 +1024,10 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
   });
 
   $('.form-data-tables').on('submit', function(e){
+
     var $form = $(this);
 
-    table.$('input[type="checkbox"]').each(function(){
+    tableFourNoOrder.$('input[type="checkbox"]').each(function(){
       if(!$.contains(document, this)){
         if(this.checked){
           $form.append(
@@ -1039,7 +1040,7 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
       }
     });
 
-    tableFour.$('input[type="checkbox"]').each(function(){
+    tableFourNoOrderPortrait.$('input[type="checkbox"]').each(function(){
       if(!$.contains(document, this)){
         if(this.checked){
           $form.append(
@@ -1051,6 +1052,85 @@ var tableFour = $('.dataTableFourNoOrderPortraitBillsReceivedtwo').DataTable({
         }
       }
     });
+
+    tableFourNoOrderPortraitBillsReceived.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
+
+    tableFourNoOrderPortraitBillsReceivedtwo.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
+
+    dataTablestandard.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
+
+    balanceSUmmary.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
+
+    movementSummary.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
+
+    dataTableFour.$('input[type="checkbox"]').each(function(){
+      if(!$.contains(document, this)){
+        if(this.checked){
+          $form.append(
+            $('<input>')
+              .attr('type', 'hidden')
+              .attr('name', this.name)
+              .val(this.value)
+            );
+        }
+      }
+    });
+
   });
 
   $('.special-form-datatables').on('submit', function(e){

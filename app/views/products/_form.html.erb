@@ -44,6 +44,7 @@
         <%= f.select :product_type, options_for_select(product_type_options, selected: (@product.product_type || 'seleccione')) %>
       </div>
 
+    <% unless params[:action] == 'edit' %>
       <div class="form-inside-style">
         <%= f.label :línea_de_producto %>
         <% if current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff' %>
@@ -52,7 +53,10 @@
           <%= f.select :line, options_for_select(["productos de tienda #{current_user.store.store_name}"], selected: (@product.line || 'seleccione')) %>
         <% end %>
       </div>
+    <% end %>
 
+
+    <% unless params[:action] == 'edit' %>
       <div class="form-inside-style">
         <%= f.label :clasificación %>
         <% if current_user.role.name == 'product-staff' || current_user.role.name == 'product-admin' %>
@@ -61,6 +65,7 @@
           <%= f.select :classification, options_for_select(['de tienda'], selected: (@product.classification || 'de tienda')) %>
         <% end %>
       </div>
+    <% end %>
 
       <div class="form-inside-style">
         <%= f.label :color_exterior_del_cartón %>
