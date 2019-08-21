@@ -108,7 +108,7 @@ class PosController < ApplicationController
           object = reg.class.where(id: reg.web_id).first if object == nil && reg.web_id.present?
         end
       end
-      return reg if object.nil? unless reg.web_id.present?
+      return reg if object.nil? unless (reg.web_id.present? && reg.class != StoresInventory)
       updated_reg_for(object, reg)
       return object
     end
