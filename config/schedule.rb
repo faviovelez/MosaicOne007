@@ -12,4 +12,8 @@ end
 every :day, at: '11:00pm' do
  rake 'delete_bills_folders'
 end
+
+every :day, at: '11:30pm' do
+ rake 'fix_inventories'
+end
 # Learn more: http://github.com/javan/whenever
