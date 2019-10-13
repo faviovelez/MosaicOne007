@@ -15,7 +15,7 @@
     <% elsif current_user.role.name == 'warehouse-admin' || current_user.role.name == 'warehouse-admin' %>
       <%= select_tag :report_type, options_for_select([['Movimientos de inventario agrupados']]) %>
     <% else %>
-      <%= select_tag :report_type, options_for_select([['Facturación por empresa'], ['Pagos por empresa'], ['Saldo por clientes'], ['Ventas por tienda'], ['Compras por tienda por mes'], ['Comparativo compras por mes'], ['Facturas recibidas'], ['Estado de cuenta']]) %>
+      <%= select_tag :report_type, options_for_select([['Facturación por empresa'], ['Pagos por empresa'], ['Saldo por clientes'], ['Ventas por tienda'], ['Compras por tienda por mes'], ['Comparativo compras por mes'], ['Facturas recibidas'], ['Estado de cuenta'], ['Movimientos de inventario agrupados']]) %>
     <% end %>
   </div>
 

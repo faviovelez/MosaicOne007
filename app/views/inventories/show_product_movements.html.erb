@@ -11,7 +11,7 @@
       <th> Movimiento </th>
       <th> Cantidad </th>
       <th> Motivo / Folio </th>
-      <% if !(current_user.store.store_type.store_type == 'tienda propia') %>
+      <% unless ((current_user.store.store_type.store_type == 'tienda propia') || (['warehouse-admin', 'warehouse-admin'].include?(current_user.role.name))) %>
         <th> Costo </th>
       <% end %>
       <th> Usuario </th>
@@ -39,7 +39,7 @@
               <td> <%= movement.ticket.ticket_number %> </td>
             <% end %>
           <% end %>
-          <% if !(current_user.store.store_type.store_type == 'tienda propia') %>
+          <% unless ((current_user.store.store_type.store_type == 'tienda propia') || (['warehouse-admin', 'warehouse-admin'].include?(current_user.role.name))) %>
             <td> <%= number_to_currency(movement.total_cost) %> </td>
           <% end %>
           <td> <%= movement_username(movement) %> </td>

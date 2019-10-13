@@ -120,7 +120,9 @@
                 <% end %>
               <% end %>
               <% if (!['store', 'store-admin'].include?(current_user.role.name)) %>
-                <i class="fa fa-truck link-to-confirm link-extra-space" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Preparó: <%= order_warehouse_user(order) %>, Entregó: <%= driver_name(order) %>"></i>
+                <i class="fa fa-truck link-to-confirm link-extra-space" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Solicitó <%= order_request_user(order) %>, Preparó: <%= order_warehouse_user(order) %>, Entregó: <%= driver_name(order) %>"></i>
+              <% else %>
+                <i class="fa fa-truck link-to-confirm link-extra-space" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Solicitó <%= order_request_user(order) %>"></i>
               <% end %>
             <% end %>
           </td>

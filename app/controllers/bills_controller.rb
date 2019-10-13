@@ -561,6 +561,15 @@ class BillsController < ApplicationController
       end
     elsif (@bills == nil  && @orders == nil)
       objects = @tickets
+      if objects.length > 1
+        @notes = "Tickets "
+        @tickets.each do |ticket|
+          @notes << "#{ticket.id}, "
+        end
+        @notes.chomp!(", ")
+      else
+        @notes = "Ticket #{@tickets.first.id}"
+      end
     end
     get_prospect_from_objects(objects)
     if objects.first.is_a?(Ticket)

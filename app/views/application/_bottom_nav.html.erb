@@ -89,12 +89,6 @@
 
     <% end %>
 
-    <% if params[:controller] == 'admin_users' && params[:action] == 'show' %>
-      <% if current_user.role.name == 'platform-admin' %>
-        <%= link_to 'Editar usuario', edit_user_path(@user)  %>
-      <% end %>
-    <% end %>
-
     <% if params[:controller] == 'business_groups' && params[:action] == 'show' %>
       <% if current_user.role.name == 'platform-admin' %>
         <%= link_to 'Editar datos del grupo', edit_business_group_path(@business_group)  %>
