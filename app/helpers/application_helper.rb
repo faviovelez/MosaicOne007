@@ -273,6 +273,14 @@ module ApplicationHelper
     @name
   end
 
+  def order_request_user(order)
+    user = order.request_user
+    @name = user.first_name + ' '
+    @name += user.middle_name + ' ' if !user.middle_name.blank?
+    @name += user.last_name
+    @name
+  end
+
   def movement_username(movement)
     movement.user == nil ? @user = "Sin información" : @user = movement.user.first_name + ' ' + movement.user.last_name
   end
