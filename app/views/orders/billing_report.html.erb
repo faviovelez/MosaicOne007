@@ -1,4 +1,4 @@
-<table class="dataTablestandard">
+<table class="dataTablestandardFact">
   <thead>
     <tr class="table-titles">
       <th> Empresa </th>
@@ -28,6 +28,11 @@
     <% end %>
   </tbody>
 </table><br /><br />
+
+<p class="hidden" id="initialDate"> <%= l @initial_date.to_date %> </p>
+<p class="hidden" id="finalDate"> <%= l @final_date.to_date %> </p>
+<p class="hidden" id="dateToday"> <%= l Date.today %> </p>
+<p class="hidden" id="storeName"> <%= @store_name %> </p>
 
 <%= link_to 'Reporte detallado', orders_process_report_path(extended_billing: true, initial_date: @initial_date, final_date: @final_date, store_id: @store_id, report_type: 'Facturación por empresa') %>
 <%= render 'dataTables' %>

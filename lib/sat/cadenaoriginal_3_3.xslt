@@ -6,13 +6,13 @@
   <!--
 		En esta sección se define la inclusión de las plantillas de utilerías para colapsar espacios
 	-->
-  <xsl:include href="utilerias.xslt"/>
+  <xsl:include href="/home/ubuntu/MosaicOne007/public/utilerias.xslt"/>
   <!--
 		En esta sección se define la inclusión de las demás plantillas de transformación para
 		la generación de las cadenas originales de los complementos fiscales
 	-->
 
-  <xsl:include href="Pagos10.xslt"/>
+  <xsl:include href="/home/ubuntu/MosaicOne007/public/Pagos10.xslt"/>
 
   <!-- Aquí iniciamos el procesamiento de la cadena original con su | inicial y el terminador || -->
   <xsl:template match="/">|<xsl:apply-templates select="/cfdi:Comprobante"/>||</xsl:template>
