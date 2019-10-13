@@ -319,7 +319,7 @@ class OrdersController < ApplicationController
           d << nil
         end
       end
-      @arranged_bills_and_payments[code].sort_by! { |a| [ a[7], a[4] ] }
+      @arranged_bills_and_payments[code].sort_by! { |a| [ a[9], a[7], a[4] ] }
     end
     render 'balance_summary'
   end

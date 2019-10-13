@@ -25,7 +25,7 @@
       <% @orders.each do |order| %>
         <tr>
           <td> <%= order.id %> </td>
-          <td> <%= l order.created_at.to_date, format: :short %> </td>
+          <td> <%= l order.created_at.to_date %> </td>
           <td>
             <% if order.category == 'de línea' %>
               <span class="label label-success">
@@ -119,11 +119,11 @@
                   <% end %>
                 <% end %>
               <% end %>
-              <% if (!['store', 'store-admin'].include?(current_user.role.name)) %>
-                <i class="fa fa-truck link-to-confirm link-extra-space" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Solicitó <%= order_request_user(order) %>, Preparó: <%= order_warehouse_user(order) %>, Entregó: <%= driver_name(order) %>"></i>
-              <% else %>
-                <i class="fa fa-truck link-to-confirm link-extra-space" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Solicitó <%= order_request_user(order) %>"></i>
-              <% end %>
+            <% end %>
+            <% if (!['store', 'store-admin'].include?(current_user.role.name)) %>
+              <i class="fa fa-truck link-to-confirm link-extra-space" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Solicitó <%= order_request_user(order) %>, Preparó: <%= order_warehouse_user(order) %>, Entregó: <%= driver_name(order) %>"></i>
+            <% else %>
+              <i class="fa fa-truck link-to-confirm link-extra-space" aria-hidden="true" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Solicitó <%= order_request_user(order) %>"></i>
             <% end %>
           </td>
         </tr>

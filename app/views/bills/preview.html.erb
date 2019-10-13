@@ -167,7 +167,7 @@
         </tr>
         <tr>
           <td colspan="10">
-            <%= submit_tag "Generar #{type}", class: 'main-button' %>
+            <%= submit_tag "Generar #{type}", class: 'main-button', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
           </td>
         </tr>
       <% end %>
@@ -275,7 +275,7 @@
       </tr>
       <tr>
         <td colspan="10">
-          <%= submit_tag "Generar #{type}", class: 'main-button' %>
+          <%= submit_tag "Generar #{type}", class: 'main-button', data: { disable_with: "Por favor espere mientras se procesa su solicitud..." } %>
         </td>
       </tr>
       <% end %>
