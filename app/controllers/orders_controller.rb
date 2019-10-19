@@ -145,6 +145,7 @@ class OrdersController < ApplicationController
   end
 
   def process_report
+    @store_name = current_user.store.business_unit.billing_address.business_name
     report_parameters
     select_dates
     if params[:report_type] == 'Facturación por empresa'
@@ -764,6 +765,7 @@ class OrdersController < ApplicationController
     current_user.role.name == 'director' ? prospects = Prospect.where(store_id: stores_id).pluck(:legal_or_business_name, :id) : prospects = Prospect.where(store_id: current_user.store.id).pluck(:legal_or_business_name, :id)
     @client_list = stores + prospects
     @client_list_balance = Bill.where(store_id: current_user.store.id).where.not(status: 'cancelada').joins(:receiving_company).order("billing_addresses.business_name").pluck("billing_addresses.business_name", "billing_addresses.id").uniq
+    @store_name = current_user.store.business_unit.billing_address.business_name
   end
 
   def show
