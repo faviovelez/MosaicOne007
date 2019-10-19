@@ -56,26 +56,19 @@ class Product < ActiveRecord::Base
   after_save :delete_stores_inventories
 
   def delete_stores_inventories
-    Store.where.not(store_type: 2).each do |store|
-      store_id = store.id
-      products = Product.where("(classification = 'de línea' OR classification = 'especial') AND child_id is NULL OR store_id = #{store_id}").order(:id).pluck(:id)
-      products.each do |product|
-        if StoresInventory.where(store: store, product_id: product).count < 1
-          StoresInventory.create(store: store, product_id: product)
+    if self.current_changed? || self.shared_changed?
+      Store.where.not(store_type: 2).each do |store|
+        store_id = store.id
+        products = Product.where("(classification = 'de línea' OR classification = 'especial') AND child_id is NULL OR store_id = #{store_id}").order(:id).pluck(:id)
+        inventories = StoresInventory.where(store: store).order(:id).pluck(:product_id)
+        products_without_inv = products - inventories
+        products_without_inv.each do |prod|
+          if StoresInventory.where(store: store, product_id: prod).count < 1
+            StoresInventory.create(store: store, product_id: prod)
+          end
         end
       end
-
-      inventories = StoresInventory.where(store: store).order(:id)
-      bad_inventories = []
-
-      inventories.each do |inv|
-        if !products.include?(inv.product_id)
-          bad_inventories << inv
-        end
-      end
-
     end
-
     StoresInventory.where(store_id: 1).find_each do |inv|
       inv.delete
     end

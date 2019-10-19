@@ -564,11 +564,11 @@ class BillsController < ApplicationController
       if objects.length > 1
         @notes = "Tickets "
         @tickets.each do |ticket|
-          @notes << "#{ticket.id}, "
+          @notes << "#{ticket.ticket_number}, "
         end
         @notes.chomp!(", ")
       else
-        @notes = "Ticket #{@tickets.first.id}"
+        @notes = "Ticket #{@tickets.first.ticket_number}"
       end
     end
     get_prospect_from_objects(objects)
