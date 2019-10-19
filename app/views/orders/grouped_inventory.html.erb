@@ -7,7 +7,9 @@
       <th> Entradas </th>
       <th> Salidas </th>
       <th> Saldo final </th>
-      <th> Valor de mercancía </th>
+      <% unless ['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) %>
+        <th> Valor de mercancía </th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -19,7 +21,9 @@
         <td> <%= number_with_delimiter(product[3].to_i) %> </td>
         <td> <%= number_with_delimiter(product[4].to_i) %> </td>
         <td> <%= number_with_delimiter(product[5].to_i) %> </td>
-        <td> <%= number_to_currency(product[6].to_f) %> </td>
+        <% unless  ['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) %>
+          <td> <%= number_to_currency(product[6].to_f) %> </td>
+        <% end %>
       </tr>
     <% end %>
     <tr>
@@ -29,7 +33,9 @@
       <td> <strong> <%= number_with_delimiter(@sum_entries) %> </strong> </td>
       <td> <strong> <%= number_with_delimiter(@sum_exits) %> </strong> </td>
       <td> <strong> <%= number_with_delimiter(@sum_balance) %> </strong> </td>
-      <td> <strong> <%= number_to_currency(@sum_price) %> </strong> </td>
+      <% unless  ['warehouse-admin', 'warehouse-staff'].include?(current_user.role.name) %>
+        <td> <strong> <%= number_to_currency(@sum_price) %> </strong> </td>
+      <% end %>
     </tr>
   </tbody>
 </table><br /><br />

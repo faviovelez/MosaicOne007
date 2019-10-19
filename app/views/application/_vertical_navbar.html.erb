@@ -489,13 +489,22 @@
           <%= link_to 'Pedidos listos para entrega', warehouse_ready_orders_path, class: 'text-link' %>
             </li>
 
-          <% if params[:controller] == 'inventories' %>
+          <% if params[:controller] == 'inventories' && params[:action] != 'index_with_data' %>
             <li class="vertical-link actual-vertical-link">
           <% else %>
             <li class="vertical-link">
           <% end %>
           <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
           <%= link_to 'Inventario', inventories_select_report_path, class: 'text-link' %>
+            </li>
+
+          <% if params[:controller] == 'inventories' && params[:action] == 'index_with_data' %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-sliders other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Control de Inventario', inventories_index_with_data_path, class: 'text-link' %>
             </li>
 
           <% if (params[:controller] == 'orders' && (params[:action] == 'select_report' || params[:action] == 'payment_report' || params[:action] == 'billing_report' || params[:action] == 'collection_report' || params[:action] == 'stores_by_month_and_year' || params[:action] == 'show_sales' || params[:action] == 'process_report' || params[:action] == 'grouped_inventory' || params[:action] == 'balance_summary')) %>
