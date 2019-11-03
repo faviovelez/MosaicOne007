@@ -233,6 +233,15 @@
           <%= link_to 'Recibo electrónico de pago', bills_partially_payed_bills_path, class: 'text-link' %>
             </li>
 
+          <% if params[:controller] == 'products' && (params[:action] == 'massive_price_change' || params[:action] == 'change_price_process') %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-money other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Ajuste masivo de inventarios', products_massive_price_change_path, class: 'text-link' %>
+            </li>
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para store o store-admin %>
 

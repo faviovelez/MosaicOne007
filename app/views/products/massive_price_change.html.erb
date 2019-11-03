@@ -4,6 +4,7 @@
 
   <h2> Elija un archivo de lista de precios en formato csv </h2>
 
+<% if current_user.role.name == 'store' || current_user.role.name == 'store-admin' %>
   <div class="form-inside-style">
     <%= label_tag :lista_de_productos %>
     <%= file_field_tag :product_list, accept: '.csv' %>
@@ -49,10 +50,17 @@
   </div>
 
   <div class="form-inside-style">
-    <%= label_tag :migración_de_inventario %>
+    <%= label_tag :ajuste_masivo_de_inventario %>
     <%= file_field_tag :migrate_inventory, accept: '.csv' %>
   </div>
 
+<% else %>
+  <div class="form-inside-style">
+    <%= label_tag :ajuste_masivo_de_inventario %>
+    <%= file_field_tag :migrate_inventory, accept: '.csv' %>
+  </div>
+
+<% end %>
 </div>
 
   <div class="actions">

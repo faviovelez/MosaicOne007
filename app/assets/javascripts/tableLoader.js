@@ -262,14 +262,14 @@ $(document).ready(function(){
         extend: 'print',
         title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + "Creado el " + $("#date").html() + " " + $("#hour").html() + 'hrs',
         exportOptions: {
-          columns: [0, 1, 2, 3, 4]
+          columns: [0, 1, 2, 3, 4, 5]
         }
       },
       {
         extend: 'pdf',
         title: 'Pedido ' + $("#orderNumber").html() + ' Cliente ' + $("#prospect").html() + " " + 'asignado a ' + $("#user").html() + " " + "Creado el " + $("#date").html() + " " + $("#hour").html() + 'hrs',
         exportOptions: {
-          columns: [0, 1, 2, 3, 4]
+          columns: [0, 1, 2, 3, 4, 5]
         }
       }
     ]
