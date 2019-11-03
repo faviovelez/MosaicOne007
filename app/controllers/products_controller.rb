@@ -94,32 +94,48 @@ class ProductsController < ApplicationController
           if row['store'].to_i == 1
             if product.group
               inventory = Inventory.where(product_id: product.id).first
-              Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: 1, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019', kg: row['kg'].to_f, identifier: Movement.where(product: product, store: row['store'].to_i).last.identifier.to_i.next.to_s)
+              Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: 1, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}", kg: row['kg'].to_f, identifier: Movement.where(product: product, store: row['store'].to_i).last.identifier.to_i.next.to_s)
               inventory.update(quantity: inventory.quantity + 1)
             else
               inventory = Inventory.where(product_id: product.id).first
               if row['cant'].to_i < inventory.quantity
                 result = inventory.quantity - row['cant'].to_i
-                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019')
+                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}")
               elsif row['cant'].to_i > inventory.quantity
                 result = row['cant'].to_i - inventory.quantity
-                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019')
+                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}")
               end
               inventory.update(quantity: row['cant'].to_i)
             end
           elsif row['store'].to_i == 2
-              if product.group
+            if product.group
               inventory = StoresInventory.where(store_id: row['store'].to_i, product_id: product.id).first
-              Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: 1, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019', kg: row['kg'].to_f, identifier: Movement.where(product: product, store: row['store'].to_i).last.identifier.to_i.next.to_s)
+              Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: 1, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}", kg: row['kg'].to_f, identifier: Movement.where(product: product, store: row['store'].to_i).last.identifier.to_i.next.to_s)
               inventory.update(quantity: inventory.quantity + 1)
             else
               inventory = StoresInventory.where(store_id: row['store'].to_i, product_id: product.id).first
               if row['cant'].to_i < inventory.quantity
                 result = inventory.quantity - row['cant'].to_i
-                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019')
+                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'baja', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}")
               elsif row['cant'].to_i > inventory.quantity
                 result = row['cant'].to_i - inventory.quantity
-                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: 'Corrección inventario 16 abr 2019')
+                Movement.create(product_id: product.id, store_id: row['store'].to_i, user_id: current_user.id, quantity: result, movement_type: 'alta', unique_code: product.unique_code, cost: product.cost.to_f, total_cost: product.cost.to_f * result, business_unit_id: Store.find(row['store'].to_i).business_unit_id, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}")
+              end
+              inventory.update(quantity: row['cant'].to_i)
+            end
+          else
+            if product.group
+              inventory = StoresInventory.where(store_id: current_user.store.id, product_id: product.id).first
+              StoreMovement.create(product_id: product.id, current_user.store.id, user_id: current_user.id, quantity: 1, movement_type: 'alta', cost: product.cost.to_f, total_cost: product.cost.to_f, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}")
+              inventory.update(quantity: inventory.quantity + 1)
+            else
+              inventory = StoresInventory.where(current_user.store.id, product_id: product.id).first
+              if row['cant'].to_i < inventory.quantity
+                result = inventory.quantity - row['cant'].to_i
+                StoreMovement.create(product_id: product.id, store_id: current_user.store.id, user_id: current_user.id, quantity: result, movement_type: 'baja', cost: product.cost.to_f, total_cost: product.cost.to_f * result, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}")
+              elsif row['cant'].to_i > inventory.quantity
+                result = row['cant'].to_i - inventory.quantity
+                StoreMovement.create(product_id: product.id, store_id: current_user.store.id, user_id: current_user.id, quantity: result, movement_type: 'alta', cost: product.cost.to_f, total_cost: product.cost.to_f * result, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}")
               end
               inventory.update(quantity: row['cant'].to_i)
             end
