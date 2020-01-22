@@ -593,6 +593,28 @@ class BillsController < ApplicationController
   def global_preview
   end
 
+  def get_date_from_pac
+    #Savon crea un nuevo cliente SOAP
+    client_date = Savon.client(wsdl: ENV['utilities_dir'])
+
+    #Correo y contraseña de acceso al panel de FINKOK
+    username = ENV['username_pac']
+    password = ENV['password_pac']
+    #Codigo postal a utilizar en el atributo LugarExpedicion
+    zipcode = @zipcode
+
+    #Consume el webservice y se cargan los parametros de envío
+    response_date = client.call(:datetime, message: { username: username, password: password, zipcode: zipcode })
+
+    #Obtiene el SOAP Request y lo guarda en un archivo
+    ops_date = client.operation(:datetime)
+    request_date = ops.build(message: { username: username, password: password, zipcode: zipcode })
+
+    response_hash = response_date.hash
+
+    @date_pac = response_hash[:envelope][:body][:datetime_response][:datetime_result][:datetime]
+  end
+
   def preview
     select_payment_forms
     select_payment_methods
@@ -1290,6 +1312,7 @@ class BillsController < ApplicationController
   end
 
   def cfdi_process
+    get_date_from_pac
     @foreign = true if params[:foreign].present?
     @notes = params[:notes]
     if (params['form'].present? || params['global_form'].present?)
@@ -1330,7 +1353,7 @@ class BillsController < ApplicationController
       p_billing = prospect.billing_address
       @prospect_rfc = p_billing.rfc.upcase
       @p_billing = p_billing
-      @date = Time.now.strftime('%FT%T')
+      @date = @date_pac || Time.now.strftime('%FT%T')
       @zipcode = store.zip_code
       cfdi_use = CfdiUse.find(params['cfdi_use'])
       @use = cfdi_use
@@ -1423,7 +1446,7 @@ class BillsController < ApplicationController
         @prospect = prospect
         p_billing = prospect.billing_address
         @p_billing = p_billing
-        @date = Time.now.strftime('%FT%T')
+        @date = @date_pac || Time.now.strftime('%FT%T')
         @zipcode = store.zip_code
         if params[:type_of_bill].present?
           type_of_bill = TypeOfBill.find(params[:type_of_bill])
@@ -1564,7 +1587,7 @@ class BillsController < ApplicationController
         @prospect = prospect
         p_billing = prospect.billing_address
         @p_billing = p_billing
-        @date = Time.now.strftime('%FT%T')
+        @date = @date_pac || Time.now.strftime('%FT%T')
         @zipcode = store.zip_code
         if params[:type_of_bill].present?
           type_of_bill = TypeOfBill.find(params[:type_of_bill])
@@ -2314,13 +2337,23 @@ XML
     response = client.call(:stamp, message: { xml: xml_file, username: username , password: password })
     response_hash = response.hash
 
+    #Obtiene el SOAP Request y guarda la respuesta en un archivo
+    soap_request = File.open(File.join(@working_dir, 'SOAP_Reques_STATUS.xml'), 'w') do |file|
+      file.write(request)
+    end
+
+    #Obtiene el SOAP Response y guarda la respuesta en un archivo
+    soap_response = File.open(File.join(@working_dir, 'SOAP_Response_STATUS'), 'w') do |file|
+      file.write(response_hash)
+    end
+
     # Resume el método para llamar las distintas partes del hash del webservice
     hash = response_hash[:envelope][:body][:stamp_response][:stamp_result]
 
     #Separa los métodos según las partes que se necesitan
     xml_response = hash[:xml]
     @uuid = hash[:uuid]
-    @date = hash[:fecha]
+    @date_response = hash[:fecha]
     @cod_status = hash[:cod_estatus]
     @sat_seal = hash[:sat_seal]
     @sat_certificate = hash[:no_certificado_sat]
@@ -2793,7 +2826,7 @@ XML
             end
             new_hash["product_id"] = mov.product.id
             new_hash["ticket"] = mov.order.id
-            mov.product.group ? new_hash["quantity"] = mov.kg : new_hash["quantity"] = mov.quantity.to_i
+            mov.product.group ? new_hash["quantity"] = mov.kg * mov.quantity.to_i : new_hash["quantity"] = mov.quantity.to_i
             new_hash["unit_value"] = mov.initial_price.round(2)
             new_hash["sat_key"] = mov.product.sat_key.sat_key
             new_hash["sat_unit_key"] = mov.product.sat_unit_key.unit

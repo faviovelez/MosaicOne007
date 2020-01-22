@@ -472,9 +472,6 @@ module BillsHelper
   end
 
   def total
-    subtotal
-    total_taxes
-    total_discount
     @total = @subtotal - @total_discount + @total_taxes
   end
 
