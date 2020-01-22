@@ -601,7 +601,7 @@ class BillsController < ApplicationController
     username = ENV['username_pac']
     password = ENV['password_pac']
     #Codigo postal a utilizar en el atributo LugarExpedicion
-    zipcode = @store.zip_code
+    zipcode = @zipcode
 
     #Consume el webservice y se cargan los parametros de envío
     response_date = client.call(:datetime, message: { username: username, password: password, zipcode: zipcode })
@@ -684,7 +684,7 @@ class BillsController < ApplicationController
           p_billing = prospect.billing_address
           s_billing = store.business_unit.billing_address
           @date = Time.now.strftime('%FT%T')
-          @zipcode = store.zip_code0
+          @zipcode = store.zip_code
           if params[:type_of_bill].present?
             type_of_bill = TypeOfBill.find(params[:type_of_bill])
           else
