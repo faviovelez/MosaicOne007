@@ -4,7 +4,7 @@
 
   <h2> Elija un archivo de lista de precios en formato csv </h2>
 
-<% if current_user.role.name == 'store' || current_user.role.name == 'store-admin' %>
+<% unless current_user.role.name == 'store' || current_user.role.name == 'store-admin' %>
   <div class="form-inside-style">
     <%= label_tag :lista_de_productos %>
     <%= file_field_tag :product_list, accept: '.csv' %>
