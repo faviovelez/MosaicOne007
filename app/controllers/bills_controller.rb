@@ -601,18 +601,32 @@ class BillsController < ApplicationController
     username = ENV['username_pac']
     password = ENV['password_pac']
     #Codigo postal a utilizar en el atributo LugarExpedicion
-    zipcode = @zipcode
+    zipcode = @store.zip_code
 
     #Consume el webservice y se cargan los parametros de envío
-    response_date = client.call(:datetime, message: { username: username, password: password, zipcode: zipcode })
+    response_date = client_date.call(:datetime, message: { username: username, password: password, zipcode: zipcode })
 
     #Obtiene el SOAP Request y lo guarda en un archivo
-    ops_date = client.operation(:datetime)
-    request_date = ops.build(message: { username: username, password: password, zipcode: zipcode })
+    ops_date = client_date.operation(:datetime)
+    request_date = ops_date.build(message: { username: username, password: password, zipcode: zipcode })
 
     response_hash = response_date.hash
 
-    @date_pac = response_hash[:envelope][:body][:datetime_response][:datetime_result][:datetime]
+    date_pac = response_hash[:envelope][:body][:datetime_response][:datetime_result][:datetime]
+    @date_pac = date_pac.strftime('%FT%T')
+
+    response_hash = response.hash
+
+    #Obtiene el SOAP Request y guarda la respuesta en un archivo
+    soap_request = File.open(File.join(@working_dir, 'SOAP_Request_datetime.xml'), 'w') do |file|
+      file.write(request_date)
+    end
+
+    #Obtiene el SOAP Response y guarda la respuesta en un archivo
+    soap_response = File.open(File.join(@working_dir, 'SOAP_Response_datetime'), 'w') do |file|
+      file.write(response_hash)
+    end
+
   end
 
   def preview
@@ -650,6 +664,8 @@ class BillsController < ApplicationController
     if @relation_type == '00' # Cancelación
       @time = Time.now.strftime('%FT%T')
       create_directories
+      get_date_from_pac
+      @time = @date_pac
       cancel_uuid
     else
       select_store if @bill == nil
@@ -1312,7 +1328,6 @@ class BillsController < ApplicationController
   end
 
   def cfdi_process
-    get_date_from_pac
     @foreign = true if params[:foreign].present?
     @notes = params[:notes]
     if (params['form'].present? || params['global_form'].present?)
@@ -1391,6 +1406,8 @@ class BillsController < ApplicationController
         @general_bill = true
       end
       create_directories
+      get_date_from_pac
+      @time = @date_pac
       create_unsigned_xml_file
       generate_digital_stamp
       get_stamp_from_pac
@@ -1760,6 +1777,8 @@ class BillsController < ApplicationController
       end
 
       create_directories
+      get_date_from_pac
+      @time = @date_pac
       create_unsigned_xml_file
       generate_digital_stamp
       get_stamp_from_pac
@@ -1833,6 +1852,8 @@ class BillsController < ApplicationController
     generate_aditional_info_for_rows
     @time = params[:time]
     create_directories
+    get_date_from_pac
+    @time = @date_pac
     @pay_bill = true
     create_additional_variables
     created_payment_cfdi
@@ -1857,6 +1878,8 @@ class BillsController < ApplicationController
     @bill = Bill.find(params[:payment])
     @store = @bill.store
     create_directories
+    get_date_from_pac
+    @time = @date_pac
     cancel_uuid
   end
 
