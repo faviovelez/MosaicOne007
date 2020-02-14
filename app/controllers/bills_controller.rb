@@ -1802,7 +1802,7 @@ class BillsController < ApplicationController
     @store
     @p_rfc = @prospect_rfc
     @base = Rails.root.join('public', 'uploads')
-
+    @unchanged_time = @time
     # Crea los directorios
     `mkdir -p -m 777 #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"`
     `sudo chown -R ubuntu:ubuntu #{@base}/bill_files/#{@store.id}/"#{@time}"-"#{@p_rfc}"/`
@@ -2975,7 +2975,7 @@ XML
         pdf = render_to_string pdf: "factura", template: 'bills/doc', page_size: 'Letter', layout: 'bill.html', encoding: "UTF-8"
       end
     end
-    save_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@time}-#{@p_rfc}_final", 'factura.pdf')
+    save_path = Rails.root.join('public', 'uploads', 'bill_files', "#{@store.id}", "#{@unchanged_time}-#{@p_rfc}_final", 'factura.pdf')
     pdf_bill = File.open(save_path, 'wb'){ |file| file << pdf }
     @pdf = pdf_bill
   end
