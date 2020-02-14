@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <tbody>
-      <% @prospects.each do |prospect| %>
+      <% @prospects.where(store_prospect_id: nil).each do |prospect| %>
       <tr>
         <td> <%= prospect.legal_or_business_name %> </td>
         <td> <%= prospect.prospect_type %> </td>
@@ -44,9 +44,11 @@
               <i class="fa fa-send-o link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Pedidos"></i>
             <% end %>
           <% end %>
-          <% if (prospect.tickets == [] && prospect.orders == [] && prospect.bills == [] && prospect.requests == []) %>
-            <%= link_to prospects_delete_prospect_path(prospect), {data: {confirm:'¿Está seguro que desea borrar este prospecto?'}} do %>
-              <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Borrar prospecto"></i>
+          <% if prospect.store_prospect_id == nil %>
+            <% if (prospect.tickets == [] && prospect.orders == [] && prospect.bills == [] && prospect.requests == []) %>
+              <%= link_to prospects_delete_prospect_path(prospect), {data: {confirm:'¿Está seguro que desea borrar este prospecto?'}} do %>
+                <i class="fa fa-minus-square link-to-price" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Borrar prospecto"></i>
+              <% end %>
             <% end %>
           <% end %>
         </td>
