@@ -301,7 +301,7 @@
   <table class="hidden">
     <tbody>
       <tr>
-        <td id="date"> <%= l @order.created_at, format: :short %> </td>
+        <td id="date"> <%= l @order.created_at %> </td>
         <td id="prospect"> <%= @order.prospect.legal_or_business_name %> </td>
         <td id="hour"> <%= @order.created_at.strftime("%H:%M") %> </td>
         <td id="user"> <%= warehouse_name(@order) %> </td>

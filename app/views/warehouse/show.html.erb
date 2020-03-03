@@ -3,15 +3,15 @@
     <tr>
       <% if @movements.first.movement_type == 'alta' %>
         <% if @movements.where.not(kg: nil).count > 0 %>
-          <th colspan="7" class="table-titles" id="warehouseTitle"> Entradas de Mercancía del <%= l @movements.first.created_at.to_date, format: :short %> a las <%= @movements.first.created_at.strftime("%H:%M") %> HRS </td>
+          <th colspan="7" class="table-titles" id="warehouseTitle"> Entradas de Mercancía del <%= l @movements.first.created_at.to_date %> a las <%= @movements.first.created_at.strftime("%H:%M") %> HRS </td>
         <% else %>
-          <th colspan="6" class="table-titles" id="warehouseTitle"> Entradas de Mercancía del <%= l @movements.first.created_at.to_date, format: :short %> a las <%= @movements.first.created_at.strftime("%H:%M") %> HRS </td>
+          <th colspan="6" class="table-titles" id="warehouseTitle"> Entradas de Mercancía del <%= l @movements.first.created_at.to_date %> a las <%= @movements.first.created_at.strftime("%H:%M") %> HRS </td>
         <% end %>
       <% else %>
         <% if @movements.where.not(kg: nil).count > 0 %>
-          <th colspan="7" class="table-titles" id="warehouseTitle"> Salidas de Mercancía <%= l @movements.first.created_at.to_date, format: :short %> a las <%= @movements.first.created_at.strftime("%H:%M") %> HRS</td>
+          <th colspan="7" class="table-titles" id="warehouseTitle"> Salidas de Mercancía <%= l @movements.first.created_at.to_date %> a las <%= @movements.first.created_at.strftime("%H:%M") %> HRS</td>
         <% else %>
-          <th colspan="6" class="table-titles" id="warehouseTitle"> Salidas de Mercancía <%= l @movements.first.created_at.to_date, format: :short %> a las <%= @movements.first.created_at.strftime("%H:%M") %> HRS</td>
+          <th colspan="6" class="table-titles" id="warehouseTitle"> Salidas de Mercancía <%= l @movements.first.created_at.to_date %> a las <%= @movements.first.created_at.strftime("%H:%M") %> HRS</td>
         <% end %>
       <% end %>
     </tr>
@@ -42,7 +42,7 @@
         <% end %>
         <td> <%= movement.user.first_name.capitalize %> <%= movement.user.middle_name.capitalize %> <%= movement.user.last_name.capitalize %> </td>
         <td> <%= movement.reason %> </td>
-        <td> <%= l @movements.first.created_at.to_date, format: :short %> <%= @movements.first.created_at.strftime("%H:%M") %> </td>
+        <td> <%= l @movements.first.created_at.to_date %> <%= @movements.first.created_at.strftime("%H:%M") %> </td>
       </tr>
     <% end %>
   </tbody>

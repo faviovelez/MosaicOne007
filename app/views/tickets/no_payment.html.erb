@@ -22,7 +22,7 @@
           <% else %>
             <td> <%= ticket.ticket_number %> </td>
           <% end %>
-          <td> <%= l ticket.created_at.to_date, format: :short %> </td>
+          <td> <%= l ticket.created_at.to_date %> </td>
           <td> <%= show_non_blank_field(ticket.prospect&.legal_or_business_name) %> </td>
           <td> <%= number_to_currency(ticket.total) %> </td>
           <td> <%= number_to_currency(get_returns_or_changes(ticket)) %> </td>

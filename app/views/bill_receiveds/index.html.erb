@@ -21,13 +21,13 @@
         <% @bills.each do |bill| %>
           <tr>
             <td> <%= number_with_delimiter(bill[0]) %> </td>
-            <td> <%= l bill[1].to_date, format: :short %> </td>
+            <td> <%= l bill[1].to_date %> </td>
             <td> <%= bill[2].to_s %> </td>
             <td> <%= number_to_currency(bill[3]) %> </td>
             <td> <%= number_to_currency(bill[4]) %> </td>
             <td> <%= number_to_currency(bill[5]) %> </td>
             <td id="balance_<%= bill[10] %>"> <%= number_to_currency(bill[6]) %> </td>
-            <td> <%= l (bill[1].to_date + bill[8].days), format: :short %> </td>
+            <td> <%= l (bill[1].to_date + bill[8].days) %> </td>
             <td> <%= number_to_currency(bill[7]) %> </td>
             <% if Date.today > bill[1].to_date %>
               <td>

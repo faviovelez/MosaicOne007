@@ -2,7 +2,7 @@
   <table id="sales-summary">
     <thead>
       <tr>
-        <th colspan="10"> Saldo de caja <%= @cash_register_name %>: <%= number_to_currency(@cash_register_balance) %>. Último ticket No. <%= @last_ticket_number %>, el <%= l @last_ticket_date, format: :short %> a las <%= @last_ticket_hour %> </th>
+        <th colspan="10"> Saldo de caja <%= @cash_register_name %>: <%= number_to_currency(@cash_register_balance) %>. Último ticket No. <%= @last_ticket_number %>, el <%= l @last_ticket_date %> a las <%= @last_ticket_hour %> </th>
       </tr>
       <tr class="table-titles">
         <th class="col-md-1"> Mes / Año </th>

@@ -49,7 +49,7 @@
             </td>
           <% end %>
           <% if request.delivery_date.present? %>
-            <td> <%= I18n.l request.delivery_date, format: :short %></td>
+            <td> <%= I18n.l request.delivery_date %></td>
           <% else %>
             <td> - </td>
           <% end %>
@@ -88,7 +88,7 @@
           <td>
             <%= link_to request do %>
               <i class="fa fa-plus-square link-to-details extra-padding" aria-hidden="true" data-toggle="tooltip" data-placement="left" title="Ver detalles"></i>
-            <% end %>  
+            <% end %>
           </td>
         </tr>
       <% end %>

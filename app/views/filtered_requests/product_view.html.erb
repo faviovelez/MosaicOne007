@@ -48,7 +48,7 @@
             </td>
           <% end %>
           <% if request.delivery_date.present? %>
-            <td> <%= I18n.l request.delivery_date, format: :short %></td>
+            <td> <%= I18n.l request.delivery_date %></td>
           <% else %>
             <td> - </td>
             <% end %>

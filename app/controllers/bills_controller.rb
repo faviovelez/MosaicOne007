@@ -2145,7 +2145,11 @@ class BillsController < ApplicationController
       hash["NoCertificado"] = s.certificate_number
       hash["Certificado"] = ''
       hash["CondicionesDePago"] = @payment_form unless (@general_bill || @payment_form == '' || @payment_form == nil)
-      hash["SubTotal"] = '%.2f' % @subtotal
+      if @foreign == true
+        hash["SubTotal"] = '%.2f' % (@subtotal * 1.16)
+      else
+        hash["SubTotal"] = '%.2f' % @subtotal
+      end
       hash["Descuento"] = '%.2f' % @total_discount if @discount_any
       hash["Moneda"] = 'MXN'
       hash["TipoCambio"] = '1'
@@ -2175,7 +2179,11 @@ class BillsController < ApplicationController
       else
         hash["TasaOCuota"] = "0.160000"
       end
-      hash["Importe"] = '%.2f' % @total_taxes
+      if @foreign == true
+        hash["Importe"] = '%.2f' % 0
+      else
+        hash["Importe"] = '%.2f' % @total_taxes
+      end
     end
     builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
       xml['cfdi'].Comprobante(document) do
@@ -2200,12 +2208,28 @@ class BillsController < ApplicationController
               @general_bill ? hash["ClaveUnidad"] = "ACT" : hash["ClaveUnidad"] = row["sat_unit_key"]
               hash["Unidad"] = row["sat_unit_description"] unless @general_bill
               @general_bill ? hash["Descripcion"] = "Venta" : hash["Descripcion"] = row["description"]
-              @general_bill ? hash["ValorUnitario"] = '%.2f' % row["subtotal"] : hash["ValorUnitario"] = '%.2f' % row["unit_value"]
-              hash["Importe"] = '%.2f' % row["subtotal"]
+              if @general_bill
+                if @foreign == true
+                  hash["ValorUnitario"] = '%.2f' % (row["subtotal"] * 1.16)
+                else
+                  hash["ValorUnitario"] = '%.2f' % row["subtotal"]
+                end
+              else
+                hash["ValorUnitario"] = '%.2f' % row["unit_value"]
+              end
+              if @foreign == true
+                hash["Importe"] = '%.2f' % (row["subtotal"] * 1.16)
+              else
+                hash["Importe"] = '%.2f' % row["subtotal"]
+              end
               hash["Descuento"] = '%.2f' % row["discount"] unless row["discount"] == 0
             end
             transfer = Hash.new.tap do |hash|
-              hash["Base"] = '%.2f' % (row["subtotal"] - row["discount"])
+              if @foreign == true
+                hash["Base"] = '%.2f' % ((row["subtotal"] - row["discount"]) * 1.16)
+              else
+                hash["Base"] = '%.2f' % (row["subtotal"] - row["discount"])
+              end
               hash["Impuesto"] = "002"
               hash["TipoFactor"] = "Tasa"
 
@@ -2214,8 +2238,11 @@ class BillsController < ApplicationController
               else
                 hash["TasaOCuota"] = "0.160000"
               end
-
-              hash["Importe"] = '%.2f' % row["taxes"]
+              if @foreign == true
+                hash["Importe"] = '%.2f' % (row["taxes"] * 0)
+              else
+                hash["Importe"] = '%.2f' % row["taxes"]
+              end
             end
             xml['cfdi'].Concepto(concept) do
               xml['cfdi'].Impuestos do
@@ -2226,9 +2253,17 @@ class BillsController < ApplicationController
             end
           end
         end
-        xml['cfdi'].Impuestos('TotalImpuestosTrasladados'=> @total_taxes) do
-          xml['cfdi'].Traslados do
-            xml['cfdi'].Traslado(total_transfer)
+        if @foreign == true
+          xml['cfdi'].Impuestos('TotalImpuestosTrasladados'=> 0.00) do
+            xml['cfdi'].Traslados do
+              xml['cfdi'].Traslado(total_transfer)
+            end
+          end
+        else
+          xml['cfdi'].Impuestos('TotalImpuestosTrasladados'=> @total_taxes) do
+            xml['cfdi'].Traslados do
+              xml['cfdi'].Traslado(total_transfer)
+            end
           end
         end
       end
