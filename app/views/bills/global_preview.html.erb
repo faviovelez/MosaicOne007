@@ -108,10 +108,22 @@
           <td class="space-preview"> 1 </td>
           <td class="space-preview"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
           <td class="space-preview"> Venta </td>
-          <td class="space-preview"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <% if @foreign == true %>
+            <td class="space-preview"> <%= number_to_currency(row["subtotal"] * 1.16) %> </td>
+          <% else %>
+            <td class="space-preview"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <% end %>
           <td class="space-preview"> <%= number_to_currency(row["discount"]) %> </td>
-          <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
-          <td class="space-preview"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <% if @foreign == true %>
+            <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(0) %> </span> </td>
+          <% else %>
+            <td class="space-preview"> <span> <strong> 002 </strong> - IVA <%= number_to_currency(row["taxes"]) %> </span> </td>
+          <% end %>
+          <% if @foreign == true %>
+            <td class="space-preview"> <%= number_to_currency(row["subtotal"] * 1.16) %> </td>
+          <% else %>
+            <td class="space-preview"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <% end %>
         </tr>
       <% end %>
     <% else %>
@@ -188,7 +200,11 @@
         <td></td>
         <td></td>
         <td colspan="3" class="final-total left"> SubTotal </td>
-        <td colspan="2" class="final-total right"> <%= number_to_currency(subtotal) %> </td>
+        <% if @foreign == true %>
+          <td colspan="2" class="final-total right"> <%= number_to_currency(subtotal * 1.16) %> </td>
+        <% else %>
+          <td colspan="2" class="final-total right"> <%= number_to_currency(subtotal) %> </td>
+        <% end %>
       </tr>
       <tr>
         <td colspan="5"></td>
@@ -198,7 +214,11 @@
       <tr>
         <td colspan="5" class="letter"> <strong> Importe con letra </strong> </td>
         <td colspan="3" class="final-total left"> Total Impuestos Trasladados </td>
-        <td colspan="2" class="final-total right"> <%= number_to_currency(total_taxes) %> </td>
+        <% if @foreign == true %>
+          <td colspan="2" class="final-total right"> <%= number_to_currency(0) %> </td>
+        <% else %>
+          <td colspan="2" class="final-total right"> <%= number_to_currency(total_taxes) %> </td>
+        <% end %>
       </tr>
       <tr>
         <% if @bill == nil || @relation_type == '04' %>

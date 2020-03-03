@@ -110,14 +110,22 @@
           <td class="grow space"> 1 </td>
           <td class="grow space"> <strong> <%= row["sat_unit_key"] %> </strong> </td>
           <td class="grow space"> Venta </td>
-          <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <% if @foreign == true %>
+            <td class="grow space"> <%= number_to_currency(row["subtotal"] * 1.16) %> </td>
+          <% else %>
+            <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <% end %>
           <td class="grow space"> <%= number_to_currency(row["discount"]) %> </td>
           <% if @foreign == true %>
-            <td class="grow space"> <span> <strong> 002 </strong> - IVA 0% <%= number_to_currency(row["taxes"]) %> </span> </td>
+            <td class="grow space"> <span> <strong> 002 </strong> - IVA 0% <%= number_to_currency(0) %> </span> </td>
           <% else %>
             <td class="grow space"> <span> <strong> 002 </strong> - IVA 16% <%= number_to_currency(row["taxes"]) %> </span> </td>
           <% end %>
-          <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <% if @foreign == true %>
+            <td class="grow space"> <%= number_to_currency(row["subtotal"] * 1.16) %> </td>
+          <% else %>
+            <td class="grow space"> <%= number_to_currency(row["subtotal"]) %> </td>
+          <% end %>
         </tr>
         <% end %>
       <% else %>
@@ -130,14 +138,22 @@
             <td class="grow space"> <%= row.quantity %> </td>
             <td class="grow space"> <%= row.sat_unit_key %> </strong> </td>
             <td class="grow space"> <%= row.description %> </td>
-            <td class="grow space"> <%= number_to_currency(row.unit_value) %> </td>
+            <% if @foreign == true %>
+              <td class="grow space"> <%= number_to_currency(row.unit_value * 1.16) %> </td>
+            <% else %>
+              <td class="grow space"> <%= number_to_currency(row.unit_value) %> </td>
+            <% end %>
             <td class="grow space"> <%= number_to_currency(row.discount) %> </td>
             <% if @foreign == true %>
-              <td class="grow space"> <span> <strong> 002 </strong> - IVA 0% <%= number_to_currency(row.taxes) %> </span> </td>
+              <td class="grow space"> <span> <strong> 002 </strong> - IVA 0% <%= number_to_currency(0) %> </span> </td>
             <% else %>
               <td class="grow space"> <span> <strong> 002 </strong> - IVA 16% <%= number_to_currency(row.taxes) %> </span> </td>
             <% end %>
-            <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
+            <% if @foreign == true %>
+              <td class="grow space"> <%= number_to_currency(row.subtotal * 1.16) %> </td>
+            <% else %>
+              <td class="grow space"> <%= number_to_currency(row.subtotal) %> </td>
+            <% end %>
           </tr>
         <% end %>
       <% end %>
@@ -178,7 +194,11 @@
         <td colspan="3" class="grow center"> </td>
         <td></td>
         <td colspan="3" class="final-total grow"> SubTotal </td>
-        <td colspan="2" class="final-total grow right"> <%= number_to_currency(subtotal) %> </td>
+        <% if @foreign == true %>
+          <td colspan="2" class="final-total grow right"> <%= number_to_currency(subtotal * 1.16) %> </td>
+        <% else %>
+          <td colspan="2" class="final-total grow right"> <%= number_to_currency(subtotal) %> </td>
+        <% end %>
       </tr>
       <tr>
         <td colspan="5"></td>
@@ -192,7 +212,11 @@
         <% else %>
           <td colspan="3" class="final-total grow"> Total Impuestos Trasladados IVA 16% </td>
         <% end %>
-        <td colspan="2" class="final-total grow right"> <%= number_to_currency(total_taxes) %> </td>
+        <% if @foreign == true %>
+          <td colspan="2" class="final-total grow right"> <%= number_to_currency(0) %> </td>
+        <% else %>
+          <td colspan="2" class="final-total grow right"> <%= number_to_currency(total_taxes) %> </td>
+        <% end %>
       </tr>
       <tr>
         <td colspan="5" class="grow letter"> <%= number_to_letters(total) %> <%= decimals(total) %> </td>

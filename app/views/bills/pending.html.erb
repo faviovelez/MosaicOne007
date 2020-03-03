@@ -24,7 +24,7 @@
         <% @bills.each do |bill| %>
           <tr>
             <td> <%= bill.folio %> </td>
-            <td> <%= l bill.created_at.to_date, format: :short %> </td>
+            <td> <%= l bill.created_at.to_date %> </td>
             <td class="col-md-2"> <%= bill.prospect.legal_or_business_name %> </td>
             <% if (current_user.role.name == 'store' || current_user.role.name == 'store-admin') %>
               <td> <%= show_non_blank_field(bill.issuing_company.business_name) %> </td>

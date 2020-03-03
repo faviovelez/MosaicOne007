@@ -15,7 +15,7 @@
       <td> <%=  @entry.product.unique_code %> </td>
       <td> <%=  @entry.product.exterior_color_or_design %> </td>
       <td> <%=  number_with_delimiter(@entry.movement.quantity) %> </td>
-      <td> <%= I18n.l @entry.created_at.to_date, format: :short %> </td>
+      <td> <%= I18n.l @entry.created_at.to_date %> </td>
 
       <%= form_for @movement, url: form_for_movement_path(@movement) do |f| %>
         <td class="col-md-2">

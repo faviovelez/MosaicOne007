@@ -32,7 +32,7 @@
             <td> <%= order.id %> </td>
             <td> <%= order.store.store_name %> </td>
             <td> <%= order.category.capitalize %> </td>
-            <td> <%= l order.created_at.to_date, format: :short %> </td>
+            <td> <%= l order.created_at.to_date %> </td>
             <td> <%= number_to_currency(order.total) %> </td>
             <td> <%= get_payments_from_individual_order(order) %> </td>
           </tr>

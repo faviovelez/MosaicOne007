@@ -6,7 +6,7 @@
     <tr>
       <td class="title-request-table col-md-2"> Tienda: <span class="color333"> <%= @request.store.store_name %> </span> </td>
       <td class="title-request-table col-md-2"> Solicita: <span class="color333"> <%= requests_store_user_name(@request) %> </span> </td>
-      <td class="title-request-table col-md-2"> Fecha: <span class="color333"> <%= l @request.created_at.to_date, format: :short %> </span> </td>
+      <td class="title-request-table col-md-2"> Fecha: <span class="color333"> <%= l @request.created_at.to_date %> </span> </td>
       <td class="title-request-table col-md-1"> Folio: <span class="color333"> <%= @request.id %> </span>  </td>
     </tr>
   </tbody>
