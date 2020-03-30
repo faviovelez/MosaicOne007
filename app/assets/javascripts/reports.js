@@ -1,7 +1,8 @@
 $(document).ready(function(){
 
   function validateDate(){
-    if ($("#what_final_date").val() == 'Al día de hoy') {
+    debugger
+    if ($("#what_final_date").val() == 'Al día de hoy' && $("#information").val() == 'Reporte de inventario')  {
       $("#date").addClass("hidden");
       $(".date-field-report").addClass("hidden");
     } else {
@@ -15,12 +16,15 @@ $(document).ready(function(){
     if (options == 'Seleccionar día') {
       $(".group_fields").addClass("hidden");
       $(".extra-margin-top").removeClass("hidden");
+      $(".date-field-report").removeClass("hidden");
     } else if (options == 'Mes actual') {
       $(".group_fields").addClass("hidden");
       $(".extra-margin-top").addClass("hidden");
+      $(".date-field-report").addClass("hidden");
     } else {
       $(".group_fields").removeClass("hidden");
       $(".extra-margin-top").addClass("hidden");
+      $(".date-field-report").addClass("hidden");
     }
   });
 
@@ -30,11 +34,13 @@ $(document).ready(function(){
       $('#products option:contains("Todos los productos")').prop('selected', true);
       $(".movements-report").addClass("hidden");
       $(".inventory-report").removeClass("hidden");
+      $(".date-field-report").addClass("hidden");
       validateDate();
     } else {
       $('#products option:contains("Elegir producto")').prop('selected', true);
       $(".movements-report").removeClass("hidden");
       $(".inventory-report").addClass("hidden");
+      $(".date-field-report").removeClass("hidden");
       validateDate();
     }
   });
