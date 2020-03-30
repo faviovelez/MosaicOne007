@@ -150,7 +150,7 @@ class ProductsController < ApplicationController
                   result = row['cant'].to_i - inventory.quantity
                   StoreMovement.create(product_id: product.id, store_id: current_user.store.id, user_id: current_user.id, quantity: result, movement_type: 'alta automática', cost: product.cost.to_f, total_cost: product.cost.to_f * result, reason: "Corrección inventario #{Date.today.strftime('%d %b %Y')}")
                 end
-                inventory.update(quantity: row['cant'].to_i)
+                inventory.update(quantity: row['cant'].to_i, rack: row['rack'].to_s, level: row['level'].to_s)
               end
             end
           end
