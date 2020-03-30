@@ -1,7 +1,6 @@
 $(document).ready(function(){
 
   function validateDate(){
-    debugger
     if ($("#what_final_date").val() == 'Al día de hoy' && $("#information").val() == 'Reporte de inventario')  {
       $("#date").addClass("hidden");
       $(".date-field-report").addClass("hidden");
