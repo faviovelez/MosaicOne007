@@ -66,32 +66,36 @@ class ApiController < ApplicationController
   def get_info_from_product_with_prospect
     product_info = []
     p = Product.find(params[:id])
+    wholesale_discount(p)
     if current_user.store.store_type.store_type == 'franquicia'
-      price_with_discount = (p.price * (1 - (p.discount_for_franchises / 100))).round(2)
-      discount = p.discount_for_franchises
+      price_with_discount = (p.price * (1 - (p.discount_for_franchises.to_f / 100))).round(2)
+      discount = p.discount_for_franchises.to_f
+      prospect_discount = current_user.store.store_prospect.discount.to_f
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
-        armed_discount = p.armed_discount
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
+        armed_discount = p.armed_discount.to_f
       else
         armed_price = price_with_discount
         armed_discount = discount
       end
     elsif current_user.store.store_type.store_type == 'tienda propia'
-      price_with_discount = (p.price * (1 - (p.discount_for_stores / 100))).round(2)
-      discount = p.discount_for_stores
+      price_with_discount = (p.price * (1 - (p.discount_for_stores.to_f / 100))).round(2)
+      discount = p.discount_for_stores.to_f
+      prospect_discount = current_user.store.store_prospect.discount.to_f
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
-        armed_discount = p.armed_discount
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
+        armed_discount = p.armed_discount.to_f
       else
         armed_price = price_with_discount
         armed_discount = discount
       end
     elsif current_user.store.store_type.store_type == 'corporativo'
       prospect = Prospect.find(params[:prospect_id])
+      prospect_discount = prospect.discount.to_f
       discount = 0
       price_with_discount = (p.price * (1 - (discount / 100))).round(2)
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
         armed_discount = p.armed_discount
       else
         armed_price = price_with_discount
@@ -101,8 +105,8 @@ class ApiController < ApplicationController
       discount = 0
       price_with_discount = p.price.round(2)
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
-        armed_discount = p.armed_discount
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
+        armed_discount = p.armed_discount.to_f
       else
         armed_price = price_with_discount
         armed_discount = discount
@@ -149,7 +153,11 @@ class ApiController < ApplicationController
       { pending: pending_orders},
       { armed: p.armed},
       { armed_price: armed_price},
-      { armed_discount: armed_discount}
+      { armed_discount: armed_discount},
+      { wholesale_discount: @wholesale_discount },
+      { wholesale_quantity: @wholesale_quantity },
+      { price_without_discount: p.price },
+      { prospect_discount: prospect_discount }
     ]
     render json: {response: product_info}
   end
@@ -157,22 +165,25 @@ class ApiController < ApplicationController
   def get_info_from_product_store
     product_info = []
     p = Product.find(params[:id])
+    wholesale_discount(p)
     if current_user.store.store_type.store_type == 'franquicia'
-      discount = Store.find(params[:this_store]).store_prospect.discount
+      discount = Store.find(params[:this_store]).store_prospect.discount.to_f
       price_with_discount = (p.price * (1 - (discount / 100))).round(2)
+      prospect_discount = current_user.store.store_prospect.discount.to_f
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
-        armed_discount = p.armed_discount
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
+        armed_discount = p.armed_discount.to_f
       else
         armed_price = price_with_discount
         armed_discount = discount
       end
     elsif current_user.store.store_type.store_type == 'tienda propia'
-      discount = Store.find(params[:this_store]).store_prospect.discount
+      discount = Store.find(params[:this_store]).store_prospect.discount.to_f
+      prospect_discount = Store.find(params[:this_store]).store_prospect.discount.to_f
       price_with_discount = (p.price * (1 - (discount / 100))).round(2)
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
-        armed_discount = p.armed_discount
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
+        armed_discount = p.armed_discount.to_f
       else
         armed_price = price_with_discount
         armed_discount = discount
@@ -182,9 +193,10 @@ class ApiController < ApplicationController
         prospect = Prospect.find(Store.find(1).store_prospect)
       end
       discount = prospect.discount.to_f
+      prospect_discount = discount
       price_with_discount = (p.price * (1 - (discount / 100))).round(2)
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
         armed_discount = p.armed_discount
       else
         armed_price = price_with_discount
@@ -194,8 +206,8 @@ class ApiController < ApplicationController
       discount = 0
       price_with_discount = p.price.round(2)
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
-        armed_discount = p.armed_discount
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
+        armed_discount = p.armed_discount.to_f
       else
         armed_price = price_with_discount
         armed_discount = discount
@@ -242,17 +254,34 @@ class ApiController < ApplicationController
       { pending: pending_orders},
       { armed: p.armed},
       { armed_price: armed_price},
-      { armed_discount: armed_discount}
-  ]
-  render json: {response: product_info}
+      { armed_discount: armed_discount},
+      { wholesale_discount: @wholesale_discount },
+      { wholesale_quantity: @wholesale_quantity },
+      { price_without_discount: p.price },
+      { prospect_discount: prospect_discount }
+    ]
+    render json: {response: product_info}
+  end
+
+  def wholesale_discount(product)
+    if current_user.store.store_type.store_type == 'franquicia'
+      @wholesale_discount = product.franchises_discount.to_f
+    elsif current_user.store.store_type.store_type == 'tienda propia' || current_user.store.store_type.store_type == 'corporativo'
+      @wholesale_discount = product.stores_discount.to_f
+    else
+      @wholesale_discount = 0
+    end
+    @wholesale_quantity = product.factor
   end
 
   def get_info_from_product
     product_info = []
     p = Product.find(params[:id])
+    wholesale_discount(p)
     if current_user.store.store_type.store_type == 'franquicia'
-      discount = Store.find(params[:this_store]).store_prospect.discount
+      discount = Store.find(params[:this_store]).store_prospect.discount.to_f
       price_with_discount = (p.price * (1 - (discount / 100))).round(2)
+      prospect_discount = discount
       if p.armed
         armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
         armed_discount = p.armed_discount
@@ -261,11 +290,12 @@ class ApiController < ApplicationController
         armed_discount = discount
       end
     elsif current_user.store.store_type.store_type == 'tienda propia'
-      discount = Store.find(params[:this_store]).store_prospect.discount
+      discount = Store.find(params[:this_store]).store_prospect.discount.to_f
+      prospect_discount = discount
       price_with_discount = (p.price * (1 - (discount / 100))).round(2)
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
-        armed_discount = p.armed_discount
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
+        armed_discount = p.armed_discount.to_f
       else
         armed_price = price_with_discount
         armed_discount = discount
@@ -277,8 +307,8 @@ class ApiController < ApplicationController
       discount = prospect.discount.to_f
       price_with_discount = (p.price * (1 - (discount / 100))).round(2)
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
-        armed_discount = p.armed_discount
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
+        armed_discount = p.armed_discount.to_f
       else
         armed_price = price_with_discount
         armed_discount = discount
@@ -287,8 +317,8 @@ class ApiController < ApplicationController
       discount = 0
       price_with_discount = p.price.round(2)
       if p.armed
-        armed_price = (p.price * (1 - (p.armed_discount / 100))).round(2)
-        armed_discount = p.armed_discount
+        armed_price = (p.price * (1 - (p.armed_discount.to_f / 100))).round(2)
+        armed_discount = p.armed_discount.to_f
       else
         armed_price = price_with_discount
         armed_discount = discount
@@ -335,7 +365,11 @@ class ApiController < ApplicationController
       { pending: pending_orders},
       { armed: p.armed},
       { armed_price: armed_price},
-      { armed_discount: armed_discount}
+      { armed_discount: armed_discount},
+      { wholesale_discount: @wholesale_discount },
+      { wholesale_quantity: @wholesale_quantity },
+      { price_without_discount: p.price },
+      { prospect_discount: prospect_discount }
     ]
     render json: {response: product_info}
   end

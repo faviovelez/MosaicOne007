@@ -1,0 +1,19 @@
+<%= form_tag({ controller: 'products', action: 'wholesale_process' }, method: 'post', class: 'form-data-tables', multipart: true) do %>
+
+<div class="form-container">
+<% if current_user.role.name == 'product-admin' || current_user.role.name == 'product-staff' %>
+  <div class="form-inside-style">
+    <br><br><br><br><br><br><br><br><br><br>
+    <%= label_tag :lista_de_productos %>
+    <%= file_field_tag :product_list, accept: '.csv' %>
+  </div>
+
+<% end %>
+</div>
+
+  <div class="actions">
+    <%= submit_tag 'Cambiar descuentos de mayoreo', {data: {confirm:'¿Está seguro que desea cambiar los descuentos de mayoreo?', disable_with: "Por favor espere mientras se procesa su solicitud..."}, class: 'main-button'} %>
+  </div>
+  <br /><br />
+
+<% end %>

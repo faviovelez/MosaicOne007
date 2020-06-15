@@ -425,6 +425,16 @@
           <%= link_to 'Reportes corporativo', orders_select_report_path, class: 'text-link' %>
             </li>
 
+          <% if (params[:controller] == 'products' && (params[:action] == 'wholesale_discount_change' || params[:action] == 'wholesale_process' )) %>
+            <li class="vertical-link actual-vertical-link">
+          <% else %>
+            <li class="vertical-link">
+          <% end %>
+          <i class="fa fa-calculator other-nav-icons" aria-hidden="true"></i>
+          <%= link_to 'Descuentos de mayoreo', products_wholesale_discount_change_path, class: 'text-link' %>
+            </li>
+
+
         <% end %>
         <%-# Aquí termina el área que muestra los links para product-staff o product-admin %>
 

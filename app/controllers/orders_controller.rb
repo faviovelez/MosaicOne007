@@ -81,6 +81,7 @@ class OrdersController < ApplicationController
       if (role == 'admin-desk')
         current_prospect_validation
         @due_debt = ActionController::Base.helpers.number_to_currency(@due_debt)
+        @is_store = @prospect.store_prospect.present?
         redirect_to root_path, alert: "El cliente #{@prospect.legal_or_business_name} presenta un saldo vencido de #{@due_debt} de #{@delay} días. Favor de registrar los pagos necesarios para reestablecer el servicio" if (@delay > 10 && @due_debt)
       else
         redirect_to root_path, alert: 'No cuenta con los permisos necesarios.'

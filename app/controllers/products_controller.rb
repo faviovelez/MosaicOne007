@@ -14,6 +14,38 @@ class ProductsController < ApplicationController
   def massive_price_change
   end
 
+  def wholesale_discount_change
+  end
+
+  def wholesale_process
+    ListPriceChange.create(user: current_user, document_list: params[:product_list], list_type: 'wholesale_change')
+    price_list = ListPriceChange.last
+    url = Dir.pwd + "/public/" + price_list.document_list_url
+    csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
+    unfinded = []
+    csv.each do |row|
+      product = Product.find_by_unique_code(row['cod'].to_s)
+      if product.nil? || (product.classification != 'de línea' && product.store_id != current_user.store.id)
+        unfinded << row['cod'].to_s
+      else
+        product.update(
+          franchises_discount: row['descto_franquicia_mayoreo'].to_f,
+          stores_discount: row['descto_tienda_mayoreo'].to_f,
+          factor: row['cant_desc_mayoreo'].to_i,
+          )
+      end
+    end
+    unfinded.join(", ")
+    @product_undefined = unfinded
+    if (@product_undefined == nil || @product_undefined == '' || @product_undefined == [] || @product_undefined == [''])
+      redirect_to root_path, notice: 'Se ha cambiado la lista de productos con descuento de mayoreo.'
+    else
+      redirect_to root_path, alert: "No se encontraron los siguientes códigos #{@product_undefined}"
+    end
+  end
+
+
+
   def change_price_process
     if params[:product_pieces] != nil
       change_product_pieces

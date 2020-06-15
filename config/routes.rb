@@ -100,6 +100,10 @@ Rails.application.routes.draw do
 
   get 'products/massive_price_change'
 
+  get 'products/wholesale_discount_change'
+
+  post 'products/wholesale_process'
+
   post 'products/change_billing_address'
 
   post 'products/change_price_process'
