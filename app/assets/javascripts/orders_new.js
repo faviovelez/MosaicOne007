@@ -8,6 +8,7 @@ $(document).ready(function() {
   action = $("#action").html();
   isStore = $("#is_store").html();
   wholesale_quantity = 999999999;
+  can_write = false;
 
   $.ajax({
     url: '/api/get_just_products',
@@ -146,6 +147,7 @@ $(document).ready(function() {
         }); // donde function(response) second ajax
       } // onSelect function(suggestion)
     }); // autocomplete
+    can_write = false;
   }); // done function (response) first ajax
 
 // AGREGAR QUE JALE AUTOMÁTICAMENTE EL PORCENTAJE DE DESCUENTO DEL CLIENTE
@@ -256,7 +258,11 @@ $(document).ready(function() {
     sum = 0;
     if (action == 'new_order_for_prospects') {
       if ($('#armed-group_' + idRow)[0].children[0].classList.contains("hidden")) {
-        discount = (parseFloat($('#discount_' + idRow).val()) / 100);
+        if (idRow in kgProducts) {
+          discount = (parseFloat($('#discount_' + idRow).val()));
+        } else {
+          discount = (parseFloat($('#discount_' + idRow).val() / 100));
+        }
       } else {
         discount = (parseFloat($('#prospect_discount_' + idRow).html()) / 100);
       }
@@ -305,13 +311,18 @@ $(document).ready(function() {
           price = parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100));
           price = parseFloat(price.toFixed(2));
         } else {
-          if (isStore) {
+          if (isStore == "true") {
             discount = parseFloat($('#prospect_discount_' + idRow).html());
             price = parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100));
             price = parseFloat(price.toFixed(2));
           } else {
-            discount = parseFloat($('#normal_discount_' + idRow).html());
-            price = $('#normal_price_' + idRow).html();
+            if (discount > parseFloat($('#prospect_discount_' + idRow).html())) {
+              discount = discount;
+              price = price;
+            } else {
+              discount = parseFloat($('#prospect_discount_' + idRow).html());
+              price = $('#normal_price_' + idRow).html();
+            }
           }
           $('#discount_' + idRow).val(discount);
           if (isNaN(parseFloat(price))) {
@@ -463,6 +474,7 @@ $(document).ready(function() {
 
       $("#strongTotal").html("$ " + converted_big_total);
 
+      can_write = true;
       return bigTotal;
     });
   }
