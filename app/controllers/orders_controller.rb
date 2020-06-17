@@ -1815,31 +1815,7 @@ class OrdersController < ApplicationController
       inventory = StoresInventory.where(product: product_request.product, store_id: 2).first
     end
     product = product_request.product
-    if params[:discount] != nil
-      discount = params[:discount][n].to_f / 100
-    else
-      if @prospect.store_prospect != nil && @prospect.store_prospect.id != 1
-        if (product.armed && params[:armed][n] == 'true')
-          discount = product.armed_discount / 100
-        else
-          if (@prospect.store_prospect.store_type.store_type == 'tienda propia')
-            discount = @prospect.discount / 100
-          elsif @prospect.store_prospect.store_type.store_type == 'franquicia'
-            discount = @prospect.discount / 100
-          elsif @prospect.store_prospect.store_type.store_type == 'corporativo'
-            discount = @prospect.discount / 100
-          end
-        end
-      else
-        if params[:discount] != nil
-          discount = params[:discount][n].to_f / 100
-        else
-          if @prospect.store_prospect.store_type.store_type == 'corporativo'
-            discount = @prospect.discount.to_f / 100
-          end
-        end
-      end
-    end
+    new_discount_logic(product_request, n)
     if order_quantity > inventory.quantity
       product_request.update(status: 'sin asignar')
       q = product_request.quantity
@@ -1853,7 +1829,7 @@ class OrdersController < ApplicationController
             product_request,
             current_user,
             'venta',
-            discount,
+            @discount,
             @prospect,
             corporate,
             multiple
@@ -1865,7 +1841,7 @@ class OrdersController < ApplicationController
           product_request,
           current_user,
           'venta',
-          discount,
+          @discount,
           @prospect,
           corporate,
           multiple
@@ -1874,39 +1850,37 @@ class OrdersController < ApplicationController
     end
   end
 
+  def new_discount_logic(pr, n)
+    if params[:discount] != nil
+      @discount = params[:discount][n].to_f / 100
+    else
+      if @prospect.store_prospect.present?
+        if (pr.quantity >= pr.product.factor.to_f && pr.product.factor.to_f != 0)
+          if @prospect.store_prospect.store_type.store_type == 'tienda propia' || 'corporativo'
+            @discount = pr.product.stores_discount.to_f / 100
+          else
+            @discount = pr.product.franchises_discount.to_f / 100
+          end
+        else
+          @discount = @prospect.discount / 100
+        end
+      elsif
+        @discount = @prospect.discount / 100
+      end
+    end
+    if (pr.product.armed && params[:armed][n] == 'true')
+      @discount = pr.product.armed_discount / 100
+    end
+  end
+
   def create_movement(object, n, product_request, corporate)
     product = product_request.product
     store = Store.find_by_store_name(corporate.store_name)
     prospect = @prospect
-
-      if params[:discount] != nil
-        discount = params[:discount][n].to_f / 100
-      else
-        if @prospect.store_prospect != nil && @prospect.store_prospect.id != 1
-          if (product.armed && params[:armed][n] == 'true')
-            discount = product.armed_discount / 100
-          else
-            if (@prospect.store_prospect.store_type.store_type == 'tienda propia')
-              discount = @prospect.discount / 100
-            elsif @prospect.store_prospect.store_type.store_type == 'franquicia'
-              discount = @prospect.discount / 100
-            elsif @prospect.store_prospect.store_type.store_type == 'corporativo'
-              discount = @prospect.discount / 100
-            end
-          end
-        else
-          if params[:discount] != nil
-            discount = params[:discount][n].to_f / 100
-          else
-            if @prospect.store_prospect.store_type.store_type == 'corporativo'
-              discount = @prospect.discount.to_f / 100
-            end
-          end
-        end
-      end
+    new_discount_logic(product_request, n)
     price = ('%.2f' % product.price).to_f
-    disc_app = ('%.2f' % (product.price * discount)).to_f
-    unit_price = ('%.2f' % (price * (1 - discount))).to_f
+    disc_app = ('%.2f' % (product.price * @discount)).to_f
+    unit_price = ('%.2f' % (price * (1 - @discount))).to_f
     cost = ('%.2f' % product.cost.to_f).to_f
     movement = object.create(
       product: product,

@@ -20,7 +20,7 @@ class ProductsController < ApplicationController
   def wholesale_process
     ListPriceChange.create(user: current_user, document_list: params[:product_list], list_type: 'wholesale_change')
     price_list = ListPriceChange.last
-    url = Dir.pwd + "/public/" + price_list.document_list_url
+    url = price_list.document_list_url
     csv = CSV.parse(open(url).read, headers: true, encoding: 'ISO-8859-1')
     unfinded = []
     csv.each do |row|

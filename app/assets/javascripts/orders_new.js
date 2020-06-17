@@ -7,6 +7,7 @@ $(document).ready(function() {
   newRows = $(".newRow");
   action = $("#action").html();
   isStore = $("#is_store").html();
+  wholesale_quantity = 999999999;
 
   $.ajax({
     url: '/api/get_just_products',
@@ -262,7 +263,7 @@ $(document).ready(function() {
       if (isNaN(discount)) {
         discount = 0;
       }
-      if (isStore) {
+      if (isStore == "true") {
         wholesale_discount = parseFloat($("#wholesale_discount_" + idRow).text());
         wholesale_quantity = parseInt($("#wholesale_quantity_" + idRow).text());
         packs = parseInt($("#packages_" + idRow).val());
@@ -270,7 +271,9 @@ $(document).ready(function() {
           packs = 0;
         }
         if (packs >= wholesale_quantity) {
-          discount = wholesale_discount;
+          if (isStore == "true") {
+            discount = wholesale_discount;
+          }
           price = parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100));
           price = parseFloat(price.toFixed(2));
           if (!$('#armed-group_' + idRow)[0].children[0].classList.contains("hidden")) {
@@ -295,7 +298,34 @@ $(document).ready(function() {
         }
       }
       if (idRow in kgProducts) {
-        unit_p = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2);
+        if (packs >= wholesale_quantity) {
+          if (isStore == "true") {
+            discount = wholesale_discount;
+          }
+          price = parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100));
+          price = parseFloat(price.toFixed(2));
+        } else {
+          if (isStore) {
+            discount = parseFloat($('#prospect_discount_' + idRow).html());
+            price = parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100));
+            price = parseFloat(price.toFixed(2));
+          } else {
+            discount = parseFloat($('#normal_discount_' + idRow).html());
+            price = $('#normal_price_' + idRow).html();
+          }
+          $('#discount_' + idRow).val(discount);
+          if (isNaN(parseFloat(price))) {
+            $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+          } else {
+            $("#unit_price_" + idRow).html("$ " + price);
+          }
+        }
+        $('#discount_' + idRow).val(discount);
+        if (discount > 1) {
+          unit_p = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - (discount / 100))).toFixed(2);
+        } else {
+          unit_p = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2);
+        }
         if (total_quantity != 0) {
           if (total_quantity <= (kgProducts[idRow].length - 1)) {
             for(var index = 0; index < total_quantity; index++) {
@@ -311,7 +341,7 @@ $(document).ready(function() {
         }
         $("#unit_price_" + idRow).html("$ " + unit_p.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
       } else {
-        if (isStore) {
+        if (isStore == "true") {
           if (packs >= wholesale_quantity) {
             $('#discount_' + idRow).val(wholesale_discount);
             discount = wholesale_discount / 100;
