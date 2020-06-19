@@ -8,7 +8,6 @@ $(document).ready(function() {
   action = $("#action").html();
   isStore = $("#is_store").html();
   wholesale_quantity = 999999999;
-  can_write = false;
 
   $.ajax({
     url: '/api/get_just_products',
@@ -147,7 +146,6 @@ $(document).ready(function() {
         }); // donde function(response) second ajax
       } // onSelect function(suggestion)
     }); // autocomplete
-    can_write = false;
   }); // done function (response) first ajax
 
 // AGREGAR QUE JALE AUTOMÁTICAMENTE EL PORCENTAJE DE DESCUENTO DEL CLIENTE
@@ -256,6 +254,8 @@ $(document).ready(function() {
       ).attr("title", "");
     }
     sum = 0;
+
+    // AQUÍ EMPIEZA LA FUNCIONALIDAD A MODIFICAR
     if (action == 'new_order_for_prospects') {
       if ($('#armed-group_' + idRow)[0].children[0].classList.contains("hidden")) {
         if (idRow in kgProducts) {
@@ -304,38 +304,49 @@ $(document).ready(function() {
         }
       }
       if (idRow in kgProducts) {
-        if (packs >= wholesale_quantity) {
-          if (isStore == "true") {
-            discount = wholesale_discount;
-          }
-          price = parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100));
-          price = parseFloat(price.toFixed(2));
-        } else {
-          if (isStore == "true") {
-            discount = parseFloat($('#prospect_discount_' + idRow).html());
+        if (isNaN(discount)) {
+          discount = 0;
+        }
+        prospect_discount = parseFloat($('#prospect_discount_' + idRow).html());
+        discount = parseFloat($('#discount_' + idRow).val());
+        price = parseFloat((parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100))).toFixed(2));
+        if (!(discount != prospect_discount && discount != wholesale_discount)) {
+          if (packs >= wholesale_quantity) {
+            if (isStore == "true") {
+              discount = wholesale_discount;
+            }
             price = parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100));
             price = parseFloat(price.toFixed(2));
           } else {
-            if (discount > parseFloat($('#prospect_discount_' + idRow).html())) {
-              discount = discount;
-              price = price;
-            } else {
+            if (isStore == "true") {
               discount = parseFloat($('#prospect_discount_' + idRow).html());
-              price = $('#normal_price_' + idRow).html();
+              price = parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100));
+              price = parseFloat(price.toFixed(2));
+            } else {
+              if (discount > parseFloat($('#prospect_discount_' + idRow).html())) {
+                discount = discount;
+                price = price;
+              } else {
+                discount = parseFloat($('#prospect_discount_' + idRow).html());
+                price = $('#normal_price_' + idRow).html();
+              }
+            }
+            $('#discount_' + idRow).val(discount);
+            if (isNaN(parseFloat(price))) {
+              $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+            } else {
+              $("#unit_price_" + idRow).html("$ " + price);
             }
           }
-          $('#discount_' + idRow).val(discount);
-          if (isNaN(parseFloat(price))) {
-            $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
-          } else {
-            $("#unit_price_" + idRow).html("$ " + price);
-          }
+        }
+        if (isNaN(discount)) {
+          discount = 0;
         }
         $('#discount_' + idRow).val(discount);
-        if (discount > 1) {
-          unit_p = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - (discount / 100))).toFixed(2);
+        if (discount >= 1) {
+          unit_p = parseFloat((parseFloat($("#base_unit_price_" + idRow).html()) * (1 - (discount / 100))).toFixed(2));
         } else {
-          unit_p = (parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2);
+          unit_p = parseFloat((parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2));
         }
         if (total_quantity != 0) {
           if (total_quantity <= (kgProducts[idRow].length - 1)) {
@@ -350,34 +361,53 @@ $(document).ready(function() {
         } else {
           price = "0.00";
         }
-        $("#unit_price_" + idRow).html("$ " + unit_p.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        if (typeof unit_p == "number") {
+          $("#unit_price_" + idRow).html("$ " + unit_p);
+        } else {
+          $("#unit_price_" + idRow).html("$ " + unit_p.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        }
       } else {
-        if (isStore == "true") {
-          if (packs >= wholesale_quantity) {
-            $('#discount_' + idRow).val(wholesale_discount);
-            discount = wholesale_discount / 100;
-          } else {
-            discount = parseFloat($('#prospect_discount_' + idRow).html());
-            $('#discount_' + idRow).val(discount);
-            discount = discount / 100;
-          }
+        if (isNaN(discount)) {
+          discount = 0;
+        }
+        prospect_discount = parseFloat($('#prospect_discount_' + idRow).html());
+        discount = parseFloat($('#discount_' + idRow).val());
+        if (isNaN(discount)) {
+          discount = 0;
+        }
+        price = parseFloat((parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100))).toFixed(2));
+        prospect_discount = parseFloat($('#prospect_discount_' + idRow).html());
+        if (typeof price == "number") {
+          $("#unit_price_" + idRow).html("$ " + price);
+        } else {
+          $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        }
 
-          if (!$('#armed-group_' + idRow)[0].children[0].classList.contains("hidden")) {
-            if (!$('#armed_' + idRow).is(":checked")) {
-              armedDiscount = $('#armed_discount_' + idRow).html();
-              $('#discount_' + idRow).val(parseFloat(armedDiscount).toFixed(1));
-              $('.second-check_' + idRow).prop("checked", false);
+        if (!(discount != prospect_discount && discount != wholesale_discount)) {
+          if (isStore == "true") {
+            if (packs >= wholesale_quantity) {
+              $('#discount_' + idRow).val(wholesale_discount);
+              discount = wholesale_discount / 100;
             } else {
-//              unarmedDiscount = $('#normal_discount_' + idRow).html();
-//              $('#discount_' + idRow).val(parseFloat(unarmedDiscount).toFixed(1));
-//              $('.second-check_' + idRow).prop("checked", true);
+              discount = parseFloat($('#prospect_discount_' + idRow).html());
+              $('#discount_' + idRow).val(discount);
+              discount = discount / 100;
+            }
+
+            if (!$('#armed-group_' + idRow)[0].children[0].classList.contains("hidden")) {
+              if (!$('#armed_' + idRow).is(":checked")) {
+                armedDiscount = $('#armed_discount_' + idRow).html();
+                $('#discount_' + idRow).val(parseFloat(armedDiscount).toFixed(1));
+                $('.second-check_' + idRow).prop("checked", false);
+              }
             }
           }
-
+          price = (parseFloat($("#base_unit_price_" + idRow).html().replace("$ ", "").replace(/,/g,'')) * (1 - discount)).toFixed(2);
+          $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
         }
-        price = (parseFloat($("#base_unit_price_" + idRow).html().replace("$ ", "").replace(/,/g,'')) * (1 - discount)).toFixed(2);
-        $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+
       }
+      // AQUÍ TERMINA LA FUNCIONALIDAD A MODIFICAR
 
     } else {
       // added to new discount feature
@@ -474,7 +504,6 @@ $(document).ready(function() {
 
       $("#strongTotal").html("$ " + converted_big_total);
 
-      can_write = true;
       return bigTotal;
     });
   }
