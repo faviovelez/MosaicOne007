@@ -375,6 +375,11 @@ $(document).ready(function() {
         if (isNaN(discount)) {
           discount = 0;
         }
+        if (discount >= 1) {
+          unit_p = parseFloat((parseFloat($("#base_unit_price_" + idRow).html()) * (1 - (discount / 100))).toFixed(2));
+        } else {
+          unit_p = parseFloat((parseFloat($("#base_unit_price_" + idRow).html()) * (1 - discount)).toFixed(2));
+        }
         price = parseFloat((parseFloat($('#price_without_discount_' + idRow).html()) * (1 - (discount / 100))).toFixed(2));
         prospect_discount = parseFloat($('#prospect_discount_' + idRow).html());
         if (typeof price == "number") {
@@ -402,7 +407,11 @@ $(document).ready(function() {
               }
             }
           }
-          price = (parseFloat($("#base_unit_price_" + idRow).html().replace("$ ", "").replace(/,/g,'')) * (1 - discount)).toFixed(2);
+          if (discount >= 1) {
+            price = (parseFloat($("#base_unit_price_" + idRow).html().replace("$ ", "").replace(/,/g,'')) * (1 - discount / 100)).toFixed(2);
+          } else {
+            price = (parseFloat($("#base_unit_price_" + idRow).html().replace("$ ", "").replace(/,/g,'')) * (1 - discount)).toFixed(2);
+          }
           $("#unit_price_" + idRow).html("$ " + price.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
         }
 

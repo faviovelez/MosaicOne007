@@ -4,6 +4,7 @@
     <thead>
       <tr class="table-titles">
         <th class="col-md-2">Nombre</th>
+        <th class="col-md-2">Correo</th>
         <th class="col-md-2">Tienda</th>
         <th class="col-md-2">Rol</th>
         <th class="col-md-2">Acciones</th>
@@ -13,6 +14,7 @@
       <tr>
         <% @users.each do |user| %>
           <td> <%= user.first_name %> <%= user.middle_name %> <%= user.last_name %> </td>
+          <td> <%= user.email %> </td>
           <td> <%= user.store.store_name %> </td>
           <td> <%= user.role.translation.capitalize %> </td>
           <td>
