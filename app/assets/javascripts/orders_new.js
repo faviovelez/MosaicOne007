@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
   kgProducts = {};
 
   $("#generateEntry").prop("disabled", true);
@@ -143,6 +142,9 @@ $(document).ready(function() {
           rowTotal(this_id);
           disableButton();
           addEvents(this_id);
+          if (action == 'new_order_for_prospects') {
+            $("#discount_" + this_id).inputmask("decimal");
+          }
         }); // donde function(response) second ajax
       } // onSelect function(suggestion)
     }); // autocomplete
@@ -203,8 +205,10 @@ $(document).ready(function() {
     });
 
     $("#discount_" + idProd).keyup(function(){
-      rowTotal(idProd);
-      disableButton();
+      setTimeout(function(){
+        rowTotal(idProd);
+        disableButton();
+      }, 1500);
     });
   }
 
@@ -394,9 +398,15 @@ $(document).ready(function() {
               $('#discount_' + idRow).val(wholesale_discount);
               discount = wholesale_discount / 100;
             } else {
-              discount = parseFloat($('#prospect_discount_' + idRow).html());
-              $('#discount_' + idRow).val(discount);
-              discount = discount / 100;
+              if (isNaN(wholesale_quantity)) {
+                discount = discount
+                $('#discount_' + idRow).val(discount);
+                discount = discount / 100;
+              } else {
+                discount = parseFloat($('#prospect_discount_' + idRow).html());
+                $('#discount_' + idRow).val(discount);
+                discount = discount / 100;
+              }
             }
 
             if (!$('#armed-group_' + idRow)[0].children[0].classList.contains("hidden")) {
