@@ -108,7 +108,7 @@
 
       <div class="ind-form form-inside-style">
         <%= label_tag :fecha_de_pago %>
-        <%= date_field_tag :date, nil, {class: 'form-control center-text', max: Date.today} %>
+        <%= date_field_tag :date, nil, {class: 'form-control center-text', max: Date.today + 1.days} %>
       </div>
 
       <div class="ind-form form-inside-style">
